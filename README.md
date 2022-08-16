@@ -1,2 +1,2 @@
 # Groupie
-A World of Warcraft Classic LFG Automation Tool
+A better LFG tool for Classic WoW.
