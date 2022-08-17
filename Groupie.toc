@@ -1,12 +1,9 @@
 ## Interface: 20504
 ## Title: Groupie
-## Notes: An LFG categorization tool
+## Notes: A better LFG tool for Classic WoW.
 ## Version: 0.1
-## Author: Gogo
+## Author: Gogo, TannerShmoog
 
 Core.lua
 RightClick.lua
 embeds.xml
-
-
-
