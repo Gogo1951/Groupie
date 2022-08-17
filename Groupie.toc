@@ -1,0 +1,12 @@
+## Interface: 20504
+## Title: Groupie
+## Notes: An LFG categorization tool
+## Version: 0.1
+## Author: Gogo
+
+Core.lua
+RightClick.lua
+embeds.xml
+
+
+
