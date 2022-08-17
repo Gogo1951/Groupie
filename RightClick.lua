@@ -3,7 +3,7 @@
 --TODO: send relevant achievment if available
 --TODO: sum 2 handed ilvl twice 
 local function SendPlayerInfo(boolCurrentSpec, targetName)
-	boolCurrentSpec = boolCurrentSpec or true
+	local boolCurrentSpec = boolCurrentSpec or true
 
 	--Convert Locales into languages
 	local localeTable = {
@@ -79,7 +79,7 @@ local function GroupieUnitMenu (dropdownMenu, which, unit, name, userData, ...)
 
 	--Some context menus dont natively give us a name parameter
 	if name == nil then
-		name = UnitName(unit)
+		local name = UnitName(unit)
 	end 
 
 	--Check that we have a non nil name, and that the target is a player
