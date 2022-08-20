@@ -1,5 +1,5 @@
 ## Interface: 30400
-## Title: Groupie
+## Title: Groupie LFG
 ## Notes: A better LFG tool for Classic WoW.
 ## Version: 0.1
 ## Author: Gogo, TannerShmoog
