@@ -1,39 +1,72 @@
 local AceGUI = LibStub("AceGUI-3.0")
 
 local function BuildGroupieWindow()
-    -- function that draws the widgets for the first tab
-    local function DrawGroup1(container)
+    --Groupie Main Tab
+    local function DrawMainTab(container)
         local desc = AceGUI:Create("Label")
-        desc:SetText("This is Tab 1")
-        desc:SetFullWidth(true)
+        desc:SetText("Main tab showing group listing.")
         container:AddChild(desc)
-
-        local button = AceGUI:Create("Button")
-        button:SetText("Tab 1 Button")
-        button:SetWidth(200)
-        container:AddChild(button)
     end
 
-    -- function that draws the widgets for the second tab
-    local function DrawGroup2(container)
+    --Group Builder Tab
+    local function DrawGroupBuilder(container)
         local desc = AceGUI:Create("Label")
-        desc:SetText("This is Tab 2")
-        desc:SetFullWidth(true)
+        desc:SetText("Group builder tab.")
         container:AddChild(desc)
+    end
 
-        local button = AceGUI:Create("Button")
-        button:SetText("Tab 2 Button")
-        button:SetWidth(200)
-        container:AddChild(button)
+    --Group Filter Tab
+    local function DrawGroupFilter(container)
+        local desc = AceGUI:Create("Label")
+        desc:SetText("Group filters tab.")
+        container:AddChild(desc)
+    end
+
+    --Instance Filter Tab
+    local function DrawInstanceFilter(container)
+        local desc = AceGUI:Create("Label")
+        desc:SetText("Instance filters tab.")
+        container:AddChild(desc)
+    end
+
+    --Character Options Tab
+    local function DrawCharOptions(container)
+        local desc = AceGUI:Create("Label")
+        desc:SetText("Character options tab.")
+        container:AddChild(desc)
+    end
+
+    --Global Options Tab
+    local function DrawGlobalOptions(container)
+        local desc = AceGUI:Create("Label")
+        desc:SetText("Global options tab.")
+        container:AddChild(desc)
+    end
+
+    --About Tab
+    local function DrawAbout(container)
+        local desc = AceGUI:Create("Label")
+        desc:SetText("About tab.")
+        container:AddChild(desc)
     end
 
     -- Callback function for OnGroupSelected
     local function SelectGroup(container, event, group)
         container:ReleaseChildren()
-        if group == "tab1" then
-            DrawGroup1(container)
-        elseif group == "tab2" then
-            DrawGroup2(container)
+        if group == "maintab" then
+            DrawMainTab(container)
+        elseif group == "groupbuilder" then
+            DrawGroupBuilder(container)
+        elseif group == "groupfilter" then
+            DrawGroupFilter(container)
+        elseif group == "instancefilter" then
+            DrawInstanceFilter(container)
+        elseif group == "charoption" then
+            DrawCharOptions(container)
+        elseif group == "globaloption" then
+            DrawGlobalOptions(container)
+        elseif group == "about" then
+            DrawAbout(container)
         end
     end
 
@@ -44,19 +77,23 @@ local function BuildGroupieWindow()
     frame:SetCallback("OnClose", function(widget) AceGUI:Release(widget) end)
     frame:SetLayout("Fill")
 
-    -- Create the TabGroup
+    --Creating Tabgroup
     local tab =  AceGUI:Create("TabGroup")
     tab:SetLayout("Flow")
-    -- Setup which tabs to show
-    tab:SetTabs({{text="Tab 1", value="tab1"}, {text="Tab 2", value="tab2"}})
-    -- Register callback
+    tab:SetTabs({{text="Groupie", value="maintab"},
+    {text="Group Builder", value="groupbuilder"},
+    {text="Group Filters", value="groupfilter"},
+    {text="Instance Filters", value="instancefilter"},
+    {text="Character Options", value="charoption"},
+    {text="Global Options", value="globaloption"},
+    {text="About", value="about"}
+    })
     tab:SetCallback("OnGroupSelected", SelectGroup)
-    -- Set initial Tab (this will fire the OnGroupSelected callback)
-    tab:SelectTab("tab1")
+    tab:SelectTab("maintab")
 
-    -- add to the frame container
     frame:AddChild(tab)
 
+    --Allow the frame to close when ESC is pressed
     _G["GroupieFrame"] = frame.frame
     tinsert(UISpecialFrames, "GroupieFrame")
 end
