@@ -1,8 +1,7 @@
 --TODO: get num talents spent to determine spec
 --TODO: allow players to set role for each spec in options
 --TODO: send relevant achievment if available
-local function SendPlayerInfo(boolCurrentSpec, targetName)
-	local boolCurrentSpec = boolCurrentSpec or true
+local function SendPlayerInfo(specGroup, targetName)
 
 	--Convert Locales into languages
 	local localeTable = {
@@ -44,13 +43,27 @@ local function SendPlayerInfo(boolCurrentSpec, targetName)
 
 	local myclass = UnitClass("player")
 	local mylevel = UnitLevel("player")
+
+	--Find out which talent spec has the most points spent in it
+	local maxTalentsSpent = -1
+	local maxTalentSpec = nil
+	for specTab = 1, 3 do
+		local specName, id, pointsSpent = GetTalentTabInfo(specTab, false, false, specGroup)
+		if pointsSpent > maxTalentsSpent then
+			maxTalentsSpent = pointsSpent
+			maxTalentSpec = specName
+		end
+	end
+
 	local mylocale = GetLocale()
 
 	--Sending Current Spec Info
-	if boolCurrentSpec then
+	if boolCurrentSpec or true then
 		SendChatMessage("{rt3} Groupie: __ROLE__ LFG! Level " ..
 			mylevel ..
-			" __SPEC__" ..
+			" " ..
+			maxTalentSpec ..
+			" " ..
 			myclass ..
 			" wearing " ..
 			tostring(averageiLevel) ..
@@ -58,7 +71,8 @@ local function SendPlayerInfo(boolCurrentSpec, targetName)
 			localeTable[mylocale] ..
 			" speaking player.",
 			"WHISPER", "COMMON", targetName)
-		--Sending Alternate Spec Info
+	--[[
+	--Sending Alternate Spec Info
 	else
 		SendChatMessage("{rt3} Groupie: __ROLE__ LFG! Level " ..
 			mylevel ..
@@ -70,6 +84,7 @@ local function SendPlayerInfo(boolCurrentSpec, targetName)
 			localeTable[mylocale] ..
 			" speaking player.",
 			"WHISPER", "COMMON", targetName)
+	--]]
 	end
 	return true
 end
@@ -90,7 +105,6 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 	--Check that we have a non nil name, and that the target is a player
 	if name ~= nil and UnitIsPlayer(unit) then
 		UIDropDownMenu_AddSeparator(UIDROPDOWNMENU_MENU_LEVEL)
-		print(2)
 		local info = UIDropDownMenu_CreateInfo()
 		info.notClickable = true
 		info.notCheckable = true
@@ -108,16 +122,35 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		local info = UIDropDownMenu_CreateInfo()
 		info.dist = 0
 		info.notCheckable = true
-		info.func = function() SendPlayerInfo(true, name) end
-		info.text = "Current Spec"
+		info.func = function() SendPlayerInfo(1, name) end
+		local maxTalentsSpent = -1
+		local maxTalentSpec = nil
+		for specTab = 1, 3 do
+			local specName, id, pointsSpent = GetTalentTabInfo(specTab)
+			if pointsSpent > maxTalentsSpent then
+				maxTalentsSpent = pointsSpent
+				maxTalentSpec = specName
+			end
+		end
+		info.text = "Spec 1: "..maxTalentSpec
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
-
+		
 		local info = UIDropDownMenu_CreateInfo()
 		info.dist = 0
 		info.notCheckable = true
-		info.func = function() SendPlayerInfo(false, name) end
-		info.text = "Other Spec"
+		info.func = function() SendPlayerInfo(2, name) end
+		local maxTalentsSpent = -1
+		local maxTalentSpec = nil
+		for specTab = 1, 3 do
+			local specName, id, pointsSpent = GetTalentTabInfo(specTab, false, false, 2)
+			if pointsSpent > maxTalentsSpent then
+				maxTalentsSpent = pointsSpent
+				maxTalentSpec = specName
+			end
+		end
+		info.text = "Spec 2: "..maxTalentSpec
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
+		
 	end
 end
 
