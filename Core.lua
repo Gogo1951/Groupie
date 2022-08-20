@@ -31,9 +31,55 @@ local function BuildGroupieWindow()
 
     --Character Options Tab
     local function DrawCharOptions(container)
-        local desc = AceGUI:Create("Label")
-        desc:SetText("Character options tab.")
-        container:AddChild(desc)
+        local playerName = UnitName("player")
+        local realmName = GetRealmName()
+
+        local tabTitle = AceGUI:Create("Label")
+        tabTitle:SetText("Groupie | "..playerName.." Options")
+        tabTitle:SetFontObject(GameFontHighlightHuge)
+        tabTitle:SetFullWidth(true)
+        container:AddChild(tabTitle)
+
+        local spec1Title = AceGUI:Create("Label")
+        spec1Title:SetText("Main Spec Role")
+        spec1Title:SetFontObject(GameFontHighlightLarge)
+        spec1Title:SetFullWidth(true)
+        container:AddChild(spec1Title)
+
+        local spec1Desc = AceGUI:Create("Label")
+        local spec1Name = GetSpecByGroupNum(1)
+        spec1Desc:SetText(spec1Name)
+        spec1Desc:SetFontObject(GameFontHighlight)
+        container:AddChild(spec1Desc)
+        local spec1Dropdown = AceGUI:Create("Dropdown")
+        spec1Dropdown:AddItem(1, "Tank")
+        spec1Dropdown:AddItem(2, "Healer")
+        spec1Dropdown:AddItem(3, "DPS")
+        spec1Dropdown:SetCallback("OnValueChanged", function()
+
+        end)
+        container:AddChild(spec1Dropdown)
+
+
+        local spec2Title = AceGUI:Create("Label")
+        spec2Title:SetText("Alternate Spec Role")
+        spec2Title:SetFontObject(GameFontHighlightLarge)
+        spec2Title:SetFullWidth(true)
+        container:AddChild(spec2Title)
+
+        local spec2Desc = AceGUI:Create("Label")
+        local spec2Name = GetSpecByGroupNum(2)
+        spec2Desc:SetText(spec2Name)
+        spec2Desc:SetFontObject(GameFontHighlight)
+        container:AddChild(spec2Desc)
+        local spec2Dropdown = AceGUI:Create("Dropdown")
+        spec2Dropdown:AddItem(1, "Tank")
+        spec2Dropdown:AddItem(2, "Healer")
+        spec2Dropdown:AddItem(3, "DPS")
+        spec2Dropdown:SetCallback("OnValueChanged", function()
+
+        end)
+        container:AddChild(spec2Dropdown)
     end
 
     --Global Options Tab
@@ -71,22 +117,24 @@ local function BuildGroupieWindow()
     end
 
 
-    local frame = AceGUI:Create("Frame")
+
+
+    local frame = AceGUI:Create("Frame") 
     frame:SetTitle("Groupie")
     frame:SetStatusText("Groupie LFG - Party Listing")
     frame:SetCallback("OnClose", function(widget) AceGUI:Release(widget) end)
     frame:SetLayout("Fill")
 
     --Creating Tabgroup
-    local tab =  AceGUI:Create("TabGroup")
+    local tab = AceGUI:Create("TabGroup")
     tab:SetLayout("Flow")
     tab:SetTabs({{text="Groupie", value="maintab"},
-    {text="Group Builder", value="groupbuilder"},
-    {text="Group Filters", value="groupfilter"},
-    {text="Instance Filters", value="instancefilter"},
-    {text="Character Options", value="charoption"},
-    {text="Global Options", value="globaloption"},
-    {text="About", value="about"}
+        {text="Group Builder", value="groupbuilder"},
+        {text="Group Filters", value="groupfilter"},
+        {text="Instance Filters", value="instancefilter"},
+        {text="Character Options", value="charoption"},
+        {text="Global Options", value="globaloption"},
+        {text="About", value="about"}
     })
     tab:SetCallback("OnGroupSelected", SelectGroup)
     tab:SelectTab("maintab")

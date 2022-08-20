@@ -5,6 +5,7 @@
 ## Author: Gogo, TannerShmoog
 
 embeds.xml
+Helpers.lua
 Core.lua
 RightClick.lua
 
