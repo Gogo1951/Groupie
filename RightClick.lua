@@ -19,6 +19,12 @@ local function SendPlayerInfo(specGroup, targetName)
 		["ptBR"] = "Portuguese",
 	}
 
+	local roleTable = {
+		[1] = "Tank",
+		[2] = "Healer",
+		[3] = "DPS"
+	}
+
 	--Calculate average itemlevel
 	local iLevelSum = 0
 	for slotNum = 1, 19 do
@@ -46,11 +52,27 @@ local function SendPlayerInfo(specGroup, targetName)
 
 	--Find out which talent spec has the most points spent in it
 	local maxTalentSpec = GetSpecByGroupNum(specGroup)
-
 	local mylocale = GetLocale()
+	
+
+	--Get saved role from options if it exists
+	local myrole = ""
+	if specGroup == 1 then
+		if groupieSpec1Role ~= nil then
+			myrole = roleTable[groupieSpec1Role]
+		end
+	elseif specGroup == 2 then
+		if groupieSpec2Role ~= nil then
+			myrole = roleTable[groupieSpec2Role]
+		end
+	end
+
 
 	--Sending Current Spec Info
-	SendChatMessage("{rt3} Groupie: __ROLE__ LFG! Level " ..
+	SendChatMessage("{rt3} Groupie: " ..
+		myrole ..
+		" " ..
+		"LFG! Level " ..
 		mylevel ..
 		" " ..
 		maxTalentSpec ..

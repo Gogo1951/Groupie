@@ -56,8 +56,13 @@ local function BuildGroupieWindow()
         spec1Dropdown:AddItem(2, "Healer")
         spec1Dropdown:AddItem(3, "DPS")
         spec1Dropdown:SetCallback("OnValueChanged", function()
-
+            if spec1Dropdown:GetValue() then
+                groupieSpec1Role = spec1Dropdown:GetValue()
+            end
         end)
+        if groupieSpec1Role ~= nil then
+            spec1Dropdown:SetValue(groupieSpec1Role)
+        end
         container:AddChild(spec1Dropdown)
 
 
@@ -77,8 +82,13 @@ local function BuildGroupieWindow()
         spec2Dropdown:AddItem(2, "Healer")
         spec2Dropdown:AddItem(3, "DPS")
         spec2Dropdown:SetCallback("OnValueChanged", function()
-
+            if spec2Dropdown:GetValue() then
+                groupieSpec2Role = spec2Dropdown:GetValue()
+            end
         end)
+        if groupieSpec2Role ~= nil then
+            spec2Dropdown:SetValue(groupieSpec2Role)
+        end
         container:AddChild(spec2Dropdown)
     end
 
