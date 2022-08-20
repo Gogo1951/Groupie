@@ -1,7 +1,6 @@
 --TODO: get num talents spent to determine spec
 --TODO: allow players to set role for each spec in options
 --TODO: send relevant achievment if available
---TODO: sum 2 handed ilvl twice 
 local function SendPlayerInfo(boolCurrentSpec, targetName)
 	local boolCurrentSpec = boolCurrentSpec or true
 
@@ -23,13 +22,20 @@ local function SendPlayerInfo(boolCurrentSpec, targetName)
 
 	--Calculate average itemlevel
 	local iLevelSum = 0
-	for slotNum=1,19 do
+	for slotNum = 1, 19 do
 		--Exclude shirt and tabard slots from itemlevel calculation
 		if slotNum ~= 4 and slotNum ~= 19 then
 			local tempItemLink = GetInventoryItemLink("player", slotNum)
-			
+
 			if tempItemLink then
-				local name, _, _, iLevel = GetItemInfo(tempItemLink)
+				local name, _, _, iLevel, _, _, _, _, itemType = GetItemInfo(tempItemLink)
+				if slotNum == 16 and itemType == "INVTYPE_2HWEAPON" then
+					--If the weapon is 2 handed, and the offhand slot is empty, we sum the weapon's itemlevel twice
+					if GetInventoryItemLink("player", 17) == nil then
+						iLevelSum = iLevelSum + iLevel
+					end
+				end
+
 				iLevelSum = iLevelSum + iLevel
 			end
 		end
@@ -42,28 +48,28 @@ local function SendPlayerInfo(boolCurrentSpec, targetName)
 
 	--Sending Current Spec Info
 	if boolCurrentSpec then
-		SendChatMessage("{rt3} Groupie: __ROLE__ LFG! Level "..
-			mylevel..
-			" __SPEC__"..
-			myclass..
-			" wearing "..
-			tostring(averageiLevel)..
-			" average item-level gear. "..
-			localeTable[mylocale]..
-			" speaking player.", 
-		"WHISPER", "COMMON", targetName)
-	--Sending Alternate Spec Info
+		SendChatMessage("{rt3} Groupie: __ROLE__ LFG! Level " ..
+			mylevel ..
+			" __SPEC__" ..
+			myclass ..
+			" wearing " ..
+			tostring(averageiLevel) ..
+			" average item-level gear. " ..
+			localeTable[mylocale] ..
+			" speaking player.",
+			"WHISPER", "COMMON", targetName)
+		--Sending Alternate Spec Info
 	else
-		SendChatMessage("{rt3} Groupie: __ROLE__ LFG! Level "..
-			mylevel..
-			" __SPEC__"..
-			myclass..
-			" wearing "..
-			tostring(averageiLevel)..
-			" average item-level gear. "..
-			localeTable[mylocale]..
-			" speaking player.", 
-		"WHISPER", "COMMON", targetName)
+		SendChatMessage("{rt3} Groupie: __ROLE__ LFG! Level " ..
+			mylevel ..
+			" __SPEC__" ..
+			myclass ..
+			" wearing " ..
+			tostring(averageiLevel) ..
+			" average item-level gear. " ..
+			localeTable[mylocale] ..
+			" speaking player.",
+			"WHISPER", "COMMON", targetName)
 	end
 	return true
 end
@@ -71,50 +77,48 @@ end
 ---------------
 -- Menu Hook --
 ---------------
-local function GroupieUnitMenu (dropdownMenu, which, unit, name, userData, ...)
-
+local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 	if (UIDROPDOWNMENU_MENU_LEVEL > 1) then
 		return
 	end
 
 	--Some context menus dont natively give us a name parameter
 	if name == nil then
-		local name = UnitName(unit)
-	end 
+		name = UnitName(unit)
+	end
 
 	--Check that we have a non nil name, and that the target is a player
 	if name ~= nil and UnitIsPlayer(unit) then
 		UIDropDownMenu_AddSeparator(UIDROPDOWNMENU_MENU_LEVEL)
-
+		print(2)
 		local info = UIDropDownMenu_CreateInfo()
 		info.notClickable = true
 		info.notCheckable = true
 		info.isTitle = true
-		info.text = "Groupie"	
+		info.text = "Groupie"
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 
 		local info = UIDropDownMenu_CreateInfo()
 		info.notClickable = true
 		info.notCheckable = true
-		info.text = "Send My Info"	
+		info.text = "Send My Info"
 		info.leftPadding = 10
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 
 		local info = UIDropDownMenu_CreateInfo()
 		info.dist = 0
-		info.notCheckable = true	
+		info.notCheckable = true
 		info.func = function() SendPlayerInfo(true, name) end
-		info.text = "Current Spec"	
+		info.text = "Current Spec"
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 
 		local info = UIDropDownMenu_CreateInfo()
 		info.dist = 0
-		info.notCheckable = true	
+		info.notCheckable = true
 		info.func = function() SendPlayerInfo(false, name) end
-		info.text = "Other Spec"	
+		info.text = "Other Spec"
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
-	end	
-	
+	end
 end
 
 hooksecurefunc("UnitPopup_ShowMenu", GroupieUnitMenu)
