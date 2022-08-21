@@ -254,18 +254,20 @@ local function BuildGroupieWindow()
 end
 
 
-
+--Minimap Icon Creation
 local groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Groupie", {
     type = "data source",
     text = "Groupie",
-    icon = "Interface\\Icons\\INV_Chest_Cloth_17",
-    OnClick = function() BuildGroupieWindow() end
+    icon = "Interface\\AddOns\\Groupie-LFG\\Images\\icon32.blp",
+    OnClick = BuildGroupieWindow
 })
 local icon = LibStub("LibDBIcon-1.0")
 function AceAddon:OnInitialize()
     self.db = LibStub("AceDB-3.0"):New("GroupieDB", { profile = { minimap = { hide = false, }, }, }) 
     icon:Register("Groupie", groupieLDB, self.db.profile.minimap)
 end
+
+--Setup Slash Command
 SLASH_GROUPIE1, SLASH_GROUPIE2= "/groupie", "/groupielfg"
 SlashCmdList["GROUPIE"] = BuildGroupieWindow
 
