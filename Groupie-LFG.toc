@@ -7,6 +7,7 @@
 ## SavedVariablesPerCharacter: groupielfg_db
 
 embeds.xml
+UI/minimap.xml
 Helpers.lua
 Core.lua
 RightClick.lua

@@ -100,8 +100,13 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		name = UnitName(unit)
 	end
 
+	--Return if the unit is not a player
+	if unit ~= nil and not UnitIsPlayer(unit) then
+		return
+	end
+
 	--Check that we have a non nil name, and that the target is a player
-	if name ~= nil and UnitIsPlayer(unit) then
+	if name ~= nil then
 		UIDropDownMenu_AddSeparator(UIDROPDOWNMENU_MENU_LEVEL)
 		local info = UIDropDownMenu_CreateInfo()
 		info.notClickable = true

@@ -1,4 +1,5 @@
 local AceGUI = LibStub("AceGUI-3.0")
+local AceAddon = LibStub("AceAddon-3.0"):NewAddon("Groupie", "AceConsole-3.0")
 GroupieLFG = {}
 
 local function BuildOptionsTable()
@@ -28,6 +29,7 @@ local function BuildOptionsTable()
         groupielfg_global.minsToPreserve = 2
         groupielfg_global.font = "Arial Narrow"
         groupielfg_global.fontSize = 8
+        groupielfg_global.minimapPos = 30
     end
 end
 BuildOptionsTable()
@@ -251,5 +253,19 @@ local function BuildGroupieWindow()
     GroupieLFG._frame = frame
 end
 
+
+
+local groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Groupie", {
+    type = "data source",
+    text = "Groupie",
+    icon = "Interface\\Icons\\INV_Chest_Cloth_17",
+    OnClick = function() BuildGroupieWindow() end
+})
+local icon = LibStub("LibDBIcon-1.0")
+function AceAddon:OnInitialize()
+    self.db = LibStub("AceDB-3.0"):New("GroupieDB", { profile = { minimap = { hide = false, }, }, }) 
+    icon:Register("Groupie", groupieLDB, self.db.profile.minimap)
+end
 SLASH_GROUPIE1, SLASH_GROUPIE2= "/groupie", "/groupielfg"
 SlashCmdList["GROUPIE"] = BuildGroupieWindow
+
