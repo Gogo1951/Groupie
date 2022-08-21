@@ -61,19 +61,19 @@ local function SendPlayerInfo(specGroup, targetName)
 		if groupielfg_db.groupieSpec1Role ~= nil then
 			myrole = roleTable[groupielfg_db.groupieSpec1Role]
 		else
-			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the Groupie-LFG Character Options tab.")
+			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the Groupie LFG Character Options tab.")
 		end
 	elseif specGroup == 2 then
 		if groupielfg_db.groupieSpec2Role ~= nil then
 			myrole = roleTable[groupielfg_db.groupieSpec2Role]
 		else
-			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the Groupie-LFG Character Options tab.")
+			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the Groupie LFG Character Options tab.")
 		end
 	end
 
 
 	--Sending Current Spec Info
-	SendChatMessage("{rt3} Groupie-LFG: " ..
+	SendChatMessage("{rt3} Groupie LFG: " ..
 		myrole ..
 		" " ..
 		"LFG! Level " ..
@@ -86,7 +86,7 @@ local function SendPlayerInfo(specGroup, targetName)
 		tostring(averageiLevel) ..
 		" average item-level gear. " ..
 		localeTable[mylocale] ..
-		" speaking player.",
+		"-speaking player.",
 		"WHISPER", "COMMON", targetName)
 	return true
 end
