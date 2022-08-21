@@ -32,7 +32,7 @@ local function BuildOptionsTable()
         groupielfg_global.minimapPos = 30
     end
 end
-BuildOptionsTable()
+
 
 local function BuildGroupieWindow()
     --Dont open a new frame if already open
@@ -259,12 +259,21 @@ local groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Groupie", {
     type = "data source",
     text = "Groupie",
     icon = "Interface\\AddOns\\Groupie-LFG\\Images\\icon32.blp",
-    OnClick = BuildGroupieWindow
+    OnClick = BuildGroupieWindow,
+    OnTooltipShow = function(tooltip)
+        tooltip:AddLine("Groupie-LFG")
+        tooltip:AddLine("A better LFG tool for Classic WoW.", 255, 255, 255, false)
+        tooltip:AddLine("Click to open Groupie", 255, 255, 255, false)
+    end
 })
 local icon = LibStub("LibDBIcon-1.0")
+
+
+--Load minimap icon and saved options
 function AceAddon:OnInitialize()
     self.db = LibStub("AceDB-3.0"):New("GroupieDB", { profile = { minimap = { hide = false, }, }, }) 
     icon:Register("Groupie", groupieLDB, self.db.profile.minimap)
+    BuildOptionsTable()
 end
 
 --Setup Slash Command
