@@ -60,10 +60,14 @@ local function SendPlayerInfo(specGroup, targetName)
 	if specGroup == 1 then
 		if groupielfg_db.groupieSpec1Role ~= nil then
 			myrole = roleTable[groupielfg_db.groupieSpec1Role]
+		else
+			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the Groupie-LFG Character Options tab.")
 		end
 	elseif specGroup == 2 then
 		if groupielfg_db.groupieSpec2Role ~= nil then
 			myrole = roleTable[groupielfg_db.groupieSpec2Role]
+		else
+			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the Groupie-LFG Character Options tab.")
 		end
 	end
 
