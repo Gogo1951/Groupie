@@ -69,7 +69,7 @@ local function SendPlayerInfo(specGroup, targetName)
 
 
 	--Sending Current Spec Info
-	SendChatMessage("{rt3} Groupie: " ..
+	SendChatMessage("{rt3} Groupie-LFG: " ..
 		myrole ..
 		" " ..
 		"LFG! Level " ..
@@ -107,7 +107,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		info.notClickable = true
 		info.notCheckable = true
 		info.isTitle = true
-		info.text = "Groupie"
+		info.text = "Groupie-LFG"
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 
 		local info = UIDropDownMenu_CreateInfo()
