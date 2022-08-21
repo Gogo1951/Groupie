@@ -1,6 +1,44 @@
 local AceGUI = LibStub("AceGUI-3.0")
+GroupieLFG = {}
+
+local function BuildOptionsTable()
+    if groupielfg_db == nil then
+        --Character Options
+        groupielfg_db = {}
+        groupielfg_db.groupieSpec1Role = nil
+        groupielfg_db.groupieSpec2Role = nil
+        groupielfg_db.recommendedLevelRange = 1
+        groupielfg_db.autoRespondFriends = false
+        groupielfg_db.autoRespondGuild = false
+        groupielfg_db.afterParty = true
+        groupielfg_db.useChannels = {
+            ["Guild"] = true,
+            ["General"] = true,
+            ["Trade"] = true,
+            ["LocalDefense"] = true,
+            ["LookingForGroup"] = true,
+            ["5"] = true,
+        }
+    end
+
+    --Global Options
+    if groupielfg_global == nil then
+        groupielfg_global = {}
+        groupielfg_global.preserveData = true
+        groupielfg_global.minsToPreserve = 2
+        groupielfg_global.font = "Arial Narrow"
+        groupielfg_global.fontSize = 8
+    end
+end
+BuildOptionsTable()
 
 local function BuildGroupieWindow()
+    --Dont open a new frame if already open
+    if 
+    GroupieLFG._frame and GroupieLFG._frame.frame:IsShown() then
+        return
+    end
+
     --Groupie Main Tab
     local function DrawMainTab(container)
         local desc = AceGUI:Create("Label")
@@ -57,11 +95,11 @@ local function BuildGroupieWindow()
         spec1Dropdown:AddItem(3, "DPS")
         spec1Dropdown:SetCallback("OnValueChanged", function()
             if spec1Dropdown:GetValue() then
-                groupieSpec1Role = spec1Dropdown:GetValue()
+                groupielfg_db.groupieSpec1Role = spec1Dropdown:GetValue()
             end
         end)
-        if groupieSpec1Role ~= nil then
-            spec1Dropdown:SetValue(groupieSpec1Role)
+        if groupielfg_db.groupieSpec1Role ~= nil then
+            spec1Dropdown:SetValue(groupielfg_db.groupieSpec1Role)
         end
         container:AddChild(spec1Dropdown)
 
@@ -83,11 +121,11 @@ local function BuildGroupieWindow()
         spec2Dropdown:AddItem(3, "DPS")
         spec2Dropdown:SetCallback("OnValueChanged", function()
             if spec2Dropdown:GetValue() then
-                groupieSpec2Role = spec2Dropdown:GetValue()
+                groupielfg_db.groupieSpec2Role = spec2Dropdown:GetValue()
             end
         end)
-        if groupieSpec2Role ~= nil then
-            spec2Dropdown:SetValue(groupieSpec2Role)
+        if groupielfg_db.groupieSpec2Role ~= nil then
+            spec2Dropdown:SetValue(groupielfg_db.groupieSpec2Role)
         end
         container:AddChild(spec2Dropdown)
     end
@@ -126,9 +164,6 @@ local function BuildGroupieWindow()
         end
     end
 
-
-
-
     local frame = AceGUI:Create("Frame") 
     frame:SetTitle("Groupie")
     frame:SetStatusText("Groupie LFG - Party Listing")
@@ -148,12 +183,13 @@ local function BuildGroupieWindow()
     })
     tab:SetCallback("OnGroupSelected", SelectGroup)
     tab:SelectTab("maintab")
-
     frame:AddChild(tab)
 
     --Allow the frame to close when ESC is pressed
     _G["GroupieFrame"] = frame.frame
     tinsert(UISpecialFrames, "GroupieFrame")
+    --Store a global reference to the frame
+    GroupieLFG._frame = frame
 end
 
 SLASH_GROUPIE1, SLASH_GROUPIE2= "/groupie", "/groupielfg"

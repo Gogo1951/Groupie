@@ -58,12 +58,12 @@ local function SendPlayerInfo(specGroup, targetName)
 	--Get saved role from options if it exists
 	local myrole = ""
 	if specGroup == 1 then
-		if groupieSpec1Role ~= nil then
-			myrole = roleTable[groupieSpec1Role]
+		if groupielfg_db.groupieSpec1Role ~= nil then
+			myrole = roleTable[groupielfg_db.groupieSpec1Role]
 		end
 	elseif specGroup == 2 then
-		if groupieSpec2Role ~= nil then
-			myrole = roleTable[groupieSpec2Role]
+		if groupielfg_db.groupieSpec2Role ~= nil then
+			myrole = roleTable[groupielfg_db.groupieSpec2Role]
 		end
 	end
 

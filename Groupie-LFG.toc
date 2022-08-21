@@ -3,8 +3,8 @@
 ## Notes: A better LFG tool for Classic WoW.
 ## Version: 0.1
 ## Author: Gogo, TannerShmoog
-## SavedVariables: 
-## SavedVariablesPerCharacter: groupieSpec1Role, groupieSpec2Role
+## SavedVariables: groupielfg_global
+## SavedVariablesPerCharacter: groupielfg_db
 
 embeds.xml
 Helpers.lua
