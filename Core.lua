@@ -1,5 +1,6 @@
 local AceGUI = LibStub("AceGUI-3.0")
 local AceAddon = LibStub("AceAddon-3.0"):NewAddon("Groupie", "AceConsole-3.0")
+local SharedMedia = LibStub("LibSharedMedia-3.0")
 GroupieLFG = {}
 
 local function BuildOptionsTable()
@@ -79,20 +80,21 @@ local function BuildGroupieWindow()
 
         local tabTitle = AceGUI:Create("Label")
         tabTitle:SetText("Groupie LFG | "..playerName.." Options")
+        tabTitle:SetColor(0.88, 0.73, 0)
         tabTitle:SetFontObject(GameFontHighlightHuge)
         tabTitle:SetFullWidth(true)
         container:AddChild(tabTitle)
 
         local spec1Title = AceGUI:Create("Label")
         spec1Title:SetText("Main Spec Role")
-        spec1Title:SetFontObject(GameFontHighlightLarge)
+        spec1Title:SetFontObject(GameFontNormalMed2)
         spec1Title:SetFullWidth(true)
         container:AddChild(spec1Title)
 
         local spec1Desc = AceGUI:Create("Label")
         local spec1Name = GetSpecByGroupNum(1)
         spec1Desc:SetText(spec1Name)
-        spec1Desc:SetFontObject(GameFontHighlight)
+        spec1Desc:SetFontObject(GameFontNormal)
         container:AddChild(spec1Desc)
         local spec1Dropdown = AceGUI:Create("Dropdown")
         --Only populate the list with valid roles
@@ -115,14 +117,14 @@ local function BuildGroupieWindow()
 
         local spec2Title = AceGUI:Create("Label")
         spec2Title:SetText("Alternate Spec Role")
-        spec2Title:SetFontObject(GameFontHighlightLarge)
+        spec2Title:SetFontObject(GameFontNormalMed2)
         spec2Title:SetFullWidth(true)
         container:AddChild(spec2Title)
 
         local spec2Desc = AceGUI:Create("Label")
         local spec2Name = GetSpecByGroupNum(2)
         spec2Desc:SetText(spec2Name)
-        spec2Desc:SetFontObject(GameFontHighlight)
+        spec2Desc:SetFontObject(GameFontNormal)
         container:AddChild(spec2Desc)
         local spec2Dropdown = AceGUI:Create("Dropdown")
         --Only populate the list with valid roles
@@ -145,7 +147,7 @@ local function BuildGroupieWindow()
 
         local recLevelTitle = AceGUI:Create("Label")
         recLevelTitle:SetText("Recommended Dungeon Level Range")
-        recLevelTitle:SetFontObject(GameFontHighlightLarge)
+        recLevelTitle:SetFontObject(GameFontNormalMed2)
         recLevelTitle:SetFullWidth(true)
         container:AddChild(recLevelTitle)
 
@@ -169,7 +171,7 @@ local function BuildGroupieWindow()
 
         local autoResponseTitle = AceGUI:Create("Label")
         autoResponseTitle:SetText("Groupie Auto-Response")
-        autoResponseTitle:SetFontObject(GameFontHighlightLarge)
+        autoResponseTitle:SetFontObject(GameFontNormalMed2)
         autoResponseTitle:SetFullWidth(true)
         container:AddChild(autoResponseTitle)
 
@@ -193,7 +195,7 @@ local function BuildGroupieWindow()
 
         local afterPartyTitle = AceGUI:Create("Label")
         afterPartyTitle:SetText("Groupie After-Party Tool")
-        afterPartyTitle:SetFontObject(GameFontHighlightLarge)
+        afterPartyTitle:SetFontObject(GameFontNormalMed2)
         afterPartyTitle:SetFullWidth(true)
         container:AddChild(afterPartyTitle)
 
@@ -208,7 +210,7 @@ local function BuildGroupieWindow()
 
         local groupChannelsTitle = AceGUI:Create("Label")
         groupChannelsTitle:SetText("Pull Groups from Available Channels")
-        groupChannelsTitle:SetFontObject(GameFontHighlightLarge)
+        groupChannelsTitle:SetFontObject(GameFontNormalMed2)
         groupChannelsTitle:SetFullWidth(true)
         container:AddChild(groupChannelsTitle)
 
@@ -264,15 +266,42 @@ local function BuildGroupieWindow()
 
     --Global Options Tab
     local function DrawGlobalOptions(container)
-        local desc = AceGUI:Create("Label")
-        desc:SetText("Global options tab.")
-        container:AddChild(desc)
+        local tabTitle = AceGUI:Create("Label")
+        tabTitle:SetText("Groupie LFG | Global Options")
+        tabTitle:SetColor(0.88, 0.73, 0)
+        tabTitle:SetFontObject(GameFontHighlightHuge)
+        tabTitle:SetFullWidth(true)
+        container:AddChild(tabTitle)
+
+        local fontTitle = AceGUI:Create("Label")
+        fontTitle:SetText("Font")
+        fontTitle:SetFontObject(GameFontNormalMed2)
+        fontTitle:SetFullWidth(true)
+        container:AddChild(fontTitle)
+
+        local fontDropdown = AceGUI:Create("Dropdown")
+        fontDropdown:SetWidth(220)
+        for key,val in pairs(SharedMedia:HashTable("font")) do
+            fontDropdown:AddItem(key, key)
+        end
+        fontDropdown:SetCallback("OnValueChanged", function()
+            if fontDropdown:GetValue() then
+                groupielfg_global.font = fontDropdown:GetValue()
+            end
+        end)
+        if groupielfg_global.font ~= nil then
+            fontDropdown:SetValue(groupielfg_global.font)
+        end
+        container:AddChild(fontDropdown)
+
+        
     end
 
     --About Tab
     local function DrawAbout(container)
         local tabTitle = AceGUI:Create("Label")
         tabTitle:SetText("Groupie LFG | About")
+        tabTitle:SetColor(0.88, 0.73, 0)
         tabTitle:SetFontObject(GameFontHighlightHuge)
         tabTitle:SetFullWidth(true)
         container:AddChild(tabTitle)
