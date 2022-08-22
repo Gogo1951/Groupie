@@ -101,6 +101,7 @@ local function BuildGroupieWindow()
                 spec1Dropdown:AddItem(roleNum, groupieRoleTable[roleNum])
             end
         end
+        spec1Dropdown:SetWidth(125)
         spec1Dropdown:SetCallback("OnValueChanged", function()
             if spec1Dropdown:GetValue() then
                 groupielfg_db.groupieSpec1Role = spec1Dropdown:GetValue()
@@ -130,6 +131,7 @@ local function BuildGroupieWindow()
                 spec2Dropdown:AddItem(roleNum, groupieRoleTable[roleNum])
             end
         end
+        spec2Dropdown:SetWidth(125)
         spec2Dropdown:SetCallback("OnValueChanged", function()
             if spec2Dropdown:GetValue() then
                 groupielfg_db.groupieSpec2Role = spec2Dropdown:GetValue()
@@ -139,6 +141,125 @@ local function BuildGroupieWindow()
             spec2Dropdown:SetValue(groupielfg_db.groupieSpec2Role)
         end
         container:AddChild(spec2Dropdown)
+
+
+        local recLevelTitle = AceGUI:Create("Label")
+        recLevelTitle:SetText("Recommended Dungeon Level Range")
+        recLevelTitle:SetFontObject(GameFontHighlightLarge)
+        recLevelTitle:SetFullWidth(true)
+        container:AddChild(recLevelTitle)
+
+        local recLevelDropdown = AceGUI:Create("Dropdown")
+        --Only populate the list with valid roles
+        recLevelDropdown:AddItem(0, "+0 - I'm new to this")
+        recLevelDropdown:AddItem(1, "+1 - I've Done This Before")
+        recLevelDropdown:AddItem(2, "+2 - This is a Geared Alt")
+        recLevelDropdown:AddItem(3, "+3 - With Heirlooms")
+        recLevelDropdown:AddItem(4, "+4 - With Heirlooms & Consumes")
+        recLevelDropdown:SetWidth(220)
+        recLevelDropdown:SetCallback("OnValueChanged", function()
+            if recLevelDropdown:GetValue() then
+                groupielfg_db.recommendedLevelRange = recLevelDropdown:GetValue()
+            end
+        end)
+        if groupielfg_db.recommendedLevelRange ~= nil then
+            recLevelDropdown:SetValue(groupielfg_db.recommendedLevelRange)
+        end
+        container:AddChild(recLevelDropdown)
+
+        local autoResponseTitle = AceGUI:Create("Label")
+        autoResponseTitle:SetText("Groupie Auto-Response")
+        autoResponseTitle:SetFontObject(GameFontHighlightLarge)
+        autoResponseTitle:SetFullWidth(true)
+        container:AddChild(autoResponseTitle)
+
+        local autoRespFriendsBox = AceGUI:Create("CheckBox")
+        autoRespFriendsBox:SetLabel("Enable Auto-Respond to Friends")
+        autoRespFriendsBox:SetFullWidth(true)
+        autoRespFriendsBox:SetValue(groupielfg_db.autoRespondFriends)
+        autoRespFriendsBox:SetCallback("OnValueChanged", function()
+            groupielfg_db.autoRespondFriends = autoRespFriendsBox:GetValue()
+        end)
+        container:AddChild(autoRespFriendsBox)
+
+        local autoRespGuildBox = AceGUI:Create("CheckBox")
+        autoRespGuildBox:SetLabel("Enable Auto-Respond to Guild Members")
+        autoRespGuildBox:SetFullWidth(true)
+        autoRespGuildBox:SetValue(groupielfg_db.autoRespondGuild)
+        autoRespGuildBox:SetCallback("OnValueChanged", function()
+            groupielfg_db.autoRespondGuild = autoRespGuildBox:GetValue()
+        end)
+        container:AddChild(autoRespGuildBox)
+
+        local afterPartyTitle = AceGUI:Create("Label")
+        afterPartyTitle:SetText("Groupie After-Party Tool")
+        afterPartyTitle:SetFontObject(GameFontHighlightLarge)
+        afterPartyTitle:SetFullWidth(true)
+        container:AddChild(afterPartyTitle)
+
+        local afterPartyBox = AceGUI:Create("CheckBox")
+        afterPartyBox:SetLabel("Enable Groupie After-Party Tool")
+        afterPartyBox:SetFullWidth(true)
+        afterPartyBox:SetValue(groupielfg_db.afterParty)
+        afterPartyBox:SetCallback("OnValueChanged", function()
+            groupielfg_db.afterParty = afterPartyBox:GetValue()
+        end)
+        container:AddChild(afterPartyBox)
+
+        local groupChannelsTitle = AceGUI:Create("Label")
+        groupChannelsTitle:SetText("Pull Groups from Available Channels")
+        groupChannelsTitle:SetFontObject(GameFontHighlightLarge)
+        groupChannelsTitle:SetFullWidth(true)
+        container:AddChild(groupChannelsTitle)
+
+        local channelGuildBox = AceGUI:Create("CheckBox")
+        channelGuildBox:SetLabel("Guild")
+        channelGuildBox:SetValue(groupielfg_db.useChannels["Guild"])
+        channelGuildBox:SetCallback("OnValueChanged", function()
+            groupielfg_db.useChannels["Guild"] = channelGuildBox:GetValue()
+        end)
+        container:AddChild(channelGuildBox)
+
+        local channelGeneralBox = AceGUI:Create("CheckBox")
+        channelGeneralBox:SetLabel("General")
+        channelGeneralBox:SetValue(groupielfg_db.useChannels["General"])
+        channelGeneralBox:SetCallback("OnValueChanged", function()
+            groupielfg_db.useChannels["General"] = channelGeneralBox:GetValue()
+        end)
+        container:AddChild(channelGeneralBox)
+
+        local channelTradeBox = AceGUI:Create("CheckBox")
+        channelTradeBox:SetLabel("Trade")
+        channelTradeBox:SetValue(groupielfg_db.useChannels["Trade"])
+        channelTradeBox:SetCallback("OnValueChanged", function()
+            groupielfg_db.useChannels["Trade"] = channelTradeBox:GetValue()
+        end)
+        container:AddChild(channelTradeBox)
+
+        local channelLocDefBox = AceGUI:Create("CheckBox")
+        channelLocDefBox:SetLabel("LocalDefense")
+        channelLocDefBox:SetValue(groupielfg_db.useChannels["LocalDefense"])
+        channelLocDefBox:SetCallback("OnValueChanged", function()
+            groupielfg_db.useChannels["LocalDefense"] = channelLocDefBox:GetValue()
+        end)
+        container:AddChild(channelLocDefBox)
+
+        local channelLFGBox = AceGUI:Create("CheckBox")
+        channelLFGBox:SetLabel("LookingForGroup")
+        channelLFGBox:SetValue(groupielfg_db.useChannels["LookingForGroup"])
+        channelLFGBox:SetCallback("OnValueChanged", function()
+            groupielfg_db.useChannels["LookingForGroup"] = channelLFGBox:GetValue()
+        end)
+        container:AddChild(channelLFGBox)
+
+        local channel5Box = AceGUI:Create("CheckBox")
+        channel5Box:SetLabel("5")
+        channel5Box:SetValue(groupielfg_db.useChannels["5"])
+        channel5Box:SetCallback("OnValueChanged", function()
+            groupielfg_db.useChannels["5"] = channel5Box:GetValue()
+        end)
+        container:AddChild(channel5Box)
+        
     end
 
     --Global Options Tab
