@@ -30,6 +30,7 @@ local function SendPlayerInfo(specGroup, targetName)
 	
 	
 	--Get saved role from options if it exists
+	--The text must be concatenated here so that the message makes sense if the player has not yet set a role
 	local myrole = ""
 	if specGroup == 1 then
 		if groupielfg_db.groupieSpec1Role ~= nil then

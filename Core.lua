@@ -95,6 +95,7 @@ local function BuildGroupieWindow()
         spec1Desc:SetFontObject(GameFontHighlight)
         container:AddChild(spec1Desc)
         local spec1Dropdown = AceGUI:Create("Dropdown")
+        --Only populate the list with valid roles
         for roleNum = 1, 4 do
             if tableContains(groupieClassRoleTable[playerClass][spec1], roleNum) then
                 spec1Dropdown:AddItem(roleNum, groupieRoleTable[roleNum])
@@ -123,6 +124,7 @@ local function BuildGroupieWindow()
         spec2Desc:SetFontObject(GameFontHighlight)
         container:AddChild(spec2Desc)
         local spec2Dropdown = AceGUI:Create("Dropdown")
+        --Only populate the list with valid roles
         for roleNum = 1, 4 do
             if tableContains(groupieClassRoleTable[playerClass][spec2], roleNum) then
                 spec2Dropdown:AddItem(roleNum, groupieRoleTable[roleNum])
