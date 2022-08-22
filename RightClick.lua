@@ -54,7 +54,7 @@ local function SendPlayerInfo(specGroup, targetName)
 	local maxTalentSpec = GetSpecByGroupNum(specGroup)
 	local mylocale = GetLocale()
 	
-
+	
 	--Get saved role from options if it exists
 	local myrole = ""
 	if specGroup == 1 then
@@ -73,10 +73,9 @@ local function SendPlayerInfo(specGroup, targetName)
 
 
 	--Sending Current Spec Info
-	SendChatMessage("{rt3} Groupie LFG : " ..
+	SendChatMessage("{rt3} Groupie LFG : Want a " ..
 		myrole ..
-		" " ..
-		"LFG! Level " ..
+		"? Level " ..
 		mylevel ..
 		" " ..
 		maxTalentSpec ..
@@ -84,7 +83,7 @@ local function SendPlayerInfo(specGroup, targetName)
 		myclass ..
 		" wearing " ..
 		tostring(averageiLevel) ..
-		" average item-level gear. " ..
+		" item-level gear. " ..
 		localeTable[mylocale] ..
 		"-speaking player.",
 		"WHISPER", "COMMON", targetName)
