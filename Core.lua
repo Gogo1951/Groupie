@@ -30,7 +30,6 @@ local function BuildOptionsTable()
         groupielfg_global.minsToPreserve = 2
         groupielfg_global.font = "Arial Narrow"
         groupielfg_global.fontSize = 8
-        groupielfg_global.minimapPos = 30
     end
 end
 
@@ -273,6 +272,36 @@ local function BuildGroupieWindow()
         tabTitle:SetFullWidth(true)
         container:AddChild(tabTitle)
 
+        local preserveBox = AceGUI:Create("CheckBox")
+        preserveBox:SetLabel("Enable Auto-Respond to Guild Members")
+        preserveBox:SetFullWidth(true)
+        preserveBox:SetValue(groupielfg_global.preserveData)
+        preserveBox:SetCallback("OnValueChanged", function()
+            groupielfg_global.preserveData = preserveBox:GetValue()
+        end)
+        container:AddChild(preserveBox)
+
+        local preserveTitle = AceGUI:Create("Label")
+        preserveTitle:SetText("Preserve Looking For Group Data Duration")
+        preserveTitle:SetFontObject(GameFontNormalMed2)
+        preserveTitle:SetFullWidth(true)
+        container:AddChild(preserveTitle)
+
+        local preserveDropdown = AceGUI:Create("Dropdown")
+        preserveDropdown:SetWidth(125)
+        for durationTemp = 2, 5 do
+            preserveDropdown:AddItem(durationTemp, tostring(durationTemp).." Minutes")
+        end
+        preserveDropdown:SetCallback("OnValueChanged", function()
+            if preserveDropdown:GetValue() then
+                groupielfg_global.minsToPreserve = preserveDropdown:GetValue()
+            end
+        end)
+        if groupielfg_global.minsToPreserve ~= nil then
+            preserveDropdown:SetValue(groupielfg_global.minsToPreserve)
+        end
+        container:AddChild(preserveDropdown)
+
         local fontTitle = AceGUI:Create("Label")
         fontTitle:SetText("Font")
         fontTitle:SetFontObject(GameFontNormalMed2)
@@ -280,7 +309,7 @@ local function BuildGroupieWindow()
         container:AddChild(fontTitle)
 
         local fontDropdown = AceGUI:Create("Dropdown")
-        fontDropdown:SetWidth(220)
+        fontDropdown:SetWidth(250)
         for key,val in pairs(SharedMedia:HashTable("font")) do
             fontDropdown:AddItem(key, key)
         end
@@ -294,7 +323,26 @@ local function BuildGroupieWindow()
         end
         container:AddChild(fontDropdown)
 
-        
+        local fontSizeTitle = AceGUI:Create("Label")
+        fontSizeTitle:SetText("Base Font Size")
+        fontSizeTitle:SetFontObject(GameFontNormalMed2)
+        fontSizeTitle:SetFullWidth(true)
+        container:AddChild(fontSizeTitle)
+
+        local fontSizeDropdown = AceGUI:Create("Dropdown")
+        fontSizeDropdown:SetWidth(75)
+        for fontSizeTemp = 8, 20, 2 do
+            fontSizeDropdown:AddItem(fontSizeTemp, tostring(fontSizeTemp).." pt")
+        end
+        fontSizeDropdown:SetCallback("OnValueChanged", function()
+            if fontSizeDropdown:GetValue() then
+                groupielfg_global.fontSize = fontSizeDropdown:GetValue()
+            end
+        end)
+        if groupielfg_global.fontSize ~= nil then
+            fontSizeDropdown:SetValue(groupielfg_global.fontSize)
+        end
+        container:AddChild(fontSizeDropdown)
     end
 
     --About Tab
