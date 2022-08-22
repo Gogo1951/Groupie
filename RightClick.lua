@@ -122,8 +122,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		local info = UIDropDownMenu_CreateInfo()
 		info.notClickable = true
 		info.notCheckable = true
-		info.text = "Send My Info"
-		info.leftPadding = 8
+		info.text = "Send my info..."
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 
 		local info = UIDropDownMenu_CreateInfo()
@@ -131,7 +130,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		info.notCheckable = true
 		info.func = function() SendPlayerInfo(1, name) end
 		local maxTalentSpec = GetSpecByGroupNum(1)
-		info.text = "Spec 1: "..maxTalentSpec
+		info.text = "Spec 1 : "..maxTalentSpec
 		info.leftPadding = 8
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 		
@@ -140,7 +139,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		info.notCheckable = true
 		info.func = function() SendPlayerInfo(2, name) end
 		local maxTalentSpec = GetSpecByGroupNum(2)
-		info.text = "Spec 2: "..maxTalentSpec
+		info.text = "Spec 2 : "..maxTalentSpec
 		info.leftPadding = 8
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 		
