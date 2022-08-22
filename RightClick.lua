@@ -73,7 +73,7 @@ local function SendPlayerInfo(specGroup, targetName)
 
 
 	--Sending Current Spec Info
-	SendChatMessage("{rt3} Groupie LFG: " ..
+	SendChatMessage("{rt3} Groupie LFG : " ..
 		myrole ..
 		" " ..
 		"LFG! Level " ..
