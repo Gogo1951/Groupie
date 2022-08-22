@@ -1,6 +1,3 @@
---TODO: get num talents spent to determine spec
---TODO: allow players to set role for each spec in options
---TODO: send relevant achievment if available
 local function SendPlayerInfo(specGroup, targetName)
 
 	--Convert Locales into languages
@@ -22,7 +19,8 @@ local function SendPlayerInfo(specGroup, targetName)
 	local roleTable = {
 		[1] = "Tank",
 		[2] = "Healer",
-		[3] = "DPS"
+		[3] = "Ranged DPS",
+		[4] = "Melee DPS"
 	}
 
 	--Calculate average itemlevel
