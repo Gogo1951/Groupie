@@ -1,28 +1,4 @@
 local function SendPlayerInfo(specGroup, targetName)
-
-	--Convert Locales into languages
-	local localeTable = {
-		["frFR"] = "French",
-		["deDE"] = "German",
-		["enGB"] = "English",
-		["enUS"] = "English",
-		["itIT"] = "Italian",
-		["koKR"] = "Korean",
-		["zhCN"] = "Chinese",
-		["zhTW"] = "Chinese",
-		["ruRU"] = "Russian",
-		["esES"] = "Spanish",
-		["esMX"] = "Spanish",
-		["ptBR"] = "Portuguese",
-	}
-
-	local roleTable = {
-		[1] = "Tank",
-		[2] = "Healer",
-		[3] = "Ranged DPS",
-		[4] = "Melee DPS"
-	}
-
 	--Calculate average itemlevel
 	local iLevelSum = 0
 	for slotNum = 1, 19 do
@@ -57,13 +33,13 @@ local function SendPlayerInfo(specGroup, targetName)
 	local myrole = ""
 	if specGroup == 1 then
 		if groupielfg_db.groupieSpec1Role ~= nil then
-			myrole = roleTable[groupielfg_db.groupieSpec1Role]
+			myrole = " Want a "..groupieRoleTable[groupielfg_db.groupieSpec1Role].."?"
 		else
 			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the Groupie LFG Character Options tab.")
 		end
 	elseif specGroup == 2 then
 		if groupielfg_db.groupieSpec2Role ~= nil then
-			myrole = roleTable[groupielfg_db.groupieSpec2Role]
+			myrole = " Want a "..groupieRoleTable[groupielfg_db.groupieSpec2Role].."?"
 		else
 			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the Groupie LFG Character Options tab.")
 		end
@@ -71,9 +47,9 @@ local function SendPlayerInfo(specGroup, targetName)
 
 
 	--Sending Current Spec Info
-	SendChatMessage("{rt3} Groupie LFG : Want a " ..
+	SendChatMessage("{rt3} Groupie LFG :" ..
 		myrole ..
-		"? Level " ..
+		" Level " ..
 		mylevel ..
 		" " ..
 		maxTalentSpec ..
@@ -82,7 +58,7 @@ local function SendPlayerInfo(specGroup, targetName)
 		" wearing " ..
 		tostring(averageiLevel) ..
 		" item-level gear. " ..
-		localeTable[mylocale] ..
+		groupieLocaleTable[mylocale] ..
 		"-speaking player.",
 		"WHISPER", "COMMON", targetName)
 	return true

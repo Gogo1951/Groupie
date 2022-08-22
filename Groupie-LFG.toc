@@ -9,6 +9,7 @@
 embeds.xml
 UI/minimap.xml
 Helpers.lua
+Globals.lua
 Core.lua
 RightClick.lua
 
