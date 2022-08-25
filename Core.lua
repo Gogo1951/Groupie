@@ -1,7 +1,11 @@
+local addonName, GroupieLFG = ...
+
+local addon = LibStub("AceAddon-3.0"):NewAddon(GroupieLFG, addonName,
+    "AceEvent-3.0", "AceConsole-3.0")
 local AceGUI = LibStub("AceGUI-3.0")
-local AceAddon = LibStub("AceAddon-3.0"):NewAddon("Groupie", "AceConsole-3.0")
 local SharedMedia = LibStub("LibSharedMedia-3.0")
-GroupieLFG = {}
+
+addon.debugMenus = true
 
 local function BuildOptionsTable()
     if groupielfg_db == nil then
@@ -33,11 +37,9 @@ local function BuildOptionsTable()
     end
 end
 
-
 local function BuildGroupieWindow()
     --Dont open a new frame if already open
-    if 
-    GroupieLFG._frame and GroupieLFG._frame.frame:IsShown() then
+    if addon._frame and addon._frame.frame:IsShown() then
         return
     end
 
@@ -73,12 +75,12 @@ local function BuildGroupieWindow()
     local function DrawCharOptions(container)
         local playerName = UnitName("player")
         local realmName = GetRealmName()
-        local spec1 = GetSpecByGroupNum(1)
-        local spec2 = GetSpecByGroupNum(2)
+        local spec1 = addon.GetSpecByGroupNum(1)
+        local spec2 = addon.GetSpecByGroupNum(2)
         local playerClass = UnitClass("player")
 
         local tabTitle = AceGUI:Create("Label")
-        tabTitle:SetText("Groupie LFG | "..playerName.." Options")
+        tabTitle:SetText("Groupie LFG | " .. playerName .. " Options")
         tabTitle:SetColor(0.88, 0.73, 0)
         tabTitle:SetFontObject(GameFontHighlightHuge)
         tabTitle:SetFullWidth(true)
@@ -91,15 +93,15 @@ local function BuildGroupieWindow()
         container:AddChild(spec1Title)
 
         local spec1Desc = AceGUI:Create("Label")
-        local spec1Name = GetSpecByGroupNum(1)
+        local spec1Name = addon.GetSpecByGroupNum(1)
         spec1Desc:SetText(spec1Name)
         spec1Desc:SetFontObject(GameFontNormal)
         container:AddChild(spec1Desc)
         local spec1Dropdown = AceGUI:Create("Dropdown")
         --Only populate the list with valid roles
         for roleNum = 1, 4 do
-            if tableContains(groupieClassRoleTable[playerClass][spec1], roleNum) then
-                spec1Dropdown:AddItem(roleNum, groupieRoleTable[roleNum])
+            if addon.tableContains(addon.groupieClassRoleTable[playerClass][spec1], roleNum) then
+                spec1Dropdown:AddItem(roleNum, addon.groupieRoleTable[roleNum])
             end
         end
         spec1Dropdown:SetWidth(125)
@@ -121,15 +123,15 @@ local function BuildGroupieWindow()
         container:AddChild(spec2Title)
 
         local spec2Desc = AceGUI:Create("Label")
-        local spec2Name = GetSpecByGroupNum(2)
+        local spec2Name = addon.GetSpecByGroupNum(2)
         spec2Desc:SetText(spec2Name)
         spec2Desc:SetFontObject(GameFontNormal)
         container:AddChild(spec2Desc)
         local spec2Dropdown = AceGUI:Create("Dropdown")
         --Only populate the list with valid roles
         for roleNum = 1, 4 do
-            if tableContains(groupieClassRoleTable[playerClass][spec2], roleNum) then
-                spec2Dropdown:AddItem(roleNum, groupieRoleTable[roleNum])
+            if addon.tableContains(addon.groupieClassRoleTable[playerClass][spec2], roleNum) then
+                spec2Dropdown:AddItem(roleNum, addon.groupieRoleTable[roleNum])
             end
         end
         spec2Dropdown:SetWidth(125)
@@ -260,7 +262,7 @@ local function BuildGroupieWindow()
             groupielfg_db.useChannels["5"] = channel5Box:GetValue()
         end)
         container:AddChild(channel5Box)
-        
+
     end
 
     --Global Options Tab
@@ -290,7 +292,7 @@ local function BuildGroupieWindow()
         local preserveDropdown = AceGUI:Create("Dropdown")
         preserveDropdown:SetWidth(125)
         for durationTemp = 2, 5 do
-            preserveDropdown:AddItem(durationTemp, tostring(durationTemp).." Minutes")
+            preserveDropdown:AddItem(durationTemp, tostring(durationTemp) .. " Minutes")
         end
         preserveDropdown:SetCallback("OnValueChanged", function()
             if preserveDropdown:GetValue() then
@@ -310,7 +312,7 @@ local function BuildGroupieWindow()
 
         local fontDropdown = AceGUI:Create("Dropdown")
         fontDropdown:SetWidth(250)
-        for key,val in pairs(SharedMedia:HashTable("font")) do
+        for key, val in pairs(SharedMedia:HashTable("font")) do
             fontDropdown:AddItem(key, key)
         end
         fontDropdown:SetCallback("OnValueChanged", function()
@@ -332,7 +334,7 @@ local function BuildGroupieWindow()
         local fontSizeDropdown = AceGUI:Create("Dropdown")
         fontSizeDropdown:SetWidth(75)
         for fontSizeTemp = 8, 20, 2 do
-            fontSizeDropdown:AddItem(fontSizeTemp, tostring(fontSizeTemp).." pt")
+            fontSizeDropdown:AddItem(fontSizeTemp, tostring(fontSizeTemp) .. " pt")
         end
         fontSizeDropdown:SetCallback("OnValueChanged", function()
             if fontSizeDropdown:GetValue() then
@@ -353,7 +355,7 @@ local function BuildGroupieWindow()
         tabTitle:SetFontObject(GameFontHighlightHuge)
         tabTitle:SetFullWidth(true)
         container:AddChild(tabTitle)
-        
+
 
         local curseLabel = AceGUI:Create("Label")
         curseLabel:SetText("Groupie LFG on CurseForge")
@@ -379,11 +381,11 @@ local function BuildGroupieWindow()
         discordLabel:SetFullWidth(true)
         container:AddChild(discordLabel)
         local discordEditBox = AceGUI:Create("EditBox")
-        discordEditBox:SetText("https://discord.gg/6xccnxcRbt")
+        discordEditBox:SetText("https://discord.gg/p68QgZ8uqF")
         discordEditBox:DisableButton(true)
         discordEditBox:SetWidth(350)
         discordEditBox:SetCallback("OnTextChanged", function()
-            discordEditBox:SetText("https://discord.gg/6xccnxcRbt")
+            discordEditBox:SetText("https://discord.gg/p68QgZ8uqF")
         end)
         discordEditBox:SetCallback("OnEnterPressed", function()
             discordEditBox.editbox:ClearFocus()
@@ -392,7 +394,7 @@ local function BuildGroupieWindow()
             discordEditBox:HighlightText()
         end)
         container:AddChild(discordEditBox)
-        
+
         local githubLabel = AceGUI:Create("Label")
         githubLabel:SetText("Groupie LFG on GitHub")
         githubLabel:SetFullWidth(true)
@@ -433,7 +435,7 @@ local function BuildGroupieWindow()
         end
     end
 
-    local frame = AceGUI:Create("Frame") 
+    local frame = AceGUI:Create("Frame")
     frame:SetTitle("Groupie LFG")
     frame:SetCallback("OnClose", function(widget) AceGUI:Release(widget) end)
     frame:SetLayout("Fill")
@@ -441,13 +443,13 @@ local function BuildGroupieWindow()
     --Creating Tabgroup
     local tab = AceGUI:Create("TabGroup")
     tab:SetLayout("Flow")
-    tab:SetTabs({{text="Groupie LFG", value="maintab"},
-        {text="Group Builder", value="groupbuilder"},
-        {text="Group Filters", value="groupfilter"},
-        {text="Instance Filters", value="instancefilter"},
-        {text="Character Options", value="charoption"},
-        {text="Global Options", value="globaloption"},
-        {text="About", value="about"}
+    tab:SetTabs({ { text = "Groupie LFG", value = "maintab" },
+        { text = "Group Builder", value = "groupbuilder" },
+        { text = "Group Filters", value = "groupfilter" },
+        { text = "Instance Filters", value = "instancefilter" },
+        { text = "Character Options", value = "charoption" },
+        { text = "Global Options", value = "globaloption" },
+        { text = "About", value = "about" }
     })
     tab:SetCallback("OnGroupSelected", SelectGroup)
     tab:SelectTab("maintab")
@@ -457,15 +459,14 @@ local function BuildGroupieWindow()
     _G["GroupieFrame"] = frame.frame
     tinsert(UISpecialFrames, "GroupieFrame")
     --Store a global reference to the frame
-    GroupieLFG._frame = frame
+    addon._frame = frame
 end
-
 
 --Minimap Icon Creation
 local groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Groupie", {
     type = "data source",
     text = "Groupie",
-    icon = "Interface\\AddOns\\Groupie-LFG\\Images\\icon32.blp",
+    icon = "Interface\\AddOns\\Groupie-LFG\\Images\\icon64.tga",
     OnClick = BuildGroupieWindow,
     OnTooltipShow = function(tooltip)
         tooltip:AddLine("Groupie LFG")
@@ -477,12 +478,12 @@ local icon = LibStub("LibDBIcon-1.0")
 
 
 --Load minimap icon and saved options
-function AceAddon:OnInitialize()
-    self.db = LibStub("AceDB-3.0"):New("GroupieDB", { profile = { minimap = { hide = false, }, }, }) 
+function addon:OnInitialize()
+    self.db = LibStub("AceDB-3.0"):New("GroupieDB", { profile = { minimap = { hide = false, }, }, })
     icon:Register("Groupie", groupieLDB, self.db.profile.minimap)
     BuildOptionsTable()
 end
 
 --Setup Slash Command
-SLASH_GROUPIE1, SLASH_GROUPIE2= "/groupie", "/groupielfg"
+SLASH_GROUPIE1, SLASH_GROUPIE2 = "/groupie", "/groupielfg"
 SlashCmdList["GROUPIE"] = BuildGroupieWindow

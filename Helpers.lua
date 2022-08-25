@@ -1,5 +1,6 @@
+local addonName, addon = ...
 --Return the primary talent spec for either main or dual specialization
-function GetSpecByGroupNum(groupnum)
+function addon.GetSpecByGroupNum(groupnum)
     local maxTalentsSpent = -1
     local maxTalentSpec = nil
     for specTab = 1, 3 do
@@ -13,12 +14,33 @@ function GetSpecByGroupNum(groupnum)
 end
 
 --Return boolean whether the table contains a value
-function tableContains(table, val)
-    for i=1,#table do
-       if table[i] == val then 
-          return true
-       end
+function addon.tableContains(table, val)
+    for i = 1, #table do
+        if table[i] == val then
+            return true
+        end
     end
     return false
- end
- 
+end
+
+--Return a table by splitting a string at specified delimiter
+function addon.GroupieSplit(inputstr, delimiter)
+    if delimiter == nil then
+        delimiter = "%s"
+    end
+    local t = {}
+    for str in string.gmatch(inputstr, "([^" .. delimiter .. "]+)") do
+        if tContains(t, str) == false then
+            table.insert(t, str)
+        end
+    end
+    return t
+end
+
+--Replace all characters specified in delimiters with a space
+function addon.ReplaceDelimiters(msg, delimiters)
+    for key, val in pairs(delimiters) do
+        msg = string.gsub(msg, val, " ")
+    end
+    return msg
+end
