@@ -29,6 +29,7 @@ end
 local function ParseMessage(msg)
     local preprocessedStr = strlower(msg)
     preprocessedStr = addon.ReplaceDelimiters(msg, " -:.?!,")
+    --TODO: remove remaining non alphanumerics, trim trailing/leading spaces, replace multiple spaces with 1
     local messageWords = addon.GroupieSplit(preprocessedStr)
     local isLFG = false
     local isLFM = false

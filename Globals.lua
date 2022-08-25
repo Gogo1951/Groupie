@@ -467,3 +467,5 @@ addon.groupieLFPatterns = {
     ["wts"] = 5,
     ["carry"] = 5
 }
+
+addon.groupieDelimiters = { "%-", ":", ",", "%?", "!", "%." }

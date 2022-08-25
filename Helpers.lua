@@ -39,5 +39,8 @@ end
 
 --Replace all characters specified in delimiters with a space
 function addon.ReplaceDelimiters(msg, delimiters)
-
+    for key, val in pairs(delimiters) do
+        msg = string.gsub(msg, val, " ")
+    end
+    return msg
 end
