@@ -1,6 +1,7 @@
 # Groupie LFG
 A better LFG tool for Classic WoW.
 
+
 **Key Features**
 
 1 - Quickly find the groups you actually want; filter groups by raid size, loot rules type, language, and more.
@@ -10,10 +11,12 @@ A better LFG tool for Classic WoW.
 3 - Optional ability to auto-respond to Friends and Guildies when they post groups you are interested in.
 
 
-Download from CurseForge - <https://www.curseforge.com/wow/addons/groupie-lfg>
+**Links**
 
-Reddit Post - SOON
+Download from CurseForge - <https://www.curseforge.com/wow/addons/groupie-lfg>
 
 Discord - <https://discord.gg/p68QgZ8uqF>
 
 Github - <https://github.com/Gogo1951/Groupie-LFG>
+
+Reddit Announcement Post - COMING SOON!
