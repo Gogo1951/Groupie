@@ -466,7 +466,7 @@ end
 local groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Groupie", {
     type = "data source",
     text = "Groupie",
-    icon = "Interface\\AddOns\\Groupie-LFG\\Images\\icon32.blp",
+    icon = "Interface\\AddOns\\Groupie-LFG\\Images\\icon64.tga",
     OnClick = BuildGroupieWindow,
     OnTooltipShow = function(tooltip)
         tooltip:AddLine("Groupie LFG")
