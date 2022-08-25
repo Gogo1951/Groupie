@@ -5,6 +5,7 @@
 ## Author: Gogo, TannerShmoog, SabreValkyrn
 ## SavedVariables: groupielfg_global
 ## SavedVariablesPerCharacter: groupielfg_db
+## X-Curse-Project-ID: 661450
 
 embeds.xml
 UI/minimap.xml
