@@ -1,7 +1,11 @@
+local addonName, GroupieLFG = ...
+
+local addon = LibStub("AceAddon-3.0"):NewAddon(GroupieLFG, addonName,
+    "AceEvent-3.0", "AceConsole-3.0")
 local AceGUI = LibStub("AceGUI-3.0")
-local AceAddon = LibStub("AceAddon-3.0"):NewAddon("Groupie", "AceConsole-3.0")
 local SharedMedia = LibStub("LibSharedMedia-3.0")
-GroupieLFG = {}
+
+addon.debugMenus = true
 
 local function BuildOptionsTable()
     if groupielfg_db == nil then
@@ -37,7 +41,7 @@ end
 local function BuildGroupieWindow()
     --Dont open a new frame if already open
     if 
-    GroupieLFG._frame and GroupieLFG._frame.frame:IsShown() then
+    addon._frame and addon._frame.frame:IsShown() then
         return
     end
 
@@ -73,8 +77,8 @@ local function BuildGroupieWindow()
     local function DrawCharOptions(container)
         local playerName = UnitName("player")
         local realmName = GetRealmName()
-        local spec1 = GetSpecByGroupNum(1)
-        local spec2 = GetSpecByGroupNum(2)
+        local spec1 = addon.GetSpecByGroupNum(1)
+        local spec2 = addon.GetSpecByGroupNum(2)
         local playerClass = UnitClass("player")
 
         local tabTitle = AceGUI:Create("Label")
@@ -91,15 +95,15 @@ local function BuildGroupieWindow()
         container:AddChild(spec1Title)
 
         local spec1Desc = AceGUI:Create("Label")
-        local spec1Name = GetSpecByGroupNum(1)
+        local spec1Name = addon.GetSpecByGroupNum(1)
         spec1Desc:SetText(spec1Name)
         spec1Desc:SetFontObject(GameFontNormal)
         container:AddChild(spec1Desc)
         local spec1Dropdown = AceGUI:Create("Dropdown")
         --Only populate the list with valid roles
         for roleNum = 1, 4 do
-            if tableContains(groupieClassRoleTable[playerClass][spec1], roleNum) then
-                spec1Dropdown:AddItem(roleNum, groupieRoleTable[roleNum])
+            if addon.tableContains(addon.groupieClassRoleTable[playerClass][spec1], roleNum) then
+                spec1Dropdown:AddItem(roleNum, addon.groupieRoleTable[roleNum])
             end
         end
         spec1Dropdown:SetWidth(125)
@@ -121,15 +125,15 @@ local function BuildGroupieWindow()
         container:AddChild(spec2Title)
 
         local spec2Desc = AceGUI:Create("Label")
-        local spec2Name = GetSpecByGroupNum(2)
+        local spec2Name = addon.GetSpecByGroupNum(2)
         spec2Desc:SetText(spec2Name)
         spec2Desc:SetFontObject(GameFontNormal)
         container:AddChild(spec2Desc)
         local spec2Dropdown = AceGUI:Create("Dropdown")
         --Only populate the list with valid roles
         for roleNum = 1, 4 do
-            if tableContains(groupieClassRoleTable[playerClass][spec2], roleNum) then
-                spec2Dropdown:AddItem(roleNum, groupieRoleTable[roleNum])
+            if addon.tableContains(addon.groupieClassRoleTable[playerClass][spec2], roleNum) then
+                spec2Dropdown:AddItem(roleNum, addon.groupieRoleTable[roleNum])
             end
         end
         spec2Dropdown:SetWidth(125)
@@ -457,7 +461,7 @@ local function BuildGroupieWindow()
     _G["GroupieFrame"] = frame.frame
     tinsert(UISpecialFrames, "GroupieFrame")
     --Store a global reference to the frame
-    GroupieLFG._frame = frame
+    addon._frame = frame
 end
 
 
@@ -477,7 +481,7 @@ local icon = LibStub("LibDBIcon-1.0")
 
 
 --Load minimap icon and saved options
-function AceAddon:OnInitialize()
+function addon:OnInitialize()
     self.db = LibStub("AceDB-3.0"):New("GroupieDB", { profile = { minimap = { hide = false, }, }, }) 
     icon:Register("Groupie", groupieLDB, self.db.profile.minimap)
     BuildOptionsTable()

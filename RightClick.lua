@@ -1,3 +1,4 @@
+local addonName, addon = ...
 local function SendPlayerInfo(specGroup, targetName)
 	--Calculate average itemlevel
 	local iLevelSum = 0
@@ -25,7 +26,7 @@ local function SendPlayerInfo(specGroup, targetName)
 	local mylevel = UnitLevel("player")
 
 	--Find out which talent spec has the most points spent in it
-	local maxTalentSpec = GetSpecByGroupNum(specGroup)
+	local maxTalentSpec = addon.GetSpecByGroupNum(specGroup)
 	local mylocale = GetLocale()
 	
 	
@@ -34,13 +35,13 @@ local function SendPlayerInfo(specGroup, targetName)
 	local myrole = ""
 	if specGroup == 1 then
 		if groupielfg_db.groupieSpec1Role ~= nil then
-			myrole = " Want a "..groupieRoleTable[groupielfg_db.groupieSpec1Role].."?"
+			myrole = " Want a "..addon.groupieRoleTable[groupielfg_db.groupieSpec1Role].."?"
 		else
 			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the Groupie LFG Character Options tab.")
 		end
 	elseif specGroup == 2 then
 		if groupielfg_db.groupieSpec2Role ~= nil then
-			myrole = " Want a "..groupieRoleTable[groupielfg_db.groupieSpec2Role].."?"
+			myrole = " Want a "..addon.groupieRoleTable[groupielfg_db.groupieSpec2Role].."?"
 		else
 			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the Groupie LFG Character Options tab.")
 		end
@@ -59,7 +60,7 @@ local function SendPlayerInfo(specGroup, targetName)
 		" wearing " ..
 		tostring(averageiLevel) ..
 		" item-level gear. " ..
-		groupieLocaleTable[mylocale] ..
+		addon.groupieLocaleTable[mylocale] ..
 		"-speaking player.",
 		"WHISPER", "COMMON", targetName)
 	return true
@@ -83,6 +84,11 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		return
 	end
 
+	--Dont show the menu on the player's own frame if not in debug mode
+	if unit == "player" and not addon.debugMenus then
+		return
+	end
+
 	--Check that we have a non nil name, and that the target is a player
 	if name ~= nil then
 		UIDropDownMenu_AddSeparator(UIDROPDOWNMENU_MENU_LEVEL)
@@ -103,7 +109,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		info.dist = 0
 		info.notCheckable = true
 		info.func = function() SendPlayerInfo(1, name) end
-		local maxTalentSpec = GetSpecByGroupNum(1)
+		local maxTalentSpec = addon.GetSpecByGroupNum(1)
 		info.text = "Spec 1 : "..maxTalentSpec
 		info.leftPadding = 8
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
@@ -112,7 +118,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		info.dist = 0
 		info.notCheckable = true
 		info.func = function() SendPlayerInfo(2, name) end
-		local maxTalentSpec = GetSpecByGroupNum(2)
+		local maxTalentSpec = addon.GetSpecByGroupNum(2)
 		info.text = "Spec 2 : "..maxTalentSpec
 		info.leftPadding = 8
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
