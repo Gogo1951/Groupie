@@ -2,7 +2,7 @@
 ## Title: Groupie LFG
 ## Notes: A better LFG tool for Classic WoW.
 ## Version: 0.1
-## Author: Gogo, TannerShmoog
+## Author: Gogo, TannerShmoog, SabreValkyrn
 ## SavedVariables: groupielfg_global
 ## SavedVariablesPerCharacter: groupielfg_db
 
@@ -13,4 +13,3 @@ Globals.lua
 Core.lua
 RightClick.lua
 Listener.lua
-
