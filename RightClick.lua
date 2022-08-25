@@ -28,20 +28,20 @@ local function SendPlayerInfo(specGroup, targetName)
 	--Find out which talent spec has the most points spent in it
 	local maxTalentSpec = addon.GetSpecByGroupNum(specGroup)
 	local mylocale = GetLocale()
-	
-	
+
+
 	--Get saved role from options if it exists
 	--The text must be concatenated here so that the message makes sense if the player has not yet set a role
 	local myrole = ""
 	if specGroup == 1 then
 		if groupielfg_db.groupieSpec1Role ~= nil then
-			myrole = " Want a "..addon.groupieRoleTable[groupielfg_db.groupieSpec1Role].."?"
+			myrole = " Want a " .. addon.groupieRoleTable[groupielfg_db.groupieSpec1Role] .. "?"
 		else
 			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the Groupie LFG Character Options tab.")
 		end
 	elseif specGroup == 2 then
 		if groupielfg_db.groupieSpec2Role ~= nil then
-			myrole = " Want a "..addon.groupieRoleTable[groupielfg_db.groupieSpec2Role].."?"
+			myrole = " Want a " .. addon.groupieRoleTable[groupielfg_db.groupieSpec2Role] .. "?"
 		else
 			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the Groupie LFG Character Options tab.")
 		end
@@ -110,19 +110,19 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		info.notCheckable = true
 		info.func = function() SendPlayerInfo(1, name) end
 		local maxTalentSpec = addon.GetSpecByGroupNum(1)
-		info.text = "Spec 1 : "..maxTalentSpec
+		info.text = "Spec 1 : " .. maxTalentSpec
 		info.leftPadding = 8
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
-		
+
 		local info = UIDropDownMenu_CreateInfo()
 		info.dist = 0
 		info.notCheckable = true
 		info.func = function() SendPlayerInfo(2, name) end
 		local maxTalentSpec = addon.GetSpecByGroupNum(2)
-		info.text = "Spec 2 : "..maxTalentSpec
+		info.text = "Spec 2 : " .. maxTalentSpec
 		info.leftPadding = 8
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
-		
+
 	end
 end
 

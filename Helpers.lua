@@ -15,26 +15,29 @@ end
 
 --Return boolean whether the table contains a value
 function addon.tableContains(table, val)
-    for i=1,#table do
-       if table[i] == val then 
-          return true
-       end
+    for i = 1, #table do
+        if table[i] == val then
+            return true
+        end
     end
     return false
- end
-
-
- --Return a table by splitting a string at specified delimiter
- function addon.groupieSplit(inputstr, delimiter)
-	if delimiter == nil then
-		delimiter = "%s"
-	end
-	local t={}
-	for str in string.gmatch(inputstr, "([^"..delimiter.."]+)") do
-		if tContains(t, str)==false then
-			table.insert(t, str)
-		end
-	end
-	return t
 end
- 
+
+--Return a table by splitting a string at specified delimiter
+function addon.GroupieSplit(inputstr, delimiter)
+    if delimiter == nil then
+        delimiter = "%s"
+    end
+    local t = {}
+    for str in string.gmatch(inputstr, "([^" .. delimiter .. "]+)") do
+        if tContains(t, str) == false then
+            table.insert(t, str)
+        end
+    end
+    return t
+end
+
+--Replace all characters specified in delimiters with a space
+function addon.ReplaceDelimiters(msg, delimiters)
+
+end
