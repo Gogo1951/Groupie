@@ -10,6 +10,8 @@ end
 local function GetDungeons(messageWords)
     local instance = nil
     local instanceloc = nil
+    local isHeroic = false
+    local forceSize = nil
     for i = 1, #messageWords do
         local word = messageWords[i]
         local lookupAttempt = addon.groupieInstancePatterns[word]
@@ -24,9 +26,59 @@ local function GetDungeons(messageWords)
                     instanceloc = i + 1
                 end
             end
+        else
+            for key, val in pairs(addon.groupieVersionPatterns) do
+                if addon.EndsWith(word, key) then
+                    lookupAttempt = addon.groupieInstancePatterns[strsub(word, 1, #word - #key)]
+                    if lookupAttempt ~= nil then
+                        instance = lookupAttempt
+                        if val == 0 then
+                            isHeroic = true
+                        elseif val == 1 then
+                            forceSize = 10
+                        elseif val == 2 then
+                            forceSize = 25
+                        elseif val == 3 then
+                            isHeroic = true
+                            forceSize = 10
+                        elseif val == 4 then
+                            isHeroic = true
+                            forceSize = 25
+                        end
+                    end
+                end
+                if addon.StartsWith(word, key) then
+                    lookupAttempt = addon.groupieInstancePatterns[strsub(word, 1 + #key, #word)]
+                    if lookupAttempt ~= nil then
+                        instance = lookupAttempt
+                        if val == 0 then
+                            isHeroic = true
+                        elseif val == 1 then
+                            forceSize = 10
+                        elseif val == 2 then
+                            forceSize = 25
+                        elseif val == 3 then
+                            isHeroic = true
+                            forceSize = 10
+                        elseif val == 4 then
+                            isHeroic = true
+                            forceSize = 25
+                        end
+                    end
+                end
+            end
         end
+
+        --If word is exactly a version pattern, set isheroic and forcesize
+
     end
+    --check in instance version table (to be made) that heroic/size vars are consistent with possible versions
+    --set instance required level/ID from instanceinfo table
+    --return everything
+    print('----------------')
     print(instance)
+    print(isHeroic)
+    print(forceSize)
 end
 
 --Extract the loot system being used by the party

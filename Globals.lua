@@ -78,8 +78,21 @@ addon.groupieClassRoleTable = {
 }
 
 
-addon.groupieInstancePatterns = {
-
+--0 - Heroic
+--1 - 10
+--2 - 25
+--3 - Heroic 10
+--4 - Heroic 25
+addon.groupieVersionPatterns = {
+    ["h"] = 0,
+    ["hc"] = 0,
+    ["heroic"] = 0,
+    ["10"] = 1,
+    ["25"] = 2,
+    ["h10"] = 3,
+    ["10h"] = 3,
+    ["h25"] = 4,
+    ["25h"] = 4
 }
 
 --0 - Generic group

@@ -64,3 +64,13 @@ function addon.TableFlip(table)
     end
     return result
 end
+
+--Check if a string starts with a given pattern
+function addon.StartsWith(str, pattern)
+    return str:sub(1, #pattern) == pattern
+end
+
+--Check if a string ends with a given pattern
+function addon.EndsWith(str, pattern)
+    return pattern == "" or str:sub(- #pattern) == pattern
+end
