@@ -8,9 +8,25 @@ end
 
 --Extract specified dungeon and version by matching each word in an LFG message to patterns in addon.groupieInstancePatterns
 local function GetDungeons(messageWords)
-    for word = 1, #messageWords do
-
+    local instance = nil
+    local instanceloc = nil
+    for i = 1, #messageWords do
+        local word = messageWords[i]
+        local lookupAttempt = addon.groupieInstancePatterns[word]
+        if lookupAttempt ~= nil then
+            instance = lookupAttempt
+            instanceloc = i
+            --Handle instances with multiple wings by checking the word to the right
+            if strmatch(instance, "Full Clear") and i < #messageWords then
+                lookupAttempt = addon.groupieInstancePatterns[messageWords[i + 1]]
+                if lookupAttempt ~= nil then
+                    instance = lookupAttempt
+                    instanceloc = i + 1
+                end
+            end
+        end
     end
+    print(instance)
 end
 
 --Extract the loot system being used by the party
@@ -61,6 +77,7 @@ local function ParseMessage(event, msg, author, _, channel)
         end
     end
 
+    print(isLFM or isLFG)
     if isLFM or isLFG then
         groupLanguage = GetLanguage(messageWords) --This can safely be nil
         groupDungeon, isHeroic, groupSize = GetDungeons(messageWords)

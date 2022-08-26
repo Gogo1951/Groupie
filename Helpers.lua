@@ -49,3 +49,18 @@ end
 function addon.Preprocess(msg)
     return strlower(string.gsub(string.gsub(msg, "%W", " "), "%s+", " "))
 end
+
+--Reverse a table by creating a new one
+--Values from original table are split on spaces, and added to new as
+--new["value"] = "key"
+function addon.TableFlip(table)
+    local result = {}
+    for key, val in pairs(table) do
+        local patterns = addon.GroupieSplit(val)
+        for i = 1, #patterns do
+            result[patterns[i]] = key
+            --print("[" .. patterns[i] .. "] = " .. key)
+        end
+    end
+    return result
+end

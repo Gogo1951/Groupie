@@ -474,7 +474,7 @@ addon.groupieInstanceData = {
 }
 
 
-addon.groupieInstancePatterns = {
+addon.groupieUnflippedPatterns = {
     ["Ragefire Chasm"]                 = "rfc ragefire chasm",
     ["The Deadmines"]                  = "deadmines vc vancleef dead mines mine",
     ["Wailing Caverns"]                = "wc wailing caverns",
@@ -493,7 +493,7 @@ addon.groupieInstancePatterns = {
     ["Zul'Farrak"]                     = "zf zul farrak zul'farrak zulfarrak zulfarak zul´farrak zul`farrak zulfa zulf",
     ["Maraudon - Full Clear"]          = "mar mara maraudon mauradon mauro maurodon maraudin maura marau mauraudon",
     ["Maraudon - Princess"]            = "princessrun princess",
-    ["Maraudon - Purple"]              = "marpurp marpurple marapurp marapurple maraudonpurple purple",
+    ["Maraudon - Purple"]              = "marpurp marpurple marapurp marapurple maraudonpurple purple, purp",
     ["Maraudon - Orange"]              = "marorange maraorange maraudonorange orange",
     ["The Temple of Atal'Hakkar"]      = "st sunken atal temple",
     ["Blackrock Depths"]               = "brd emperor emp arenarun angerforge blackrockdepth",
@@ -540,3 +540,5 @@ addon.groupieInstancePatterns = {
     ["Brewfest"]                       = "brewfest brew coren dire direbrew beerfest",
     ["Hallow's End"]                   = "headless horseman hollow",
 }
+
+addon.groupieInstancePatterns = addon.TableFlip(addon.groupieUnflippedPatterns)
