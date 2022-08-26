@@ -1,35 +1,26 @@
 local addonName, addon = ...
-
+local AceEvent = LibStub("AceEvent-3.0")
+AceEvent:Embed(addon)
 --Extract a specified language from an LFG message, if it exists
-local function GetLanguage(msg)
+local function GetLanguage(messageWords)
 
 end
 
---Extract specified dungeon by matching each word in an LFG message to patterns in addon.groupieInstancePatterns
-local function GetDungeons(msg)
+--Extract specified dungeon and version by matching each word in an LFG message to patterns in addon.groupieInstancePatterns
+local function GetDungeons(messageWords)
+    for word = 1, #messageWords do
 
-end
-
---Extract whether a party is for heroic or normal, and what raid size it is
-local function GetInstanceVersion(msg, skipHeroic)
-
+    end
 end
 
 --Extract the loot system being used by the party
-local function GetGroupType(msg)
-
-end
-
---Determine whether a message is an LFG or LFM post
-local function IsLFGPost(msg)
+local function GetGroupType(messageWords)
 
 end
 
 --Given a message passed by event handler, extract information about the party
-local function ParseMessage(msg)
-    local preprocessedStr = strlower(msg)
-    preprocessedStr = addon.ReplaceDelimiters(msg, " -:.?!,")
-    --TODO: remove remaining non alphanumerics, trim trailing/leading spaces, replace multiple spaces with 1
+local function ParseMessage(event, msg, author, _, channel)
+    local preprocessedStr = addon.Preprocess(msg)
     local messageWords = addon.GroupieSplit(preprocessedStr)
     local isLFG = false
     local isLFM = false
@@ -37,26 +28,28 @@ local function ParseMessage(msg)
     local groupLanguage = nil
     local groupTimestamp = time()
     local groupDungeon = nil
-    local skipHeroic = false
     local isHeroic = nil
     local groupSize = nil
     local lootType = nil
 
-    for key, val in pairs(messageWords) do
-        if addon.groupieLFPatterns[key] ~= nil then
-            if val == 0 then --Generic LFM
+    for i = 1, #messageWords do
+        --handle cases of 'LF3M', etc by removing numbers for this part
+        local word = string.gsub(messageWords[i], "%d", "")
+        local patternType = addon.groupieLFPatterns[word]
+        if patternType ~= nil then
+            if patternType == 0 then --Generic LFM
                 isLFM = true
                 isLFG = false
-            elseif val == 1 then --Mentions tank
+            elseif patternType == 1 then --Mentions tank
                 tinsert(rolesNeeded, 1)
-            elseif val == 2 then --Mentions healer
+            elseif patternType == 2 then --Mentions healer
                 tinsert(rolesNeeded, 2)
-            elseif val == 3 then --Mentions DPS
+            elseif patternType == 3 then --Mentions DPS
                 tinsert(rolesNeeded, 3)
-            elseif val == 4 then --LFG
+            elseif patternType == 4 then --LFG
                 isLFM = false
                 isLFG = true
-            elseif val == 5 then --Boost run
+            elseif patternType == 5 then --Boost run
                 isLFM = true
                 lootType = "boost"
             end
@@ -69,18 +62,14 @@ local function ParseMessage(msg)
     end
 
     if isLFM or isLFG then
-        groupLanguage = GetLanguage(msg) --This can safely be nil
-        groupDungeon, skipHeroic = GetDungeons(msg)
+        groupLanguage = GetLanguage(messageWords) --This can safely be nil
+        groupDungeon, isHeroic, groupSize = GetDungeons(messageWords)
         --TODO: Get instance level range and ID from table
-        if skipHeroic then
-            isHeroic = true
-        end
         if groupDungeon == nil then
             return false --No dungeon Found
         end
-        isHeroic, groupSize = GetInstanceVersion(msg, skipHeroic) --Defaults to smallest size, normal mode if not mentioned
         if lootType == nil then
-            lootType = GetGroupType(msg) --Defaults to MS>OS if not mentioned
+            lootType = GetGroupType(messageWords) --Defaults to MS>OS if not mentioned
         end
     else
         return false --This is not an LFM or LFG post
@@ -94,3 +83,28 @@ local function ParseMessage(msg)
     --TODO: return an object containing all the information about the group listing
     return true
 end
+
+--Handle chat events
+local function GroupieEventHandlers(...)
+    local event, msg, author, _, channel = ...
+    local validChannel = false
+    if groupielfg_db.useChannels["Guild"] and strmatch(channel, "Guild") then
+        validChannel = true
+    elseif groupielfg_db.useChannels["General"] and strmatch(channel, "General") then
+        validChannel = true
+    elseif groupielfg_db.useChannels["Trade"] and strmatch(channel, "Trade") then
+        validChannel = true
+    elseif groupielfg_db.useChannels["LocalDefense"] and strmatch(channel, "LocalDefense") then
+        validChannel = true
+    elseif groupielfg_db.useChannels["LookingForGroup"] and strmatch(channel, "LookingForGroup") then
+        validChannel = true
+    elseif groupielfg_db.useChannels["5"] and strmatch(channel, "5. ") then
+        validChannel = true
+    end
+    if validChannel then
+        ParseMessage(event, msg, author, _, channel)
+    end
+end
+
+addon:RegisterEvent("CHAT_MSG_CHANNEL", GroupieEventHandlers)
+addon:RegisterEvent("CHAT_MSG_GUILD", GroupieEventHandlers)

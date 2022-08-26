@@ -44,3 +44,8 @@ function addon.ReplaceDelimiters(msg, delimiters)
     end
     return msg
 end
+
+--Replace all non alphanumeric characters with a space, trim excess spaces, and convert to all lower case
+function addon.Preprocess(msg)
+    return strlower(string.gsub(string.gsub(msg, "%W", " "), "%s+", " "))
+end
