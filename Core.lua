@@ -33,6 +33,10 @@ local function BuildOptionsTable()
         groupielfg_global.font = "Arial Narrow"
         groupielfg_global.fontSize = 8
     end
+
+    if addon.debugMenus and groupielfg_global.debugData == nil then
+        groupielfg_global.debugData = {}
+    end
 end
 
 local function BuildGroupieWindow()
@@ -477,9 +481,11 @@ local icon = LibStub("LibDBIcon-1.0")
 
 --Load minimap icon and saved options
 function addon:OnInitialize()
+    addon.debugMenus = true
     self.db = LibStub("AceDB-3.0"):New("GroupieDB", { profile = { minimap = { hide = false, }, }, })
     icon:Register("Groupie", groupieLDB, self.db.profile.minimap)
     BuildOptionsTable()
+    addon.isInitialized = true
 end
 
 --Setup Slash Command

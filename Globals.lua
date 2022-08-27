@@ -1,8 +1,5 @@
 local addonName, addon = ...
 
-
-addon.debugMenus = true
-
 addon.groupieListingTable = {}
 
 addon.groupieLocaleTable = {
@@ -143,22 +140,17 @@ addon.groupieLFPatterns = {
     ["carry"] = 5
 }
 
-addon.groupieUnFlippedLootPatterns = {
+addon.groupieUnflippedLootPatterns = {
     ["Ticket"] = "ticket",
     ["GDKP"] = "gdkp",
     ["Soft Reserve"] = "sr softres softreserve soft",
-    ["MS>OS"] = "msos ms>os ms os",
+    ["MS>OS"] = "msos ms>os ms os"
 }
-
-addon.groupieLootPatterns = addon.TableFlip(addon.groupieUnflippedLootPatterns)
-
 
 --For now, this only supports English, but implemented such that localization would be easy in the future
-addon.groupieUnFlippedLanguagePatterns = {
+addon.groupieUnflippedLanguagePatterns = {
     ["English"] = "english eng",
 }
-
-addon.groupieLanguagePatterns = addon.TableFlip(addon.groupieUnFlippedLanguagePatterns)
 
 addon.groupieDelimiters = { "%-", ":", ",", "%?", "!", "%." }
 
@@ -682,4 +674,7 @@ addon.groupieUnflippedDungeonPatterns = {
     ["Hallow's End"] = "headless horseman hollow",
 }
 
+
 addon.groupieInstancePatterns = addon.TableFlip(addon.groupieUnflippedDungeonPatterns)
+addon.groupieLootPatterns = addon.TableFlip(addon.groupieUnflippedLootPatterns)
+addon.groupieLanguagePatterns = addon.TableFlip(addon.groupieUnflippedLanguagePatterns)

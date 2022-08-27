@@ -99,11 +99,14 @@ local function GetDungeons(messageWords)
         end
     end
 
+    if instance == nil then
+        return nil, nil, nil
+    end
     local possibleVersions = addon.instanceVersions[instance]
     local validVersionFlag = false
     --Check that the found instance version is a valid version
     if isHeroic or forceSize then
-        for version = 0, #possibleVersions do
+        for version = 1, #possibleVersions do
             if isHeroic == possibleVersions[version][1] then
                 if forceSize == nil or forceSize == possibleVersions[version][0] then
                     validVersionFlag = true
@@ -114,14 +117,10 @@ local function GetDungeons(messageWords)
 
     --If the instance version is invalid, default to lowest size and normal mode
     if not validVersionFlag then
-        forceSize = possibleVersions[0][0]
-        isHeroic = possibleVersions[0][1]
+        forceSize = possibleVersions[1][1]
+        isHeroic = possibleVersions[1][2]
     end
 
-    print('----------------')
-    print(instance)
-    print(isHeroic)
-    print(forceSize)
     return instance, isHeroic, forceSize
 end
 
@@ -184,7 +183,7 @@ local function ParseMessage(event, msg, author, _, channel)
         end
     end
 
-    print(isLFM or isLFG)
+    --print(isLFM or isLFG)
     if isLFM or isLFG then
         groupLanguage = GetLanguage(messageWords) --This can safely be nil
         groupDungeon, isHeroic, groupSize = GetDungeons(messageWords)
@@ -230,6 +229,10 @@ local function ParseMessage(event, msg, author, _, channel)
     addon.groupieListingTable[author].groupSize = groupSize
     addon.groupieListingTable[author].lootType = lootType
     addon.groupieListingTable[author].rolesNeeded = rolesNeeded
+    --Collect data to debug with
+    if addon.debugMenus then
+        tinsert(groupielfg_global.debugData, { msg, messageWords, addon.groupieListingTable[author] })
+    end
     return true
 end
 
@@ -253,6 +256,7 @@ local function GroupieEventHandlers(...)
     if validChannel then
         ParseMessage(event, msg, author, _, channel)
     end
+    return true
 end
 
 addon:RegisterEvent("CHAT_MSG_CHANNEL", GroupieEventHandlers)
