@@ -28,7 +28,12 @@ local function GetDungeons(messageWords)
         --Look for dungeon patterns
         local lookupAttempt = addon.groupieInstancePatterns[word]
         if lookupAttempt ~= nil then
-            instance = lookupAttempt
+            --Handle the fact that people use MT to mean both mana-tombs and main-tank
+            --Assume that if we find MT and the instance is already set, it means tank
+            if lookupAttempt ~= "Mana-Tombs" or instance == nil then
+                instance = lookupAttempt
+            end
+
             --Handle instances with multiple wings by checking the word to the right
             if strmatch(instance, "Full Clear") and i < #messageWords then
                 lookupAttempt = addon.groupieInstancePatterns[messageWords[i + 1]]
@@ -108,7 +113,10 @@ local function GetDungeons(messageWords)
     if isHeroic or forceSize then
         for version = 1, #possibleVersions do
             if isHeroic == possibleVersions[version][2] then
-                if forceSize == nil or forceSize == possibleVersions[version][1] then
+                if forceSize == possibleVersions[version][1] then
+                    validVersionFlag = true
+                elseif forceSize == nil then
+                    forceSize = possibleVersions[version][1]
                     validVersionFlag = true
                 end
             end
@@ -187,8 +195,7 @@ local function ParseMessage(event, msg, author, _, channel)
     if isLFM or isLFG then
         groupLanguage = GetLanguage(messageWords) --This can safely be nil
         groupDungeon, isHeroic, groupSize = GetDungeons(messageWords)
-        --TODO: Get instance level range and ID from table
-        if groupDungeon == nil or groupSize == nil then
+        if groupDungeon == nil then
             return false --No dungeon Found
         end
         lootType = GetGroupType(messageWords) --Defaults to MS>OS if not mentioned
@@ -230,6 +237,10 @@ local function ParseMessage(event, msg, author, _, channel)
     addon.groupieListingTable[author].lootType = lootType
     addon.groupieListingTable[author].rolesNeeded = rolesNeeded
     --Collect data to debug with
+    print(groupDungeon)
+    print(isHeroic)
+    print(groupSize)
+
     if addon.debugMenus then
         tinsert(groupielfg_global.debugData, { msg, preprocessedStr, addon.groupieListingTable[author] })
     end
