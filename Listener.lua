@@ -8,7 +8,7 @@ local function GetLanguage(messageWords)
         local word = messageWords[i]
 
         --Look for loot type patterns
-        local lookupAttempt = addon.groupieLootPatterns[word]
+        local lookupAttempt = addon.groupieLanguagePatterns[word]
         if lookupAttempt ~= nil then
             language = lookupAttempt
         end
