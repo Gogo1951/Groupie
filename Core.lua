@@ -5,8 +5,6 @@ local addon = LibStub("AceAddon-3.0"):NewAddon(GroupieLFG, addonName,
 local AceGUI = LibStub("AceGUI-3.0")
 local SharedMedia = LibStub("LibSharedMedia-3.0")
 
-addon.debugMenus = true
-
 local function BuildOptionsTable()
     if groupielfg_db == nil then
         --Character Options

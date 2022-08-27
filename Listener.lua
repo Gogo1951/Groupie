@@ -9,24 +9,24 @@ end
 --Extract specified dungeon and version by matching each word in an LFG message to patterns in addon.groupieInstancePatterns
 local function GetDungeons(messageWords)
     local instance = nil
-    local instanceloc = nil
     local isHeroic = false
     local forceSize = nil
     for i = 1, #messageWords do
         local word = messageWords[i]
+
+        --Look for dungeon patterns
         local lookupAttempt = addon.groupieInstancePatterns[word]
         if lookupAttempt ~= nil then
             instance = lookupAttempt
-            instanceloc = i
             --Handle instances with multiple wings by checking the word to the right
             if strmatch(instance, "Full Clear") and i < #messageWords then
                 lookupAttempt = addon.groupieInstancePatterns[messageWords[i + 1]]
                 if lookupAttempt ~= nil then
                     instance = lookupAttempt
-                    instanceloc = i + 1
                 end
             end
         else
+            --If we couldn't recognize an instance, try removing heroic/size patterns from the start and end of the word
             for key, val in pairs(addon.groupieVersionPatterns) do
                 if addon.EndsWith(word, key) then
                     lookupAttempt = addon.groupieInstancePatterns[strsub(word, 1, #word - #key)]
@@ -69,16 +69,49 @@ local function GetDungeons(messageWords)
             end
         end
 
-        --If word is exactly a version pattern, set isheroic and forcesize
-
+        --Look for heroic/size patterns
+        lookupAttempt = addon.groupieVersionPatterns[word]
+        if lookupAttempt ~= nil then
+            if lookupAttempt == 0 then
+                isHeroic = true
+            elseif lookupAttempt == 1 then
+                forceSize = 10
+            elseif lookupAttempt == 2 then
+                forceSize = 25
+            elseif lookupAttempt == 3 then
+                isHeroic = true
+                forceSize = 10
+            elseif lookupAttempt == 4 then
+                isHeroic = true
+                forceSize = 25
+            end
+        end
     end
-    --check in instance version table (to be made) that heroic/size vars are consistent with possible versions
-    --set instance required level/ID from instanceinfo table
-    --return everything
+
+    local possibleVersions = addon.instanceVersions[instance]
+    local validVersionFlag = false
+    --Check that the found instance version is a valid version
+    if isHeroic or forceSize then
+        for version = 0, #possibleVersions do
+            if isHeroic == possibleVersions[version][1] then
+                if forceSize == nil or forceSize == possibleVersions[version][0] then
+                    validVersionFlag = true
+                end
+            end
+        end
+    end
+
+    --If the instance version is invalid, default to lowest size and normal mode
+    if not validVersionFlag then
+        forceSize = possibleVersions[0][0]
+        isHeroic = possibleVersions[0][1]
+    end
+
     print('----------------')
     print(instance)
     print(isHeroic)
     print(forceSize)
+    return instance, isHeroic, forceSize
 end
 
 --Extract the loot system being used by the party
@@ -149,7 +182,17 @@ local function ParseMessage(event, msg, author, _, channel)
         return false
     end
 
-    --TODO: return an object containing all the information about the group listing
+    --Create the listing entry
+    addon.groupieListingTable[author] = {}
+    addon.groupieListingTable[author].isLFM = isLFM
+    addon.groupieListingTable[author].isLFG = isLFG
+    addon.groupieListingTable[author].timestamp = groupTimestamp
+    addon.groupieListingTable[author].language = groupLanguage
+    addon.groupieListingTable[author].instanceName = groupDungeon
+    addon.groupieListingTable[author].isHeroic = isHeroic
+    addon.groupieListingTable[author].groupSize = groupSize
+    addon.groupieListingTable[author].lootType = lootType
+    addon.groupieListingTable[author].rolesNeeded = rolesNeeded
     return true
 end
 

@@ -1,5 +1,8 @@
 local addonName, addon = ...
 
+
+addon.debugMenus = true
+
 addon.groupieListingTable = {}
 
 addon.groupieLocaleTable = {
@@ -79,8 +82,8 @@ addon.groupieClassRoleTable = {
 
 
 --0 - Heroic
---1 - 10
---2 - 25
+--1 - 10 Normal
+--2 - 25 Normal
 --3 - Heroic 10
 --4 - Heroic 25
 addon.groupieVersionPatterns = {
@@ -88,7 +91,11 @@ addon.groupieVersionPatterns = {
     ["hc"] = 0,
     ["heroic"] = 0,
     ["10"] = 1,
+    ["n10"] = 1,
+    ["10n"] = 1,
     ["25"] = 2,
+    ["n25"] = 2,
+    ["25n"] = 2,
     ["h10"] = 3,
     ["10h"] = 3,
     ["h25"] = 4,
@@ -139,6 +146,106 @@ addon.groupieLFPatterns = {
 addon.groupieDelimiters = { "%-", ":", ",", "%?", "!", "%." }
 
 addon.multiWingInstances = { "Dire Maul - Full Clear", "Maraudon - Full Clear", "Scarlet Monastery - Full Clear" }
+
+--instanceVersions[instance] = {{size, isHeroic}, ...}
+addon.instanceVersions = {
+    ["Ragefire Chasm"]                 = { { 5, false } },
+    ["Wailing Caverns"]                = { { 5, false } },
+    ["The Deadmines"]                  = { { 5, false } },
+    ["Shadowfang Keep"]                = { { 5, false } },
+    ["The Stockade"]                   = { { 5, false } },
+    ["Blackfathom Deeps"]              = { { 5, false } },
+    ["Gnomeregan"]                     = { { 5, false } },
+    ["Razorfen Kraul"]                 = { { 5, false } },
+    ["Scarlet Monastery - Full Clear"] = { { 5, false } },
+    ["Scarlet Monastery - Graveyard"]  = { { 5, false } },
+    ["Scarlet Monastery - Library"]    = { { 5, false } },
+    ["Scarlet Monastery - Armory"]     = { { 5, false } },
+    ["Scarlet Monastery - Cathedral"]  = { { 5, false } },
+    ["Razorfen Downs"]                 = { { 5, false } },
+    ["Uldaman"]                        = { { 5, false } },
+    ["Zul'Farrak"]                     = { { 5, false } },
+    ["Maraudon - Full Clear"]          = { { 5, false } },
+    ["Maraudon - Princess"]            = { { 5, false } },
+    ["Maraudon - Purple"]              = { { 5, false } },
+    ["Maraudon - Orange"]              = { { 5, false } },
+    ["The Temple of Atal'Hakkar"]      = { { 5, false } },
+    ["Blackrock Depths"]               = { { 5, false } },
+    ["Dire Maul - Full Clear"]         = { { 5, false } },
+    ["Dire Maul - East Wing"]          = { { 5, false } },
+    ["Dire Maul - North Wing"]         = { { 5, false } },
+    ["Dire Maul - West Wing"]          = { { 5, false } },
+    ["Lower Blackrock Spire"]          = { { 5, false } },
+    ["Stratholme"]                     = { { 5, false } },
+    ["Scholomance"]                    = { { 5, false } },
+
+    ["Upper Blackrock Spire"] = { { 10, false } },
+    ["Zul'Gurub"]             = { { 20, false } },
+    ["Ruins of Ahn'Qiraj"]    = { { 20, false } },
+    --["Onyxia's Lair"]         = { { 40, false } },
+    ["Molten Core"]           = { { 40, false } },
+    ["Blackwing Lair"]        = { { 40, false } },
+    ["Temple of Ahn'Qiraj"]   = { { 40, false } },
+    --["Naxxramas"]             = { { 40, false } },
+
+    ["Hellfire Ramparts"]       = { { 5, false }, { 5, true } },
+    ["The Blood Furnace"]       = { { 5, false }, { 5, true } },
+    ["The Slave Pens"]          = { { 5, false }, { 5, true } },
+    ["The Underbog"]            = { { 5, false }, { 5, true } },
+    ["Mana-Tombs"]              = { { 5, false }, { 5, true } },
+    ["Auchenai Crypts"]         = { { 5, false }, { 5, true } },
+    ["Sethekk Halls"]           = { { 5, false }, { 5, true } },
+    ["Old Hillsbrad Foothills"] = { { 5, false }, { 5, true } },
+    ["Shadow Labyrinth"]        = { { 5, false }, { 5, true } },
+    ["The Mechanar"]            = { { 5, false }, { 5, true } },
+    ["The Shattered Halls"]     = { { 5, false }, { 5, true } },
+    ["The Steamvault"]          = { { 5, false }, { 5, true } },
+    ["The Botanica"]            = { { 5, false }, { 5, true } },
+    ["The Arcatraz"]            = { { 5, false }, { 5, true } },
+    ["The Black Morass"]        = { { 5, false }, { 5, true } },
+    ["Magisters' Terrace"]      = { { 5, false }, { 5, true } },
+
+    ["Karazhan"]             = { { 10, false } },
+    ["Zul'Aman"]             = { { 10, false } },
+    ["Gruul's Lair"]         = { { 25, false } },
+    ["Magtheridon's Lair"]   = { { 25, false } },
+    ["Serpentshrine Cavern"] = { { 25, false } },
+    ["The Eye"]              = { { 25, false } },
+    ["Hyjal Summit"]         = { { 25, false } },
+    ["Black Temple"]         = { { 25, false } },
+    ["Sunwell Plateau"]      = { { 25, false } },
+
+    ["Utgarde Keep"]               = { { 5, false }, { 5, true } },
+    ["Nexus"]                      = { { 5, false }, { 5, true } },
+    ["Ajzol-Nerub"]                = { { 5, false }, { 5, true } },
+    ["Ahn'kahet: The Old Kingdom"] = { { 5, false }, { 5, true } },
+    ["Drak'Tharon Keep"]           = { { 5, false }, { 5, true } },
+    ["Violet Hold"]                = { { 5, false }, { 5, true } },
+    ["Gundrak"]                    = { { 5, false }, { 5, true } },
+    ["Halls of Stone"]             = { { 5, false }, { 5, true } },
+    ["The Culling of Stratholme"]  = { { 5, false }, { 5, true } },
+    ["Halls of Lightning"]         = { { 5, false }, { 5, true } },
+    ["Utgarde Pinnacle"]           = { { 5, false }, { 5, true } },
+    ["The Oculus"]                 = { { 5, false }, { 5, true } },
+    ["Trial of the Champion"]      = { { 5, false }, { 5, true } },
+    ["Forge of Souls"]             = { { 5, false }, { 5, true } },
+    ["Pit of Saron"]               = { { 5, false }, { 5, true } },
+    ["Halls of Reflection"]        = { { 5, false }, { 5, true } },
+
+    ["Naxxramas"]            = { { 10, false }, { 25, false } },
+    ["The Obsidian Sanctum"] = { { 10, false }, { 25, false } },
+    ["Vault of Archavon"]    = { { 10, false }, { 25, false } },
+    ["The Eye of Eternity"]  = { { 10, false }, { 25, false } },
+    ["Onyxia's Lair"]        = { { 10, false }, { 25, false } },
+    ["Ulduar"]               = { { 10, false }, { 25, false } },
+
+    ["Crusaders' Coliseum: Trial of the Crusader"] = { { 10, false }, { 25, false }, { 10, true }, { 25, true } },
+    ["Icecrown Citadel"]                           = { { 10, false }, { 25, false }, { 10, true }, { 25, true } },
+    ["The Ruby Sanctum"]                           = { { 10, false }, { 25, false }, { 10, true }, { 25, true } },
+
+    ["Brewfest"]     = { { 5, false } },
+    ["Hallow's End"] = { { 5, false } },
+}
 
 addon.groupieInstanceData = {
     ["Heroic The Ruby Sanctum - 25"] = { Active = false, Expac = "Wrath of the Lich King",
@@ -215,7 +322,7 @@ addon.groupieInstanceData = {
     ["Heroic Ajzol-Nerub"] = { Active = true, Expac = "Wrath of the Lich King",
         InstanceType = "Wrath of the Lich King Heroic Dungeons", InstanceID = -1, MinLevel = 80, MaxLevel = 80,
         GroupSize = 5, Order = 2300 },
-    ["Heroic Drak’Tharon Keep"] = { Active = true, Expac = "Wrath of the Lich King",
+    ["Heroic Drak'Tharon Keep"] = { Active = true, Expac = "Wrath of the Lich King",
         InstanceType = "Wrath of the Lich King Heroic Dungeons", InstanceID = -1, MinLevel = 80, MaxLevel = 80,
         GroupSize = 5, Order = 2290 },
     ["Heroic Forge of Souls"] = { Active = false, Expac = "Wrath of the Lich King",
@@ -287,7 +394,7 @@ addon.groupieInstanceData = {
         InstanceID = -1, MinLevel = 76, MaxLevel = 78, GroupSize = 5, Order = 2060 },
     ["Violet Hold"] = { Active = true, Expac = "Wrath of the Lich King", InstanceType = "Wrath of the Lich King Dungeons",
         InstanceID = -1, MinLevel = 75, MaxLevel = 77, GroupSize = 5, Order = 2050 },
-    ["Drak’Tharon Keep"] = { Active = true, Expac = "Wrath of the Lich King",
+    ["Drak'Tharon Keep"] = { Active = true, Expac = "Wrath of the Lich King",
         InstanceType = "Wrath of the Lich King Dungeons", InstanceID = -1, MinLevel = 74, MaxLevel = 76, GroupSize = 5,
         Order = 2040 },
     ["Ahn'kahet: The Old Kingdom"] = { Active = true, Expac = "Wrath of the Lich King",
@@ -489,8 +596,8 @@ addon.groupieInstanceData = {
 
 addon.groupieUnflippedPatterns = {
     ["Ragefire Chasm"]                 = "rfc ragefire chasm",
-    ["The Deadmines"]                  = "deadmines vc vancleef dead mines mine",
     ["Wailing Caverns"]                = "wc wailing caverns",
+    ["The Deadmines"]                  = "deadmines vc vancleef dead mines mine",
     ["Shadowfang Keep"]                = "sfk shadowfang",
     ["The Stockade"]                   = "stk stock stockade stockades",
     ["Blackfathom Deeps"]              = "bfd blackfathom fathom",
@@ -514,44 +621,48 @@ addon.groupieUnflippedPatterns = {
     ["Dire Maul - East Wing"]          = "dme dmeast east puzilin jumprun",
     ["Dire Maul - North Wing"]         = "dmn dmnorth north tribute",
     ["Dire Maul - West Wing"]          = "dmw dmwest west",
+    ["Lower Blackrock Spire"]          = "lower lbrs lrbs",
     ["Stratholme"]                     = "stratlive live living stratUD undead ud baron stratholme stath stratholm strah strath strat starth",
     ["Scholomance"]                    = "scholomance scholo sholo sholomance",
-    ["Lower Blackrock Spire"]          = "lower lbrs lrbs",
-    ["Upper Blackrock Spire"]          = "upper ubrs urbs rend",
-    ["Hellfire Ramparts"]              = "ramparts rampart ramp ramps",
-    ["The Blood Furnace"]              = "furnace furn bf",
-    ["The Slave Pens"]                 = "slavepens pens sp",
-    ["The Underbog"]                   = "underbog ub",
-    ["Mana-Tombs"]                     = "manatombs mana mt tomb tombs",
-    ["Auchenai Crypts"]                = "crypts crypt auchenai ac acrypts acrypt",
-    ["Sethekk Halls"]                  = "sethekk seth sethek",
-    ["Old Hillsbrad Foothills"]        = "ohb oh ohf durnholde hillsbrad escape",
-    ["The Mechanar"]                   = "mech mechanar",
-    ["The Black Morass"]               = "morass bm black",
-    ["Magisters' Terrace"]             = "mgt mrt terrace magisters magister",
-    ["The Shattered Halls"]            = "sh shattered shatered shaterred",
-    ["The Botanica"]                   = "botanica bot",
-    ["Shadow Labyrinth"]               = "sl slab labyrinth lab",
-    ["The Steamvault"]                 = "sv steamvault steamvaults steam vault valts",
-    ["The Arcatraz"]                   = "arc arcatraz alcatraz",
-    ["Karazhan"]                       = "kara kz karazhan",
-    ["Gruul's Lair"]                   = "gl gruul gruuls gruul's",
-    ["Magtheridon's Lair"]             = "mag magtheridon magtheridon's magth",
-    ["Serpentshrine Cavern"]           = "ssc serpentshrine serpentshine",
-    ["Zul'Aman"]                       = "za zulaman zul-aman zaman aman zul'aman",
-    ["The Eye"]                        = "eye tk",
-    ["Hyjal Summit"]                   = "hyjal hs hyj",
-    ["Black Temple"]                   = "bt",
-    ["Sunwell Plateau"]                = "swp sunwell plateau plataeu sunwel",
-    ["Onyxia's Lair"]                  = "onyxia ony",
-    ["Molten Core"]                    = "molten core mc",
-    ["Zul'Gurub"]                      = "zg gurub zul'gurub zulgurub zul´gurub zul`gurub zulg zul-gurub",
-    ["Ruins of Ahn'Qiraj"]             = "ruins aq20",
-    ["Blackwing Lair"]                 = "blackwing bwl",
-    ["Temple of Ahn'Qiraj"]            = "aq40",
-    ["Naxxramas"]                      = "naxxramas nax naxx",
-    ["Brewfest"]                       = "brewfest brew coren dire direbrew beerfest",
-    ["Hallow's End"]                   = "headless horseman hollow",
+
+    ["Upper Blackrock Spire"] = "upper ubrs urbs rend",
+    ["Zul'Gurub"]             = "zg gurub zul'gurub zulgurub zul´gurub zul`gurub zulg zul-gurub",
+    ["Ruins of Ahn'Qiraj"]    = "ruins aq20",
+    ["Onyxia's Lair"]         = "onyxia ony",
+    ["Molten Core"]           = "molten core mc",
+    ["Blackwing Lair"]        = "blackwing bwl",
+    ["Temple of Ahn'Qiraj"]   = "aq40",
+    ["Naxxramas"]             = "naxxramas nax naxx",
+
+    ["Hellfire Ramparts"]       = "ramparts rampart ramp ramps",
+    ["The Blood Furnace"]       = "furnace furn bf",
+    ["The Slave Pens"]          = "slavepens pens sp",
+    ["The Underbog"]            = "underbog ub",
+    ["Mana-Tombs"]              = "manatombs mana mt tomb tombs",
+    ["Auchenai Crypts"]         = "crypts crypt auchenai ac acrypts acrypt",
+    ["Sethekk Halls"]           = "sethekk seth sethek",
+    ["Old Hillsbrad Foothills"] = "ohb oh ohf durnholde hillsbrad escape",
+    ["Shadow Labyrinth"]        = "sl slab labyrinth lab",
+    ["The Mechanar"]            = "mech mechanar",
+    ["The Shattered Halls"]     = "sh shattered shatered shaterred",
+    ["The Steamvault"]          = "sv steamvault steamvaults steam vault valts",
+    ["The Botanica"]            = "botanica bot",
+    ["The Arcatraz"]            = "arc arcatraz alcatraz",
+    ["The Black Morass"]        = "morass bm black",
+    ["Magisters' Terrace"]      = "mgt mrt terrace magisters magister",
+
+    ["Karazhan"]             = "kara kz karazhan",
+    ["Zul'Aman"]             = "za zulaman zul-aman zaman aman zul'aman",
+    ["Gruul's Lair"]         = "gl gruul gruuls gruul's",
+    ["Magtheridon's Lair"]   = "mag magtheridon magtheridon's magth",
+    ["Serpentshrine Cavern"] = "ssc serpentshrine serpentshine",
+    ["The Eye"]              = "eye tk",
+    ["Hyjal Summit"]         = "hyjal hs hyj",
+    ["Black Temple"]         = "bt blacktemple",
+    ["Sunwell Plateau"]      = "swp sunwell plateau plataeu sunwel",
+
+    ["Brewfest"]     = "brewfest brew coren dire direbrew beerfest",
+    ["Hallow's End"] = "headless horseman hollow",
 }
 
 addon.groupieInstancePatterns = addon.TableFlip(addon.groupieUnflippedPatterns)
