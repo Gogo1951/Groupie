@@ -231,7 +231,7 @@ local function ParseMessage(event, msg, author, _, channel)
     addon.groupieListingTable[author].rolesNeeded = rolesNeeded
     --Collect data to debug with
     if addon.debugMenus then
-        tinsert(groupielfg_global.debugData, { msg, messageWords, addon.groupieListingTable[author] })
+        tinsert(groupielfg_global.debugData, { msg, preprocessedStr, addon.groupieListingTable[author] })
     end
     return true
 end
