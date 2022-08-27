@@ -107,8 +107,8 @@ local function GetDungeons(messageWords)
     --Check that the found instance version is a valid version
     if isHeroic or forceSize then
         for version = 1, #possibleVersions do
-            if isHeroic == possibleVersions[version][1] then
-                if forceSize == nil or forceSize == possibleVersions[version][0] then
+            if isHeroic == possibleVersions[version][2] then
+                if forceSize == nil or forceSize == possibleVersions[version][1] then
                     validVersionFlag = true
                 end
             end

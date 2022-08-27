@@ -119,10 +119,13 @@ addon.groupieLFPatterns = {
 
     ["lfheal"] = 2,
     ["lfhealer"] = 2,
+    ["lfheals"] = 2,
     ["heal"] = 2,
+    ["heals"] = 2,
     ["healer"] = 2,
     ["xheal"] = 2,
     ["xhealer"] = 2,
+    ["xheals"] = 2,
 
     ["lfdps"] = 3,
     ["lfdd"] = 3,
@@ -144,7 +147,8 @@ addon.groupieUnflippedLootPatterns = {
     ["Ticket"] = "ticket",
     ["GDKP"] = "gdkp",
     ["Soft Reserve"] = "sr softres softreserve soft",
-    ["MS>OS"] = "msos ms>os ms os"
+    ["MS>OS"] = "msos ms>os ms os",
+    ["Boost"] = "boost boosts carry"
 }
 
 --For now, this only supports English, but implemented such that localization would be easy in the future
@@ -649,7 +653,7 @@ addon.groupieUnflippedDungeonPatterns = {
     ["The Underbog"]            = "underbog ub",
     ["Mana-Tombs"]              = "manatombs mana mt tomb tombs",
     ["Auchenai Crypts"]         = "crypts crypt auchenai ac acrypts acrypt",
-    ["Sethekk Halls"]           = "sethekk seth sethek",
+    ["Sethekk Halls"]           = "sethekk seth sethek anzu",
     ["Old Hillsbrad Foothills"] = "ohb oh ohf durnholde hillsbrad escape",
     ["Shadow Labyrinth"]        = "sl slab labyrinth lab",
     ["The Mechanar"]            = "mech mechanar",
