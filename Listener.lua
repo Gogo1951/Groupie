@@ -3,7 +3,18 @@ local AceEvent = LibStub("AceEvent-3.0")
 AceEvent:Embed(addon)
 --Extract a specified language from an LFG message, if it exists
 local function GetLanguage(messageWords)
+    local language = nil
+    for i = 1, #messageWords do
+        local word = messageWords[i]
 
+        --Look for loot type patterns
+        local lookupAttempt = addon.groupieLootPatterns[word]
+        if lookupAttempt ~= nil then
+            language = lookupAttempt
+        end
+    end
+
+    return language
 end
 
 --Extract specified dungeon and version by matching each word in an LFG message to patterns in addon.groupieInstancePatterns
@@ -116,7 +127,18 @@ end
 
 --Extract the loot system being used by the party
 local function GetGroupType(messageWords)
+    local lootType = "MS>OS"
+    for i = 1, #messageWords do
+        local word = messageWords[i]
 
+        --Look for loot type patterns
+        local lookupAttempt = addon.groupieLootPatterns[word]
+        if lookupAttempt ~= nil then
+            lootType = lookupAttempt
+        end
+    end
+
+    return lootType
 end
 
 --Given a message passed by event handler, extract information about the party
@@ -167,12 +189,10 @@ local function ParseMessage(event, msg, author, _, channel)
         groupLanguage = GetLanguage(messageWords) --This can safely be nil
         groupDungeon, isHeroic, groupSize = GetDungeons(messageWords)
         --TODO: Get instance level range and ID from table
-        if groupDungeon == nil then
+        if groupDungeon == nil or groupSize == nil then
             return false --No dungeon Found
         end
-        if lootType == nil then
-            lootType = GetGroupType(messageWords) --Defaults to MS>OS if not mentioned
-        end
+        lootType = GetGroupType(messageWords) --Defaults to MS>OS if not mentioned
     else
         return false --This is not an LFM or LFG post
     end
@@ -182,13 +202,30 @@ local function ParseMessage(event, msg, author, _, channel)
         return false
     end
 
+    --The full versioned instance name for use in data table
+    local fullName = groupDungeon
+    if isHeroic then
+        fullName = "Heroic " .. fullName
+    end
+    if #addon.instanceVersions[groupDungeon] > 1 then
+        if groupSize == 10 then
+            fullName = fullName .. " - 10"
+        elseif groupSize == 25 then
+            fullName = fullName .. " - 25"
+        end
+    end
+
     --Create the listing entry
     addon.groupieListingTable[author] = {}
     addon.groupieListingTable[author].isLFM = isLFM
     addon.groupieListingTable[author].isLFG = isLFG
+    addon.groupieListingTable[author].instanceID = addon.groupieInstanceData[fullName].instanceID
+    addon.groupieListingTable[author].MinLevel = addon.groupieInstanceData[fullName].MinLevel
+    addon.groupieListingTable[author].MaxLevel = addon.groupieInstanceData[fullName].MaxLevel
     addon.groupieListingTable[author].timestamp = groupTimestamp
     addon.groupieListingTable[author].language = groupLanguage
     addon.groupieListingTable[author].instanceName = groupDungeon
+    addon.groupieListingTable[author].fullName = fullName
     addon.groupieListingTable[author].isHeroic = isHeroic
     addon.groupieListingTable[author].groupSize = groupSize
     addon.groupieListingTable[author].lootType = lootType

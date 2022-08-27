@@ -143,6 +143,23 @@ addon.groupieLFPatterns = {
     ["carry"] = 5
 }
 
+addon.groupieUnFlippedLootPatterns = {
+    ["Ticket"] = "ticket",
+    ["GDKP"] = "gdkp",
+    ["Soft Reserve"] = "sr softres softreserve soft",
+    ["MS>OS"] = "msos ms>os ms os",
+}
+
+addon.groupieLootPatterns = addon.TableFlip(addon.groupieUnflippedLootPatterns)
+
+
+--For now, this only supports English, but implemented such that localization would be easy in the future
+addon.groupieUnFlippedLanguagePatterns = {
+    ["English"] = "english eng",
+}
+
+addon.groupieLanguagePatterns = addon.TableFlip(addon.groupieUnFlippedLanguagePatterns)
+
 addon.groupieDelimiters = { "%-", ":", ",", "%?", "!", "%." }
 
 addon.multiWingInstances = { "Dire Maul - Full Clear", "Maraudon - Full Clear", "Scarlet Monastery - Full Clear" }
@@ -182,7 +199,7 @@ addon.instanceVersions = {
     ["Upper Blackrock Spire"] = { { 10, false } },
     ["Zul'Gurub"]             = { { 20, false } },
     ["Ruins of Ahn'Qiraj"]    = { { 20, false } },
-    --["Onyxia's Lair"]         = { { 40, false } },
+    ["Onyxia's Lair"]         = { { 40, false } },
     ["Molten Core"]           = { { 40, false } },
     ["Blackwing Lair"]        = { { 40, false } },
     ["Temple of Ahn'Qiraj"]   = { { 40, false } },
@@ -236,7 +253,7 @@ addon.instanceVersions = {
     ["The Obsidian Sanctum"] = { { 10, false }, { 25, false } },
     ["Vault of Archavon"]    = { { 10, false }, { 25, false } },
     ["The Eye of Eternity"]  = { { 10, false }, { 25, false } },
-    ["Onyxia's Lair"]        = { { 10, false }, { 25, false } },
+    --["Onyxia's Lair"]        = { { 10, false }, { 25, false } },
     ["Ulduar"]               = { { 10, false }, { 25, false } },
 
     ["Crusaders' Coliseum: Trial of the Crusader"] = { { 10, false }, { 25, false }, { 10, true }, { 25, true } },
@@ -594,7 +611,7 @@ addon.groupieInstanceData = {
 }
 
 
-addon.groupieUnflippedPatterns = {
+addon.groupieUnflippedDungeonPatterns = {
     ["Ragefire Chasm"]                 = "rfc ragefire chasm",
     ["Wailing Caverns"]                = "wc wailing caverns",
     ["The Deadmines"]                  = "deadmines vc vancleef dead mines mine",
@@ -665,4 +682,4 @@ addon.groupieUnflippedPatterns = {
     ["Hallow's End"] = "headless horseman hollow",
 }
 
-addon.groupieInstancePatterns = addon.TableFlip(addon.groupieUnflippedPatterns)
+addon.groupieInstancePatterns = addon.TableFlip(addon.groupieUnflippedDungeonPatterns)
