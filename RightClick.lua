@@ -37,19 +37,19 @@ local function SendPlayerInfo(specGroup, targetName)
 		if groupielfg_db.groupieSpec1Role ~= nil then
 			myrole = " Want a " .. addon.groupieRoleTable[groupielfg_db.groupieSpec1Role] .. "?"
 		else
-			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the Groupie LFG Character Options tab.")
+			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the Groupie Character Options tab.")
 		end
 	elseif specGroup == 2 then
 		if groupielfg_db.groupieSpec2Role ~= nil then
 			myrole = " Want a " .. addon.groupieRoleTable[groupielfg_db.groupieSpec2Role] .. "?"
 		else
-			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the Groupie LFG Character Options tab.")
+			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the Groupie Character Options tab.")
 		end
 	end
 
 
 	--Sending Current Spec Info
-	SendChatMessage("{rt3} Groupie LFG :" ..
+	SendChatMessage("{rt3} Groupie :" ..
 		myrole ..
 		" Level " ..
 		mylevel ..
@@ -96,7 +96,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		info.notClickable = true
 		info.notCheckable = true
 		info.isTitle = true
-		info.text = "Groupie LFG"
+		info.text = "Groupie"
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 
 		local info = UIDropDownMenu_CreateInfo()

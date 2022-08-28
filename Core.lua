@@ -1,6 +1,6 @@
-local addonName, GroupieLFG = ...
+local addonName, Groupie = ...
 
-local addon = LibStub("AceAddon-3.0"):NewAddon(GroupieLFG, addonName,
+local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName,
     "AceEvent-3.0", "AceConsole-3.0")
 local AceGUI = LibStub("AceGUI-3.0")
 local SharedMedia = LibStub("LibSharedMedia-3.0")
@@ -82,7 +82,7 @@ local function BuildGroupieWindow()
         local playerClass = UnitClass("player")
 
         local tabTitle = AceGUI:Create("Label")
-        tabTitle:SetText("Groupie LFG | " .. playerName .. " Options")
+        tabTitle:SetText("Groupie | " .. playerName .. " Options")
         tabTitle:SetColor(0.88, 0.73, 0)
         tabTitle:SetFontObject(GameFontHighlightHuge)
         tabTitle:SetFullWidth(true)
@@ -270,7 +270,7 @@ local function BuildGroupieWindow()
     --Global Options Tab
     local function DrawGlobalOptions(container)
         local tabTitle = AceGUI:Create("Label")
-        tabTitle:SetText("Groupie LFG | Global Options")
+        tabTitle:SetText("Groupie | Global Options")
         tabTitle:SetColor(0.88, 0.73, 0)
         tabTitle:SetFontObject(GameFontHighlightHuge)
         tabTitle:SetFullWidth(true)
@@ -352,7 +352,7 @@ local function BuildGroupieWindow()
     --About Tab
     local function DrawAbout(container)
         local tabTitle = AceGUI:Create("Label")
-        tabTitle:SetText("Groupie LFG | About")
+        tabTitle:SetText("Groupie | About")
         tabTitle:SetColor(0.88, 0.73, 0)
         tabTitle:SetFontObject(GameFontHighlightHuge)
         tabTitle:SetFullWidth(true)
@@ -360,7 +360,7 @@ local function BuildGroupieWindow()
 
 
         local curseLabel = AceGUI:Create("Label")
-        curseLabel:SetText("Groupie LFG on CurseForge")
+        curseLabel:SetText("Groupie on CurseForge")
         curseLabel:SetFullWidth(true)
         container:AddChild(curseLabel)
         local curseEditBox = AceGUI:Create("EditBox")
@@ -379,7 +379,7 @@ local function BuildGroupieWindow()
         container:AddChild(curseEditBox)
 
         local discordLabel = AceGUI:Create("Label")
-        discordLabel:SetText("Groupie LFG on Discord")
+        discordLabel:SetText("Groupie on Discord")
         discordLabel:SetFullWidth(true)
         container:AddChild(discordLabel)
         local discordEditBox = AceGUI:Create("EditBox")
@@ -398,7 +398,7 @@ local function BuildGroupieWindow()
         container:AddChild(discordEditBox)
 
         local githubLabel = AceGUI:Create("Label")
-        githubLabel:SetText("Groupie LFG on GitHub")
+        githubLabel:SetText("Groupie on GitHub")
         githubLabel:SetFullWidth(true)
         container:AddChild(githubLabel)
         local githubEditBox = AceGUI:Create("EditBox")
@@ -438,14 +438,14 @@ local function BuildGroupieWindow()
     end
 
     local frame = AceGUI:Create("Frame")
-    frame:SetTitle("Groupie LFG")
+    frame:SetTitle("Groupie")
     frame:SetCallback("OnClose", function(widget) AceGUI:Release(widget) end)
     frame:SetLayout("Fill")
 
     --Creating Tabgroup
     local tab = AceGUI:Create("TabGroup")
     tab:SetLayout("Flow")
-    tab:SetTabs({ { text = "Groupie LFG", value = "maintab" },
+    tab:SetTabs({ { text = "Groupie", value = "maintab" },
         { text = "Group Builder", value = "groupbuilder" },
         { text = "Group Filters", value = "groupfilter" },
         { text = "Instance Filters", value = "instancefilter" },
@@ -468,10 +468,10 @@ end
 local groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Groupie", {
     type = "data source",
     text = "Groupie",
-    icon = "Interface\\AddOns\\Groupie-LFG\\Images\\icon64.tga",
+    icon = "Interface\\AddOns\\Groupie\\Images\\icon64.tga",
     OnClick = BuildGroupieWindow,
     OnTooltipShow = function(tooltip)
-        tooltip:AddLine("Groupie LFG")
+        tooltip:AddLine("Groupie")
         tooltip:AddLine("A better LFG tool for Classic WoW.", 255, 255, 255, false)
         tooltip:AddLine("Click to open Groupie", 255, 255, 255, false)
     end
@@ -489,5 +489,5 @@ function addon:OnInitialize()
 end
 
 --Setup Slash Command
-SLASH_GROUPIE1, SLASH_GROUPIE2 = "/groupie", "/groupielfg"
+SLASH_GROUPIE1, SLASH_GROUPIE2 = "/groupie"
 SlashCmdList["GROUPIE"] = BuildGroupieWindow
