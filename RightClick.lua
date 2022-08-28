@@ -1,4 +1,7 @@
 local addonName, addon = ...
+-------------------------------
+-- Right Click Functionality --
+-------------------------------
 local function SendPlayerInfo(specGroup, targetName)
 	--Calculate average itemlevel
 	local iLevelSum = 0

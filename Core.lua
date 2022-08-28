@@ -5,6 +5,129 @@ local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName,
 local AceGUI = LibStub("AceGUI-3.0")
 local SharedMedia = LibStub("LibSharedMedia-3.0")
 
+---------------------
+-- AceConfig Setup --
+---------------------
+local options = {
+    name = addonName,
+    desc = "Optional description? for the group of options",
+    descStyle = "inline",
+    icon = "Interface/icons/inv_helmet_50", -- this doesn't seem to show on the top level
+    handler = addon,
+    type = 'group',
+    args = {
+        msg = {
+            type = 'input',
+            name = 'My Message',
+            desc = 'The message for my addon',
+            set = 'SetMyMessage',
+            get = 'GetMyMessage',
+            order = 90, -- default is 100 so this will put it at the top of non-ordered ones?
+        },
+        flag1 = {
+            type = 'toggle',
+            name = 'First flag for my addon',
+            desc = 'This can show as a tooltip for the input?',
+            set = 'SetFlag1',
+            get = 'GetFlag1',
+            width = 'full', -- this keeps the checkboxes on one line each
+        },
+        flag2 = {
+            type = 'toggle',
+            name = 'Second flag for my addon',
+            desc = 'This can show as a tooltip for the input?',
+            set = 'SetFlag2',
+            get = 'GetFlag2',
+            width = 'full',
+        },
+        rangetest = {
+            type = 'range',
+            name = 'Range Test',
+            desc = 'A range of values - displayed as a slider?',
+            min = 10,
+            max = 42,
+            step = 1,
+            set = function(info, val) addon.db.profile.rangetest = val end,
+            get = function(info) return addon.db.profile.rangetest end,
+            width = 'double',
+            order = 110,
+        },
+        moreoptions = {
+            name = "More options",
+            desc = "Description of the other options",
+            icon = "Interface/icons/inv_helmet_51",
+            type = "group",
+            width = "double",
+            args = {
+                -- more options go here
+                --   this post helped http://forums.wowace.com/showthread.php?t=13755
+                selecttest = {
+                    type = "select",
+                    name = "Select Test Greetings",
+                    desc = "Should be rendered as a dropdown box?",
+                    style = "dropdown",
+                    values = { ["A"] = "Hi", ["B"] = "Bye", ["Z"] = "Omega" },
+                    set = function(info, val) addon.db.profile.selecttest = val end,
+                    get = function(info) return addon.db.profile.selecttest end,
+                },
+                selectradiotest = {
+                    type = "select",
+                    name = "Which station?",
+                    desc = "Should be rendered as a radiobuttions?",
+                    style = "radio",
+                    values = { [1] = "107.1", [2] = "Chez 102", [3] = "The Rock" },
+                    set = function(info, val) addon.db.profile.selectradiotest = val end,
+                    get = function(info) return addon.db.profile.selectradiotest end,
+                },
+            },
+        },
+    },
+}
+
+local optionsTable = LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, options, { "groupiecfg" })
+local AceConfigDialog = LibStub("AceConfigDialog-3.0")
+function addon:OnEnable()
+    -- Called when the addon is enabled
+end
+
+function addon:OnDisable()
+    -- Called when the addon is disabled
+end
+
+-- There is no magic connecting the options and the db.  You need to reference the fields directly in the get and sets.
+function addon:GetMyMessage(info)
+    return "test message :)"
+end
+
+function addon:SetMyMessage(info, input)
+
+end
+
+function addon:GetFlag1(info)
+    return false
+end
+
+function addon:SetFlag1(info, input)
+
+end
+
+function addon:GetFlag2(info)
+    return true
+end
+
+function addon:SetFlag2(info, input)
+
+end
+
+function addon:OpenConfig()
+    InterfaceOptionsFrame_OpenToCategory(addonName)
+    -- need to call it a second time as there is a bug where the first time it won't switch !BlizzBugsSuck has a fix
+    InterfaceOptionsFrame_OpenToCategory(addonName)
+end
+
+--------------------
+-- User Interface --
+--------------------
 local function BuildGroupieWindow()
     --Dont open a new frame if already open
     if addon._frame and addon._frame.frame:IsShown() then
@@ -442,9 +565,11 @@ local groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Groupie", {
         tooltip:AddLine("Click to open Groupie", 255, 255, 255, false)
     end
 })
-local icon = LibStub("LibDBIcon-1.0")
 
---Load minimap icon and saved options
+--------------------------
+-- Addon Initialization --
+--------------------------
+local icon = LibStub("LibDBIcon-1.0")
 function addon:OnInitialize()
     local defaults = {
         char = {
@@ -473,7 +598,7 @@ function addon:OnInitialize()
     }
     addon.db = LibStub("AceDB-3.0"):New("GroupieDB", defaults)
     icon:Register("Groupie", groupieLDB, self.db.profile.minimap)
-
+    AceConfigDialog:AddToBlizOptions(addonName, "Groupie")
     addon.debugMenus = true
     --Setup Slash Command
     SLASH_GROUPIE1, SLASH_GROUPIE2 = "/groupie"
