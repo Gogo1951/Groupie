@@ -1,4 +1,4 @@
-# Groupie LFG
+# Groupie
 A better LFG tool for Classic WoW.
 
 
