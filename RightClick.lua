@@ -34,14 +34,14 @@ local function SendPlayerInfo(specGroup, targetName)
 	--The text must be concatenated here so that the message makes sense if the player has not yet set a role
 	local myrole = ""
 	if specGroup == 1 then
-		if groupielfg_db.groupieSpec1Role ~= nil then
-			myrole = " Want a " .. addon.groupieRoleTable[groupielfg_db.groupieSpec1Role] .. "?"
+		if addon.db.char.groupieSpec1Role ~= nil then
+			myrole = " Want a " .. addon.groupieRoleTable[addon.db.char.groupieSpec1Role] .. "?"
 		else
 			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the Groupie Character Options tab.")
 		end
 	elseif specGroup == 2 then
-		if groupielfg_db.groupieSpec2Role ~= nil then
-			myrole = " Want a " .. addon.groupieRoleTable[groupielfg_db.groupieSpec2Role] .. "?"
+		if addon.db.char.groupieSpec2Role ~= nil then
+			myrole = " Want a " .. addon.groupieRoleTable[addon.db.char.groupieSpec2Role] .. "?"
 		else
 			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the Groupie Character Options tab.")
 		end

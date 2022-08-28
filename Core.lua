@@ -5,40 +5,6 @@ local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName,
 local AceGUI = LibStub("AceGUI-3.0")
 local SharedMedia = LibStub("LibSharedMedia-3.0")
 
-local function BuildOptionsTable()
-    if groupielfg_db == nil then
-        --Character Options
-        groupielfg_db = {}
-        groupielfg_db.groupieSpec1Role = nil
-        groupielfg_db.groupieSpec2Role = nil
-        groupielfg_db.recommendedLevelRange = 1
-        groupielfg_db.autoRespondFriends = false
-        groupielfg_db.autoRespondGuild = false
-        groupielfg_db.afterParty = true
-        groupielfg_db.useChannels = {
-            ["Guild"] = true,
-            ["General"] = true,
-            ["Trade"] = true,
-            ["LocalDefense"] = true,
-            ["LookingForGroup"] = true,
-            ["5"] = true,
-        }
-    end
-
-    --Global Options
-    if groupielfg_global == nil then
-        groupielfg_global = {}
-        groupielfg_global.preserveData = true
-        groupielfg_global.minsToPreserve = 2
-        groupielfg_global.font = "Arial Narrow"
-        groupielfg_global.fontSize = 8
-    end
-
-    if addon.debugMenus and groupielfg_global.debugData == nil then
-        groupielfg_global.debugData = {}
-    end
-end
-
 local function BuildGroupieWindow()
     --Dont open a new frame if already open
     if addon._frame and addon._frame.frame:IsShown() then
@@ -109,11 +75,11 @@ local function BuildGroupieWindow()
         spec1Dropdown:SetWidth(125)
         spec1Dropdown:SetCallback("OnValueChanged", function()
             if spec1Dropdown:GetValue() then
-                groupielfg_db.groupieSpec1Role = spec1Dropdown:GetValue()
+                addon.db.char.groupieSpec1Role = spec1Dropdown:GetValue()
             end
         end)
-        if groupielfg_db.groupieSpec1Role ~= nil then
-            spec1Dropdown:SetValue(groupielfg_db.groupieSpec1Role)
+        if addon.db.char.groupieSpec1Role ~= nil then
+            spec1Dropdown:SetValue(addon.db.char.groupieSpec1Role)
         end
         container:AddChild(spec1Dropdown)
 
@@ -139,11 +105,11 @@ local function BuildGroupieWindow()
         spec2Dropdown:SetWidth(125)
         spec2Dropdown:SetCallback("OnValueChanged", function()
             if spec2Dropdown:GetValue() then
-                groupielfg_db.groupieSpec2Role = spec2Dropdown:GetValue()
+                addon.db.char.groupieSpec2Role = spec2Dropdown:GetValue()
             end
         end)
-        if groupielfg_db.groupieSpec2Role ~= nil then
-            spec2Dropdown:SetValue(groupielfg_db.groupieSpec2Role)
+        if addon.db.char.groupieSpec2Role ~= nil then
+            spec2Dropdown:SetValue(addon.db.char.groupieSpec2Role)
         end
         container:AddChild(spec2Dropdown)
 
@@ -164,11 +130,11 @@ local function BuildGroupieWindow()
         recLevelDropdown:SetWidth(220)
         recLevelDropdown:SetCallback("OnValueChanged", function()
             if recLevelDropdown:GetValue() then
-                groupielfg_db.recommendedLevelRange = recLevelDropdown:GetValue()
+                addon.db.char.recommendedLevelRange = recLevelDropdown:GetValue()
             end
         end)
-        if groupielfg_db.recommendedLevelRange ~= nil then
-            recLevelDropdown:SetValue(groupielfg_db.recommendedLevelRange)
+        if addon.db.char.recommendedLevelRange ~= nil then
+            recLevelDropdown:SetValue(addon.db.char.recommendedLevelRange)
         end
         container:AddChild(recLevelDropdown)
 
@@ -181,18 +147,18 @@ local function BuildGroupieWindow()
         local autoRespFriendsBox = AceGUI:Create("CheckBox")
         autoRespFriendsBox:SetLabel("Enable Auto-Respond to Friends")
         autoRespFriendsBox:SetFullWidth(true)
-        autoRespFriendsBox:SetValue(groupielfg_db.autoRespondFriends)
+        autoRespFriendsBox:SetValue(addon.db.char.autoRespondFriends)
         autoRespFriendsBox:SetCallback("OnValueChanged", function()
-            groupielfg_db.autoRespondFriends = autoRespFriendsBox:GetValue()
+            addon.db.char.autoRespondFriends = autoRespFriendsBox:GetValue()
         end)
         container:AddChild(autoRespFriendsBox)
 
         local autoRespGuildBox = AceGUI:Create("CheckBox")
         autoRespGuildBox:SetLabel("Enable Auto-Respond to Guild Members")
         autoRespGuildBox:SetFullWidth(true)
-        autoRespGuildBox:SetValue(groupielfg_db.autoRespondGuild)
+        autoRespGuildBox:SetValue(addon.db.char.autoRespondGuild)
         autoRespGuildBox:SetCallback("OnValueChanged", function()
-            groupielfg_db.autoRespondGuild = autoRespGuildBox:GetValue()
+            addon.db.char.autoRespondGuild = autoRespGuildBox:GetValue()
         end)
         container:AddChild(autoRespGuildBox)
 
@@ -205,9 +171,9 @@ local function BuildGroupieWindow()
         local afterPartyBox = AceGUI:Create("CheckBox")
         afterPartyBox:SetLabel("Enable Groupie After-Party Tool")
         afterPartyBox:SetFullWidth(true)
-        afterPartyBox:SetValue(groupielfg_db.afterParty)
+        afterPartyBox:SetValue(addon.db.char.afterParty)
         afterPartyBox:SetCallback("OnValueChanged", function()
-            groupielfg_db.afterParty = afterPartyBox:GetValue()
+            addon.db.char.afterParty = afterPartyBox:GetValue()
         end)
         container:AddChild(afterPartyBox)
 
@@ -219,49 +185,49 @@ local function BuildGroupieWindow()
 
         local channelGuildBox = AceGUI:Create("CheckBox")
         channelGuildBox:SetLabel("Guild")
-        channelGuildBox:SetValue(groupielfg_db.useChannels["Guild"])
+        channelGuildBox:SetValue(addon.db.char.useChannels["Guild"])
         channelGuildBox:SetCallback("OnValueChanged", function()
-            groupielfg_db.useChannels["Guild"] = channelGuildBox:GetValue()
+            addon.db.char.useChannels["Guild"] = channelGuildBox:GetValue()
         end)
         container:AddChild(channelGuildBox)
 
         local channelGeneralBox = AceGUI:Create("CheckBox")
         channelGeneralBox:SetLabel("General")
-        channelGeneralBox:SetValue(groupielfg_db.useChannels["General"])
+        channelGeneralBox:SetValue(addon.db.char.useChannels["General"])
         channelGeneralBox:SetCallback("OnValueChanged", function()
-            groupielfg_db.useChannels["General"] = channelGeneralBox:GetValue()
+            addon.db.char.useChannels["General"] = channelGeneralBox:GetValue()
         end)
         container:AddChild(channelGeneralBox)
 
         local channelTradeBox = AceGUI:Create("CheckBox")
         channelTradeBox:SetLabel("Trade")
-        channelTradeBox:SetValue(groupielfg_db.useChannels["Trade"])
+        channelTradeBox:SetValue(addon.db.char.useChannels["Trade"])
         channelTradeBox:SetCallback("OnValueChanged", function()
-            groupielfg_db.useChannels["Trade"] = channelTradeBox:GetValue()
+            addon.db.char.useChannels["Trade"] = channelTradeBox:GetValue()
         end)
         container:AddChild(channelTradeBox)
 
         local channelLocDefBox = AceGUI:Create("CheckBox")
         channelLocDefBox:SetLabel("LocalDefense")
-        channelLocDefBox:SetValue(groupielfg_db.useChannels["LocalDefense"])
+        channelLocDefBox:SetValue(addon.db.char.useChannels["LocalDefense"])
         channelLocDefBox:SetCallback("OnValueChanged", function()
-            groupielfg_db.useChannels["LocalDefense"] = channelLocDefBox:GetValue()
+            addon.db.char.useChannels["LocalDefense"] = channelLocDefBox:GetValue()
         end)
         container:AddChild(channelLocDefBox)
 
         local channelLFGBox = AceGUI:Create("CheckBox")
         channelLFGBox:SetLabel("LookingForGroup")
-        channelLFGBox:SetValue(groupielfg_db.useChannels["LookingForGroup"])
+        channelLFGBox:SetValue(addon.db.char.useChannels["LookingForGroup"])
         channelLFGBox:SetCallback("OnValueChanged", function()
-            groupielfg_db.useChannels["LookingForGroup"] = channelLFGBox:GetValue()
+            addon.db.char.useChannels["LookingForGroup"] = channelLFGBox:GetValue()
         end)
         container:AddChild(channelLFGBox)
 
         local channel5Box = AceGUI:Create("CheckBox")
         channel5Box:SetLabel("5")
-        channel5Box:SetValue(groupielfg_db.useChannels["5"])
+        channel5Box:SetValue(addon.db.char.useChannels["5"])
         channel5Box:SetCallback("OnValueChanged", function()
-            groupielfg_db.useChannels["5"] = channel5Box:GetValue()
+            addon.db.char.useChannels["5"] = channel5Box:GetValue()
         end)
         container:AddChild(channel5Box)
 
@@ -277,11 +243,11 @@ local function BuildGroupieWindow()
         container:AddChild(tabTitle)
 
         local preserveBox = AceGUI:Create("CheckBox")
-        preserveBox:SetLabel("Enable Auto-Respond to Guild Members")
+        preserveBox:SetLabel("Preserve Looking for Group Data When Switching Characters")
         preserveBox:SetFullWidth(true)
-        preserveBox:SetValue(groupielfg_global.preserveData)
+        preserveBox:SetValue(addon.db.global.preserveData)
         preserveBox:SetCallback("OnValueChanged", function()
-            groupielfg_global.preserveData = preserveBox:GetValue()
+            addon.db.global.preserveData = preserveBox:GetValue()
         end)
         container:AddChild(preserveBox)
 
@@ -298,11 +264,11 @@ local function BuildGroupieWindow()
         end
         preserveDropdown:SetCallback("OnValueChanged", function()
             if preserveDropdown:GetValue() then
-                groupielfg_global.minsToPreserve = preserveDropdown:GetValue()
+                addon.db.global.minsToPreserve = preserveDropdown:GetValue()
             end
         end)
-        if groupielfg_global.minsToPreserve ~= nil then
-            preserveDropdown:SetValue(groupielfg_global.minsToPreserve)
+        if addon.db.global.minsToPreserve ~= nil then
+            preserveDropdown:SetValue(addon.db.global.minsToPreserve)
         end
         container:AddChild(preserveDropdown)
 
@@ -319,11 +285,11 @@ local function BuildGroupieWindow()
         end
         fontDropdown:SetCallback("OnValueChanged", function()
             if fontDropdown:GetValue() then
-                groupielfg_global.font = fontDropdown:GetValue()
+                addon.db.global.font = fontDropdown:GetValue()
             end
         end)
-        if groupielfg_global.font ~= nil then
-            fontDropdown:SetValue(groupielfg_global.font)
+        if addon.db.global.font ~= nil then
+            fontDropdown:SetValue(addon.db.global.font)
         end
         container:AddChild(fontDropdown)
 
@@ -340,11 +306,11 @@ local function BuildGroupieWindow()
         end
         fontSizeDropdown:SetCallback("OnValueChanged", function()
             if fontSizeDropdown:GetValue() then
-                groupielfg_global.fontSize = fontSizeDropdown:GetValue()
+                addon.db.global.fontSize = fontSizeDropdown:GetValue()
             end
         end)
-        if groupielfg_global.fontSize ~= nil then
-            fontSizeDropdown:SetValue(groupielfg_global.fontSize)
+        if addon.db.global.fontSize ~= nil then
+            fontSizeDropdown:SetValue(addon.db.global.fontSize)
         end
         container:AddChild(fontSizeDropdown)
     end
@@ -364,11 +330,11 @@ local function BuildGroupieWindow()
         curseLabel:SetFullWidth(true)
         container:AddChild(curseLabel)
         local curseEditBox = AceGUI:Create("EditBox")
-        curseEditBox:SetText("https://www.curseforge.com/wow/addons/groupie-lfg")
+        curseEditBox:SetText("https://www.curseforge.com/wow/addons/groupie")
         curseEditBox:DisableButton(true)
         curseEditBox:SetWidth(350)
         curseEditBox:SetCallback("OnTextChanged", function()
-            curseEditBox:SetText("https://www.curseforge.com/wow/addons/groupie-lfg")
+            curseEditBox:SetText("https://www.curseforge.com/wow/addons/groupie")
         end)
         curseEditBox:SetCallback("OnEnterPressed", function()
             curseEditBox.editbox:ClearFocus()
@@ -402,11 +368,11 @@ local function BuildGroupieWindow()
         githubLabel:SetFullWidth(true)
         container:AddChild(githubLabel)
         local githubEditBox = AceGUI:Create("EditBox")
-        githubEditBox:SetText("https://github.com/Gogo1951/Groupie-LFG")
+        githubEditBox:SetText("https://github.com/Gogo1951/Groupie")
         githubEditBox:DisableButton(true)
         githubEditBox:SetWidth(350)
         githubEditBox:SetCallback("OnTextChanged", function()
-            githubEditBox:SetText("https://github.com/Gogo1951/Groupie-LFG")
+            githubEditBox:SetText("https://github.com/Gogo1951/Groupie")
         end)
         githubEditBox:SetCallback("OnEnterPressed", function()
             githubEditBox.editbox:ClearFocus()
@@ -478,16 +444,39 @@ local groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Groupie", {
 })
 local icon = LibStub("LibDBIcon-1.0")
 
-
 --Load minimap icon and saved options
 function addon:OnInitialize()
-    addon.debugMenus = true
-    self.db = LibStub("AceDB-3.0"):New("GroupieDB", { profile = { minimap = { hide = false, }, }, })
+    local defaults = {
+        char = {
+            groupieSpec1Role = nil,
+            groupieSpec2Role = nil,
+            recommendedLevelRange = 1,
+            autoRespondFriends = false,
+            autoRespondGuild = false,
+            afterParty = true,
+            useChannels = {
+                ["Guild"] = true,
+                ["General"] = true,
+                ["Trade"] = true,
+                ["LocalDefense"] = true,
+                ["LookingForGroup"] = true,
+                ["5"] = true,
+            }
+        },
+        global = {
+            preserveData = true,
+            minsToPreserve = 2,
+            font = "Arial Narrow",
+            fontSize = 8,
+            debugData = {}
+        }
+    }
+    addon.db = LibStub("AceDB-3.0"):New("GroupieDB", defaults)
     icon:Register("Groupie", groupieLDB, self.db.profile.minimap)
-    BuildOptionsTable()
+
+    addon.debugMenus = true
+    --Setup Slash Command
+    SLASH_GROUPIE1, SLASH_GROUPIE2 = "/groupie"
+    SlashCmdList["GROUPIE"] = BuildGroupieWindow
     addon.isInitialized = true
 end
-
---Setup Slash Command
-SLASH_GROUPIE1, SLASH_GROUPIE2 = "/groupie"
-SlashCmdList["GROUPIE"] = BuildGroupieWindow

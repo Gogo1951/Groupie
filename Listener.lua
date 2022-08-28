@@ -242,7 +242,7 @@ local function ParseMessage(event, msg, author, _, channel)
     print(groupSize)
 
     if addon.debugMenus then
-        tinsert(groupielfg_global.debugData, { msg, preprocessedStr, addon.groupieListingTable[author] })
+        tinsert(addon.db.global.debugData, { msg, preprocessedStr, addon.groupieListingTable[author] })
     end
     return true
 end
@@ -251,17 +251,17 @@ end
 local function GroupieEventHandlers(...)
     local event, msg, author, _, channel = ...
     local validChannel = false
-    if groupielfg_db.useChannels["Guild"] and strmatch(channel, "Guild") then
+    if addon.db.char.useChannels["Guild"] and strmatch(channel, "Guild") then
         validChannel = true
-    elseif groupielfg_db.useChannels["General"] and strmatch(channel, "General") then
+    elseif addon.db.char.useChannels["General"] and strmatch(channel, "General") then
         validChannel = true
-    elseif groupielfg_db.useChannels["Trade"] and strmatch(channel, "Trade") then
+    elseif addon.db.char.useChannels["Trade"] and strmatch(channel, "Trade") then
         validChannel = true
-    elseif groupielfg_db.useChannels["LocalDefense"] and strmatch(channel, "LocalDefense") then
+    elseif addon.db.char.useChannels["LocalDefense"] and strmatch(channel, "LocalDefense") then
         validChannel = true
-    elseif groupielfg_db.useChannels["LookingForGroup"] and strmatch(channel, "LookingForGroup") then
+    elseif addon.db.char.useChannels["LookingForGroup"] and strmatch(channel, "LookingForGroup") then
         validChannel = true
-    elseif groupielfg_db.useChannels["5"] and strmatch(channel, "5. ") then
+    elseif addon.db.char.useChannels["5"] and strmatch(channel, "5. ") then
         validChannel = true
     end
     if validChannel then

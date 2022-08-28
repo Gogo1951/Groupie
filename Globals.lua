@@ -41,9 +41,9 @@ addon.groupieClassRoleTable = {
         ["Survival"] = { 3 }
     },
     ["Mage"] = {
-        ["Arcane"] = {},
-        ["Fire"] = {},
-        ["Frost"] = {}
+        ["Arcane"] = { 3 },
+        ["Fire"] = { 3 },
+        ["Frost"] = { 3 }
     },
     ["Paladin"] = {
         ["Holy"] = { 2 },
