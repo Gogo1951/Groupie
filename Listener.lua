@@ -1,6 +1,17 @@
 local addonName, addon = ...
 local AceEvent = LibStub("AceEvent-3.0")
 AceEvent:Embed(addon)
+
+--Local Function References for performance reasons
+local gsub = gsub
+local pairs = pairs
+local strmatch = strmatch
+local strsub = strsub
+local time = time
+local tinsert = tinsert
+local next = next
+local format = format
+
 --Extract a specified language from an LFG message, if it exists
 local function GetLanguage(messageWords)
     local language = nil
@@ -128,7 +139,7 @@ local function GetDungeons(messageWords)
         forceSize = possibleVersions[1][1]
         isHeroic = possibleVersions[1][2]
     end
-
+    print(instance, isHeroic, forceSize)
     return instance, isHeroic, forceSize
 end
 
@@ -164,7 +175,7 @@ local function ParseMessage(event, msg, author, _, channel)
 
     for i = 1, #messageWords do
         --handle cases of 'LF3M', etc by removing numbers for this part
-        local word = string.gsub(messageWords[i], "%d", "")
+        local word = gsub(messageWords[i], "%d", "")
         local patternType = addon.groupieLFPatterns[word]
         if patternType ~= nil then
             if patternType == 0 then --Generic LFM
@@ -211,13 +222,13 @@ local function ParseMessage(event, msg, author, _, channel)
     --The full versioned instance name for use in data table
     local fullName = groupDungeon
     if isHeroic then
-        fullName = "Heroic " .. fullName
+        fullName = format("Heroic %s", fullName)
     end
     if #addon.instanceVersions[groupDungeon] > 1 then
         if groupSize == 10 then
-            fullName = fullName .. " - 10"
+            fullName = format("%s - 10", fullName)
         elseif groupSize == 25 then
-            fullName = fullName .. " - 25"
+            fullName = format("%s - 25", fullName)
         end
     end
 
@@ -237,10 +248,6 @@ local function ParseMessage(event, msg, author, _, channel)
     addon.groupieListingTable[author].lootType = lootType
     addon.groupieListingTable[author].rolesNeeded = rolesNeeded
     --Collect data to debug with
-    print(groupDungeon)
-    print(isHeroic)
-    print(groupSize)
-
     if addon.debugMenus then
         tinsert(addon.db.global.debugData, { msg, preprocessedStr, addon.groupieListingTable[author] })
     end
