@@ -13,10 +13,10 @@ A better LFG tool for Classic WoW.
 
 **Links**
 
-Download from CurseForge : <https://www.curseforge.com/wow/addons/groupie-lfg>
+Download from CurseForge : <https://www.curseforge.com/wow/addons/groupie>
 
 Discord : <https://discord.gg/p68QgZ8uqF>
 
-Github : <https://github.com/Gogo1951/Groupie-LFG>
+Github : <https://github.com/Gogo1951/Groupie>
 
 Reddit Announcement Post : COMING SOON!
