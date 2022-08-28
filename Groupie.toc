@@ -2,7 +2,7 @@
 ## Title: Groupie
 ## Notes: A better LFG tool for Classic WoW.
 ## Version: 0.1
-## Author: Gogo, TannerShmoog, SabreValkyrn
+## Author: Gogo, TannerShmoog, SabreValkyrn, Fathom
 ## SavedVariables: groupielfg_global
 ## SavedVariablesPerCharacter: groupielfg_db
 ## X-Curse-Project-ID: 661450
