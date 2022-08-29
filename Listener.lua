@@ -145,7 +145,7 @@ end
 
 --Extract the loot system being used by the party
 local function GetGroupType(messageWords)
-    local lootType = "MS>OS"
+    local lootType = nil
     for i = 1, #messageWords do
         local word = messageWords[i]
 
@@ -212,15 +212,13 @@ local function ParseMessage(event, msg, author, _, channel)
         if groupDungeon == nil then
             return false --No dungeon Found
         end
-        if lootType == nil then
-            lootType = GetGroupType(messageWords) --Defaults to MS>OS if not mentioned
-        end
+        lootType = GetGroupType(messageWords) --Defaults to MS>OS if not mentioned
     else
         return false --This is not an LFM or LFG post
     end
 
     --Return false if any required information could not be found
-    if isHeroic == nil or groupSize == nil or lootType == nil then
+    if isHeroic == nil or groupSize == nil then
         return false
     end
 
@@ -256,6 +254,7 @@ local function ParseMessage(event, msg, author, _, channel)
     if addon.debugMenus then
         tinsert(addon.db.global.debugData, { msg, preprocessedStr, addon.groupieListingTable[author] })
     end
+    print(lootType)
     return true
 end
 
