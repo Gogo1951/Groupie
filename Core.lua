@@ -215,7 +215,7 @@ end
 -- AceConfig Setup --
 ---------------------
 function addon.SetupConfig()
-    local options = {
+    addon.options = {
         name = addonName,
         desc = "Optional description? for the group of options",
         descStyle = "inline",
@@ -248,7 +248,7 @@ function addon.SetupConfig()
                         name = "",
                         order = 3,
                         width = 1.4,
-                        values = addon.groupieClassRoleTable[UnitClass("player")][addon.GetSpecByGroupNum(1)],
+                        values = addon.groupieClassRoleTable[UnitClass("player")][addon.GetSpecByGroupNum(2)],
                         set = function(info, val) addon.db.char.groupieSpec1Role = val end,
                         get = function(info) return addon.db.char.groupieSpec1Role end,
                     },
@@ -488,7 +488,7 @@ function addon.SetupConfig()
             },
         },
     }
-    addon.optionsTable = LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, options)
+    LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, addon.options)
     addon.AceConfigDialog = LibStub("AceConfigDialog-3.0")
     addon.optionsFrame = addon.AceConfigDialog:AddToBlizOptions(addonName, addonName)
     if addon.db.global.showMinimap == false then
@@ -496,11 +496,31 @@ function addon.SetupConfig()
     end
 end
 
---This must be done after player entering world event so that we can pull spec
-addon:RegisterEvent("PLAYER_ENTERING_WORLD", addon.SetupConfig)
-
 function addon:OpenConfig()
     InterfaceOptionsFrame_OpenToCategory(addonName)
     -- need to call it a second time as there is a bug where the first time it won't switch !BlizzBugsSuck has a fix
     InterfaceOptionsFrame_OpenToCategory(addonName)
 end
+
+--This must be done after player entering world event so that we can pull spec
+addon:RegisterEvent("PLAYER_ENTERING_WORLD", addon.SetupConfig)
+
+--Update our options menu dropdowns when the player's specialization changes
+function addon.UpdateSpecOptions()
+    --Set labels
+    addon.options.args.charoptions.args.header2.name = "|cffffd900Spec 1 Role - " .. addon.GetSpecByGroupNum(1)
+    addon.options.args.charoptions.args.header3.name = "|cffffd900Spec 2 Role - " .. addon.GetSpecByGroupNum(2)
+    --Set dropdowns
+    addon.options.args.charoptions.args.spec1Dropdown.values = addon.groupieClassRoleTable[UnitClass("player")][
+        addon.GetSpecByGroupNum(1)]
+    addon.options.args.charoptions.args.spec2Dropdown.values = addon.groupieClassRoleTable[UnitClass("player")][
+        addon.GetSpecByGroupNum(2)]
+    --Reset to default value
+    addon.db.char.groupieSpec1Role = nil
+    addon.db.char.groupieSpec2Role = nil
+end
+
+--Leave this commented for now, may trigger when swapping dual specs, which we dont want to reset settings
+--Only actual talent changes
+--addon:RegisterEvent("PLAYER_TALENT_UPDATE", addon.UpdateSpecOptions)
+addon:RegisterEvent("CHARACTER_POINTS_CHANGED", addon.UpdateSpecOptions)
