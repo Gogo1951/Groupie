@@ -42,88 +42,6 @@ local function BuildGroupieWindow()
         container:AddChild(desc)
     end
 
-    --Global Options Tab
-    local function DrawGlobalOptions(container)
-        local tabTitle = AceGUI:Create("Label")
-        tabTitle:SetText("Groupie | Global Options")
-        tabTitle:SetColor(0.88, 0.73, 0)
-        tabTitle:SetFontObject(GameFontHighlightHuge)
-        tabTitle:SetFullWidth(true)
-        container:AddChild(tabTitle)
-
-        local preserveBox = AceGUI:Create("CheckBox")
-        preserveBox:SetLabel("Preserve Looking for Group Data When Switching Characters")
-        preserveBox:SetFullWidth(true)
-        preserveBox:SetValue(addon.db.global.preserveData)
-        preserveBox:SetCallback("OnValueChanged", function()
-            addon.db.global.preserveData = preserveBox:GetValue()
-        end)
-        container:AddChild(preserveBox)
-
-        local preserveTitle = AceGUI:Create("Label")
-        preserveTitle:SetText("Preserve Looking For Group Data Duration")
-        preserveTitle:SetFontObject(GameFontNormalMed2)
-        preserveTitle:SetFullWidth(true)
-        container:AddChild(preserveTitle)
-
-        local preserveDropdown = AceGUI:Create("Dropdown")
-        preserveDropdown:SetWidth(125)
-        for durationTemp = 2, 5 do
-            preserveDropdown:AddItem(durationTemp, tostring(durationTemp) .. " Minutes")
-        end
-        preserveDropdown:SetCallback("OnValueChanged", function()
-            if preserveDropdown:GetValue() then
-                addon.db.global.minsToPreserve = preserveDropdown:GetValue()
-            end
-        end)
-        if addon.db.global.minsToPreserve ~= nil then
-            preserveDropdown:SetValue(addon.db.global.minsToPreserve)
-        end
-        container:AddChild(preserveDropdown)
-
-        local fontTitle = AceGUI:Create("Label")
-        fontTitle:SetText("Font")
-        fontTitle:SetFontObject(GameFontNormalMed2)
-        fontTitle:SetFullWidth(true)
-        container:AddChild(fontTitle)
-
-        local fontDropdown = AceGUI:Create("Dropdown")
-        fontDropdown:SetWidth(250)
-        for key, val in pairs(SharedMedia:HashTable("font")) do
-            fontDropdown:AddItem(key, key)
-        end
-        fontDropdown:SetCallback("OnValueChanged", function()
-            if fontDropdown:GetValue() then
-                addon.db.global.font = fontDropdown:GetValue()
-            end
-        end)
-        if addon.db.global.font ~= nil then
-            fontDropdown:SetValue(addon.db.global.font)
-        end
-        container:AddChild(fontDropdown)
-
-        local fontSizeTitle = AceGUI:Create("Label")
-        fontSizeTitle:SetText("Base Font Size")
-        fontSizeTitle:SetFontObject(GameFontNormalMed2)
-        fontSizeTitle:SetFullWidth(true)
-        container:AddChild(fontSizeTitle)
-
-        local fontSizeDropdown = AceGUI:Create("Dropdown")
-        fontSizeDropdown:SetWidth(75)
-        for fontSizeTemp = 8, 20, 2 do
-            fontSizeDropdown:AddItem(fontSizeTemp, tostring(fontSizeTemp) .. " pt")
-        end
-        fontSizeDropdown:SetCallback("OnValueChanged", function()
-            if fontSizeDropdown:GetValue() then
-                addon.db.global.fontSize = fontSizeDropdown:GetValue()
-            end
-        end)
-        if addon.db.global.fontSize ~= nil then
-            fontSizeDropdown:SetValue(addon.db.global.fontSize)
-        end
-        container:AddChild(fontSizeDropdown)
-    end
-
     --About Tab
     local function DrawAbout(container)
         local tabTitle = AceGUI:Create("Label")
@@ -203,8 +121,6 @@ local function BuildGroupieWindow()
             DrawGroupFilter(container)
         elseif group == "instancefilter" then
             DrawInstanceFilter(container)
-        elseif group == "globaloption" then
-            DrawGlobalOptions(container)
         elseif group == "about" then
             DrawAbout(container)
         end
@@ -222,7 +138,6 @@ local function BuildGroupieWindow()
         { text = "Group Builder", value = "groupbuilder" },
         { text = "Group Filters", value = "groupfilter" },
         { text = "Instance Filters", value = "instancefilter" },
-        { text = "Global Options", value = "globaloption" },
         { text = "About", value = "about" }
     })
     tab:SetCallback("OnGroupSelected", SelectGroup)
@@ -237,7 +152,7 @@ local function BuildGroupieWindow()
 end
 
 --Minimap Icon Creation
-local groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Groupie", {
+addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Groupie", {
     type = "data source",
     text = "Groupie",
     icon = "Interface\\AddOns\\Groupie\\Images\\icon64.tga",
@@ -252,7 +167,6 @@ local groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Groupie", {
 --------------------------
 -- Addon Initialization --
 --------------------------
-addon.icon = LibStub("LibDBIcon-1.0")
 function addon:OnInitialize()
     local defaults = {
         char = {
@@ -282,12 +196,10 @@ function addon:OnInitialize()
     }
 
     addon.db = LibStub("AceDB-3.0"):New("GroupieDB", defaults)
-    addon.icon:Register("Groupie", groupieLDB, addon.db.global.showMinimap)
-    if addon.db.global.showMinimap then
-        addon.icon:Show()
-    else
-        addon.icon:Hide()
-    end
+    addon.icon = LibStub("LibDBIcon-1.0")
+    addon.icon:Register("GroupieLDB", addon.groupieLDB, addon.db.global)
+    --addon.icon:Show()
+    addon.icon:Hide("GroupieLDB")
 
 
     addon.debugMenus = true
@@ -483,9 +395,94 @@ function addon.SetupConfig()
                 inline = false,
                 args = {
                     header1 = {
-                        type = "header",
-                        name = "Groupie | " .. UnitName("player") .. " Options",
+                        type = "description",
+                        name = "|cffffd900Groupie | Global Options",
                         order = 0,
+                        fontSize = "large"
+                    },
+                    spacerdesc1 = { type = "description", name = " ", width = "full", order = 1 },
+                    minimapToggle = {
+                        type = "toggle",
+                        name = "Enable Minimap Button",
+                        order = 2,
+                        width = "full",
+                        get = function(info) return addon.db.global.showMinimap end,
+                        set = function(info, val)
+                            addon.db.global.showMinimap = val
+                            if val == true then
+                                addon.icon:Show("GroupieLDB")
+                            else
+                                addon.icon:Hide("GroupieLDB")
+                            end
+                        end,
+                    },
+                    --spacerdesc2 = { type = "description", name = " ", width = "full", order = 3 },
+                    preserveDataToggle = {
+                        type = "toggle",
+                        name = "Preserve Looking for Group Data When Switching Characters",
+                        order = 4,
+                        width = "full",
+                        get = function(info) return addon.db.global.preserveData end,
+                        set = function(info, val) addon.db.global.preserveData = val end,
+                    },
+                    spacerdesc3 = { type = "description", name = " ", width = "full", order = 5 },
+                    header2 = {
+                        type = "description",
+                        name = "|cffffd900Preserve Looking for Group Data Duration",
+                        order = 6,
+                        fontSize = "medium"
+                    },
+                    preserveDurationDropdown = {
+                        type = "select",
+                        style = "dropdown",
+                        name = "",
+                        order = 7,
+                        width = 1.4,
+                        values = { [2] = "2 Minutes", [3] = "3 Minutes", [4] = "4 Minutes", [5] = "5 Minutes" },
+                        set = function(info, val) addon.db.global.minsToPreserve = val end,
+                        get = function(info) return addon.db.global.minsToPreserve end,
+                    },
+                    spacerdesc4 = { type = "description", name = " ", width = "full", order = 8 },
+                    header3 = {
+                        type = "description",
+                        name = "|cffffd900Font",
+                        order = 9,
+                        fontSize = "medium"
+                    },
+                    fontDropdown = {
+                        type = "select",
+                        style = "dropdown",
+                        name = "",
+                        order = 10,
+                        width = 1.4,
+                        values = addon.TableFlip(SharedMedia:HashTable("font")),
+                        set = function(info, val) addon.db.global.font = val end,
+                        get = function(info) return addon.db.global.font end,
+                    },
+                    spacerdesc5 = { type = "description", name = " ", width = "full", order = 11 },
+                    header4 = {
+                        type = "description",
+                        name = "|cffffd900Base Font Size",
+                        order = 12,
+                        fontSize = "medium"
+                    },
+                    fontSizeDropdown = {
+                        type = "select",
+                        style = "dropdown",
+                        name = "",
+                        order = 13,
+                        width = 1.4,
+                        values = {
+                            [8] = "8 pt",
+                            [10] = "10 pt",
+                            [12] = "12 pt",
+                            [14] = "14 pt",
+                            [16] = "16 pt",
+                            [18] = "18 pt",
+                            [20] = "20 pt",
+                        },
+                        set = function(info, val) addon.db.global.fontSize = val end,
+                        get = function(info) return addon.db.global.fontSize end,
                     },
                 },
             },
@@ -494,6 +491,9 @@ function addon.SetupConfig()
     addon.optionsTable = LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, options)
     addon.AceConfigDialog = LibStub("AceConfigDialog-3.0")
     addon.AceConfigDialog:AddToBlizOptions(addonName, addonName)
+    if addon.db.global.showMinimap == false then
+        addon.icon:Hide("GroupieLDB")
+    end
 end
 
 --This must be done after player entering world event so that we can pull spec
