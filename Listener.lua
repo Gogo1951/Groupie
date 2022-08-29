@@ -152,7 +152,10 @@ local function GetGroupType(messageWords)
         --Look for loot type patterns
         local lookupAttempt = addon.groupieLootPatterns[word]
         if lookupAttempt ~= nil then
-            lootType = lookupAttempt
+            --Because GDKP messages sometimes include the word carry, avoid overwriting in this case
+            if lookupAttempt ~= "Ticket" or lootType ~= "GDKP" then
+                lootType = lookupAttempt
+            end
         end
     end
 
@@ -192,7 +195,7 @@ local function ParseMessage(event, msg, author, _, channel)
                 isLFG = true
             elseif patternType == 5 then --Boost run
                 isLFM = true
-                lootType = "boost"
+                lootType = "Ticket"
             end
             --If a role was mentioned but not LFG OR LFM, assume it is LFM
             if not isLFM and not isLFG and next(rolesNeeded) ~= nil then
@@ -209,7 +212,9 @@ local function ParseMessage(event, msg, author, _, channel)
         if groupDungeon == nil then
             return false --No dungeon Found
         end
-        lootType = GetGroupType(messageWords) --Defaults to MS>OS if not mentioned
+        if lootType == nil then
+            lootType = GetGroupType(messageWords) --Defaults to MS>OS if not mentioned
+        end
     else
         return false --This is not an LFM or LFG post
     end

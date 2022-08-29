@@ -114,25 +114,25 @@ addon.groupieLFPatterns = {
     ["running"] = 0,
 
     ["lftank"] = 1,
+    ["lftanks"] = 1,
     ["tank"] = 1,
-    ["xtank"] = 1,
+    ["tanks"] = 1,
 
     ["lfheal"] = 2,
     ["lfhealer"] = 2,
     ["lfheals"] = 2,
+    ["lfhealers"] = 2,
     ["heal"] = 2,
     ["heals"] = 2,
     ["healer"] = 2,
-    ["xheal"] = 2,
-    ["xhealer"] = 2,
-    ["xheals"] = 2,
+    ["healers"] = 2,
 
     ["lfdps"] = 3,
-    ["lfdd"] = 3,
     ["dps"] = 3,
-    ["dd"] = 3,
-    ["xdps"] = 3,
-    ["xdd"] = 3,
+    ["melee"] = 3,
+    ["ranged"] = 3,
+    ["lfmelee"] = 3,
+    ["lfranged"] = 3,
 
     ["lfg"] = 4,
 
@@ -140,15 +140,17 @@ addon.groupieLFPatterns = {
     ["boosts"] = 5,
     ["boosting"] = 5,
     ["wts"] = 5,
-    ["carry"] = 5
+    ["carry"] = 5,
+    ["ticket"] = 5,
+    ["selling"] = 5,
+    ["buyer"] = 5
 }
 
 addon.groupieUnflippedLootPatterns = {
-    ["Ticket"] = "ticket",
+    ["Ticket"] = "ticket carry boost boosts boosting wts",
     ["GDKP"] = "gdkp",
     ["Soft Reserve"] = "sr softres softreserve soft",
-    ["MS>OS"] = "msos ms>os ms os",
-    ["Boost"] = "boost boosts carry"
+    ["MS>OS"] = "msos"
 }
 
 --For now, this only supports English, but implemented such that localization would be easy in the future
@@ -630,7 +632,7 @@ addon.groupieUnflippedDungeonPatterns = {
     ["Maraudon - Orange"]              = "marorange maraorange maraudonorange orange",
     ["The Temple of Atal'Hakkar"]      = "st sunken atal temple",
     ["Blackrock Depths"]               = "brd emperor emp arenarun angerforge blackrockdepth",
-    ["Dire Maul - Full Clear"]         = "dire maul diremaul",
+    ["Dire Maul - Full Clear"]         = "dm dire maul diremaul",
     ["Dire Maul - East Wing"]          = "dme dmeast east puzilin jumprun",
     ["Dire Maul - North Wing"]         = "dmn dmnorth north tribute",
     ["Dire Maul - West Wing"]          = "dmw dmwest west",

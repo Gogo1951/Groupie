@@ -47,7 +47,8 @@ end
 
 --Replace all non alphanumeric characters with a space, trim excess spaces, and convert to all lower case
 function addon.Preprocess(msg)
-    return strlower(string.gsub(string.gsub(msg, "%W", " "), "%s+", " "))
+    local gsub = gsub
+    return gsub(strlower(gsub(gsub(msg, "%W", " "), "%s+", " ")), "ms os", "msos")
 end
 
 --Reverse a table by creating a new one

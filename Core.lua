@@ -104,11 +104,17 @@ function addon:SetMyMessage(info, input)
 end
 
 function addon:GetFlag1(info)
-    return false
+    return addon.db.global.showMinimap
 end
 
 function addon:SetFlag1(info, input)
-
+    addon.db.global.showMinimap = not addon.db.global.showMinimap
+    print(addon.db.global.showMinimap)
+    if addon.db.global.showMinimap then
+        addon.icon:Show()
+    else
+        addon.icon:Hide()
+    end
 end
 
 function addon:GetFlag2(info)
@@ -569,7 +575,7 @@ local groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Groupie", {
 --------------------------
 -- Addon Initialization --
 --------------------------
-local icon = LibStub("LibDBIcon-1.0")
+addon.icon = LibStub("LibDBIcon-1.0")
 function addon:OnInitialize()
     local defaults = {
         char = {
@@ -593,11 +599,17 @@ function addon:OnInitialize()
             minsToPreserve = 2,
             font = "Arial Narrow",
             fontSize = 8,
-            debugData = {}
+            debugData = {},
+            showMinimap = false
         }
     }
     addon.db = LibStub("AceDB-3.0"):New("GroupieDB", defaults)
-    icon:Register("Groupie", groupieLDB, self.db.profile.minimap)
+    addon.icon:Register("Groupie", groupieLDB, addon.db.global.showMinimap)
+    if addon.db.global.showMinimap then
+        addon.icon:Show()
+    else
+        addon.icon:Hide()
+    end
     AceConfigDialog:AddToBlizOptions(addonName, "Groupie")
     addon.debugMenus = true
     --Setup Slash Command
