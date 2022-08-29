@@ -193,9 +193,9 @@ local function ParseMessage(event, msg, author, _, channel)
             elseif patternType == 4 then --LFG
                 isLFM = false
                 isLFG = true
-            elseif patternType == 5 then --Boost run
+            elseif patternType == 5 then --Other Groups
                 isLFM = true
-                lootType = "Ticket"
+                lootType = "Other"
             end
             --If a role was mentioned but not LFG OR LFM, assume it is LFM
             if not isLFM and not isLFG and next(rolesNeeded) ~= nil then
@@ -212,7 +212,9 @@ local function ParseMessage(event, msg, author, _, channel)
         if groupDungeon == nil then
             return false --No dungeon Found
         end
-        lootType = GetGroupType(messageWords) --Defaults to MS>OS if not mentioned
+        if lootType == nil then
+            lootType = GetGroupType(messageWords) --Defaults to MS>OS if not mentioned
+        end
     else
         return false --This is not an LFM or LFG post
     end

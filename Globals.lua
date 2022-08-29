@@ -140,17 +140,14 @@ addon.groupieLFPatterns = {
     ["boosts"] = 5,
     ["boosting"] = 5,
     ["wts"] = 5,
-    ["carry"] = 5,
-    ["ticket"] = 5,
-    ["selling"] = 5,
-    ["buyer"] = 5
 }
 
 addon.groupieUnflippedLootPatterns = {
-    ["Ticket"] = "ticket carry boost boosts boosting wts",
+    ["Ticket"] = "ticket carry selling",
     ["GDKP"] = "gdkp",
     ["Soft Reserve"] = "sr softres softreserve soft",
-    ["MS>OS"] = "msos"
+    ["MS>OS"] = "msos",
+    ["Other"] = "boost boosts boosting wts"
 }
 
 --For now, this only supports English, but implemented such that localization would be easy in the future

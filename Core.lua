@@ -28,20 +28,6 @@ local function BuildGroupieWindow()
         container:AddChild(desc)
     end
 
-    --Group Filter Tab
-    local function DrawGroupFilter(container)
-        local desc = AceGUI:Create("Label")
-        desc:SetText("Group filters tab.")
-        container:AddChild(desc)
-    end
-
-    --Instance Filter Tab
-    local function DrawInstanceFilter(container)
-        local desc = AceGUI:Create("Label")
-        desc:SetText("Instance filters tab.")
-        container:AddChild(desc)
-    end
-
     --About Tab
     local function DrawAbout(container)
         local tabTitle = AceGUI:Create("Label")
@@ -117,10 +103,6 @@ local function BuildGroupieWindow()
             DrawMainTab(container)
         elseif group == "groupbuilder" then
             DrawGroupBuilder(container)
-        elseif group == "groupfilter" then
-            DrawGroupFilter(container)
-        elseif group == "instancefilter" then
-            DrawInstanceFilter(container)
         elseif group == "about" then
             DrawAbout(container)
         end
@@ -136,8 +118,6 @@ local function BuildGroupieWindow()
     tab:SetLayout("Flow")
     tab:SetTabs({ { text = addonName, value = "maintab" },
         { text = "Group Builder", value = "groupbuilder" },
-        { text = "Group Filters", value = "groupfilter" },
-        { text = "Instance Filters", value = "instancefilter" },
         { text = "About", value = "about" }
     })
     tab:SetCallback("OnGroupSelected", SelectGroup)
@@ -222,6 +202,40 @@ function addon.SetupConfig()
         handler = addon,
         type = 'group',
         args = {
+            instancefilters = {
+                name = "Instance Filters",
+                desc = "Filter Groups by Instance",
+                type = "group",
+                width = "double",
+                inline = false,
+                args = {
+                    header1 = {
+                        type = "description",
+                        name = "|cffffd900" .. addonName .. " | Instance Filters",
+                        order = 0,
+                        fontSize = "large"
+                    },
+                    spacerdesc1 = { type = "description", name = " ", width = "full", order = 1 },
+                    wrath25HToggle = {
+                        type = "toggle",
+                        name = "Wrath of the Lich Heroic Raids - 25",
+                        order = 2,
+                        width = "full",
+                        get = function(info) return 1 end,
+                        set = function(info, val) local foo = val end,
+                    },
+                }
+            },
+            groupfilters = {
+                name = "Group Filters",
+                desc = "Filter Groups by Other Properties",
+                type = "group",
+                width = "double",
+                inline = false,
+                args = {
+
+                }
+            },
             charoptions = {
                 name = "Character Options",
                 desc = "Change Character-Specific Settings",
