@@ -75,8 +75,3 @@ end
 function addon.EndsWith(str, pattern)
     return pattern == "" or str:sub(- #pattern) == pattern
 end
-
---Generate a table for use in config spec dropdown
-function addon.GenerateRoleDropdown(class, spec)
-
-end
