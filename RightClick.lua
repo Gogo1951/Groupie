@@ -40,19 +40,21 @@ local function SendPlayerInfo(specGroup, targetName)
 		if addon.db.char.groupieSpec1Role ~= nil then
 			myrole = " Want a " .. addon.groupieRoleTable[addon.db.char.groupieSpec1Role] .. "?"
 		else
-			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the Groupie Character Options tab.")
+			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the " ..
+				addonName .. " Character Options tab.")
 		end
 	elseif specGroup == 2 then
 		if addon.db.char.groupieSpec2Role ~= nil then
 			myrole = " Want a " .. addon.groupieRoleTable[addon.db.char.groupieSpec2Role] .. "?"
 		else
-			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the Groupie Character Options tab.")
+			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the " ..
+				addonName .. " Character Options tab.")
 		end
 	end
 
 
 	--Sending Current Spec Info
-	SendChatMessage("{rt3} Groupie :" ..
+	SendChatMessage("{rt3} " .. addonName .. " :" ..
 		myrole ..
 		" Level " ..
 		mylevel ..
@@ -99,7 +101,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		info.notClickable = true
 		info.notCheckable = true
 		info.isTitle = true
-		info.text = "Groupie"
+		info.text = addonName
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 
 		info = UIDropDownMenu_CreateInfo()
@@ -135,7 +137,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 				local myname = UnitName("player")
 				local myserver = GetRealmName()
 				local link = format("https://classic.warcraftlogs.com/character/us/%s/%s", myserver, myname)
-				SendChatMessage("{rt3} Groupie : Warcraft Logs Link " .. link, "WHISPER", "COMMON", name)
+				SendChatMessage("{rt3} " .. addonName .. " : Warcraft Logs Link " .. link, "WHISPER", "COMMON", name)
 			end
 			info.text = "Warcraft Logs Link"
 			info.leftPadding = 8

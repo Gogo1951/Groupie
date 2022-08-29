@@ -45,7 +45,7 @@ local function BuildGroupieWindow()
     --About Tab
     local function DrawAbout(container)
         local tabTitle = AceGUI:Create("Label")
-        tabTitle:SetText("Groupie | About")
+        tabTitle:SetText(addonName .. " | About")
         tabTitle:SetColor(0.88, 0.73, 0)
         tabTitle:SetFontObject(GameFontHighlightHuge)
         tabTitle:SetFullWidth(true)
@@ -53,7 +53,7 @@ local function BuildGroupieWindow()
 
 
         local curseLabel = AceGUI:Create("Label")
-        curseLabel:SetText("Groupie on CurseForge")
+        curseLabel:SetText(addonName .. " on CurseForge")
         curseLabel:SetFullWidth(true)
         container:AddChild(curseLabel)
         local curseEditBox = AceGUI:Create("EditBox")
@@ -72,7 +72,7 @@ local function BuildGroupieWindow()
         container:AddChild(curseEditBox)
 
         local discordLabel = AceGUI:Create("Label")
-        discordLabel:SetText("Groupie on Discord")
+        discordLabel:SetText(addonName .. " on Discord")
         discordLabel:SetFullWidth(true)
         container:AddChild(discordLabel)
         local discordEditBox = AceGUI:Create("EditBox")
@@ -91,7 +91,7 @@ local function BuildGroupieWindow()
         container:AddChild(discordEditBox)
 
         local githubLabel = AceGUI:Create("Label")
-        githubLabel:SetText("Groupie on GitHub")
+        githubLabel:SetText(addonName .. " on GitHub")
         githubLabel:SetFullWidth(true)
         container:AddChild(githubLabel)
         local githubEditBox = AceGUI:Create("EditBox")
@@ -127,14 +127,14 @@ local function BuildGroupieWindow()
     end
 
     local frame = AceGUI:Create("Frame")
-    frame:SetTitle("Groupie")
+    frame:SetTitle(addonName)
     frame:SetCallback("OnClose", function(widget) AceGUI:Release(widget) end)
     frame:SetLayout("Fill")
 
     --Creating Tabgroup
     local tab = AceGUI:Create("TabGroup")
     tab:SetLayout("Flow")
-    tab:SetTabs({ { text = "Groupie", value = "maintab" },
+    tab:SetTabs({ { text = addonName, value = "maintab" },
         { text = "Group Builder", value = "groupbuilder" },
         { text = "Group Filters", value = "groupfilter" },
         { text = "Instance Filters", value = "instancefilter" },
@@ -152,15 +152,15 @@ local function BuildGroupieWindow()
 end
 
 --Minimap Icon Creation
-addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Groupie", {
+addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
     type = "data source",
-    text = "Groupie",
-    icon = "Interface\\AddOns\\Groupie\\Images\\icon64.tga",
+    text = addonName,
+    icon = "Interface\\AddOns\\" .. addonName .. "\\Images\\icon64.tga",
     OnClick = BuildGroupieWindow,
     OnTooltipShow = function(tooltip)
-        tooltip:AddLine("Groupie")
+        tooltip:AddLine(addonName)
         tooltip:AddLine("A better LFG tool for Classic WoW.", 255, 255, 255, false)
-        tooltip:AddLine("Click to open Groupie", 255, 255, 255, false)
+        tooltip:AddLine("Click to open " .. addonName .. ", 255, 255, 255, false")
     end
 })
 
@@ -231,7 +231,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cffffd900Groupie | " .. UnitName("player") .. " Options",
+                        name = "|cffffd900" .. addonName .. " | " .. UnitName("player") .. " Options",
                         order = 0,
                         fontSize = "large"
                     },
@@ -295,7 +295,7 @@ function addon.SetupConfig()
                     spacerdesc4 = { type = "description", name = " ", width = "full", order = 10 },
                     header5 = {
                         type = "description",
-                        name = "|cffffd900Groupie Auto-Response",
+                        name = "|cffffd900" .. addonName .. " Auto-Response",
                         order = 11,
                         fontSize = "medium"
                     },
@@ -318,13 +318,13 @@ function addon.SetupConfig()
                     spacerdesc5 = { type = "description", name = " ", width = "full", order = 14 },
                     header6 = {
                         type = "description",
-                        name = "|cffffd900Groupie After-Party Tool",
+                        name = "|cffffd900" .. addonName .. " After-Party Tool",
                         order = 15,
                         fontSize = "medium"
                     },
                     afterPartyToggle = {
                         type = "toggle",
-                        name = "Enable Groupie After-Party Tool",
+                        name = "Enable " .. addonName .. " After-Party Tool",
                         order = 16,
                         width = "full",
                         get = function(info) return addon.db.char.afterParty end,
@@ -396,7 +396,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cffffd900Groupie | Global Options",
+                        name = "|cffffd900" .. addonName .. " | Global Options",
                         order = 0,
                         fontSize = "large"
                     },
