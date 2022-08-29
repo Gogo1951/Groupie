@@ -283,3 +283,5 @@ end
 
 addon:RegisterEvent("CHAT_MSG_CHANNEL", GroupieEventHandlers)
 addon:RegisterEvent("CHAT_MSG_GUILD", GroupieEventHandlers)
+
+--Handle spec update event

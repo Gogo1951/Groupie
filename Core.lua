@@ -5,132 +5,6 @@ local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName,
 local AceGUI = LibStub("AceGUI-3.0")
 local SharedMedia = LibStub("LibSharedMedia-3.0")
 
----------------------
--- AceConfig Setup --
----------------------
-local options = {
-    name = addonName,
-    desc = "Optional description? for the group of options",
-    descStyle = "inline",
-    icon = "Interface/icons/inv_helmet_50", -- this doesn't seem to show on the top level
-    handler = addon,
-    type = 'group',
-    args = {
-        msg = {
-            type = 'input',
-            name = 'My Message',
-            desc = 'The message for my addon',
-            set = 'SetMyMessage',
-            get = 'GetMyMessage',
-            order = 90, -- default is 100 so this will put it at the top of non-ordered ones?
-        },
-        flag1 = {
-            type = 'toggle',
-            name = 'First flag for my addon',
-            desc = 'This can show as a tooltip for the input?',
-            set = 'SetFlag1',
-            get = 'GetFlag1',
-            width = 'full', -- this keeps the checkboxes on one line each
-        },
-        flag2 = {
-            type = 'toggle',
-            name = 'Second flag for my addon',
-            desc = 'This can show as a tooltip for the input?',
-            set = 'SetFlag2',
-            get = 'GetFlag2',
-            width = 'full',
-        },
-        rangetest = {
-            type = 'range',
-            name = 'Range Test',
-            desc = 'A range of values - displayed as a slider?',
-            min = 10,
-            max = 42,
-            step = 1,
-            set = function(info, val) addon.db.profile.rangetest = val end,
-            get = function(info) return addon.db.profile.rangetest end,
-            width = 'double',
-            order = 110,
-        },
-        moreoptions = {
-            name = "More options",
-            desc = "Description of the other options",
-            icon = "Interface/icons/inv_helmet_51",
-            type = "group",
-            width = "double",
-            args = {
-                -- more options go here
-                --   this post helped http://forums.wowace.com/showthread.php?t=13755
-                selecttest = {
-                    type = "select",
-                    name = "Select Test Greetings",
-                    desc = "Should be rendered as a dropdown box?",
-                    style = "dropdown",
-                    values = { ["A"] = "Hi", ["B"] = "Bye", ["Z"] = "Omega" },
-                    set = function(info, val) addon.db.profile.selecttest = val end,
-                    get = function(info) return addon.db.profile.selecttest end,
-                },
-                selectradiotest = {
-                    type = "select",
-                    name = "Which station?",
-                    desc = "Should be rendered as a radiobuttions?",
-                    style = "radio",
-                    values = { [1] = "107.1", [2] = "Chez 102", [3] = "The Rock" },
-                    set = function(info, val) addon.db.profile.selectradiotest = val end,
-                    get = function(info) return addon.db.profile.selectradiotest end,
-                },
-            },
-        },
-    },
-}
-
-local optionsTable = LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, options, { "groupiecfg" })
-local AceConfigDialog = LibStub("AceConfigDialog-3.0")
-function addon:OnEnable()
-    -- Called when the addon is enabled
-end
-
-function addon:OnDisable()
-    -- Called when the addon is disabled
-end
-
--- There is no magic connecting the options and the db.  You need to reference the fields directly in the get and sets.
-function addon:GetMyMessage(info)
-    return "test message :)"
-end
-
-function addon:SetMyMessage(info, input)
-
-end
-
-function addon:GetFlag1(info)
-    return addon.db.global.showMinimap
-end
-
-function addon:SetFlag1(info, input)
-    addon.db.global.showMinimap = not addon.db.global.showMinimap
-    print(addon.db.global.showMinimap)
-    if addon.db.global.showMinimap then
-        addon.icon:Show()
-    else
-        addon.icon:Hide()
-    end
-end
-
-function addon:GetFlag2(info)
-    return true
-end
-
-function addon:SetFlag2(info, input)
-
-end
-
-function addon:OpenConfig()
-    InterfaceOptionsFrame_OpenToCategory(addonName)
-    -- need to call it a second time as there is a bug where the first time it won't switch !BlizzBugsSuck has a fix
-    InterfaceOptionsFrame_OpenToCategory(addonName)
-end
-
 --------------------
 -- User Interface --
 --------------------
@@ -166,200 +40,6 @@ local function BuildGroupieWindow()
         local desc = AceGUI:Create("Label")
         desc:SetText("Instance filters tab.")
         container:AddChild(desc)
-    end
-
-    --Character Options Tab
-    local function DrawCharOptions(container)
-        local playerName = UnitName("player")
-        local realmName = GetRealmName()
-        local spec1 = addon.GetSpecByGroupNum(1)
-        local spec2 = addon.GetSpecByGroupNum(2)
-        local playerClass = UnitClass("player")
-
-        local tabTitle = AceGUI:Create("Label")
-        tabTitle:SetText("Groupie | " .. playerName .. " Options")
-        tabTitle:SetColor(0.88, 0.73, 0)
-        tabTitle:SetFontObject(GameFontHighlightHuge)
-        tabTitle:SetFullWidth(true)
-        container:AddChild(tabTitle)
-
-        local spec1Title = AceGUI:Create("Label")
-        spec1Title:SetText("Main Spec Role")
-        spec1Title:SetFontObject(GameFontNormalMed2)
-        spec1Title:SetFullWidth(true)
-        container:AddChild(spec1Title)
-
-        local spec1Desc = AceGUI:Create("Label")
-        local spec1Name = addon.GetSpecByGroupNum(1)
-        spec1Desc:SetText(spec1Name)
-        spec1Desc:SetFontObject(GameFontNormal)
-        container:AddChild(spec1Desc)
-        local spec1Dropdown = AceGUI:Create("Dropdown")
-        --Only populate the list with valid roles
-        for roleNum = 1, 4 do
-            if addon.tableContains(addon.groupieClassRoleTable[playerClass][spec1], roleNum) then
-                spec1Dropdown:AddItem(roleNum, addon.groupieRoleTable[roleNum])
-            end
-        end
-        spec1Dropdown:SetWidth(125)
-        spec1Dropdown:SetCallback("OnValueChanged", function()
-            if spec1Dropdown:GetValue() then
-                addon.db.char.groupieSpec1Role = spec1Dropdown:GetValue()
-            end
-        end)
-        if addon.db.char.groupieSpec1Role ~= nil then
-            spec1Dropdown:SetValue(addon.db.char.groupieSpec1Role)
-        end
-        container:AddChild(spec1Dropdown)
-
-
-        local spec2Title = AceGUI:Create("Label")
-        spec2Title:SetText("Alternate Spec Role")
-        spec2Title:SetFontObject(GameFontNormalMed2)
-        spec2Title:SetFullWidth(true)
-        container:AddChild(spec2Title)
-
-        local spec2Desc = AceGUI:Create("Label")
-        local spec2Name = addon.GetSpecByGroupNum(2)
-        spec2Desc:SetText(spec2Name)
-        spec2Desc:SetFontObject(GameFontNormal)
-        container:AddChild(spec2Desc)
-        local spec2Dropdown = AceGUI:Create("Dropdown")
-        --Only populate the list with valid roles
-        for roleNum = 1, 4 do
-            if addon.tableContains(addon.groupieClassRoleTable[playerClass][spec2], roleNum) then
-                spec2Dropdown:AddItem(roleNum, addon.groupieRoleTable[roleNum])
-            end
-        end
-        spec2Dropdown:SetWidth(125)
-        spec2Dropdown:SetCallback("OnValueChanged", function()
-            if spec2Dropdown:GetValue() then
-                addon.db.char.groupieSpec2Role = spec2Dropdown:GetValue()
-            end
-        end)
-        if addon.db.char.groupieSpec2Role ~= nil then
-            spec2Dropdown:SetValue(addon.db.char.groupieSpec2Role)
-        end
-        container:AddChild(spec2Dropdown)
-
-
-        local recLevelTitle = AceGUI:Create("Label")
-        recLevelTitle:SetText("Recommended Dungeon Level Range")
-        recLevelTitle:SetFontObject(GameFontNormalMed2)
-        recLevelTitle:SetFullWidth(true)
-        container:AddChild(recLevelTitle)
-
-        local recLevelDropdown = AceGUI:Create("Dropdown")
-        --Only populate the list with valid roles
-        recLevelDropdown:AddItem(0, "+0 - I'm new to this")
-        recLevelDropdown:AddItem(1, "+1 - I've Done This Before")
-        recLevelDropdown:AddItem(2, "+2 - This is a Geared Alt")
-        recLevelDropdown:AddItem(3, "+3 - With Heirlooms")
-        recLevelDropdown:AddItem(4, "+4 - With Heirlooms & Consumes")
-        recLevelDropdown:SetWidth(220)
-        recLevelDropdown:SetCallback("OnValueChanged", function()
-            if recLevelDropdown:GetValue() then
-                addon.db.char.recommendedLevelRange = recLevelDropdown:GetValue()
-            end
-        end)
-        if addon.db.char.recommendedLevelRange ~= nil then
-            recLevelDropdown:SetValue(addon.db.char.recommendedLevelRange)
-        end
-        container:AddChild(recLevelDropdown)
-
-        local autoResponseTitle = AceGUI:Create("Label")
-        autoResponseTitle:SetText("Groupie Auto-Response")
-        autoResponseTitle:SetFontObject(GameFontNormalMed2)
-        autoResponseTitle:SetFullWidth(true)
-        container:AddChild(autoResponseTitle)
-
-        local autoRespFriendsBox = AceGUI:Create("CheckBox")
-        autoRespFriendsBox:SetLabel("Enable Auto-Respond to Friends")
-        autoRespFriendsBox:SetFullWidth(true)
-        autoRespFriendsBox:SetValue(addon.db.char.autoRespondFriends)
-        autoRespFriendsBox:SetCallback("OnValueChanged", function()
-            addon.db.char.autoRespondFriends = autoRespFriendsBox:GetValue()
-        end)
-        container:AddChild(autoRespFriendsBox)
-
-        local autoRespGuildBox = AceGUI:Create("CheckBox")
-        autoRespGuildBox:SetLabel("Enable Auto-Respond to Guild Members")
-        autoRespGuildBox:SetFullWidth(true)
-        autoRespGuildBox:SetValue(addon.db.char.autoRespondGuild)
-        autoRespGuildBox:SetCallback("OnValueChanged", function()
-            addon.db.char.autoRespondGuild = autoRespGuildBox:GetValue()
-        end)
-        container:AddChild(autoRespGuildBox)
-
-        local afterPartyTitle = AceGUI:Create("Label")
-        afterPartyTitle:SetText("Groupie After-Party Tool")
-        afterPartyTitle:SetFontObject(GameFontNormalMed2)
-        afterPartyTitle:SetFullWidth(true)
-        container:AddChild(afterPartyTitle)
-
-        local afterPartyBox = AceGUI:Create("CheckBox")
-        afterPartyBox:SetLabel("Enable Groupie After-Party Tool")
-        afterPartyBox:SetFullWidth(true)
-        afterPartyBox:SetValue(addon.db.char.afterParty)
-        afterPartyBox:SetCallback("OnValueChanged", function()
-            addon.db.char.afterParty = afterPartyBox:GetValue()
-        end)
-        container:AddChild(afterPartyBox)
-
-        local groupChannelsTitle = AceGUI:Create("Label")
-        groupChannelsTitle:SetText("Pull Groups from Available Channels")
-        groupChannelsTitle:SetFontObject(GameFontNormalMed2)
-        groupChannelsTitle:SetFullWidth(true)
-        container:AddChild(groupChannelsTitle)
-
-        local channelGuildBox = AceGUI:Create("CheckBox")
-        channelGuildBox:SetLabel("Guild")
-        channelGuildBox:SetValue(addon.db.char.useChannels["Guild"])
-        channelGuildBox:SetCallback("OnValueChanged", function()
-            addon.db.char.useChannels["Guild"] = channelGuildBox:GetValue()
-        end)
-        container:AddChild(channelGuildBox)
-
-        local channelGeneralBox = AceGUI:Create("CheckBox")
-        channelGeneralBox:SetLabel("General")
-        channelGeneralBox:SetValue(addon.db.char.useChannels["General"])
-        channelGeneralBox:SetCallback("OnValueChanged", function()
-            addon.db.char.useChannels["General"] = channelGeneralBox:GetValue()
-        end)
-        container:AddChild(channelGeneralBox)
-
-        local channelTradeBox = AceGUI:Create("CheckBox")
-        channelTradeBox:SetLabel("Trade")
-        channelTradeBox:SetValue(addon.db.char.useChannels["Trade"])
-        channelTradeBox:SetCallback("OnValueChanged", function()
-            addon.db.char.useChannels["Trade"] = channelTradeBox:GetValue()
-        end)
-        container:AddChild(channelTradeBox)
-
-        local channelLocDefBox = AceGUI:Create("CheckBox")
-        channelLocDefBox:SetLabel("LocalDefense")
-        channelLocDefBox:SetValue(addon.db.char.useChannels["LocalDefense"])
-        channelLocDefBox:SetCallback("OnValueChanged", function()
-            addon.db.char.useChannels["LocalDefense"] = channelLocDefBox:GetValue()
-        end)
-        container:AddChild(channelLocDefBox)
-
-        local channelLFGBox = AceGUI:Create("CheckBox")
-        channelLFGBox:SetLabel("LookingForGroup")
-        channelLFGBox:SetValue(addon.db.char.useChannels["LookingForGroup"])
-        channelLFGBox:SetCallback("OnValueChanged", function()
-            addon.db.char.useChannels["LookingForGroup"] = channelLFGBox:GetValue()
-        end)
-        container:AddChild(channelLFGBox)
-
-        local channel5Box = AceGUI:Create("CheckBox")
-        channel5Box:SetLabel("5")
-        channel5Box:SetValue(addon.db.char.useChannels["5"])
-        channel5Box:SetCallback("OnValueChanged", function()
-            addon.db.char.useChannels["5"] = channel5Box:GetValue()
-        end)
-        container:AddChild(channel5Box)
-
     end
 
     --Global Options Tab
@@ -523,8 +203,6 @@ local function BuildGroupieWindow()
             DrawGroupFilter(container)
         elseif group == "instancefilter" then
             DrawInstanceFilter(container)
-        elseif group == "charoption" then
-            DrawCharOptions(container)
         elseif group == "globaloption" then
             DrawGlobalOptions(container)
         elseif group == "about" then
@@ -544,7 +222,6 @@ local function BuildGroupieWindow()
         { text = "Group Builder", value = "groupbuilder" },
         { text = "Group Filters", value = "groupfilter" },
         { text = "Instance Filters", value = "instancefilter" },
-        { text = "Character Options", value = "charoption" },
         { text = "Global Options", value = "globaloption" },
         { text = "About", value = "about" }
     })
@@ -603,6 +280,7 @@ function addon:OnInitialize()
             showMinimap = false
         }
     }
+
     addon.db = LibStub("AceDB-3.0"):New("GroupieDB", defaults)
     addon.icon:Register("Groupie", groupieLDB, addon.db.global.showMinimap)
     if addon.db.global.showMinimap then
@@ -610,10 +288,219 @@ function addon:OnInitialize()
     else
         addon.icon:Hide()
     end
-    AceConfigDialog:AddToBlizOptions(addonName, "Groupie")
+
+
     addon.debugMenus = true
-    --Setup Slash Command
-    SLASH_GROUPIE1, SLASH_GROUPIE2 = "/groupie"
+    --Setup Slash Commands
+    SLASH_GROUPIE1 = "/groupie"
     SlashCmdList["GROUPIE"] = BuildGroupieWindow
+    SLASH_GROUPIECFG1 = "/groupiecfg"
+    SlashCmdList["GROUPIECFG"] = addon.OpenConfig
     addon.isInitialized = true
+end
+
+---------------------
+-- AceConfig Setup --
+---------------------
+function addon.SetupConfig()
+    local options = {
+        name = addonName,
+        desc = "Optional description? for the group of options",
+        descStyle = "inline",
+        handler = addon,
+        type = 'group',
+        args = {
+            charoptions = {
+                name = "Character Options",
+                desc = "Change Character-Specific Settings",
+                type = "group",
+                width = "double",
+                inline = false,
+                args = {
+                    header1 = {
+                        type = "description",
+                        name = "|cffffd900Groupie | " .. UnitName("player") .. " Options",
+                        order = 0,
+                        fontSize = "large"
+                    },
+                    spacerdesc1 = { type = "description", name = " ", width = "full", order = 1 },
+                    header2 = {
+                        type = "description",
+                        name = "|cffffd900Spec 1 Role - " .. addon.GetSpecByGroupNum(1),
+                        order = 2,
+                        fontSize = "medium"
+                    },
+                    spec1Dropdown = {
+                        type = "select",
+                        style = "dropdown",
+                        name = "",
+                        order = 3,
+                        width = 1.4,
+                        values = addon.groupieClassRoleTable[UnitClass("player")][addon.GetSpecByGroupNum(1)],
+                        set = function(info, val) addon.db.char.groupieSpec1Role = val end,
+                        get = function(info) return addon.db.char.groupieSpec1Role end,
+                    },
+                    spacerdesc2 = { type = "description", name = " ", width = "full", order = 4 },
+                    header3 = {
+                        type = "description",
+                        name = "|cffffd900Spec 2 Role - " .. addon.GetSpecByGroupNum(1),
+                        order = 5,
+                        fontSize = "medium"
+                    },
+                    spec2Dropdown = {
+                        type = "select",
+                        style = "dropdown",
+                        name = "",
+                        order = 6,
+                        width = 1.4,
+                        values = addon.groupieClassRoleTable[UnitClass("player")][addon.GetSpecByGroupNum(2)],
+                        set = function(info, val) addon.db.char.groupieSpec2Role = val end,
+                        get = function(info) return addon.db.char.groupieSpec2Role end,
+                    },
+                    spacerdesc3 = { type = "description", name = " ", width = "full", order = 7 },
+                    header4 = {
+                        type = "description",
+                        name = "|cffffd900Recommended Dungeon Level Range",
+                        order = 8,
+                        fontSize = "medium"
+                    },
+                    recLevelDropdown = {
+                        type = "select",
+                        style = "dropdown",
+                        name = "",
+                        order = 9,
+                        width = 1.4,
+                        values = {
+                            [0] = "+0 - I'm new to this",
+                            [1] = "+1 - I've Done This Before",
+                            [2] = "+2 - This is a Geared Alt",
+                            [3] = "+3 - With Heirlooms",
+                            [4] = "+4 - With Heirlooms & Consumes"
+                        },
+                        set = function(info, val) addon.db.char.recommendedLevelRange = val end,
+                        get = function(info) return addon.db.char.recommendedLevelRange end,
+                    },
+                    spacerdesc4 = { type = "description", name = " ", width = "full", order = 10 },
+                    header5 = {
+                        type = "description",
+                        name = "|cffffd900Groupie Auto-Response",
+                        order = 11,
+                        fontSize = "medium"
+                    },
+                    autoFriendsToggle = {
+                        type = "toggle",
+                        name = "Enable Auto-Respond to Friends",
+                        order = 12,
+                        width = "full",
+                        get = function(info) return addon.db.char.autoRespondFriends end,
+                        set = function(info, val) addon.db.char.autoRespondFriends = val end,
+                    },
+                    autoGuildToggle = {
+                        type = "toggle",
+                        name = "Enable Auto-Respond to Guild Members",
+                        order = 13,
+                        width = "full",
+                        get = function(info) return addon.db.char.autoRespondGuild end,
+                        set = function(info, val) addon.db.char.autoRespondGuild = val end,
+                    },
+                    spacerdesc5 = { type = "description", name = " ", width = "full", order = 14 },
+                    header6 = {
+                        type = "description",
+                        name = "|cffffd900Groupie After-Party Tool",
+                        order = 15,
+                        fontSize = "medium"
+                    },
+                    afterPartyToggle = {
+                        type = "toggle",
+                        name = "Enable Groupie After-Party Tool",
+                        order = 16,
+                        width = "full",
+                        get = function(info) return addon.db.char.afterParty end,
+                        set = function(info, val) addon.db.char.afterParty = val end,
+                    },
+                    spacerdesc6 = { type = "description", name = " ", width = "full", order = 17 },
+                    header7 = {
+                        type = "description",
+                        name = "|cffffd900Pull Groups From These Channels",
+                        order = 18,
+                        fontSize = "medium"
+                    },
+                    channelGuildToggle = {
+                        type = "toggle",
+                        name = "Guild",
+                        order = 19,
+                        width = "full",
+                        get = function(info) return addon.db.char.useChannels["Guild"] end,
+                        set = function(info, val) addon.db.char.useChannels["Guild"] = val end,
+                    },
+                    channelGeneralToggle = {
+                        type = "toggle",
+                        name = "General",
+                        order = 20,
+                        width = "full",
+                        get = function(info) return addon.db.char.useChannels["General"] end,
+                        set = function(info, val) addon.db.char.useChannels["General"] = val end,
+                    },
+                    channelTradeToggle = {
+                        type = "toggle",
+                        name = "Trade",
+                        order = 21,
+                        width = "full",
+                        get = function(info) return addon.db.char.useChannels["Trade"] end,
+                        set = function(info, val) addon.db.char.useChannels["Trade"] = val end,
+                    },
+                    channelLocalDefenseToggle = {
+                        type = "toggle",
+                        name = "LocalDefense",
+                        order = 22,
+                        width = "full",
+                        get = function(info) return addon.db.char.useChannels["LocalDefense"] end,
+                        set = function(info, val) addon.db.char.useChannels["LocalDefense"] = val end,
+                    },
+                    channelLookingForGroupToggle = {
+                        type = "toggle",
+                        name = "LookingForGroup",
+                        order = 23,
+                        width = "full",
+                        get = function(info) return addon.db.char.useChannels["LookingForGroup"] end,
+                        set = function(info, val) addon.db.char.useChannels["LookingForGroup"] = val end,
+                    },
+                    channel5Toggle = {
+                        type = "toggle",
+                        name = "5",
+                        order = 24,
+                        width = "full",
+                        get = function(info) return addon.db.char.useChannels["5"] end,
+                        set = function(info, val) addon.db.char.useChannels["5"] = val end,
+                    }
+                },
+            },
+            globaloptions = {
+                name = "Global Options",
+                desc = "Change Account-Wide Settings",
+                type = "group",
+                width = "double",
+                inline = false,
+                args = {
+                    header1 = {
+                        type = "header",
+                        name = "Groupie | " .. UnitName("player") .. " Options",
+                        order = 0,
+                    },
+                },
+            },
+        },
+    }
+    addon.optionsTable = LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, options)
+    addon.AceConfigDialog = LibStub("AceConfigDialog-3.0")
+    addon.AceConfigDialog:AddToBlizOptions(addonName, addonName)
+end
+
+--This must be done after player entering world event so that we can pull spec
+addon:RegisterEvent("PLAYER_ENTERING_WORLD", addon.SetupConfig)
+
+function addon:OpenConfig()
+    InterfaceOptionsFrame_OpenToCategory(addonName)
+    -- need to call it a second time as there is a bug where the first time it won't switch !BlizzBugsSuck has a fix
+    InterfaceOptionsFrame_OpenToCategory(addonName)
 end

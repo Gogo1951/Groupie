@@ -26,54 +26,54 @@ addon.groupieRoleTable = {
 
 addon.groupieClassRoleTable = {
     ["Death Knight"] = {
-        ["Blood"] = { 1 },
-        ["Frost"] = { 1, 4 },
-        ["Unholy"] = { 4 }
+        ["Blood"] = { [1] = "Tank" },
+        ["Frost"] = { [1] = "Tank", [4] = "Melee DPS" },
+        ["Unholy"] = { [4] = "Melee DPS" }
     },
     ["Druid"] = {
-        ["Balance"] = { 3 },
-        ["Feral Combat"] = { 1, 4 },
-        ["Restoration"] = { 2 }
+        ["Balance"] = { [3] = "Ranged DPS" },
+        ["Feral Combat"] = { [1] = "Tank", [4] = "Melee DPS" },
+        ["Restoration"] = { [2] = "Healer" }
     },
     ["Hunter"] = {
-        ["Beast Mastery"] = { 3 },
-        ["Marksmanship"] = { 3 },
-        ["Survival"] = { 3 }
+        ["Beast Mastery"] = { [3] = "Ranged DPS" },
+        ["Marksmanship"] = { [3] = "Ranged DPS" },
+        ["Survival"] = { [3] = "Ranged DPS" }
     },
     ["Mage"] = {
-        ["Arcane"] = { 3 },
-        ["Fire"] = { 3 },
-        ["Frost"] = { 3 }
+        ["Arcane"] = { [3] = "Ranged DPS" },
+        ["Fire"] = { [3] = "Ranged DPS" },
+        ["Frost"] = { [3] = "Ranged DPS" }
     },
     ["Paladin"] = {
-        ["Holy"] = { 2 },
-        ["Protection"] = { 1 },
-        ["Retribution"] = { 4 }
+        ["Holy"] = { [2] = "Healer" },
+        ["Protection"] = { [1] = "Tank" },
+        ["Retribution"] = { [4] = "Melee DPS" }
     },
     ["Priest"] = {
-        ["Discipline"] = { 2 },
-        ["Holy"] = { 2 },
-        ["Shadow"] = { 3 }
+        ["Discipline"] = { [2] = "Healer" },
+        ["Holy"] = { [2] = "Healer" },
+        ["Shadow"] = { [3] = "Ranged DPS" }
     },
     ["Rogue"] = {
-        ["Assassination"] = { 4 },
-        ["Combat"] = { 4 },
-        ["Subtlety"] = { 4 }
+        ["Assassination"] = { [4] = "Melee DPS" },
+        ["Combat"] = { [4] = "Melee DPS" },
+        ["Subtlety"] = { [4] = "Melee DPS" }
     },
     ["Shaman"] = {
-        ["Elemental"] = { 3 },
-        ["Enhancement"] = { 4 },
-        ["Restoration"] = { 2 }
+        ["Elemental"] = { [3] = "Ranged DPS" },
+        ["Enhancement"] = { [4] = "Melee DPS" },
+        ["Restoration"] = { [2] = "Healer" }
     },
     ["Warlock"] = {
-        ["Affliction"] = { 3 },
-        ["Demonology"] = { 3 },
-        ["Destruction"] = { 3 }
+        ["Affliction"] = { [3] = "Ranged DPS" },
+        ["Demonology"] = { [3] = "Ranged DPS" },
+        ["Destruction"] = { [3] = "Ranged DPS" }
     },
     ["Warrior"] = {
-        ["Arms"] = { 4 },
-        ["Fury"] = { 4 },
-        ["Protection"] = { 1 }
+        ["Arms"] = { [4] = "Melee DPS" },
+        ["Fury"] = { [4] = "Melee DPS" },
+        ["Protection"] = { [1] = "Tank" }
     }
 }
 
