@@ -102,13 +102,13 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		info.text = "Groupie"
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 
-		local info = UIDropDownMenu_CreateInfo()
+		info = UIDropDownMenu_CreateInfo()
 		info.notClickable = true
 		info.notCheckable = true
 		info.text = "Send my info..."
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 
-		local info = UIDropDownMenu_CreateInfo()
+		info = UIDropDownMenu_CreateInfo()
 		info.dist = 0
 		info.notCheckable = true
 		info.func = function() SendPlayerInfo(1, name) end
@@ -117,15 +117,30 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		info.leftPadding = 8
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 
-		local info = UIDropDownMenu_CreateInfo()
+		info = UIDropDownMenu_CreateInfo()
 		info.dist = 0
 		info.notCheckable = true
 		info.func = function() SendPlayerInfo(2, name) end
-		local maxTalentSpec = addon.GetSpecByGroupNum(2)
+		maxTalentSpec = addon.GetSpecByGroupNum(2)
 		info.text = "Spec 2 : " .. maxTalentSpec
 		info.leftPadding = 8
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 
+		--Only US region supported for now
+		if GetLocale() == "enUS" then
+			info = UIDropDownMenu_CreateInfo()
+			info.dist = 0
+			info.notCheckable = true
+			info.func = function()
+				local myname = UnitName("player")
+				local myserver = GetRealmName()
+				local link = format("https://classic.warcraftlogs.com/character/us/%s/%s", myserver, myname)
+				SendChatMessage("{rt3} Groupie : Warcraft Logs Link " .. link, "WHISPER", "COMMON", name)
+			end
+			info.text = "Warcraft Logs Link"
+			info.leftPadding = 8
+			UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
+		end
 	end
 end
 

@@ -191,7 +191,7 @@ function addon:OnInitialize()
             font = "Arial Narrow",
             fontSize = 8,
             debugData = {},
-            showMinimap = false
+            showMinimap = false,
         }
     }
 
@@ -490,7 +490,7 @@ function addon.SetupConfig()
     }
     addon.optionsTable = LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, options)
     addon.AceConfigDialog = LibStub("AceConfigDialog-3.0")
-    addon.AceConfigDialog:AddToBlizOptions(addonName, addonName)
+    addon.optionsFrame = addon.AceConfigDialog:AddToBlizOptions(addonName, addonName)
     if addon.db.global.showMinimap == false then
         addon.icon:Hide("GroupieLDB")
     end
