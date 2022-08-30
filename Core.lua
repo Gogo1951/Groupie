@@ -171,7 +171,7 @@ function addon:OnInitialize()
             font = "Arial Narrow",
             fontSize = 8,
             debugData = {},
-            showMinimap = false,
+            showMinimap = true,
         }
     }
 
@@ -417,7 +417,7 @@ function addon.SetupConfig()
                     spacerdesc1 = { type = "description", name = " ", width = "full", order = 1 },
                     minimapToggle = {
                         type = "toggle",
-                        name = "Enable Minimap Button",
+                        name = "Enable Mini-Map Button",
                         order = 2,
                         width = "full",
                         get = function(info) return addon.db.global.showMinimap end,
