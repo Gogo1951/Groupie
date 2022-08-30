@@ -510,10 +510,11 @@ function addon.SetupConfig()
     if addon.db.global.showMinimap == false then
         addon.icon:Hide("GroupieLDB")
     end
-    addon.UpdateSpecOptions(false)
+    addon.UpdateSpecOptions()
 end
 
 function addon:OpenConfig()
+    addon.UpdateSpecOptions()
     InterfaceOptionsFrame_OpenToCategory(addonName)
     -- need to call it a second time as there is a bug where the first time it won't switch !BlizzBugsSuck has a fix
     InterfaceOptionsFrame_OpenToCategory(addonName)
@@ -523,28 +524,22 @@ end
 addon:RegisterEvent("PLAYER_ENTERING_WORLD", addon.SetupConfig)
 
 --Update our options menu dropdowns when the player's specialization changes
-function addon.UpdateSpecOptions(resetTalentFlag, ...)
-    local resetTalentFlag = resetTalentFlag
-    if resetTalentFlag ~= false then
-        resetTalentFlag = true
-    end
+function addon.UpdateSpecOptions()
     local spec1 = addon.GetSpecByGroupNum(1)
     local spec2 = addon.GetSpecByGroupNum(2)
+    print(spec1)
     --Set labels
     addon.options.args.charoptions.args.header2.name = "|cffffd900Role for Spec 1 - " .. spec1
     addon.options.args.charoptions.args.header3.name = "|cffffd900Role for Spec 2 - " .. spec2
     --Set dropdowns
     addon.options.args.charoptions.args.spec1Dropdown.values = addon.groupieClassRoleTable[UnitClass("player")][spec1]
     addon.options.args.charoptions.args.spec2Dropdown.values = addon.groupieClassRoleTable[UnitClass("player")][spec2]
-    --Reset to default value for dropdowns if fired by CHARACTER_POINTS_CHANGED event
-    --and if the currently selected role is now invalid after the change
-    if resetTalentFlag then
-        if not addon.groupieClassRoleTable[UnitClass("player")][spec1][addon.db.char.groupieSpec1Role] then
-            addon.db.char.groupieSpec1Role = nil
-        end
-        if not addon.groupieClassRoleTable[UnitClass("player")][spec2][addon.db.char.groupieSpec2Role] then
-            addon.db.char.groupieSpec2Role = nil
-        end
+    --Reset to default value for dropdowns if the currently selected role is now invalid after the change
+    if not addon.groupieClassRoleTable[UnitClass("player")][spec1][addon.db.char.groupieSpec1Role] then
+        addon.db.char.groupieSpec1Role = nil
+    end
+    if not addon.groupieClassRoleTable[UnitClass("player")][spec2][addon.db.char.groupieSpec2Role] then
+        addon.db.char.groupieSpec2Role = nil
     end
     for i = 4, 1, -1 do
         if addon.groupieClassRoleTable[UnitClass("player")][spec1][i] and addon.db.char.groupieSpec1Role == nil then

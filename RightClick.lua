@@ -3,6 +3,7 @@ local addonName, addon = ...
 -- Right Click Functionality --
 -------------------------------
 local function SendPlayerInfo(specGroup, targetName)
+	addon.UpdateSpecOptions()
 	--Calculate average itemlevel
 	local iLevelSum = 0
 	for slotNum = 1, 19 do
