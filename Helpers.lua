@@ -1,4 +1,6 @@
 local addonName, addon = ...
+local GetTalentTabInfo = GetTalentTabInfo
+
 --Return the primary talent spec for either main or dual specialization
 function addon.GetSpecByGroupNum(groupnum)
     local maxTalentsSpent = -1
@@ -11,6 +13,28 @@ function addon.GetSpecByGroupNum(groupnum)
         end
     end
     return maxTalentSpec, maxTalentsSpent
+end
+
+--Find the currently active spec group by comparing its talents to tab 1 and 2
+function addon.GetActiveSpecGroup()
+    local equaltab1 = true
+    local equaltab2 = true
+    for specTab = 1, 3 do
+        local _, _, activePointsSpent = GetTalentTabInfo(specTab, false, false)
+        local _, _, tab1PointsSpent = GetTalentTabInfo(specTab, false, false, 1)
+        local _, _, tab2PointsSpent = GetTalentTabInfo(specTab, false, false, 2)
+        if activePointsSpent ~= tab1PointsSpent then
+            equaltab1 = false
+        end
+        if activePointsSpent ~= tab2PointsSpent then
+            equaltab2 = false
+        end
+    end
+    if equaltab1 then
+        return 1
+    elseif equaltab2 then
+        return 2
+    end
 end
 
 --Return boolean whether the table contains a value

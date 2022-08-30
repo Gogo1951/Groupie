@@ -2,7 +2,7 @@ local addonName, addon = ...
 -------------------------------
 -- Right Click Functionality --
 -------------------------------
-local function SendPlayerInfo(specGroup, targetName)
+local function SendPlayerInfo(targetName)
 	addon.UpdateSpecOptions()
 	--Calculate average itemlevel
 	local iLevelSum = 0
@@ -29,46 +29,38 @@ local function SendPlayerInfo(specGroup, targetName)
 	local myclass = UnitClass("player")
 	local mylevel = UnitLevel("player")
 
+	--Find out which spec group is active
+	local specGroup = addon.GetActiveSpecGroup()
+	--1+2=3 :)
+	local inactiveSpecGroup = 3 - specGroup
 	--Find out which talent spec has the most points spent in it
-	local maxTalentSpec = addon.GetSpecByGroupNum(specGroup)
+	local activeTalentSpec = addon.GetSpecByGroupNum(specGroup)
+	local inactiveTalentSpec = addon.GetSpecByGroupNum(inactiveSpecGroup)
 	local mylocale = GetLocale()
-
-
-	--Get saved role from options if it exists
-	--The text must be concatenated here so that the message makes sense if the player has not yet set a role
-	local myrole = ""
+	local activeRole = nil
+	local inactiveRole = nil
 	if specGroup == 1 then
-		if addon.db.char.groupieSpec1Role ~= nil then
-			myrole = " Want a " .. addon.groupieRoleTable[addon.db.char.groupieSpec1Role] .. "?"
-		else
-			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the " ..
-				addonName .. " Character Options tab.")
-		end
-	elseif specGroup == 2 then
-		if addon.db.char.groupieSpec2Role ~= nil then
-			myrole = " Want a " .. addon.groupieRoleTable[addon.db.char.groupieSpec2Role] .. "?"
-		else
-			SendSystemMessage("Warning! Role not set for this specialization! Please set your roles in the " ..
-				addonName .. " Character Options tab.")
-		end
+		activeRole = addon.groupieRoleTable[addon.db.char.groupieSpec1Role]
+		inactiveRole = addon.groupieRoleTable[addon.db.char.groupieSpec2Role]
+	else
+		activeRole = addon.groupieRoleTable[addon.db.char.groupieSpec2Role]
+		inactiveRole = addon.groupieRoleTable[addon.db.char.groupieSpec1Role]
 	end
 
-
+	local groupieMsg = format("{rt3} %s : %s LFG! Level %s %s %s wearing %s item-level gear. Other spec is %s %s. %s-speaking Player."
+		,
+		addonName,
+		activeRole,
+		mylevel,
+		activeTalentSpec,
+		myclass,
+		tostring(averageiLevel),
+		inactiveTalentSpec,
+		inactiveRole,
+		addon.groupieLocaleTable[mylocale]
+	)
 	--Sending Current Spec Info
-	SendChatMessage("{rt3} " .. addonName .. " :" ..
-		myrole ..
-		" Level " ..
-		mylevel ..
-		" " ..
-		maxTalentSpec ..
-		" " ..
-		myclass ..
-		" wearing " ..
-		tostring(averageiLevel) ..
-		" item-level gear. " ..
-		addon.groupieLocaleTable[mylocale] ..
-		"-speaking player.",
-		"WHISPER", "COMMON", targetName)
+	SendChatMessage(groupieMsg, "WHISPER", "COMMON", targetName)
 	return true
 end
 
@@ -114,14 +106,15 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		info = UIDropDownMenu_CreateInfo()
 		info.dist = 0
 		info.notCheckable = true
-		info.func = function() SendPlayerInfo(1, name) end
-		local maxTalentSpec, maxTalentsSpent = addon.GetSpecByGroupNum(1)
-		info.text = "Spec 1 : " .. maxTalentSpec
+		info.func = function() SendPlayerInfo(name) end
+		local maxTalentSpec, maxTalentsSpent = addon.GetSpecByGroupNum(addon.GetActiveSpecGroup())
+		info.text = "Current Spec : " .. maxTalentSpec
 		info.leftPadding = 8
 		if maxTalentsSpent > 0 then
 			UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 		end
 
+		--[[
 		info = UIDropDownMenu_CreateInfo()
 		info.dist = 0
 		info.notCheckable = true
@@ -132,6 +125,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		if maxTalentsSpent > 0 then
 			UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 		end
+		--]]
 
 		--Only US region supported for now
 		if GetLocale() == "enUS" then

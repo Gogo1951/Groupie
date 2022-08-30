@@ -262,14 +262,14 @@ function addon.SetupConfig()
                         name = "",
                         order = 3,
                         width = 1.4,
-                        values = addon.groupieClassRoleTable[UnitClass("player")][addon.GetSpecByGroupNum(2)],
+                        values = addon.groupieClassRoleTable[UnitClass("player")][addon.GetSpecByGroupNum(1)],
                         set = function(info, val) addon.db.char.groupieSpec1Role = val end,
                         get = function(info) return addon.db.char.groupieSpec1Role end,
                     },
                     spacerdesc2 = { type = "description", name = " ", width = "full", order = 4 },
                     header3 = {
                         type = "description",
-                        name = "|cffffd900Spec 2 Role - " .. addon.GetSpecByGroupNum(1),
+                        name = "|cffffd900Spec 2 Role - " .. addon.GetSpecByGroupNum(2),
                         order = 5,
                         fontSize = "medium"
                     },
