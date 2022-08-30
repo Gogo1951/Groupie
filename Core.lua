@@ -525,9 +525,8 @@ addon:RegisterEvent("PLAYER_ENTERING_WORLD", addon.SetupConfig)
 
 --Update our options menu dropdowns when the player's specialization changes
 function addon.UpdateSpecOptions()
-    local spec1 = addon.GetSpecByGroupNum(1)
-    local spec2 = addon.GetSpecByGroupNum(2)
-    print(spec1)
+    local spec1, maxtalents1 = addon.GetSpecByGroupNum(1)
+    local spec2, maxtalents2 = addon.GetSpecByGroupNum(2)
     --Set labels
     addon.options.args.charoptions.args.header2.name = "|cffffd900Role for Spec 1 - " .. spec1
     addon.options.args.charoptions.args.header3.name = "|cffffd900Role for Spec 2 - " .. spec2
@@ -548,6 +547,16 @@ function addon.UpdateSpecOptions()
         if addon.groupieClassRoleTable[UnitClass("player")][spec2][i] and addon.db.char.groupieSpec2Role == nil then
             addon.db.char.groupieSpec2Role = i
         end
+    end
+    --Hide dropdown for spec 2 if no talents are spent in any tabs
+    if maxtalents2 > 0 then
+        addon.options.args.charoptions.args.spacerdesc2.hidden = false
+        addon.options.args.charoptions.args.header3.hidden = false
+        addon.options.args.charoptions.args.spec2Dropdown.hidden = false
+    else
+        addon.options.args.charoptions.args.spacerdesc2.hidden = true
+        addon.options.args.charoptions.args.header3.hidden = true
+        addon.options.args.charoptions.args.spec2Dropdown.hidden = true
     end
 end
 

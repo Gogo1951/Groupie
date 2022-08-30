@@ -10,7 +10,7 @@ function addon.GetSpecByGroupNum(groupnum)
             maxTalentSpec = specName
         end
     end
-    return maxTalentSpec
+    return maxTalentSpec, maxTalentsSpent
 end
 
 --Return boolean whether the table contains a value
