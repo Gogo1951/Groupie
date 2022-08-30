@@ -501,9 +501,12 @@ function addon.SetupConfig()
             },
         },
     }
-    LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, addon.options)
-    addon.AceConfigDialog = LibStub("AceConfigDialog-3.0")
-    addon.optionsFrame = addon.AceConfigDialog:AddToBlizOptions(addonName, addonName)
+    if not addon.addedToBlizz then
+        LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, addon.options)
+        addon.AceConfigDialog = LibStub("AceConfigDialog-3.0")
+        addon.optionsFrame = addon.AceConfigDialog:AddToBlizOptions(addonName, addonName)
+    end
+    addon.addedToBlizz = true
     if addon.db.global.showMinimap == false then
         addon.icon:Hide("GroupieLDB")
     end
@@ -521,7 +524,6 @@ addon:RegisterEvent("PLAYER_ENTERING_WORLD", addon.SetupConfig)
 
 --Update our options menu dropdowns when the player's specialization changes
 function addon.UpdateSpecOptions(resetTalentFlag, ...)
-    print(...)
     local resetTalentFlag = resetTalentFlag
     if resetTalentFlag ~= false then
         resetTalentFlag = true
