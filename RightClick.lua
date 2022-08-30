@@ -47,7 +47,7 @@ local function SendPlayerInfo(targetName)
 		inactiveRole = addon.groupieRoleTable[addon.db.char.groupieSpec1Role]
 	end
 
-	local groupieMsg = format("{rt3} %s : %s LFG! Level %s %s %s wearing %s item-level gear. Other Spec is %s (%s). %s-speaking Player."
+	local groupieMsg = format("{rt3} %s : %s LFG! Level %s %s %s wearing %s item-level gear. My Other Spec is %s (%s). %s-speaking Player."
 		,
 		addonName,
 		activeRole,
