@@ -140,7 +140,7 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
     OnTooltipShow = function(tooltip)
         tooltip:AddLine(addonName)
         tooltip:AddLine("A better LFG tool for Classic WoW.", 255, 255, 255, false)
-        tooltip:AddLine("Click to open " .. addonName .. ", 255, 255, 255, false")
+        tooltip:AddLine("Click to open " .. addonName, 255, 255, 255, false)
     end
 })
 
@@ -152,9 +152,9 @@ function addon:OnInitialize()
         char = {
             groupieSpec1Role = nil,
             groupieSpec2Role = nil,
-            recommendedLevelRange = 1,
-            autoRespondFriends = false,
-            autoRespondGuild = false,
+            recommendedLevelRange = 0,
+            autoRespondFriends = true,
+            autoRespondGuild = true,
             afterParty = true,
             useChannels = {
                 ["Guild"] = true,
@@ -297,11 +297,10 @@ function addon.SetupConfig()
                         order = 9,
                         width = 1.4,
                         values = {
-                            [0] = "+0 - I'm new to this",
+                            [0] = "Default Suggested Levels",
                             [1] = "+1 - I've Done This Before",
-                            [2] = "+2 - This is a Geared Alt",
-                            [3] = "+3 - With Heirlooms",
-                            [4] = "+4 - With Heirlooms & Consumes"
+                            [2] = "+2 - I've Got Enchanted Heirlooms",
+                            [3] = "+3 - I'm Playing a Healer"
                         },
                         set = function(info, val) addon.db.char.recommendedLevelRange = val end,
                         get = function(info) return addon.db.char.recommendedLevelRange end,
@@ -522,8 +521,8 @@ addon:RegisterEvent("PLAYER_ENTERING_WORLD", addon.SetupConfig)
 --Update our options menu dropdowns when the player's specialization changes
 function addon.UpdateSpecOptions()
     --Set labels
-    addon.options.args.charoptions.args.header2.name = "|cffffd900Spec 1 Role - " .. addon.GetSpecByGroupNum(1)
-    addon.options.args.charoptions.args.header3.name = "|cffffd900Spec 2 Role - " .. addon.GetSpecByGroupNum(2)
+    addon.options.args.charoptions.args.header2.name = "|cffffd900Role for Spec 1 - " .. addon.GetSpecByGroupNum(1)
+    addon.options.args.charoptions.args.header3.name = "|cffffd900Role for Spec 2 - " .. addon.GetSpecByGroupNum(2)
     --Set dropdowns
     addon.options.args.charoptions.args.spec1Dropdown.values = addon.groupieClassRoleTable[UnitClass("player")][
         addon.GetSpecByGroupNum(1)]
