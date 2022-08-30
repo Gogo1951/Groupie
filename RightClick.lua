@@ -47,7 +47,7 @@ local function SendPlayerInfo(targetName)
 		inactiveRole = addon.groupieRoleTable[addon.db.char.groupieSpec1Role]
 	end
 
-	local groupieMsg = format("{rt3} %s : %s LFG! Level %s %s %s wearing %s item-level gear. Other spec is %s %s. %s-speaking Player."
+	local groupieMsg = format("{rt3} %s : %s LFG! Level %s %s %s wearing %s item-level gear. Other Spec is %s (%s). %s-speaking Player."
 		,
 		addonName,
 		activeRole,
@@ -136,7 +136,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 				local myname = UnitName("player")
 				local myserver = GetRealmName()
 				local link = format("https://classic.warcraftlogs.com/character/us/%s/%s", myserver, myname)
-				SendChatMessage("{rt3} " .. addonName .. " : Warcraft Logs Link " .. link, "WHISPER", "COMMON", name)
+				SendChatMessage("{rt3} " .. addonName .. " : Here's my Warcraft Logs Link " .. link, "WHISPER", "COMMON", name)
 			end
 			info.text = "Warcraft Logs Link"
 			info.leftPadding = 8
