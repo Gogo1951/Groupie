@@ -507,6 +507,7 @@ function addon.SetupConfig()
     if addon.db.global.showMinimap == false then
         addon.icon:Hide("GroupieLDB")
     end
+    addon.UpdateSpecOptions(false)
 end
 
 function addon:OpenConfig()
@@ -519,18 +520,38 @@ end
 addon:RegisterEvent("PLAYER_ENTERING_WORLD", addon.SetupConfig)
 
 --Update our options menu dropdowns when the player's specialization changes
-function addon.UpdateSpecOptions()
+function addon.UpdateSpecOptions(resetTalentFlag, ...)
+    print(...)
+    local resetTalentFlag = resetTalentFlag
+    if resetTalentFlag ~= false then
+        resetTalentFlag = true
+    end
+    local spec1 = addon.GetSpecByGroupNum(1)
+    local spec2 = addon.GetSpecByGroupNum(2)
     --Set labels
-    addon.options.args.charoptions.args.header2.name = "|cffffd900Role for Spec 1 - " .. addon.GetSpecByGroupNum(1)
-    addon.options.args.charoptions.args.header3.name = "|cffffd900Role for Spec 2 - " .. addon.GetSpecByGroupNum(2)
+    addon.options.args.charoptions.args.header2.name = "|cffffd900Role for Spec 1 - " .. spec1
+    addon.options.args.charoptions.args.header3.name = "|cffffd900Role for Spec 2 - " .. spec2
     --Set dropdowns
-    addon.options.args.charoptions.args.spec1Dropdown.values = addon.groupieClassRoleTable[UnitClass("player")][
-        addon.GetSpecByGroupNum(1)]
-    addon.options.args.charoptions.args.spec2Dropdown.values = addon.groupieClassRoleTable[UnitClass("player")][
-        addon.GetSpecByGroupNum(2)]
-    --Reset to default value
-    addon.db.char.groupieSpec1Role = nil
-    addon.db.char.groupieSpec2Role = nil
+    addon.options.args.charoptions.args.spec1Dropdown.values = addon.groupieClassRoleTable[UnitClass("player")][spec1]
+    addon.options.args.charoptions.args.spec2Dropdown.values = addon.groupieClassRoleTable[UnitClass("player")][spec2]
+    --Reset to default value for dropdowns if fired by CHARACTER_POINTS_CHANGED event
+    --and if the currently selected role is now invalid after the change
+    if resetTalentFlag then
+        if not addon.groupieClassRoleTable[UnitClass("player")][spec1][addon.db.char.groupieSpec1Role] then
+            addon.db.char.groupieSpec1Role = nil
+        end
+        if not addon.groupieClassRoleTable[UnitClass("player")][spec2][addon.db.char.groupieSpec2Role] then
+            addon.db.char.groupieSpec2Role = nil
+        end
+    end
+    for i = 4, 1, -1 do
+        if addon.groupieClassRoleTable[UnitClass("player")][spec1][i] and addon.db.char.groupieSpec1Role == nil then
+            addon.db.char.groupieSpec1Role = i
+        end
+        if addon.groupieClassRoleTable[UnitClass("player")][spec2][i] and addon.db.char.groupieSpec2Role == nil then
+            addon.db.char.groupieSpec2Role = i
+        end
+    end
 end
 
 --Leave this commented for now, may trigger when swapping dual specs, which we dont want to reset settings
