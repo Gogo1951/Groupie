@@ -99,3 +99,75 @@ end
 function addon.EndsWith(str, pattern)
     return pattern == "" or str:sub(- #pattern) == pattern
 end
+
+--Generate toggles for all instances of a specified type
+function addon.GenerateInstanceToggles(order, instanceType, showMaxLevel, groupToggle)
+    local initorder = order
+    addon.options.args.instancefilters.args[tostring(initorder) .. "headerspacer"] = {
+        type = "description",
+        name = " ",
+        width = "full",
+        order = initorder
+    }
+    initorder = initorder + 1
+    addon.options.args.instancefilters.args[tostring(initorder) .. "header"] = {
+        type = "description",
+        name = "|cffffd900" .. instanceType,
+        width = "full",
+        fontSize = "medium",
+        order = initorder
+    }
+    initorder = initorder + 1
+    --[[addon.options.args.instancefilters.args[groupToggle] = {
+        type = "toggle",
+        name = "|cffffd900" .. instanceType,
+        order = initorder,
+        width = "full",
+        get = function(info)
+            return addon.db.char[groupToggle]
+        end,
+        set = function(info, val)
+            addon.db.char[groupToggle] = val
+            for key, val in pairs(addon.options.args.instancefilters.args) do
+                if val.order >= initorder and val.order < initorder + 98 then
+                    if val.type == "toggle" then
+                        val.set(info, val, true)
+                    end
+                end
+            end
+        end,
+    }
+    initorder = initorder + 1--]]
+    for _, key in ipairs(addon.instanceOrders) do
+        if addon.instanceConfigData[key].InstanceType == instanceType then
+            --This slows down the page way too much, need to find a better solution to indent
+            --addon.options.args.instancefilters.args[tostring(order) .. "leftspacer"] = {
+            --    type = "description",
+            --    name = " ",
+            --    width = 0.1,
+            --    order = order
+            --}
+            --order = order + 1
+            local nameStr = ""
+            if showMaxLevel then
+                nameStr = format("%s | %d-%d", addon.instanceConfigData[key].Name,
+                    addon.instanceConfigData[key].MinLevel, addon.instanceConfigData[key].MaxLevel,
+                    addon.instanceConfigData[key].GroupSize)
+            else
+                nameStr = format("%s | %d", addon.instanceConfigData[key].Name,
+                    addon.instanceConfigData[key].MinLevel, addon.instanceConfigData[key].GroupSize)
+            end
+            addon.options.args.instancefilters.args[addon.instanceConfigData[key].Name] = {
+                type = "toggle",
+                name = nameStr,
+                order = initorder,
+                width = 2.1,
+                get = function(info) return not addon.db.char.hideInstances[key] end,
+                set = function(info, val)
+                    addon.db.char.hideInstances[key] = not val
+                end,
+            }
+            initorder = initorder + 1
+        end
+    end
+end

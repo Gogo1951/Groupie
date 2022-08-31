@@ -175,7 +175,7 @@ function addon:OnInitialize()
             showTBC5 = true,
             showClassicRaid = true,
             showClassic5 = true,
-            showInstances = {}
+            hideInstances = {}
         },
         global = {
             preserveData = true,
@@ -188,7 +188,7 @@ function addon:OnInitialize()
     }
     --Generate defaults for each individual dungeon filter
     for key, val in pairs(addon.groupieInstanceData) do
-        defaults.char.showInstances[key] = true
+        defaults.char.hideInstances[key] = false
     end
     addon.db = LibStub("AceDB-3.0"):New("GroupieDB", defaults)
     addon.icon = LibStub("LibDBIcon-1.0")
@@ -230,15 +230,7 @@ function addon.SetupConfig()
                         order = 0,
                         fontSize = "large"
                     },
-                    spacerdesc1 = { type = "description", name = " ", width = "full", order = 1 },
-                    wrath25HToggle = {
-                        type = "toggle",
-                        name = "Wrath of the Lich Heroic Raids - 25",
-                        order = 2,
-                        width = "full",
-                        get = function(info) return addon.db.char.showWrathH25 end,
-                        set = function(info, val) addon.db.char.showWrathH25 = val end,
-                    },
+
                 }
             },
             groupfilters = {
@@ -516,6 +508,23 @@ function addon.SetupConfig()
             },
         },
     }
+    ---------------------------------------
+    -- Generate Instance Filter Controls --
+    ---------------------------------------
+    addon.GenerateInstanceToggles(1, "Wrath of the Lich King Heroic Raids - 25", false, "showWrathH25")
+    addon.GenerateInstanceToggles(101, "Wrath of the Lich King Heroic Raids - 10", false, "showWrathH10")
+    addon.GenerateInstanceToggles(201, "Wrath of the Lich King Raids - 25", false, "showWrath25")
+    addon.GenerateInstanceToggles(301, "Wrath of the Lich King Raids - 10", false, "showWrath10")
+    addon.GenerateInstanceToggles(401, "Wrath of the Lich King Heroic Dungeons", false, "showWrathH5")
+    addon.GenerateInstanceToggles(501, "Wrath of the Lich King Dungeons", true, "showWrath5")
+    addon.GenerateInstanceToggles(601, "The Burning Crusade Raids", false, "showTBCRaid")
+    addon.GenerateInstanceToggles(701, "The Burning Crusade Heroic Dungeons", false, "showTBCH5")
+    addon.GenerateInstanceToggles(801, "The Burning Crusade Dungeons", true, "showTBC5")
+    addon.GenerateInstanceToggles(901, "Classic Raids", false, "showClassicRaid")
+    addon.GenerateInstanceToggles(1001, "Classic Dungeons", true, "showClassic5")
+    ----------------------------------
+    -- End Instance Filter Controls --
+    ----------------------------------
     if not addon.addedToBlizz then
         LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, addon.options)
         addon.AceConfigDialog = LibStub("AceConfigDialog-3.0")

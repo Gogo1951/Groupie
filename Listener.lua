@@ -224,6 +224,11 @@ local function ParseMessage(event, msg, author, _, channel)
         return false
     end
 
+    --Trial of the crusader heroic is called Trial of the grand crusader
+    if groupDungeon == "Trial of the Crusader" and isHeroic then
+        groupDungeon = "Trial of the Grand Crusader"
+    end
+
     --The full versioned instance name for use in data table
     local fullName = groupDungeon
     if isHeroic then
