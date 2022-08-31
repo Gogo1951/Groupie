@@ -163,7 +163,19 @@ function addon:OnInitialize()
                 ["LocalDefense"] = true,
                 ["LookingForGroup"] = true,
                 ["5"] = true,
-            }
+            },
+            showWrathH25 = true,
+            showWrathH10 = true,
+            showWrath25 = true,
+            showWrath10 = true,
+            showWrathH5 = true,
+            showWrath5 = true,
+            showTBCRaid = true,
+            showTBCH5 = true,
+            showTBC5 = true,
+            showClassicRaid = true,
+            showClassic5 = true,
+            showInstances = {}
         },
         global = {
             preserveData = true,
@@ -174,7 +186,10 @@ function addon:OnInitialize()
             showMinimap = true,
         }
     }
-
+    --Generate defaults for each individual dungeon filter
+    for key, val in pairs(addon.groupieInstanceData) do
+        defaults.char.showInstances[key] = true
+    end
     addon.db = LibStub("AceDB-3.0"):New("GroupieDB", defaults)
     addon.icon = LibStub("LibDBIcon-1.0")
     addon.icon:Register("GroupieLDB", addon.groupieLDB, addon.db.global)
@@ -221,8 +236,8 @@ function addon.SetupConfig()
                         name = "Wrath of the Lich Heroic Raids - 25",
                         order = 2,
                         width = "full",
-                        get = function(info) return 1 end,
-                        set = function(info, val) local foo = val end,
+                        get = function(info) return addon.db.char.showWrathH25 end,
+                        set = function(info, val) addon.db.char.showWrathH25 = val end,
                     },
                 }
             },

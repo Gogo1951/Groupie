@@ -35,7 +35,7 @@ local function SendPlayerInfo(targetName)
 	local inactiveSpecGroup = 3 - specGroup
 	--Find out which talent spec has the most points spent in it
 	local activeTalentSpec = addon.GetSpecByGroupNum(specGroup)
-	local inactiveTalentSpec = addon.GetSpecByGroupNum(inactiveSpecGroup)
+	local inactiveTalentSpec, inactiveTalentsSpent = addon.GetSpecByGroupNum(inactiveSpecGroup)
 	local mylocale = GetLocale()
 	local activeRole = nil
 	local inactiveRole = nil
@@ -47,7 +47,12 @@ local function SendPlayerInfo(targetName)
 		inactiveRole = addon.groupieRoleTable[addon.db.char.groupieSpec1Role]
 	end
 
-	local groupieMsg = format("{rt3} %s : %s LFG! Level %s %s %s wearing %s item-level gear. My Other Spec is %s (%s). %s-speaking Player."
+	local otherspecmsg = ""
+	--Send other spec role if dual spec is purchased and used
+	if inactiveTalentsSpent > 0 then
+		otherspecmsg = format(" My Other Spec is %s (%s).", inactiveTalentSpec, inactiveRole)
+	end
+	local groupieMsg = format("{rt3} %s : %s LFG! Level %s %s %s wearing %s item-level gear.%s %s-speaking Player."
 		,
 		addonName,
 		activeRole,
@@ -55,8 +60,7 @@ local function SendPlayerInfo(targetName)
 		activeTalentSpec,
 		myclass,
 		tostring(averageiLevel),
-		inactiveTalentSpec,
-		inactiveRole,
+		otherspecmsg,
 		addon.groupieLocaleTable[mylocale]
 	)
 	--Sending Current Spec Info
@@ -135,7 +139,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 			info.func = function()
 				local myname = UnitName("player")
 				local myserver = GetRealmName()
-				local link = format("https://classic.warcraftlogs.com/character/us/%s/%s", myserver, myname)
+				local link = format("https://classic.warcraftlogs.com/character/us/%s/%s", gsub(myserver, " ", ""), myname)
 				SendChatMessage("{rt3} " .. addonName .. " : Here's my Warcraft Logs Link " .. link, "WHISPER", "COMMON", name)
 			end
 			info.text = "Warcraft Logs Link"
