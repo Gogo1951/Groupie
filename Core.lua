@@ -19,7 +19,8 @@ local COL_SIZE           = 38
 local COL_MSG            = 364
 
 
-local addon               = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0", "AceConsole-3.0")
+local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0", "AceConsole-3.0", "AceTimer-3.0")
+
 local SharedMedia         = LibStub("LibSharedMedia-3.0")
 addon.groupieBoardButtons = {}
 addon.selectedListing     = nil
@@ -43,9 +44,6 @@ local function DrawListings(self)
             button:UnlockHighlight()
         end
         button:Show()
-        if addon.debugMenus then
-            print(i, button:GetText())
-        end
     end
 end
 
@@ -201,6 +199,22 @@ local function createColumn(text, width, parent)
     Header:SetScript("OnClick", function() return end)
 end
 
+--Listing update timer
+function addon:TimerListingUpdate()
+    if LFGScrollFrame:IsShown() and MainTabFrame:IsShown() then
+        CreateListingButtons()
+        print(1)
+    end
+end
+
+function addon.ScheduleListingTimer()
+    addon.listingUpdateTimer = addon:ScheduleRepeatingTimer("TimerListingUpdate", 1)
+end
+
+function addon.CancelListingTimer()
+    addon:CancelTimer(addon.listingUpdateTimer)
+end
+
 --Build and show the main LFG board window
 local function BuildGroupieWindow()
     if GroupieFrame ~= nil then
@@ -293,6 +307,8 @@ local function BuildGroupieWindow()
     -- Scroller Frame --
     --------------------
     LFGScrollFrame = CreateFrame("ScrollFrame", "LFGScrollFrame", MainTabFrame, "FauxScrollFrameTemplate")
+    LFGScrollFrame:HookScript("OnShow", addon.ScheduleListingTimer)
+    LFGScrollFrame:HookScript("OnHide", addon.CancelListingTimer)
     LFGScrollFrame:SetWidth(WINDOW_WIDTH - 46)
     LFGScrollFrame:SetHeight(BUTTON_TOTAL * BUTTON_HEIGHT)
     LFGScrollFrame:SetPoint("TOPLEFT", 0, -4)
