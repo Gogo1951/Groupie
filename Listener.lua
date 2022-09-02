@@ -249,6 +249,11 @@ local function ParseMessage(event, msg, author, _, channel)
         end
     end
 
+    --For some reason sometimes realm name is not included
+    if not strfind(author, "-") then
+        author = author .. "-" .. gsub(GetRealmName(), " ", "")
+    end
+
     --Create the listing entry
     addon.groupieListingTable[author] = {}
     addon.groupieListingTable[author].isLFM = isLFM
@@ -265,7 +270,6 @@ local function ParseMessage(event, msg, author, _, channel)
     if addon.debugMenus then
         tinsert(addon.db.global.debugData, { msg, preprocessedStr, addon.groupieListingTable[author] })
     end
-    print(lootType)
     return true
 end
 

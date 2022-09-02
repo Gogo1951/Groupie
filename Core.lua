@@ -9,6 +9,7 @@ local WINDOW_HEIGHT      = 400
 local WINDOW_OFFSET      = 113
 local BUTTON_HEIGHT      = 20
 local BUTTON_TOTAL       = math.floor((WINDOW_HEIGHT - WINDOW_OFFSET) / BUTTON_HEIGHT)
+local BUTTON_WIDTH       = WINDOW_WIDTH - 44
 local COL_TIME           = 75
 local COL_LEADER         = 100
 local COL_INSTANCE       = 125
@@ -20,12 +21,116 @@ local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName,
     "AceEvent-3.0", "AceConsole-3.0")
 local AceGUI = LibStub("AceGUI-3.0")
 local SharedMedia = LibStub("LibSharedMedia-3.0")
+addon.groupieBoardButtons = {}
 
 --------------------
 -- User Interface --
 --------------------
-local function createColumn(text, width, parent)
+--Apply filters and draw matching listings in the LFG board
+local function DrawListings(self)
+    FauxScrollFrame_Update(self, 10, BUTTON_TOTAL, BUTTON_HEIGHT)
+    for i, button in pairs(addon.groupieBoardButtons) do
+        button:Show()
+        print(i, button:GetText())
+    end
+end
 
+--Create entries in the LFG board for each group listing
+local function CreateListingButtons()
+    --Remove old buttons first
+    for i, button in pairs(addon.groupieBoardButtons) do
+        button:Hide()
+        button:SetParent(nil)
+        button:ClearAllPoints()
+    end
+    --Expire out of date listings
+    addon.ExpireListings()
+
+    --Then create new ones
+    addon.groupieBoardButtons = {}
+    local listcount = 1
+    for author, listing in pairs(addon.groupieListingTable) do
+        if listing ~= nil then
+            addon.groupieBoardButtons[listcount] = CreateFrame(
+                "Button",
+                "ListingBtn" .. tostring(listcount),
+                LFGScrollFrame:GetParent(),
+                "UIPanelButtonTemplate"
+            )
+            addon.groupieBoardButtons[listcount]:SetSize(100, 30)
+            addon.groupieBoardButtons[listcount]:SetText(gsub(author, "-.+", ""))
+            if listcount == 1 then
+                addon.groupieBoardButtons[listcount]:SetPoint("TOPLEFT", LFGScrollFrame, -1, 0)
+            else
+                addon.groupieBoardButtons[listcount]:SetPoint("TOP", addon.groupieBoardButtons[listcount - 1], "BOTTOM")
+            end
+            --[[
+            addon.groupieBoardButtons[listcount] = CreateFrame("Button", nil, LFGScrollFrame:GetParent(),
+                "GroupieListingTemplate")
+            if listcount == 1 then
+                addon.groupieBoardButtons[listcount]:SetPoint("TOPLEFT", LFGScrollFrame, -1, 0)
+            else
+                addon.groupieBoardButtons[listcount]:SetPoint("TOP", addon.groupieBoardButtons[listcount - 1], "BOTTOM")
+            end
+            addon.groupieBoardButtons[listcount]:SetSize(BUTTON_WIDTH, BUTTON_HEIGHT)
+            addon.groupieBoardButtons[listcount]:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+            addon.groupieBoardButtons[listcount]:SetScript("OnClick", function() return end)
+
+
+            
+            addon.groupieBoardButtons[listcount].time:SetWidth(COL_TIME)
+            
+            addon.groupieBoardButtons[listcount].leader = addon.groupieBoardButtons[listcount]:CreateFontString("FontString"
+                ,
+                "OVERLAY", "GameFontHighlight")
+            addon.groupieBoardButtons[listcount].leader:SetPoint("LEFT", addon.groupieBoardButtons[listcount].name, "RIGHT",
+                0, 0)
+            addon.groupieBoardButtons[listcount].leader:SetWidth(COL_LEADER)
+            addon.groupieBoardButtons[listcount].leader:SetJustifyH("LEFT")
+
+            addon.groupieBoardButtons[listcount].instance = addon.groupieBoardButtons[listcount]:CreateFontString("FontString"
+                ,
+                "OVERLAY", "GameFontHighlight")
+            addon.groupieBoardButtons[listcount].instance:SetPoint("LEFT", addon.groupieBoardButtons[listcount].server,
+                "RIGHT",
+                0, 0)
+            addon.groupieBoardButtons[listcount].instance:SetWidth(COL_INSTANCE)
+            addon.groupieBoardButtons[listcount].instance:SetJustifyH("LEFT")
+
+            addon.groupieBoardButtons[listcount].heroic = addon.groupieBoardButtons[listcount]:CreateFontString("FontString"
+                ,
+                "OVERLAY", "GameFontHighlight")
+            addon.groupieBoardButtons[listcount].heroic:SetPoint("LEFT", addon.groupieBoardButtons[listcount].type, "RIGHT",
+                -17
+                , 0)
+            addon.groupieBoardButtons[listcount].heroic:SetWidth(COL_HEROIC)
+            addon.groupieBoardButtons[listcount].heroic:SetJustifyH("RIGHT")
+
+            addon.groupieBoardButtons[listcount].size = addon.groupieBoardButtons[listcount]:CreateFontString("FontString",
+                "OVERLAY", "GameFontHighlight")
+            addon.groupieBoardButtons[listcount].size:SetPoint("LEFT", addon.groupieBoardButtons[listcount].listed, "RIGHT",
+                3
+                , 0)
+            addon.groupieBoardButtons[listcount].size:SetWidth(COL_SIZE)
+            addon.groupieBoardButtons[listcount].size:SetJustifyH("RIGHT")
+
+            addon.groupieBoardButtons[listcount].msg = addon.groupieBoardButtons[listcount]:CreateFontString("FontString",
+                "OVERLAY", "GameFontHighlight")
+            addon.groupieBoardButtons[listcount].msg:SetPoint("LEFT", addon.groupieBoardButtons[listcount].expire, "RIGHT",
+                13,
+                0)
+            addon.groupieBoardButtons[listcount].msg:SetWidth(COL_MSG)
+            addon.groupieBoardButtons[listcount].msg:SetJustifyH("LEFT")
+            addon.groupieBoardButtons[listcount].msg:SetWordWrap(false)
+            --]]
+            listcount = listcount + 1
+        end
+    end
+    DrawListings(LFGScrollFrame)
+end
+
+--Create column headers for the main tab
+local function createColumn(text, width, parent)
     local p = _G[parent:GetName() .. "Header1"]
 
     if p == nil then
@@ -48,9 +153,10 @@ local function createColumn(text, width, parent)
         Header:SetPoint("LEFT", parent:GetName() .. "Header" .. columnCount - 1, "RIGHT", 0, 0)
     end
 
-    Header:SetScript("OnClick", columnClick)
+    Header:SetScript("OnClick", function() return end)
 end
 
+--Build and show the main LFG board window
 local function BuildGroupieWindow()
     if GroupieFrame ~= nil then
         GroupieFrame:Show()
@@ -88,10 +194,7 @@ local function BuildGroupieWindow()
                 self.isMoving = false
             end
         end)
-    GroupieFrame:SetScript("OnShow",
-        function(self)
-            return
-        end)
+    GroupieFrame:SetScript("OnShow", function() return end)
 
     --------
     --Icon--
@@ -123,7 +226,7 @@ local function BuildGroupieWindow()
     MainTabFrame:SetPoint("TOPLEFT", GroupieFrame, "TOPLEFT", 8, -84)
     MainTabFrame:SetScript("OnShow",
         function(self)
-            return
+            CreateListingButtons()
         end)
 
     createColumn("Time", COL_TIME, MainTabFrame)
@@ -147,7 +250,7 @@ local function BuildGroupieWindow()
     LFGScrollFrame:SetPoint("TOPLEFT", 0, -4)
     LFGScrollFrame:SetScript("OnVerticalScroll",
         function(self, offset)
-            return
+            FauxScrollFrame_OnVerticalScroll(self, offset, BUTTON_HEIGHT, CreateListingButtons)
         end)
 
     MainTabFrame.infotext = MainTabFrame:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
@@ -155,7 +258,7 @@ local function BuildGroupieWindow()
     MainTabFrame.infotext:SetJustifyH("CENTER")
     MainTabFrame.infotext:SetPoint("TOP", 0, 46)
 
-
+    CreateListingButtons()
     --------------------
     --Send Info Button--
     --------------------
@@ -233,6 +336,17 @@ function addon:OnInitialize()
             fontSize = 8,
             debugData = {},
             showMinimap = true,
+            ignoreWrongLvl = true,
+            ignoreSavedInstances = true,
+            ignoreLFM = false,
+            ignoreLFG = false,
+            ignoreWrongRole = false,
+            ignoreAmbiguousLanguage = false,
+            ignoreTicket = false,
+            ignoreGDKP = false,
+            ignoreSoftRes = false,
+            ignoreMSOS = false,
+            keywordBlacklist = {}
         }
     }
     --Generate defaults for each individual dungeon filter

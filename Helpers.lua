@@ -1,5 +1,6 @@
 local addonName, addon = ...
 local GetTalentTabInfo = GetTalentTabInfo
+local time = time
 
 --Return the primary talent spec for either main or dual specialization
 function addon.GetSpecByGroupNum(groupnum)
@@ -168,6 +169,16 @@ function addon.GenerateInstanceToggles(order, instanceType, showMaxLevel, groupT
                 end,
             }
             initorder = initorder + 1
+        end
+    end
+end
+
+--Remove expired listings from the listing table
+function addon.ExpireListings()
+    local expirytimediff = addon.db.global.minsToPreserve * 60
+    for key, val in pairs(addon.groupieListingTable) do
+        if time() - val.timestamp > expirytimediff then
+            addon.groupieListingTable[key] = nil
         end
     end
 end
