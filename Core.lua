@@ -31,7 +31,9 @@ local function DrawListings(self)
     FauxScrollFrame_Update(self, 10, BUTTON_TOTAL, BUTTON_HEIGHT)
     for i, button in pairs(addon.groupieBoardButtons) do
         button:Show()
-        print(i, button:GetText())
+        if addon.debugMenus then
+            print(i, button:GetText())
+        end
     end
 end
 
