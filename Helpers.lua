@@ -176,9 +176,9 @@ end
 --Remove expired listings from the listing table
 function addon.ExpireListings()
     local expirytimediff = addon.db.global.minsToPreserve * 60
-    for key, val in pairs(addon.groupieListingTable) do
+    for key, val in pairs(addon.db.global.listingTable) do
         if time() - val.timestamp > expirytimediff then
-            addon.groupieListingTable[key] = nil
+            addon.db.global.listingTable[key] = nil
         end
     end
 end

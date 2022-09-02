@@ -78,7 +78,7 @@ local function CreateListingButtons()
     --Then create new ones
     addon.groupieBoardButtons = {}
     local listcount = 1
-    for author, listing in pairs(addon.groupieListingTable) do
+    for author, listing in pairs(addon.db.global.listingTable) do
         if listing ~= nil then
             addon.groupieBoardButtons[listcount] = CreateFrame(
                 "Button",
@@ -406,6 +406,7 @@ function addon:OnInitialize()
             font = "Arial Narrow",
             fontSize = 8,
             debugData = {},
+            listingTable = {},
             showMinimap = true,
             ignoreWrongLvl = true,
             ignoreSavedInstances = true,

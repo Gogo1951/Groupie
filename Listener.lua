@@ -255,23 +255,23 @@ local function ParseMessage(event, msg, author, _, channel)
     end
 
     --Create the listing entry
-    addon.groupieListingTable[author] = {}
-    addon.groupieListingTable[author].isLFM = isLFM
-    addon.groupieListingTable[author].isLFG = isLFG
-    addon.groupieListingTable[author].timestamp = groupTimestamp
-    addon.groupieListingTable[author].language = groupLanguage
-    addon.groupieListingTable[author].instanceName = groupDungeon
-    addon.groupieListingTable[author].fullName = fullName
-    addon.groupieListingTable[author].isHeroic = isHeroic
-    addon.groupieListingTable[author].groupSize = groupSize
-    addon.groupieListingTable[author].lootType = lootType
-    addon.groupieListingTable[author].rolesNeeded = rolesNeeded
-    addon.groupieListingTable[author].author = author
-    addon.groupieListingTable[author].msg = msg
+    addon.db.global.listingTable[author] = {}
+    addon.db.global.listingTable[author].isLFM = isLFM
+    addon.db.global.listingTable[author].isLFG = isLFG
+    addon.db.global.listingTable[author].timestamp = groupTimestamp
+    addon.db.global.listingTable[author].language = groupLanguage
+    addon.db.global.listingTable[author].instanceName = groupDungeon
+    addon.db.global.listingTable[author].fullName = fullName
+    addon.db.global.listingTable[author].isHeroic = isHeroic
+    addon.db.global.listingTable[author].groupSize = groupSize
+    addon.db.global.listingTable[author].lootType = lootType
+    addon.db.global.listingTable[author].rolesNeeded = rolesNeeded
+    addon.db.global.listingTable[author].author = author
+    addon.db.global.listingTable[author].msg = msg
     --Collect data to debug with
-    if addon.debugMenus then
-        tinsert(addon.db.global.debugData, { msg, preprocessedStr, addon.groupieListingTable[author] })
-    end
+    --if addon.debugMenus then
+    --tinsert(addon.db.global.debugData, { msg, preprocessedStr, addon.db.global.listingTable[author] })
+    --end
     return true
 end
 

@@ -1,6 +1,5 @@
 local addonName, addon = ...
 
-addon.groupieListingTable = {}
 
 addon.groupieLocaleTable = {
     ["frFR"] = "French",
