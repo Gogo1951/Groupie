@@ -2,9 +2,10 @@ local addonName, Groupie = ...
 --Main UI variables
 local GroupieFrame       = nil
 local MainTabFrame       = nil
+local AboutTabFrame      = nil
 local columnCount        = 0
 local LFGScrollFrame     = nil
-local WINDOW_WIDTH       = 734
+local WINDOW_WIDTH       = 834
 local WINDOW_HEIGHT      = 400
 local WINDOW_OFFSET      = 113
 local BUTTON_HEIGHT      = 20
@@ -12,16 +13,24 @@ local BUTTON_TOTAL       = math.floor((WINDOW_HEIGHT - WINDOW_OFFSET) / BUTTON_H
 local BUTTON_WIDTH       = WINDOW_WIDTH - 44
 local COL_TIME           = 75
 local COL_LEADER         = 100
-local COL_INSTANCE       = 125
+local COL_INSTANCE       = 175
 local COL_HEROIC         = 38
 local COL_SIZE           = 38
-local COL_MSG            = 314
+local COL_MSG            = 364
 
-local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName,
+
+local addon               = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName,
     "AceEvent-3.0", "AceConsole-3.0")
-local AceGUI = LibStub("AceGUI-3.0")
-local SharedMedia = LibStub("LibSharedMedia-3.0")
+local AceGUI              = LibStub("AceGUI-3.0")
+local SharedMedia         = LibStub("LibSharedMedia-3.0")
 addon.groupieBoardButtons = {}
+addon.selectedListing     = nil
+
+IgnoreListButtonMixin = {};
+
+function IgnoreListButtonMixin:OnClick()
+    return
+end
 
 --------------------
 -- User Interface --
@@ -30,9 +39,30 @@ addon.groupieBoardButtons = {}
 local function DrawListings(self)
     FauxScrollFrame_Update(self, 10, BUTTON_TOTAL, BUTTON_HEIGHT)
     for i, button in pairs(addon.groupieBoardButtons) do
+        --APPLY FILTERS HERE USING button.listing
+        if button.id == addon.selectedListing then
+            button:LockHighlight()
+        else
+            button:UnlockHighlight()
+        end
         button:Show()
         if addon.debugMenus then
             print(i, button:GetText())
+        end
+    end
+end
+
+--Onclick for group listings, highlights the selected listing
+local function ListingOnClick(self, button, down)
+    if down then
+        return
+    end
+
+    if button == "LeftButton" then
+        addon.selectedListing = self.id
+        DrawListings(LFGScrollFrame)
+        if addon.debugMenus then
+            print(addon.groupieBoardButtons[addon.selectedListing].listing.author)
         end
     end
 end
@@ -57,74 +87,80 @@ local function CreateListingButtons()
                 "Button",
                 "ListingBtn" .. tostring(listcount),
                 LFGScrollFrame:GetParent(),
-                "UIPanelButtonTemplate"
+                "IgnoreListButtonTemplate"
             )
-            addon.groupieBoardButtons[listcount]:SetSize(100, 30)
-            addon.groupieBoardButtons[listcount]:SetText(gsub(author, "-.+", ""))
             if listcount == 1 then
                 addon.groupieBoardButtons[listcount]:SetPoint("TOPLEFT", LFGScrollFrame, -1, 0)
             else
                 addon.groupieBoardButtons[listcount]:SetPoint("TOP", addon.groupieBoardButtons[listcount - 1], "BOTTOM")
             end
-            --[[
-            addon.groupieBoardButtons[listcount] = CreateFrame("Button", nil, LFGScrollFrame:GetParent(),
-                "GroupieListingTemplate")
-            if listcount == 1 then
-                addon.groupieBoardButtons[listcount]:SetPoint("TOPLEFT", LFGScrollFrame, -1, 0)
-            else
-                addon.groupieBoardButtons[listcount]:SetPoint("TOP", addon.groupieBoardButtons[listcount - 1], "BOTTOM")
-            end
+            addon.groupieBoardButtons[listcount].listing = listing
             addon.groupieBoardButtons[listcount]:SetSize(BUTTON_WIDTH, BUTTON_HEIGHT)
             addon.groupieBoardButtons[listcount]:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-            addon.groupieBoardButtons[listcount]:SetScript("OnClick", function() return end)
+            addon.groupieBoardButtons[listcount]:SetScript("OnClick", ListingOnClick)
 
-
-            
+            --TIME COLUMN
             addon.groupieBoardButtons[listcount].time:SetWidth(COL_TIME)
-            
+            addon.groupieBoardButtons[listcount].time:SetText(addon.GetTimeSinceString(listing.timestamp))
+
+            --LEADER NAME COLUMN
             addon.groupieBoardButtons[listcount].leader = addon.groupieBoardButtons[listcount]:CreateFontString("FontString"
                 ,
                 "OVERLAY", "GameFontHighlight")
-            addon.groupieBoardButtons[listcount].leader:SetPoint("LEFT", addon.groupieBoardButtons[listcount].name, "RIGHT",
+            addon.groupieBoardButtons[listcount].leader:SetPoint("LEFT", addon.groupieBoardButtons[listcount].time,
+                "RIGHT",
                 0, 0)
             addon.groupieBoardButtons[listcount].leader:SetWidth(COL_LEADER)
             addon.groupieBoardButtons[listcount].leader:SetJustifyH("LEFT")
+            addon.groupieBoardButtons[listcount].leader:SetText(gsub(listing.author, "-.+", ""))
 
+            --INSTANCE NAME COLUMN
             addon.groupieBoardButtons[listcount].instance = addon.groupieBoardButtons[listcount]:CreateFontString("FontString"
                 ,
                 "OVERLAY", "GameFontHighlight")
-            addon.groupieBoardButtons[listcount].instance:SetPoint("LEFT", addon.groupieBoardButtons[listcount].server,
+            addon.groupieBoardButtons[listcount].instance:SetPoint("LEFT", addon.groupieBoardButtons[listcount].leader,
                 "RIGHT",
                 0, 0)
             addon.groupieBoardButtons[listcount].instance:SetWidth(COL_INSTANCE)
             addon.groupieBoardButtons[listcount].instance:SetJustifyH("LEFT")
+            addon.groupieBoardButtons[listcount].instance:SetText(listing.instanceName)
 
+            --HEROIC/NORMAL COLUMN
             addon.groupieBoardButtons[listcount].heroic = addon.groupieBoardButtons[listcount]:CreateFontString("FontString"
                 ,
                 "OVERLAY", "GameFontHighlight")
-            addon.groupieBoardButtons[listcount].heroic:SetPoint("LEFT", addon.groupieBoardButtons[listcount].type, "RIGHT",
-                -17
-                , 0)
+            addon.groupieBoardButtons[listcount].heroic:SetPoint("LEFT", addon.groupieBoardButtons[listcount].instance,
+                "RIGHT", 2, 0)
             addon.groupieBoardButtons[listcount].heroic:SetWidth(COL_HEROIC)
-            addon.groupieBoardButtons[listcount].heroic:SetJustifyH("RIGHT")
+            addon.groupieBoardButtons[listcount].heroic:SetJustifyH("LEFT")
+            if listing.isHeroic then
+                addon.groupieBoardButtons[listcount].heroic:SetText("H")
+            else
+                addon.groupieBoardButtons[listcount].heroic:SetText("N")
+            end
 
-            addon.groupieBoardButtons[listcount].size = addon.groupieBoardButtons[listcount]:CreateFontString("FontString",
+            --GROUP SIZE COLUMN
+            addon.groupieBoardButtons[listcount].size = addon.groupieBoardButtons[listcount]:CreateFontString("FontString"
+                ,
                 "OVERLAY", "GameFontHighlight")
-            addon.groupieBoardButtons[listcount].size:SetPoint("LEFT", addon.groupieBoardButtons[listcount].listed, "RIGHT",
-                3
-                , 0)
+            addon.groupieBoardButtons[listcount].size:SetPoint("LEFT", addon.groupieBoardButtons[listcount].heroic,
+                "RIGHT", 2, 0)
             addon.groupieBoardButtons[listcount].size:SetWidth(COL_SIZE)
-            addon.groupieBoardButtons[listcount].size:SetJustifyH("RIGHT")
+            addon.groupieBoardButtons[listcount].size:SetJustifyH("LEFT")
+            addon.groupieBoardButtons[listcount].size:SetText(tostring(listing.groupSize))
 
-            addon.groupieBoardButtons[listcount].msg = addon.groupieBoardButtons[listcount]:CreateFontString("FontString",
+            --POSTING MESSAGE COLUMN
+            addon.groupieBoardButtons[listcount].msg = addon.groupieBoardButtons[listcount]:CreateFontString("FontString"
+                ,
                 "OVERLAY", "GameFontHighlight")
-            addon.groupieBoardButtons[listcount].msg:SetPoint("LEFT", addon.groupieBoardButtons[listcount].expire, "RIGHT",
-                13,
-                0)
+            addon.groupieBoardButtons[listcount].msg:SetPoint("LEFT", addon.groupieBoardButtons[listcount].size,
+                "RIGHT", -4, 0)
             addon.groupieBoardButtons[listcount].msg:SetWidth(COL_MSG)
             addon.groupieBoardButtons[listcount].msg:SetJustifyH("LEFT")
             addon.groupieBoardButtons[listcount].msg:SetWordWrap(false)
-            --]]
+            addon.groupieBoardButtons[listcount].msg:SetText(listing.msg)
+
+            addon.groupieBoardButtons[listcount].id = listcount
             listcount = listcount + 1
         end
     end
@@ -215,6 +251,9 @@ local function BuildGroupieWindow()
     MainTabButton:SetID("1")
     MainTabButton:SetScript("OnClick",
         function(self)
+            if AboutTabFrame then
+                AboutTabFrame:Hide()
+            end
             MainTabFrame:Show()
             PanelTemplates_SetTab(GroupieFrame, 1)
         end)
@@ -261,14 +300,6 @@ local function BuildGroupieWindow()
     MainTabFrame.infotext:SetPoint("TOP", 0, 46)
 
     CreateListingButtons()
-    --------------------
-    --Send Info Button--
-    --------------------
-    local SendInfoButton = CreateFrame("Button", "SendInfoBtn", MainTabFrame, "UIPanelButtonTemplate")
-    SendInfoButton:SetSize(155, 22)
-    SendInfoButton:SetText("Send Current Spec Info")
-    SendInfoButton:SetPoint("BOTTOMRIGHT", -166, -24)
-    SendInfoButton:SetScript("OnClick", function(self) return end)
 
     --------------------
     --Send WCL Button--
@@ -277,9 +308,40 @@ local function BuildGroupieWindow()
     SendWCLButton:SetSize(155, 22)
     SendWCLButton:SetText("Send WarcraftLogs Link")
     SendWCLButton:SetPoint("BOTTOMRIGHT", -1, -24)
-    SendWCLButton:SetScript("OnClick", function(self) return end)
+    SendWCLButton:SetScript("OnClick", function(self)
+        if addon.selectedListing then
+            addon.SendWCLInfo(addon.groupieBoardButtons[addon.selectedListing].listing.author)
+        end
+    end)
 
-    PanelTemplates_SetNumTabs(GroupieFrame, 1)
+    --------------------
+    --Send Info Button--
+    --------------------
+    local SendInfoButton = CreateFrame("Button", "SendInfoBtn", MainTabFrame, "UIPanelButtonTemplate")
+    SendInfoButton:SetSize(155, 22)
+    SendInfoButton:SetText("Send Current Spec Info")
+    SendInfoButton:SetPoint("RIGHT", "SendWCLBtn", "LEFT", -8, 0)
+    SendInfoButton:SetScript("OnClick", function(self)
+        if addon.selectedListing then
+            addon.SendPlayerInfo(addon.groupieBoardButtons[addon.selectedListing].listing.author)
+        end
+    end)
+
+    --------------------
+    --About Tab Button--
+    --------------------
+    local AboutTabButton = CreateFrame("Button", "GroupieTab2", GroupieFrame, "CharacterFrameTabButtonTemplate")
+    AboutTabButton:SetPoint("LEFT", "GroupieTab1", "RIGHT", -16, 0)
+    AboutTabButton:SetText("About")
+    AboutTabButton:SetID("2")
+    AboutTabButton:SetScript("OnClick",
+        function(self)
+            MainTabFrame:Hide()
+            AboutTabButton:Show()
+            PanelTemplates_SetTab(GroupieFrame, 2)
+        end)
+
+    PanelTemplates_SetNumTabs(GroupieFrame, 2)
     PanelTemplates_SetTab(GroupieFrame, 1)
 
     GroupieFrame:Show()

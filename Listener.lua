@@ -266,6 +266,8 @@ local function ParseMessage(event, msg, author, _, channel)
     addon.groupieListingTable[author].groupSize = groupSize
     addon.groupieListingTable[author].lootType = lootType
     addon.groupieListingTable[author].rolesNeeded = rolesNeeded
+    addon.groupieListingTable[author].author = author
+    addon.groupieListingTable[author].msg = msg
     --Collect data to debug with
     if addon.debugMenus then
         tinsert(addon.db.global.debugData, { msg, preprocessedStr, addon.groupieListingTable[author] })

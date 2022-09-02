@@ -182,3 +182,11 @@ function addon.ExpireListings()
         end
     end
 end
+
+--Convert a timestamp into a XXMin:XXSec string
+function addon.GetTimeSinceString(timestamp)
+    local timediff = time() - timestamp
+    local mins = floor(timediff / 60)
+    local secs = timediff - (60 * mins)
+    return format("%dm%ds", mins, secs)
+end

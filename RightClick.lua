@@ -2,7 +2,7 @@ local addonName, addon = ...
 -------------------------------
 -- Right Click Functionality --
 -------------------------------
-local function SendPlayerInfo(targetName, dropdownMenu, which)
+function addon.SendPlayerInfo(targetName, dropdownMenu, which)
 	addon.UpdateSpecOptions()
 	--Calculate average itemlevel
 	local iLevelSum = 0
@@ -72,6 +72,18 @@ local function SendPlayerInfo(targetName, dropdownMenu, which)
 	return true
 end
 
+function addon.SendWCLInfo(targetName, dropdownMenu, which)
+	local myname = UnitName("player")
+	local myserver = GetRealmName()
+	local link = format("https://classic.warcraftlogs.com/character/us/%s/%s", gsub(myserver, " ", ""), myname)
+	local groupieMsg = "{rt3} " .. addonName .. " : Here's my Warcraft Logs Link " .. link
+	if which == "BN_FRIEND" then
+		BNSendWhisper(dropdownMenu.accountInfo.bnetAccountID, groupieMsg)
+	else
+		SendChatMessage(groupieMsg, "WHISPER", "COMMON", targetName)
+	end
+end
+
 ---------------
 -- Menu Hook --
 ---------------
@@ -114,7 +126,9 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		info = UIDropDownMenu_CreateInfo()
 		info.dist = 0
 		info.notCheckable = true
-		info.func = function() SendPlayerInfo(name, dropdownMenu, which) end
+		info.func = function()
+			addon.SendPlayerInfo(name, dropdownMenu, which)
+		end
 		local maxTalentSpec, maxTalentsSpent = addon.GetSpecByGroupNum(addon.GetActiveSpecGroup())
 		info.text = "Current Spec : " .. maxTalentSpec
 		info.leftPadding = 8
@@ -141,15 +155,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 			info.dist = 0
 			info.notCheckable = true
 			info.func = function()
-				local myname = UnitName("player")
-				local myserver = GetRealmName()
-				local link = format("https://classic.warcraftlogs.com/character/us/%s/%s", gsub(myserver, " ", ""), myname)
-				local groupieMsg = "{rt3} " .. addonName .. " : Here's my Warcraft Logs Link " .. link
-				if which == "BN_FRIEND" then
-					BNSendWhisper(dropdownMenu.accountInfo.bnetAccountID, groupieMsg)
-				else
-					SendChatMessage(groupieMsg, "WHISPER", "COMMON", name)
-				end
+				addon.SendWCLInfo(name, dropdownMenu, which)
 			end
 			info.text = "Warcraft Logs Link"
 			info.leftPadding = 8
