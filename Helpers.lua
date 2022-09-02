@@ -162,7 +162,7 @@ function addon.GenerateInstanceToggles(order, instanceType, showMaxLevel, groupT
                 type = "toggle",
                 name = nameStr,
                 order = initorder,
-                width = 2.1,
+                width = "full",
                 get = function(info) return not addon.db.char.hideInstances[key] end,
                 set = function(info, val)
                     addon.db.char.hideInstances[key] = not val

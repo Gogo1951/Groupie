@@ -348,7 +348,7 @@ function addon:OnInitialize()
             ignoreGDKP = false,
             ignoreSoftRes = false,
             ignoreMSOS = false,
-            keywordBlacklist = {}
+            keywordBlacklist = ""
         }
     }
     --Generate defaults for each individual dungeon filter
@@ -405,7 +405,121 @@ function addon.SetupConfig()
                 width = "double",
                 inline = false,
                 args = {
-
+                    spacerdesc1 = { type = "description", name = " ", width = "full", order = 0 },
+                    header1 = {
+                        type = "description",
+                        name = "|cffffd900General Filters",
+                        order = 1,
+                        fontSize = "medium"
+                    },
+                    levelRangeToggle = {
+                        type = "toggle",
+                        name = "Ignore Instances Outside of your Recommended Level Range",
+                        order = 2,
+                        width = "full",
+                        get = function(info) return addon.db.global.ignoreWrongLvl end,
+                        set = function(info, val) addon.db.global.ignoreWrongLvl = val end,
+                    },
+                    savedToggle = {
+                        type = "toggle",
+                        name = "Ignore Instances You Are Already Saved To on Current Character",
+                        order = 3,
+                        width = "full",
+                        get = function(info) return addon.db.global.ignoreSavedInstances end,
+                        set = function(info, val) addon.db.global.ignoreSavedInstances = val end,
+                    },
+                    ignoreLFG = {
+                        type = "toggle",
+                        name = "Ignore \"LFG\" Messages from People Looking for a Group",
+                        order = 4,
+                        width = "full",
+                        get = function(info) return addon.db.global.ignoreLFG end,
+                        set = function(info, val) addon.db.global.ignoreLFG = val end,
+                    },
+                    ignoreLFM = {
+                        type = "toggle",
+                        name = "Ignore \"LFM\" Messages from People Making a Group",
+                        order = 5,
+                        width = "full",
+                        get = function(info) return addon.db.global.ignoreLFM end,
+                        set = function(info, val) addon.db.global.ignoreLFM = val end,
+                    },
+                    roleToggle = {
+                        type = "toggle",
+                        name = "Ignore Groups that are Not Looking for a Role You Can Play",
+                        order = 6,
+                        width = "full",
+                        get = function(info) return addon.db.global.ignoreWrongRole end,
+                        set = function(info, val) addon.db.global.ignoreWrongRole = val end,
+                    },
+                    languageToggle = {
+                        type = "toggle",
+                        name = "Ignore Groups Not Explicitly Labeled as your Default Language",
+                        order = 7,
+                        width = "full",
+                        get = function(info) return addon.db.global.ignoreAmbiguousLanguage end,
+                        set = function(info, val) addon.db.global.ignoreAmbiguousLanguage = val end,
+                    },
+                    spacerdesc2 = { type = "description", name = " ", width = "full", order = 8 },
+                    header2 = {
+                        type = "description",
+                        name = "|cffffd900Filter By Reward Distribution Style",
+                        order = 9,
+                        fontSize = "medium"
+                    },
+                    ticketToggle = {
+                        type = "toggle",
+                        name = "Ignore Ticket Run Reward Distribution Style Groups",
+                        order = 10,
+                        width = "full",
+                        get = function(info) return addon.db.global.ignoreTicket end,
+                        set = function(info, val) addon.db.global.ignoreTicket = val end,
+                    },
+                    gdkpToggle = {
+                        type = "toggle",
+                        name = "Ignore GDKP Reward Distribution Style Groups",
+                        order = 11,
+                        width = "full",
+                        get = function(info) return addon.db.global.ignoreGDKP end,
+                        set = function(info, val) addon.db.global.ignoreGDKP = val end,
+                    },
+                    softresToggle = {
+                        type = "toggle",
+                        name = "Ignore Soft Reserve Reward Distribution Style Groups",
+                        order = 12,
+                        width = "full",
+                        get = function(info) return addon.db.global.ignoreSoftRes end,
+                        set = function(info, val) addon.db.global.ignoreSoftRes = val end,
+                    },
+                    msosToggle = {
+                        type = "toggle",
+                        name = "Ignore MS > OS Reward Distribution Style Groups",
+                        order = 13,
+                        width = "full",
+                        get = function(info) return addon.db.global.ignoreMSOS end,
+                        set = function(info, val) addon.db.global.ignoreMSOS = val end,
+                    },
+                    spacerdesc3 = { type = "description", name = " ", width = "full", order = 14 },
+                    header3 = {
+                        type = "description",
+                        name = "|cffffd900Filter By Keyword",
+                        order = 15,
+                        fontSize = "medium"
+                    },
+                    keywordBlacklist = {
+                        type = "input",
+                        name = "",
+                        order = 16,
+                        width = 2,
+                        get = function(info) return addon.db.global.keywordBlacklist end,
+                        set = function(info, val) addon.db.global.keywordBlacklist = val end,
+                    },
+                    header4 = {
+                        type = "description",
+                        name = "|cff999999Separate words or phrases using a comma; any post matching any keyword will be ignored.\nExample: \"SWP TRASH, Selling, Boost\"",
+                        order = 17,
+                        fontSize = "medium"
+                    },
                 }
             },
             charoptions = {
