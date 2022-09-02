@@ -45,6 +45,11 @@ local function GetDungeons(messageWords)
                 instance = lookupAttempt
             end
 
+            --Handle edge case of trial of the crusader heroic having a different name
+            if word == "togc" and instance == "Trial of the Crusader" then
+                isHeroic = true
+            end
+
             --Handle instances with multiple wings by checking the word to the right
             if strmatch(instance, "Full Clear") and i < #messageWords then
                 lookupAttempt = addon.groupieInstancePatterns[messageWords[i + 1]]
@@ -139,7 +144,9 @@ local function GetDungeons(messageWords)
         forceSize = possibleVersions[1][1]
         isHeroic = possibleVersions[1][2]
     end
-    print(instance, isHeroic, forceSize)
+    if addon.debugMenus then
+        print(instance, isHeroic, forceSize)
+    end
     return instance, isHeroic, forceSize
 end
 
@@ -246,9 +253,6 @@ local function ParseMessage(event, msg, author, _, channel)
     addon.groupieListingTable[author] = {}
     addon.groupieListingTable[author].isLFM = isLFM
     addon.groupieListingTable[author].isLFG = isLFG
-    addon.groupieListingTable[author].instanceID = addon.groupieInstanceData[fullName].instanceID
-    addon.groupieListingTable[author].MinLevel = addon.groupieInstanceData[fullName].MinLevel
-    addon.groupieListingTable[author].MaxLevel = addon.groupieInstanceData[fullName].MaxLevel
     addon.groupieListingTable[author].timestamp = groupTimestamp
     addon.groupieListingTable[author].language = groupLanguage
     addon.groupieListingTable[author].instanceName = groupDungeon

@@ -77,7 +77,19 @@ addon.groupieClassRoleTable = {
     }
 }
 
-
+addon.groupieInstanceTypes = {
+    "Wrath of the Lich King Heroic Raids - 25",
+    "Wrath of the Lich King Heroic Raids - 10",
+    "Wrath of the Lich King Raids - 25",
+    "Wrath of the Lich King Raids - 10",
+    "Wrath of the Lich King Heroic Dungeons",
+    "Wrath of the Lich King Dungeons",
+    "The Burning Crusade Raids",
+    "The Burning Crusade Heroic Dungeons",
+    "The Burning Crusade Dungeons",
+    "Classic Raids",
+    "Classic Dungeons",
+}
 --0 - Heroic
 --1 - 10 Normal
 --2 - 25 Normal

@@ -2,7 +2,7 @@ local addonName, addon = ...
 -------------------------------
 -- Right Click Functionality --
 -------------------------------
-local function SendPlayerInfo(targetName)
+local function SendPlayerInfo(targetName, dropdownMenu, which)
 	addon.UpdateSpecOptions()
 	--Calculate average itemlevel
 	local iLevelSum = 0
@@ -64,7 +64,11 @@ local function SendPlayerInfo(targetName)
 		addon.groupieLocaleTable[mylocale]
 	)
 	--Sending Current Spec Info
-	SendChatMessage(groupieMsg, "WHISPER", "COMMON", targetName)
+	if which == "BN_FRIEND" then
+		BNSendWhisper(dropdownMenu.accountInfo.bnetAccountID, groupieMsg)
+	else
+		SendChatMessage(groupieMsg, "WHISPER", "COMMON", targetName)
+	end
 	return true
 end
 
@@ -110,7 +114,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		info = UIDropDownMenu_CreateInfo()
 		info.dist = 0
 		info.notCheckable = true
-		info.func = function() SendPlayerInfo(name) end
+		info.func = function() SendPlayerInfo(name, dropdownMenu, which) end
 		local maxTalentSpec, maxTalentsSpent = addon.GetSpecByGroupNum(addon.GetActiveSpecGroup())
 		info.text = "Current Spec : " .. maxTalentSpec
 		info.leftPadding = 8
@@ -140,7 +144,12 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 				local myname = UnitName("player")
 				local myserver = GetRealmName()
 				local link = format("https://classic.warcraftlogs.com/character/us/%s/%s", gsub(myserver, " ", ""), myname)
-				SendChatMessage("{rt3} " .. addonName .. " : Here's my Warcraft Logs Link " .. link, "WHISPER", "COMMON", name)
+				local groupieMsg = "{rt3} " .. addonName .. " : Here's my Warcraft Logs Link " .. link
+				if which == "BN_FRIEND" then
+					BNSendWhisper(dropdownMenu.accountInfo.bnetAccountID, groupieMsg)
+				else
+					SendChatMessage(groupieMsg, "WHISPER", "COMMON", name)
+				end
 			end
 			info.text = "Warcraft Logs Link"
 			info.leftPadding = 8

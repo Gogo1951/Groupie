@@ -1,4 +1,20 @@
 local addonName, Groupie = ...
+--Main UI variables
+local GroupieFrame       = nil
+local MainTabFrame       = nil
+local columnCount        = 0
+local LFGScrollFrame     = nil
+local WINDOW_WIDTH       = 734
+local WINDOW_HEIGHT      = 400
+local WINDOW_OFFSET      = 113
+local BUTTON_HEIGHT      = 20
+local BUTTON_TOTAL       = math.floor((WINDOW_HEIGHT - WINDOW_OFFSET) / BUTTON_HEIGHT)
+local COL_TIME           = 75
+local COL_LEADER         = 100
+local COL_INSTANCE       = 125
+local COL_HEROIC         = 38
+local COL_SIZE           = 38
+local COL_MSG            = 314
 
 local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName,
     "AceEvent-3.0", "AceConsole-3.0")
@@ -8,127 +24,160 @@ local SharedMedia = LibStub("LibSharedMedia-3.0")
 --------------------
 -- User Interface --
 --------------------
+local function createColumn(text, width, parent)
+
+    local p = _G[parent:GetName() .. "Header1"]
+
+    if p == nil then
+        columnCount = 0
+    end
+
+    columnCount = columnCount + 1
+
+    local Header = CreateFrame("Button", parent:GetName() .. "Header" .. columnCount, parent,
+        "WhoFrameColumnHeaderTemplate")
+    Header:SetWidth(width)
+    _G[parent:GetName() .. "Header" .. columnCount .. "Middle"]:SetWidth(width - 9)
+    Header:SetText(text)
+    Header:SetNormalFontObject("GameFontHighlight")
+    Header:SetID(columnCount)
+
+    if columnCount == 1 then
+        Header:SetPoint("TOPLEFT", parent, "TOPLEFT", 1, 22)
+    else
+        Header:SetPoint("LEFT", parent:GetName() .. "Header" .. columnCount - 1, "RIGHT", 0, 0)
+    end
+
+    Header:SetScript("OnClick", columnClick)
+end
+
 local function BuildGroupieWindow()
-    --Dont open a new frame if already open
-    if addon._frame and addon._frame.frame:IsShown() then
+    if GroupieFrame ~= nil then
+        GroupieFrame:Show()
         return
     end
 
-    --Groupie Main Tab
-    local function DrawMainTab(container)
-        local desc = AceGUI:Create("Label")
-        desc:SetText("Main tab showing group listing.")
-        container:AddChild(desc)
-    end
-
-    --Group Builder Tab
-    local function DrawGroupBuilder(container)
-        local desc = AceGUI:Create("Label")
-        desc:SetText("Group builder tab.")
-        container:AddChild(desc)
-    end
-
-    --About Tab
-    local function DrawAbout(container)
-        local tabTitle = AceGUI:Create("Label")
-        tabTitle:SetText(addonName .. " | About")
-        tabTitle:SetColor(0.88, 0.73, 0)
-        tabTitle:SetFontObject(GameFontHighlightHuge)
-        tabTitle:SetFullWidth(true)
-        container:AddChild(tabTitle)
-
-
-        local curseLabel = AceGUI:Create("Label")
-        curseLabel:SetText(addonName .. " on CurseForge")
-        curseLabel:SetFullWidth(true)
-        container:AddChild(curseLabel)
-        local curseEditBox = AceGUI:Create("EditBox")
-        curseEditBox:SetText("https://www.curseforge.com/wow/addons/groupie")
-        curseEditBox:DisableButton(true)
-        curseEditBox:SetWidth(350)
-        curseEditBox:SetCallback("OnTextChanged", function()
-            curseEditBox:SetText("https://www.curseforge.com/wow/addons/groupie")
-        end)
-        curseEditBox:SetCallback("OnEnterPressed", function()
-            curseEditBox.editbox:ClearFocus()
-        end)
-        curseEditBox.editbox:SetScript("OnCursorChanged", function()
-            curseEditBox:HighlightText()
-        end)
-        container:AddChild(curseEditBox)
-
-        local discordLabel = AceGUI:Create("Label")
-        discordLabel:SetText(addonName .. " on Discord")
-        discordLabel:SetFullWidth(true)
-        container:AddChild(discordLabel)
-        local discordEditBox = AceGUI:Create("EditBox")
-        discordEditBox:SetText("https://discord.gg/p68QgZ8uqF")
-        discordEditBox:DisableButton(true)
-        discordEditBox:SetWidth(350)
-        discordEditBox:SetCallback("OnTextChanged", function()
-            discordEditBox:SetText("https://discord.gg/p68QgZ8uqF")
-        end)
-        discordEditBox:SetCallback("OnEnterPressed", function()
-            discordEditBox.editbox:ClearFocus()
-        end)
-        discordEditBox.editbox:SetScript("OnCursorChanged", function()
-            discordEditBox:HighlightText()
-        end)
-        container:AddChild(discordEditBox)
-
-        local githubLabel = AceGUI:Create("Label")
-        githubLabel:SetText(addonName .. " on GitHub")
-        githubLabel:SetFullWidth(true)
-        container:AddChild(githubLabel)
-        local githubEditBox = AceGUI:Create("EditBox")
-        githubEditBox:SetText("https://github.com/Gogo1951/Groupie")
-        githubEditBox:DisableButton(true)
-        githubEditBox:SetWidth(350)
-        githubEditBox:SetCallback("OnTextChanged", function()
-            githubEditBox:SetText("https://github.com/Gogo1951/Groupie")
-        end)
-        githubEditBox:SetCallback("OnEnterPressed", function()
-            githubEditBox.editbox:ClearFocus()
-        end)
-        githubEditBox.editbox:SetScript("OnCursorChanged", function()
-            githubEditBox:HighlightText()
-        end)
-        container:AddChild(githubEditBox)
-    end
-
-    -- Callback function for OnGroupSelected
-    local function SelectGroup(container, event, group)
-        container:ReleaseChildren()
-        if group == "maintab" then
-            DrawMainTab(container)
-        elseif group == "groupbuilder" then
-            DrawGroupBuilder(container)
-        elseif group == "about" then
-            DrawAbout(container)
-        end
-    end
-
-    local frame = AceGUI:Create("Frame")
-    frame:SetTitle(addonName)
-    frame:SetCallback("OnClose", function(widget) AceGUI:Release(widget) end)
-    frame:SetLayout("Fill")
-
-    --Creating Tabgroup
-    local tab = AceGUI:Create("TabGroup")
-    tab:SetLayout("Flow")
-    tab:SetTabs({ { text = addonName, value = "maintab" },
-        { text = "Group Builder", value = "groupbuilder" },
-        { text = "About", value = "about" }
-    })
-    tab:SetCallback("OnGroupSelected", SelectGroup)
-    tab:SelectTab("maintab")
-    frame:AddChild(tab)
-
+    --------------
+    --Main Frame--
+    --------------
+    GroupieFrame = CreateFrame("Frame", "Groupie", UIParent, "PortraitFrameTemplate")
+    GroupieFrame:Hide()
     --Allow the frame to close when ESC is pressed
-    _G["GroupieFrame"] = frame.frame
-    tinsert(UISpecialFrames, "GroupieFrame")
-    --Store a global reference to the frame
-    addon._frame = frame
+    tinsert(UISpecialFrames, "Groupie")
+    --Store reference to frame
+    addon._frame = GroupieFrame
+    GroupieFrame:SetFrameStrata("DIALOG")
+    GroupieFrame:SetWidth(WINDOW_WIDTH)
+    GroupieFrame:SetHeight(WINDOW_HEIGHT)
+    GroupieFrame:SetPoint("CENTER", UIParent)
+    GroupieFrame:SetMovable(true)
+    GroupieFrame:EnableMouse(true)
+    GroupieFrame:RegisterForDrag("LeftButton", "RightButton")
+    GroupieFrame:SetClampedToScreen(true)
+    GroupieFrame.title = _G["GroupieTitleText"]
+    GroupieFrame.title:SetText("Groupie")
+    GroupieFrame:SetScript("OnMouseDown",
+        function(self)
+            self:StartMoving()
+            self.isMoving = true
+        end)
+    GroupieFrame:SetScript("OnMouseUp",
+        function(self)
+            if self.isMoving then
+                self:StopMovingOrSizing()
+                self.isMoving = false
+            end
+        end)
+    GroupieFrame:SetScript("OnShow",
+        function(self)
+            return
+        end)
+
+    --------
+    --Icon--
+    --------
+    local icon = GroupieFrame:CreateTexture("$parentIcon", "OVERLAY", nil, -8)
+    icon:SetSize(60, 60)
+    icon:SetPoint("TOPLEFT", -5, 7)
+    icon:SetTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\icon64.tga")
+
+    -------------------
+    --Main Tab Button--
+    -------------------
+    local MainTabButton = CreateFrame("Button", "GroupieTab1", GroupieFrame, "CharacterFrameTabButtonTemplate")
+    MainTabButton:SetPoint("TOPLEFT", GroupieFrame, "BOTTOMLEFT", 20, 1)
+    MainTabButton:SetText("LFG Board")
+    MainTabButton:SetID("1")
+    MainTabButton:SetScript("OnClick",
+        function(self)
+            MainTabFrame:Show()
+            PanelTemplates_SetTab(GroupieFrame, 1)
+        end)
+
+    --------------------
+    -- Main Tab Frame --
+    --------------------
+    MainTabFrame = CreateFrame("Frame", "GroupieFrame1", GroupieFrame, "InsetFrameTemplate")
+    MainTabFrame:SetWidth(WINDOW_WIDTH - 19)
+    MainTabFrame:SetHeight(WINDOW_HEIGHT - WINDOW_OFFSET)
+    MainTabFrame:SetPoint("TOPLEFT", GroupieFrame, "TOPLEFT", 8, -84)
+    MainTabFrame:SetScript("OnShow",
+        function(self)
+            return
+        end)
+
+    createColumn("Time", COL_TIME, MainTabFrame)
+    createColumn("Leader", COL_LEADER, MainTabFrame)
+    createColumn("Instance", COL_INSTANCE, MainTabFrame)
+    createColumn("H/N", COL_HEROIC, MainTabFrame)
+    createColumn("Size", COL_SIZE, MainTabFrame)
+    createColumn("Message", COL_MSG, MainTabFrame)
+
+    GroupieTopFrame = CreateFrame("Button", "GroupieTopFrame", MainTabFrame, "UIPanelButtonTemplate")
+    GroupieTopFrame:SetSize(155, 22)
+    GroupieTopFrame:SetText("test")
+    GroupieTopFrame:SetPoint("TOPRIGHT", -0, 50)
+    GroupieTopFrame:SetScript("OnClick", function(self) return end)
+    --------------------
+    -- Scroller Frame --
+    --------------------
+    LFGScrollFrame = CreateFrame("ScrollFrame", "LFGScrollFrame", MainTabFrame, "FauxScrollFrameTemplate")
+    LFGScrollFrame:SetWidth(WINDOW_WIDTH - 46)
+    LFGScrollFrame:SetHeight(BUTTON_TOTAL * BUTTON_HEIGHT)
+    LFGScrollFrame:SetPoint("TOPLEFT", 0, -4)
+    LFGScrollFrame:SetScript("OnVerticalScroll",
+        function(self, offset)
+            return
+        end)
+
+    MainTabFrame.infotext = MainTabFrame:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
+    MainTabFrame.infotext:SetWidth(100)
+    MainTabFrame.infotext:SetJustifyH("CENTER")
+    MainTabFrame.infotext:SetPoint("TOP", 0, 46)
+
+
+    --------------------
+    --Send Info Button--
+    --------------------
+    local SendInfoButton = CreateFrame("Button", "SendInfoBtn", MainTabFrame, "UIPanelButtonTemplate")
+    SendInfoButton:SetSize(155, 22)
+    SendInfoButton:SetText("Send Current Spec Info")
+    SendInfoButton:SetPoint("BOTTOMRIGHT", -166, -24)
+    SendInfoButton:SetScript("OnClick", function(self) return end)
+
+    --------------------
+    --Send WCL Button--
+    --------------------
+    local SendWCLButton = CreateFrame("Button", "SendWCLBtn", MainTabFrame, "UIPanelButtonTemplate")
+    SendWCLButton:SetSize(155, 22)
+    SendWCLButton:SetText("Send WarcraftLogs Link")
+    SendWCLButton:SetPoint("BOTTOMRIGHT", -1, -24)
+    SendWCLButton:SetScript("OnClick", function(self) return end)
+
+    PanelTemplates_SetNumTabs(GroupieFrame, 1)
+    PanelTemplates_SetTab(GroupieFrame, 1)
+
+    GroupieFrame:Show()
 end
 
 --Minimap Icon Creation
@@ -518,7 +567,7 @@ function addon.SetupConfig()
     addon.GenerateInstanceToggles(401, "Wrath of the Lich King Heroic Dungeons", false, "showWrathH5")
     addon.GenerateInstanceToggles(501, "Wrath of the Lich King Dungeons", true, "showWrath5")
     addon.GenerateInstanceToggles(601, "The Burning Crusade Raids", false, "showTBCRaid")
-    addon.GenerateInstanceToggles(701, "The Burning Crusade Heroic Dungeons", false, "showTBCH5")
+    addon.GenerateInstanceToggles(701, "The Burning Crusade Heroic Dungeons", true, "showTBCH5")
     addon.GenerateInstanceToggles(801, "The Burning Crusade Dungeons", true, "showTBC5")
     addon.GenerateInstanceToggles(901, "Classic Raids", false, "showClassicRaid")
     addon.GenerateInstanceToggles(1001, "Classic Dungeons", true, "showClassic5")
