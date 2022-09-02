@@ -8,7 +8,7 @@ local LFGScrollFrame     = nil
 local WINDOW_WIDTH       = 834
 local WINDOW_HEIGHT      = 400
 local WINDOW_OFFSET      = 113
-local BUTTON_HEIGHT      = 20
+local BUTTON_HEIGHT      = 30
 local BUTTON_TOTAL       = math.floor((WINDOW_HEIGHT - WINDOW_OFFSET) / BUTTON_HEIGHT)
 local BUTTON_WIDTH       = WINDOW_WIDTH - 44
 local COL_TIME           = 75
@@ -19,15 +19,12 @@ local COL_SIZE           = 38
 local COL_MSG            = 364
 
 
-local addon               = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName,
-    "AceEvent-3.0", "AceConsole-3.0")
-local AceGUI              = LibStub("AceGUI-3.0")
+local addon               = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0", "AceConsole-3.0")
 local SharedMedia         = LibStub("LibSharedMedia-3.0")
 addon.groupieBoardButtons = {}
 addon.selectedListing     = nil
 
-IgnoreListButtonMixin = {};
-
+IgnoreListButtonMixin = {}
 function IgnoreListButtonMixin:OnClick()
     return
 end
@@ -92,7 +89,8 @@ local function CreateListingButtons()
             if listcount == 1 then
                 addon.groupieBoardButtons[listcount]:SetPoint("TOPLEFT", LFGScrollFrame, -1, 0)
             else
-                addon.groupieBoardButtons[listcount]:SetPoint("TOP", addon.groupieBoardButtons[listcount - 1], "BOTTOM")
+                addon.groupieBoardButtons[listcount]:SetPoint("TOP", addon.groupieBoardButtons[listcount - 1], "BOTTOM",
+                    0, 0)
             end
             addon.groupieBoardButtons[listcount].listing = listing
             addon.groupieBoardButtons[listcount]:SetSize(BUTTON_WIDTH, BUTTON_HEIGHT)
@@ -106,12 +104,13 @@ local function CreateListingButtons()
             --LEADER NAME COLUMN
             addon.groupieBoardButtons[listcount].leader = addon.groupieBoardButtons[listcount]:CreateFontString("FontString"
                 ,
-                "OVERLAY", "GameFontHighlight")
+                "OVERLAY", "GameFontNormal")
             addon.groupieBoardButtons[listcount].leader:SetPoint("LEFT", addon.groupieBoardButtons[listcount].time,
                 "RIGHT",
                 0, 0)
             addon.groupieBoardButtons[listcount].leader:SetWidth(COL_LEADER)
             addon.groupieBoardButtons[listcount].leader:SetJustifyH("LEFT")
+            addon.groupieBoardButtons[listcount].leader:SetJustifyV("MIDDLE")
             addon.groupieBoardButtons[listcount].leader:SetText(gsub(listing.author, "-.+", ""))
 
             --INSTANCE NAME COLUMN
@@ -123,6 +122,7 @@ local function CreateListingButtons()
                 0, 0)
             addon.groupieBoardButtons[listcount].instance:SetWidth(COL_INSTANCE)
             addon.groupieBoardButtons[listcount].instance:SetJustifyH("LEFT")
+            addon.groupieBoardButtons[listcount].instance:SetJustifyV("MIDDLE")
             addon.groupieBoardButtons[listcount].instance:SetText(listing.instanceName)
 
             --HEROIC/NORMAL COLUMN
@@ -133,10 +133,13 @@ local function CreateListingButtons()
                 "RIGHT", 2, 0)
             addon.groupieBoardButtons[listcount].heroic:SetWidth(COL_HEROIC)
             addon.groupieBoardButtons[listcount].heroic:SetJustifyH("LEFT")
+            addon.groupieBoardButtons[listcount].heroic:SetJustifyV("MIDDLE")
             if listing.isHeroic then
                 addon.groupieBoardButtons[listcount].heroic:SetText("H")
+                addon.groupieBoardButtons[listcount].heroic:SetTextColor(255, 0, 0)
             else
                 addon.groupieBoardButtons[listcount].heroic:SetText("N")
+                addon.groupieBoardButtons[listcount].heroic:SetTextColor(0, 255, 0)
             end
 
             --GROUP SIZE COLUMN
@@ -147,7 +150,9 @@ local function CreateListingButtons()
                 "RIGHT", 2, 0)
             addon.groupieBoardButtons[listcount].size:SetWidth(COL_SIZE)
             addon.groupieBoardButtons[listcount].size:SetJustifyH("LEFT")
+            addon.groupieBoardButtons[listcount].size:SetJustifyV("MIDDLE")
             addon.groupieBoardButtons[listcount].size:SetText(tostring(listing.groupSize))
+            addon.groupieBoardButtons[listcount].size:SetTextColor(0, 173, 239)
 
             --POSTING MESSAGE COLUMN
             addon.groupieBoardButtons[listcount].msg = addon.groupieBoardButtons[listcount]:CreateFontString("FontString"
@@ -157,7 +162,9 @@ local function CreateListingButtons()
                 "RIGHT", -4, 0)
             addon.groupieBoardButtons[listcount].msg:SetWidth(COL_MSG)
             addon.groupieBoardButtons[listcount].msg:SetJustifyH("LEFT")
-            addon.groupieBoardButtons[listcount].msg:SetWordWrap(false)
+            addon.groupieBoardButtons[listcount].msg:SetJustifyV("MIDDLE")
+            addon.groupieBoardButtons[listcount].msg:SetWordWrap(true)
+            addon.groupieBoardButtons[listcount].msg:SetMaxLines(2)
             addon.groupieBoardButtons[listcount].msg:SetText(listing.msg)
 
             addon.groupieBoardButtons[listcount].id = listcount
