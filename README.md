@@ -1,17 +1,20 @@
 # Groupie
+
 A better LFG tool for Classic WoW.
 
+<br>
 
-**Key Features**
+:gem:  **Key Features**
 
-1 - Quickly find the groups you actually want; filter groups by raid size, loot rules type, language, and more.
+:one:  Quickly find the groups you actually want; filter groups by raid size, loot rules type, language, and more.
 
-2 - One-click ability to share your character's role, key stats, and relevant achievement with group leaders.
+:two:  One-click ability to share your character's role, key stats, and relevant achievement with group leaders.
 
-3 - Optional ability to auto-respond to Friends and Guildies when they post groups you are interested in.
+:three:  Optional ability to auto-respond to Friends and Guildies when they post groups you are interested in.
 
+<br>
 
-**Links**
+:link:  **Links**
 
 Download from CurseForge : <https://www.curseforge.com/wow/addons/groupie>
 
@@ -20,3 +23,25 @@ Discord : <https://discord.gg/p68QgZ8uqF>
 Github : <https://github.com/Gogo1951/Groupie>
 
 Reddit Announcement Post : COMING SOON!
+
+<br>
+
+:hand:  **Current Needs**
+
+As a new add-on, we can use a hand raising awarenss. If you're a streamer, please feel free to plug or review Groupie on your channel.
+
+We can use help translating the add-on. Reach out on Discord if you want to help!
+
+> Chinese - Need Translator
+> 
+> German - Need Translator
+> 
+> Italian - Need Translator
+> 
+> Korean - Need Translator
+> 
+> Portuguese - Need Translator
+> 
+> Russian - Need Translator
+> 
+> Spanish - Need Translator
