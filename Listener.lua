@@ -235,7 +235,10 @@ local function ParseMessage(event, msg, author, _, channel)
         groupLanguage = GetLanguage(messageWords) --This can safely be nil
         groupDungeon, isHeroic, groupSize = GetDungeons(messageWords)
         if groupDungeon == nil then
-            return false --No dungeon Found
+            groupDungeon = "Miscellaneous" --No dungeon Found
+            lootType = "Other"
+            isHeroic = false
+            groupSize = 5
         end
         if lootType == nil then
             lootType = GetGroupType(messageWords) --Defaults to MS>OS if not mentioned
@@ -256,14 +259,16 @@ local function ParseMessage(event, msg, author, _, channel)
 
     --The full versioned instance name for use in data table
     local fullName = groupDungeon
-    if isHeroic then
-        fullName = format("Heroic %s", fullName)
-    end
-    if #addon.instanceVersions[groupDungeon] > 1 then
-        if groupSize == 10 then
-            fullName = format("%s - 10", fullName)
-        elseif groupSize == 25 then
-            fullName = format("%s - 25", fullName)
+    if groupDungeon ~= "Miscellaneous" then
+        if isHeroic then
+            fullName = format("Heroic %s", fullName)
+        end
+        if #addon.instanceVersions[groupDungeon] > 1 then
+            if groupSize == 10 then
+                fullName = format("%s - 10", fullName)
+            elseif groupSize == 25 then
+                fullName = format("%s - 25", fullName)
+            end
         end
     end
 
