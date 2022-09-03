@@ -54,8 +54,6 @@ end
 local function DrawListings(self)
     --Create a numerical index for use populating the table
     filterListings()
-    --Expire out of date listings
-    addon.ExpireListings()
 
     FauxScrollFrame_Update(self, #addon.filteredListings, BUTTON_TOTAL, BUTTON_HEIGHT)
 
@@ -397,6 +395,14 @@ local function BuildGroupieWindow()
     LFGScrollFrame:HookScript("OnUpdate", function()
         addon.TimerListingUpdate()
     end)
+    LFGScrollFrame:HookScript("OnShow", function()
+        --Expire out of date listings
+        addon.ExpireListings()
+    end)
+    LFGScrollFrame:HookScript("OnHide", function()
+        --Expire out of date listings
+        addon.ExpireListings()
+    end)
     LFGScrollFrame:SetWidth(WINDOW_WIDTH - 46)
     LFGScrollFrame:SetHeight(BUTTON_TOTAL * BUTTON_HEIGHT)
     LFGScrollFrame:SetPoint("TOPLEFT", 0, -4)
@@ -515,9 +521,9 @@ function addon:OnInitialize()
     addon.db = LibStub("AceDB-3.0"):New("GroupieDB", defaults)
     addon.icon = LibStub("LibDBIcon-1.0")
     addon.icon:Register("GroupieLDB", addon.groupieLDB, addon.db.global)
-    --addon.icon:Show()
     addon.icon:Hide("GroupieLDB")
 
+    BuildGroupieWindow()
 
     addon.debugMenus = false
     --Setup Slash Commands
@@ -526,7 +532,10 @@ function addon:OnInitialize()
     SLASH_GROUPIECFG1 = "/groupiecfg"
     SlashCmdList["GROUPIECFG"] = addon.OpenConfig
     SLASH_GROUPIEDEBUG1 = "/groupiedebug"
-    SlashCmdList["GROUPIEDEBUG"] = function() addon.debugMenus = not addon.debugMenus end
+    SlashCmdList["GROUPIEDEBUG"] = function()
+        addon.debugMenus = not addon.debugMenus
+        print("GROUPIE DEBUG MODE: " .. tostring(addon.debugMenus))
+    end
     addon.isInitialized = true
 end
 
