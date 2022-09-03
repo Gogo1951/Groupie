@@ -393,6 +393,9 @@ local function BuildGroupieWindow()
         function(self)
             return
         end)
+    MainTabFrame:HookScript("OnUpdate", function()
+        addon.TimerListingUpdate()
+    end)
 
     MainTabFrame.infotext = MainTabFrame:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
     MainTabFrame.infotext:SetWidth(100)
@@ -421,9 +424,7 @@ local function BuildGroupieWindow()
     --Scroller Frame--
     ------------------
     LFGScrollFrame = CreateFrame("ScrollFrame", "LFGScrollFrame", MainTabFrame, "FauxScrollFrameTemplate")
-    LFGScrollFrame:HookScript("OnUpdate", function()
-        addon.TimerListingUpdate()
-    end)
+
     LFGScrollFrame:SetWidth(WINDOW_WIDTH - 46)
     LFGScrollFrame:SetHeight(BUTTON_TOTAL * BUTTON_HEIGHT)
     LFGScrollFrame:SetPoint("TOPLEFT", 0, -4)
@@ -432,6 +433,14 @@ local function BuildGroupieWindow()
             addon.selectedListing = nil
             FauxScrollFrame_OnVerticalScroll(self, offset, BUTTON_HEIGHT, DrawListings)
         end)
+    LFGScrollFrame:HookScript("OnShow", function()
+        --Expire out of date listings
+        addon.ExpireListings()
+    end)
+    LFGScrollFrame:HookScript("OnHide", function()
+        --Expire out of date listings
+        addon.ExpireListings()
+    end)
 
     CreateListingButtons()
 
