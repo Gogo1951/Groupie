@@ -39,22 +39,27 @@ end
 --Create a numerically indexed table of listings for use in the scroller
 local function filterListings()
     addon.filteredListings = {}
-    local idx = 0
+    local idx = 1
+    local total = 0
     for author, listing in pairs(addon.db.global.listingTable) do
         if listing.isHeroic ~= MainTabFrame.isHeroic then
+            --Wrong tab
         elseif listing.groupSize ~= MainTabFrame.size then
+            --Wrong tab
         else
             addon.filteredListings[idx] = listing
             idx = idx + 1
         end
+        total = total + 1
     end
+    MainTabFrame.infotext:SetText(format("Showing %d of %d possible groups. To see more groups adjust your [Group Filters] or [Instance Filters] under Groupie > Settings."
+        , idx, total))
 end
 
 --Apply filters and draw matching listings in the LFG board
 local function DrawListings(self)
     --Create a numerical index for use populating the table
     filterListings()
-
 
     FauxScrollFrame_Update(self, #addon.filteredListings, BUTTON_TOTAL, BUTTON_HEIGHT)
 
@@ -398,7 +403,7 @@ local function BuildGroupieWindow()
     end)
 
     MainTabFrame.infotext = MainTabFrame:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
-    MainTabFrame.infotext:SetWidth(100)
+    MainTabFrame.infotext:SetWidth(WINDOW_WIDTH - 44)
     MainTabFrame.infotext:SetJustifyH("CENTER")
     MainTabFrame.infotext:SetPoint("TOP", 0, 46)
 
