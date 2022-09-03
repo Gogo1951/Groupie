@@ -44,6 +44,10 @@ local function GetDungeons(messageWords)
             if lookupAttempt ~= "Mana-Tombs" or instance == nil then
                 instance = lookupAttempt
             end
+            --Same situation but with obsidian sanctum and off-spec
+            if lookupAttempt ~= "The Obsidian Sanctum" or instance == nil then
+                instance = lookupAttempt
+            end
 
             --Set to heroic for special case "TOGC"
             if word == "togc" then
