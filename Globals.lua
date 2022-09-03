@@ -262,9 +262,10 @@ addon.instanceVersions = {
     --["Onyxia's Lair"]        = { { 10, false }, { 25, false } },
     ["Ulduar"]               = { { 10, false }, { 25, false } },
 
-    ["Trial of the Crusader"] = { { 10, false }, { 25, false }, { 10, true }, { 25, true } },
-    ["Icecrown Citadel"]      = { { 10, false }, { 25, false }, { 10, true }, { 25, true } },
-    ["The Ruby Sanctum"]      = { { 10, false }, { 25, false }, { 10, true }, { 25, true } },
+    ["Trial of the Crusader"]       = { { 10, false }, { 25, false }, { 10, true }, { 25, true } },
+    ["Icecrown Citadel"]            = { { 10, false }, { 25, false }, { 10, true }, { 25, true } },
+    ["The Ruby Sanctum"]            = { { 10, false }, { 25, false }, { 10, true }, { 25, true } },
+    ["Trial of the Grand Crusader"] = { { 10, true }, { 25, true } }
 }
 
 addon.groupieInstanceData = {
@@ -643,7 +644,7 @@ addon.groupieUnflippedDungeonPatterns = {
     ["Scarlet Monastery - Armory"]     = "smarm sma arm armory herod armoury arms",
     ["Scarlet Monastery - Cathedral"]  = "smcath smc cath cathedral",
     ["Razorfen Downs"]                 = "rfd downs",
-    ["Uldaman"]                        = "uld ulda uldaman ulduman uldman uldama udaman",
+    ["Uldaman"]                        = "ulda uldaman ulduman uldman uldama udaman",
     ["Zul'Farrak"]                     = "zf zul farrak zul'farrak zulfarrak zulfarak zul´farrak zul`farrak zulfa zulf",
     ["Maraudon - Full Clear"]          = "mar mara maraudon mauradon mauro maurodon maraudin maura marau mauraudon",
     ["Maraudon - Princess"]            = "princessrun princess",
@@ -679,7 +680,7 @@ addon.groupieUnflippedDungeonPatterns = {
     ["Shadow Labyrinth"]        = "sl slab labyrinth lab labrinth slabs",
     ["The Mechanar"]            = "mech mechanar",
     ["The Shattered Halls"]     = "sh shattered shatered shaterred",
-    ["The Steamvault"]          = "sv steamvault steamvaults steam vault valts",
+    ["The Steamvault"]          = "sv steamvault steamvaults steam valts",
     ["The Botanica"]            = "botanica bot",
     ["The Arcatraz"]            = "arc arcatraz alcatraz",
     ["The Black Morass"]        = "morass bm black",
@@ -690,10 +691,39 @@ addon.groupieUnflippedDungeonPatterns = {
     ["Gruul's Lair"]         = "gl gruul gruuls gruul's",
     ["Magtheridon's Lair"]   = "mag magtheridon magtheridon's magth",
     ["Serpentshrine Cavern"] = "ssc serpentshrine serpentshine",
-    ["The Eye"]              = "eye tk",
+    ["The Eye"]              = "tk tempest tempestkeep",
     ["Hyjal Summit"]         = "hyjal hs hyj",
     ["Black Temple"]         = "bt blacktemple",
     ["Sunwell Plateau"]      = "swp sunwell plateau plataeu sunwel",
+
+    ["Utgarde Keep"]               = "uk utgardekeep",
+    ["The Nexus"]                  = "nexus",
+    ["Ajzol-Nerub"]                = "an azjol azjolnerub",
+    ["Ahn'kahet: The Old Kingdom"] = "ok atok ahnkahet ankahet",
+    ["Drak'Tharon Keep"]           = "dk dtk draktharon",
+    ["The Violet Hold"]            = "vh violet violethold",
+    ["Gundrak"]                    = "gundrak",
+    ["Halls of Stone"]             = "hos",
+    ["The Culling of Stratholme"]  = "cos culling bronze",
+    ["Halls of Lightning"]         = "hol",
+    ["Utgarde Pinnacle"]           = "up pinnacle",
+    ["The Oculus"]                 = "oculus occulus oc occ",
+    --["Trial of the Champion"]      = "",
+    ["Forge of Souls"]             = "forge fos forgeofsouls",
+    ["Pit of Saron"]               = "pit pos pitofsaron",
+    ["Halls of Reflection"]        = "hor reflection",
+
+    --["Naxxramas"]            = "",
+    ["The Obsidian Sanctum"] = "os obsidian obssanc obsanc obsidiansanctum",
+    ["Vault of Archavon"]    = "voa archavon vault",
+    ["The Eye of Eternity"]  = "eoe eye",
+    --["Onyxia's Lair"]        = "",
+    ["Ulduar"]               = "uld uldu ulduar",
+
+    ["TOC-SPECIALCASE"]             = "toc trial",
+    ["Icecrown Citadel"]            = "icc",
+    ["The Ruby Sanctum"]            = "rs rubysanctum rubysanc ruby",
+    ["Trial of the Grand Crusader"] = "togc grand",
 }
 
 

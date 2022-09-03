@@ -45,9 +45,12 @@ local function GetDungeons(messageWords)
                 instance = lookupAttempt
             end
 
-            --Handle edge case of trial of the crusader heroic having a different name
-            if word == "togc" and instance == "Trial of the Crusader" then
+            --Set to heroic for special case "TOGC"
+            if word == "togc" then
                 isHeroic = true
+                if forceSize == nil then
+                    forceSize = 10
+                end
             end
 
             --Handle instances with multiple wings by checking the word to the right
@@ -117,6 +120,17 @@ local function GetDungeons(messageWords)
                 isHeroic = true
                 forceSize = 25
             end
+        end
+    end
+
+    --Handle "TOC" disambiguation
+    if instance == "TOC-SPECIALCASE" then
+        --If size specified, it is the raid
+        if forceSize == 25 or forceSize == 10 then
+            instance = "Trial of the Crusader"
+            --Otherwise, assume it is the 5 man
+        else
+            instance = "Trial of the Champion"
         end
     end
 

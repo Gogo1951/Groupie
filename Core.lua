@@ -41,19 +41,39 @@ local function filterListings()
     addon.filteredListings = {}
     local idx = 1
     local total = 0
-    for author, listing in pairs(addon.db.global.listingTable) do
-        if listing.isHeroic ~= MainTabFrame.isHeroic then
-            --Wrong tab
-        elseif listing.groupSize ~= MainTabFrame.size then
-            --Wrong tab
-        else
-            addon.filteredListings[idx] = listing
-            idx = idx + 1
+    if MainTabFrame.isOther then
+        for author, listing in pairs(addon.db.global.listingTable) do
+            if (MainTabFrame.isOther and listing.lootType ~= "Other") then
+                --Wrong tab
+                --Other tab shows groups with 'other' loot type, and 40 man raids
+                --No other filters apply to this tab currently
+            else
+                addon.filteredListings[idx] = listing
+                idx = idx + 1
+            end
+            total = total + 1
         end
-        total = total + 1
+        MainTabFrame.infotext:SetText(format(
+            "Showing %d of %d possible groups. To see more groups adjust your [Group Filters] or [Instance Filters] under Groupie > Settings."
+            , idx - 1, total))
+    else
+        for author, listing in pairs(addon.db.global.listingTable) do
+            if listing.isHeroic ~= MainTabFrame.isHeroic and not MainTabFrame.isOther then
+                --Wrong tab
+            elseif listing.groupSize ~= MainTabFrame.size then
+                --Wrong tab
+            elseif listing.lootType == "Other" then
+                --Only show these groups in 'Other' tab
+            else
+                addon.filteredListings[idx] = listing
+                idx = idx + 1
+            end
+            total = total + 1
+        end
+        MainTabFrame.infotext:SetText(format(
+            "Showing %d of %d possible groups. To see more groups adjust your [Group Filters] or [Instance Filters] under Groupie > Settings."
+            , idx - 1, total))
     end
-    MainTabFrame.infotext:SetText(format("Showing %d of %d possible groups. To see more groups adjust your [Group Filters] or [Instance Filters] under Groupie > Settings."
-        , idx, total))
 end
 
 --Apply filters and draw matching listings in the LFG board
@@ -180,14 +200,7 @@ end
 
 --Create column headers for the main tab
 local function createColumn(text, width, parent)
-    local p = _G[parent:GetName() .. "Header1"]
-
-    if p == nil then
-        columnCount = 0
-    end
-
     columnCount = columnCount + 1
-
     local Header = CreateFrame("Button", parent:GetName() .. "Header" .. columnCount, parent,
         "WhoFrameColumnHeaderTemplate")
     Header:SetWidth(width)
@@ -201,7 +214,6 @@ local function createColumn(text, width, parent)
     else
         Header:SetPoint("LEFT", parent:GetName() .. "Header" .. columnCount - 1, "RIGHT", 0, 0)
     end
-
     Header:SetScript("OnClick", function() return end)
 end
 
@@ -279,6 +291,7 @@ local function BuildGroupieWindow()
             MainTabFrame:Show()
             MainTabFrame.isHeroic = false
             MainTabFrame.size = 5
+            MainTabFrame.isOther = false
             if addon.selectedListing then
                 addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
             end
@@ -289,7 +302,7 @@ local function BuildGroupieWindow()
 
     local DungeonHTabButton = CreateFrame("Button", "GroupieTab2", GroupieFrame, "CharacterFrameTabButtonTemplate")
     DungeonHTabButton:SetPoint("LEFT", "GroupieTab1", "RIGHT", -16, 0)
-    DungeonHTabButton:SetText("Heroic Dungeons")
+    DungeonHTabButton:SetText("Dungeons (H)")
     DungeonHTabButton:SetID("2")
     DungeonHTabButton:SetScript("OnClick",
         function(self)
@@ -299,6 +312,7 @@ local function BuildGroupieWindow()
             MainTabFrame:Show()
             MainTabFrame.isHeroic = true
             MainTabFrame.size = 5
+            MainTabFrame.isOther = false
             if addon.selectedListing then
                 addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
             end
@@ -319,6 +333,7 @@ local function BuildGroupieWindow()
             MainTabFrame:Show()
             MainTabFrame.isHeroic = false
             MainTabFrame.size = 10
+            MainTabFrame.isOther = false
             if addon.selectedListing then
                 addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
             end
@@ -339,6 +354,7 @@ local function BuildGroupieWindow()
             MainTabFrame:Show()
             MainTabFrame.isHeroic = false
             MainTabFrame.size = 25
+            MainTabFrame.isOther = false
             if addon.selectedListing then
                 addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
             end
@@ -349,7 +365,7 @@ local function BuildGroupieWindow()
 
     local RaidH10TabButton = CreateFrame("Button", "GroupieTab5", GroupieFrame, "CharacterFrameTabButtonTemplate")
     RaidH10TabButton:SetPoint("LEFT", "GroupieTab4", "RIGHT", -16, 0)
-    RaidH10TabButton:SetText("Heroic Raids (10)")
+    RaidH10TabButton:SetText("Raids (10H)")
     RaidH10TabButton:SetID("5")
     RaidH10TabButton:SetScript("OnClick",
         function(self)
@@ -359,6 +375,7 @@ local function BuildGroupieWindow()
             MainTabFrame:Show()
             MainTabFrame.isHeroic = true
             MainTabFrame.size = 10
+            MainTabFrame.isOther = false
             if addon.selectedListing then
                 addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
             end
@@ -369,7 +386,7 @@ local function BuildGroupieWindow()
 
     local RaidH25TabButton = CreateFrame("Button", "GroupieTab6", GroupieFrame, "CharacterFrameTabButtonTemplate")
     RaidH25TabButton:SetPoint("LEFT", "GroupieTab5", "RIGHT", -16, 0)
-    RaidH25TabButton:SetText("Heroic Raids (25)")
+    RaidH25TabButton:SetText("Raids (25H)")
     RaidH25TabButton:SetID("6")
     RaidH25TabButton:SetScript("OnClick",
         function(self)
@@ -379,12 +396,45 @@ local function BuildGroupieWindow()
             MainTabFrame:Show()
             MainTabFrame.isHeroic = true
             MainTabFrame.size = 25
+            MainTabFrame.isOther = false
             if addon.selectedListing then
                 addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
             end
             addon.selectedListing = nil
             DrawListings(LFGScrollFrame)
             PanelTemplates_SetTab(GroupieFrame, 6)
+        end)
+
+    local OtherTabButton = CreateFrame("Button", "GroupieTab7", GroupieFrame, "CharacterFrameTabButtonTemplate")
+    OtherTabButton:SetPoint("LEFT", "GroupieTab6", "RIGHT", -16, 0)
+    OtherTabButton:SetText("Other")
+    OtherTabButton:SetID("7")
+    OtherTabButton:SetScript("OnClick",
+        function(self)
+            if AboutTabFrame then
+                AboutTabFrame:Hide()
+            end
+            MainTabFrame:Show()
+            MainTabFrame.isHeroic = nil
+            MainTabFrame.size = nil
+            MainTabFrame.isOther = true
+            if addon.selectedListing then
+                addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
+            end
+            addon.selectedListing = nil
+            DrawListings(LFGScrollFrame)
+            PanelTemplates_SetTab(GroupieFrame, 7)
+        end)
+
+    local AboutTabButton = CreateFrame("Button", "GroupieTab8", GroupieFrame, "CharacterFrameTabButtonTemplate")
+    AboutTabButton:SetPoint("LEFT", "GroupieTab7", "RIGHT", -16, 0)
+    AboutTabButton:SetText("About")
+    AboutTabButton:SetID("8")
+    AboutTabButton:SetScript("OnClick",
+        function(self)
+            MainTabFrame:Hide()
+            AboutTabButton:Show()
+            PanelTemplates_SetTab(GroupieFrame, 8)
         end)
 
     --------------------
@@ -398,6 +448,7 @@ local function BuildGroupieWindow()
         function(self)
             return
         end)
+    --This frame is the main container for all listing categories, so do the update here
     MainTabFrame:HookScript("OnUpdate", function()
         addon.TimerListingUpdate()
     end)
@@ -409,6 +460,7 @@ local function BuildGroupieWindow()
 
     MainTabFrame.isHeroic = false
     MainTabFrame.size = 5
+    MainTabFrame.isOther = false
 
     createColumn("Time", COL_TIME, MainTabFrame)
     createColumn("Leader", COL_LEADER, MainTabFrame)
@@ -462,21 +514,7 @@ local function BuildGroupieWindow()
         end
     end)
 
-    --------------------
-    --About Tab Button--
-    --------------------
-    local AboutTabButton = CreateFrame("Button", "GroupieTab7", GroupieFrame, "CharacterFrameTabButtonTemplate")
-    AboutTabButton:SetPoint("LEFT", "GroupieTab6", "RIGHT", -16, 0)
-    AboutTabButton:SetText("About")
-    AboutTabButton:SetID("7")
-    AboutTabButton:SetScript("OnClick",
-        function(self)
-            MainTabFrame:Hide()
-            AboutTabButton:Show()
-            PanelTemplates_SetTab(GroupieFrame, 7)
-        end)
-
-    PanelTemplates_SetNumTabs(GroupieFrame, 7)
+    PanelTemplates_SetNumTabs(GroupieFrame, 8)
     PanelTemplates_SetTab(GroupieFrame, 1)
 
     GroupieFrame:Show()
