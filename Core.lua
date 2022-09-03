@@ -519,12 +519,14 @@ function addon:OnInitialize()
     addon.icon:Hide("GroupieLDB")
 
 
-    addon.debugMenus = true
+    addon.debugMenus = false
     --Setup Slash Commands
     SLASH_GROUPIE1 = "/groupie"
     SlashCmdList["GROUPIE"] = BuildGroupieWindow
     SLASH_GROUPIECFG1 = "/groupiecfg"
     SlashCmdList["GROUPIECFG"] = addon.OpenConfig
+    SLASH_GROUPIEDEBUG1 = "/groupiedebug"
+    SlashCmdList["GROUPIEDEBUG"] = function() addon.debugMenus = not addon.debugMenus end
     addon.isInitialized = true
 end
 
