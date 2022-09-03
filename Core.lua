@@ -55,6 +55,7 @@ local function DrawListings(self)
     --Create a numerical index for use populating the table
     filterListings()
 
+
     FauxScrollFrame_Update(self, #addon.filteredListings, BUTTON_TOTAL, BUTTON_HEIGHT)
 
     if addon.selectedListing then
@@ -98,7 +99,11 @@ end
 --Onclick for group listings, highlights the selected listing
 local function ListingOnClick(self, button, down)
     if button == "LeftButton" then
+        if addon.selectedListing then
+            addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
+        end
         addon.selectedListing = self.id
+        addon.groupieBoardButtons[addon.selectedListing]:LockHighlight()
         DrawListings(LFGScrollFrame)
         if addon.debugMenus then
             print(addon.selectedListing)
@@ -269,6 +274,10 @@ local function BuildGroupieWindow()
             MainTabFrame:Show()
             MainTabFrame.isHeroic = false
             MainTabFrame.size = 5
+            if addon.selectedListing then
+                addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
+            end
+            addon.selectedListing = nil
             DrawListings(LFGScrollFrame)
             PanelTemplates_SetTab(GroupieFrame, 1)
         end)
@@ -285,6 +294,10 @@ local function BuildGroupieWindow()
             MainTabFrame:Show()
             MainTabFrame.isHeroic = true
             MainTabFrame.size = 5
+            if addon.selectedListing then
+                addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
+            end
+            addon.selectedListing = nil
             DrawListings(LFGScrollFrame)
             PanelTemplates_SetTab(GroupieFrame, 2)
         end)
@@ -301,6 +314,10 @@ local function BuildGroupieWindow()
             MainTabFrame:Show()
             MainTabFrame.isHeroic = false
             MainTabFrame.size = 10
+            if addon.selectedListing then
+                addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
+            end
+            addon.selectedListing = nil
             DrawListings(LFGScrollFrame)
             PanelTemplates_SetTab(GroupieFrame, 3)
         end)
@@ -317,6 +334,10 @@ local function BuildGroupieWindow()
             MainTabFrame:Show()
             MainTabFrame.isHeroic = false
             MainTabFrame.size = 25
+            if addon.selectedListing then
+                addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
+            end
+            addon.selectedListing = nil
             DrawListings(LFGScrollFrame)
             PanelTemplates_SetTab(GroupieFrame, 4)
         end)
@@ -333,6 +354,10 @@ local function BuildGroupieWindow()
             MainTabFrame:Show()
             MainTabFrame.isHeroic = true
             MainTabFrame.size = 10
+            if addon.selectedListing then
+                addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
+            end
+            addon.selectedListing = nil
             DrawListings(LFGScrollFrame)
             PanelTemplates_SetTab(GroupieFrame, 5)
         end)
@@ -349,6 +374,10 @@ local function BuildGroupieWindow()
             MainTabFrame:Show()
             MainTabFrame.isHeroic = true
             MainTabFrame.size = 25
+            if addon.selectedListing then
+                addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
+            end
+            addon.selectedListing = nil
             DrawListings(LFGScrollFrame)
             PanelTemplates_SetTab(GroupieFrame, 6)
         end)
@@ -394,14 +423,6 @@ local function BuildGroupieWindow()
     LFGScrollFrame = CreateFrame("ScrollFrame", "LFGScrollFrame", MainTabFrame, "FauxScrollFrameTemplate")
     LFGScrollFrame:HookScript("OnUpdate", function()
         addon.TimerListingUpdate()
-    end)
-    LFGScrollFrame:HookScript("OnShow", function()
-        --Expire out of date listings
-        addon.ExpireListings()
-    end)
-    LFGScrollFrame:HookScript("OnHide", function()
-        --Expire out of date listings
-        addon.ExpireListings()
     end)
     LFGScrollFrame:SetWidth(WINDOW_WIDTH - 46)
     LFGScrollFrame:SetHeight(BUTTON_TOTAL * BUTTON_HEIGHT)
