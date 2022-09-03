@@ -14,6 +14,10 @@ A better LFG tool for Classic WoW.
 
 <br>
 
+![image](https://i.imgur.com/iqlOF3z.png)
+
+<br>
+
 :link:  **Links**
 
 Download from CurseForge : <https://www.curseforge.com/wow/addons/groupie>
