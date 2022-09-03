@@ -24,6 +24,7 @@ local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0
 
 local AceGUI              = LibStub("AceGUI-3.0")
 local SharedMedia         = LibStub("LibSharedMedia-3.0")
+local gsub                = gsub
 addon.groupieBoardButtons = {}
 addon.filteredListings    = {}
 addon.selectedListing     = nil
@@ -107,7 +108,7 @@ local function DrawListings(self)
             button.leader:SetText(gsub(listing.author, "-.+", ""))
             button.instance:SetText(listing.instanceName)
             button.loot:SetText(listing.lootType)
-            button.msg:SetText(listing.msg)
+            button.msg:SetText(gsub(gsub(listing.msg, "%{%w+%}", ""), "%s+", " "))
             button:SetID(idx)
             button:Show()
             btnNum = btnNum + 1
