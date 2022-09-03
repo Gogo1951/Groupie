@@ -29,18 +29,10 @@ As a new add-on, we can use a hand raising awarenss. If you're a streamer, pleas
 
 We can use help translating the add-on. Reach out on Discord if you want to help!
 
-:flag_cn:  MISSING
- 
-:flag_fr:  MISSING
- 
-:flag_de:  MISSING
-
-:flag_it:  MISSING
-
-:flag_kr:  MISSING
-
-:flag_flag_br:  MISSING
-
-:flag_ru:  MISSING
-
-:flag_es:  MISSING
+Chinese - MISSING
+German - MISSING
+Italian - MISSING
+Korean - MISSING
+Portuguese - MISSING
+Russian - MISSING
+Spanish - MISSING
