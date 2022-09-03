@@ -29,16 +29,16 @@ As a new add-on, we can use a hand raising awarenss. If you're a streamer, pleas
 
 We can use help translating the add-on. Reach out on Discord if you want to help!
 
-Chinese - Need Translator
-
-German - Need Translator
-
-Italian - Need Translator
-
-Korean - Need Translator
-
-Portuguese - Need Translator
-
-Russian - Need Translator
-
-Spanish - Need Translator
+> Chinese - Need Translator
+> 
+> German - Need Translator
+> 
+> Italian - Need Translator
+> 
+> Korean - Need Translator
+> 
+> Portuguese - Need Translator
+> 
+> Russian - Need Translator
+> 
+> Spanish - Need Translator
