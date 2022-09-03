@@ -1,6 +1,7 @@
 # Groupie
 A better LFG tool for Classic WoW.
 
+<br>
 
 :gem:  **Key Features**
 
@@ -9,8 +10,6 @@ A better LFG tool for Classic WoW.
 :two:  One-click ability to share your character's role, key stats, and relevant achievement with group leaders.
 
 :three:  Optional ability to auto-respond to Friends and Guildies when they post groups you are interested in.
-
-<br>
 
 <br>
 
@@ -23,8 +22,6 @@ Discord : <https://discord.gg/p68QgZ8uqF>
 Github : <https://github.com/Gogo1951/Groupie>
 
 Reddit Announcement Post : COMING SOON!
-
-<br>
 
 <br>
 
