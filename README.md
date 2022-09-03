@@ -10,7 +10,9 @@ A better LFG tool for Classic WoW.
 
 :three:  Optional ability to auto-respond to Friends and Guildies when they post groups you are interested in.
 
+<br>
 
+<br>
 
 :link:  **Links**
 
@@ -22,6 +24,9 @@ Github : <https://github.com/Gogo1951/Groupie>
 
 Reddit Announcement Post : COMING SOON!
 
+<br>
+
+<br>
 
 :hand:  **Current Needs**
 
