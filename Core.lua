@@ -2,7 +2,6 @@ local addonName, Groupie = ...
 --Main UI variables
 local GroupieFrame       = nil
 local MainTabFrame       = nil
-local AboutTabFrame      = nil
 local columnCount        = 0
 local LFGScrollFrame     = nil
 local LFGScrollChild     = nil
@@ -231,9 +230,6 @@ end
 
 --Set environment variables when switching group tabs
 function addon.TabSwap(isHeroic, size, isOther, tabNum)
-    if AboutTabFrame then
-        AboutTabFrame:Hide()
-    end
     addon.ExpireListings()
     MainTabFrame:Show()
     MainTabFrame.isHeroic = isHeroic
@@ -361,17 +357,6 @@ local function BuildGroupieWindow()
             addon.TabSwap(nil, nil, true, 7)
         end)
 
-    local AboutTabButton = CreateFrame("Button", "GroupieTab8", GroupieFrame, "CharacterFrameTabButtonTemplate")
-    AboutTabButton:SetPoint("LEFT", "GroupieTab7", "RIGHT", -16, 0)
-    AboutTabButton:SetText("About")
-    AboutTabButton:SetID("8")
-    AboutTabButton:SetScript("OnClick",
-        function(self)
-            MainTabFrame:Hide()
-            AboutTabButton:Show()
-            PanelTemplates_SetTab(GroupieFrame, 8)
-        end)
-
     --------------------
     -- Main Tab Frame --
     --------------------
@@ -449,7 +434,7 @@ local function BuildGroupieWindow()
         end
     end)
 
-    PanelTemplates_SetNumTabs(GroupieFrame, 8)
+    PanelTemplates_SetNumTabs(GroupieFrame, 7)
     PanelTemplates_SetTab(GroupieFrame, 1)
 
     GroupieFrame:Show()
@@ -558,12 +543,74 @@ function addon.SetupConfig()
         handler = addon,
         type = 'group',
         args = {
+            about = {
+                name = "About",
+                desc = "About Groupie",
+                type = "group",
+                width = "double",
+                inline = false,
+                order = 5,
+                args = {
+                    header1 = {
+                        type = "description",
+                        name = "|cffffd900" .. addonName .. " | About",
+                        order = 0,
+                        fontSize = "large"
+                    },
+                    spacerdesc1 = { type = "description", name = " ", width = "full", order = 1 },
+                    header2 = {
+                        type = "description",
+                        name = "|cffffd900Groupie on CurseForge",
+                        order = 2,
+                        fontSize = "medium"
+                    },
+                    editbox1 = {
+                        type = "input",
+                        name = "",
+                        order = 3,
+                        width = 2,
+                        get = function(info) return "https://www.curseforge.com/wow/addons/groupie-lfg" end,
+                        set = function(info, val) return end,
+                    },
+                    spacerdesc2 = { type = "description", name = " ", width = "full", order = 4 },
+                    header3 = {
+                        type = "description",
+                        name = "|cffffd900Groupie on Discord",
+                        order = 5,
+                        fontSize = "medium"
+                    },
+                    editbox2 = {
+                        type = "input",
+                        name = "",
+                        order = 6,
+                        width = 2,
+                        get = function(info) return "https://discord.gg/6xccnxcRbt" end,
+                        set = function(info, val) return end,
+                    },
+                    spacerdesc3 = { type = "description", name = " ", width = "full", order = 7 },
+                    header4 = {
+                        type = "description",
+                        name = "|cffffd900Groupie on GitHub",
+                        order = 8,
+                        fontSize = "medium"
+                    },
+                    editbox3 = {
+                        type = "input",
+                        name = "",
+                        order = 9,
+                        width = 2,
+                        get = function(info) return "https://github.com/Gogo1951/Groupie-LFG" end,
+                        set = function(info, val) return end,
+                    },
+                }
+            },
             instancefilters = {
                 name = "Instance Filters",
                 desc = "Filter Groups by Instance",
                 type = "group",
                 width = "double",
                 inline = false,
+                order = 4,
                 args = {
                     header1 = {
                         type = "description",
@@ -580,18 +627,25 @@ function addon.SetupConfig()
                 type = "group",
                 width = "double",
                 inline = false,
+                order = 3,
                 args = {
-                    spacerdesc1 = { type = "description", name = " ", width = "full", order = 0 },
+                    header0 = {
+                        type = "description",
+                        name = "|cffffd900" .. addonName .. " | Group Filters",
+                        order = 0,
+                        fontSize = "large"
+                    },
+                    spacerdesc1 = { type = "description", name = " ", width = "full", order = 1 },
                     header1 = {
                         type = "description",
                         name = "|cffffd900General Filters",
-                        order = 1,
+                        order = 2,
                         fontSize = "medium"
                     },
                     levelRangeToggle = {
                         type = "toggle",
                         name = "Ignore Instances Outside of your Recommended Level Range",
-                        order = 2,
+                        order = 3,
                         width = "full",
                         get = function(info) return addon.db.global.ignoreWrongLvl end,
                         set = function(info, val) addon.db.global.ignoreWrongLvl = val end,
@@ -599,7 +653,7 @@ function addon.SetupConfig()
                     savedToggle = {
                         type = "toggle",
                         name = "Ignore Instances You Are Already Saved To on Current Character",
-                        order = 3,
+                        order = 4,
                         width = "full",
                         get = function(info) return addon.db.global.ignoreSavedInstances end,
                         set = function(info, val) addon.db.global.ignoreSavedInstances = val end,
@@ -607,7 +661,7 @@ function addon.SetupConfig()
                     ignoreLFG = {
                         type = "toggle",
                         name = "Ignore \"LFG\" Messages from People Looking for a Group",
-                        order = 4,
+                        order = 5,
                         width = "full",
                         get = function(info) return addon.db.global.ignoreLFG end,
                         set = function(info, val) addon.db.global.ignoreLFG = val end,
@@ -615,7 +669,7 @@ function addon.SetupConfig()
                     ignoreLFM = {
                         type = "toggle",
                         name = "Ignore \"LFM\" Messages from People Making a Group",
-                        order = 5,
+                        order = 6,
                         width = "full",
                         get = function(info) return addon.db.global.ignoreLFM end,
                         set = function(info, val) addon.db.global.ignoreLFM = val end,
@@ -623,7 +677,7 @@ function addon.SetupConfig()
                     roleToggle = {
                         type = "toggle",
                         name = "Ignore Groups that are Not Looking for a Role You Can Play",
-                        order = 6,
+                        order = 7,
                         width = "full",
                         get = function(info) return addon.db.global.ignoreWrongRole end,
                         set = function(info, val) addon.db.global.ignoreWrongRole = val end,
@@ -631,22 +685,22 @@ function addon.SetupConfig()
                     languageToggle = {
                         type = "toggle",
                         name = "Ignore Groups Not Explicitly Labeled as your Default Language",
-                        order = 7,
+                        order = 8,
                         width = "full",
                         get = function(info) return addon.db.global.ignoreAmbiguousLanguage end,
                         set = function(info, val) addon.db.global.ignoreAmbiguousLanguage = val end,
                     },
-                    spacerdesc2 = { type = "description", name = " ", width = "full", order = 8 },
+                    spacerdesc2 = { type = "description", name = " ", width = "full", order = 9 },
                     header2 = {
                         type = "description",
                         name = "|cffffd900Filter By Reward Distribution Style",
-                        order = 9,
+                        order = 10,
                         fontSize = "medium"
                     },
                     ticketToggle = {
                         type = "toggle",
                         name = "Ignore Ticket Run Reward Distribution Style Groups",
-                        order = 10,
+                        order = 11,
                         width = "full",
                         get = function(info) return addon.db.global.ignoreTicket end,
                         set = function(info, val) addon.db.global.ignoreTicket = val end,
@@ -654,7 +708,7 @@ function addon.SetupConfig()
                     gdkpToggle = {
                         type = "toggle",
                         name = "Ignore GDKP Reward Distribution Style Groups",
-                        order = 11,
+                        order = 12,
                         width = "full",
                         get = function(info) return addon.db.global.ignoreGDKP end,
                         set = function(info, val) addon.db.global.ignoreGDKP = val end,
@@ -662,7 +716,7 @@ function addon.SetupConfig()
                     softresToggle = {
                         type = "toggle",
                         name = "Ignore Soft Reserve Reward Distribution Style Groups",
-                        order = 12,
+                        order = 13,
                         width = "full",
                         get = function(info) return addon.db.global.ignoreSoftRes end,
                         set = function(info, val) addon.db.global.ignoreSoftRes = val end,
@@ -670,22 +724,22 @@ function addon.SetupConfig()
                     msosToggle = {
                         type = "toggle",
                         name = "Ignore MS > OS Reward Distribution Style Groups",
-                        order = 13,
+                        order = 14,
                         width = "full",
                         get = function(info) return addon.db.global.ignoreMSOS end,
                         set = function(info, val) addon.db.global.ignoreMSOS = val end,
                     },
-                    spacerdesc3 = { type = "description", name = " ", width = "full", order = 14 },
+                    spacerdesc3 = { type = "description", name = " ", width = "full", order = 15 },
                     header3 = {
                         type = "description",
                         name = "|cffffd900Filter By Keyword",
-                        order = 15,
+                        order = 16,
                         fontSize = "medium"
                     },
                     keywordBlacklist = {
                         type = "input",
                         name = "",
-                        order = 16,
+                        order = 17,
                         width = 2,
                         get = function(info) return addon.db.global.keywordBlacklist end,
                         set = function(info, val) addon.db.global.keywordBlacklist = val end,
@@ -693,7 +747,7 @@ function addon.SetupConfig()
                     header4 = {
                         type = "description",
                         name = "|cff999999Separate words or phrases using a comma; any post matching any keyword will be ignored.\nExample: \"SWP TRASH, Selling, Boost\"",
-                        order = 17,
+                        order = 18,
                         fontSize = "medium"
                     },
                 }
@@ -704,6 +758,7 @@ function addon.SetupConfig()
                 type = "group",
                 width = "double",
                 inline = false,
+                order = 1,
                 args = {
                     header1 = {
                         type = "description",
@@ -868,6 +923,7 @@ function addon.SetupConfig()
                 type = "group",
                 width = "double",
                 inline = false,
+                order = 2,
                 args = {
                     header1 = {
                         type = "description",
