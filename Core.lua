@@ -229,6 +229,24 @@ function addon.TimerListingUpdate()
     end
 end
 
+--Set environment variables when switching group tabs
+function addon.TabSwap(isHeroic, size, isOther, tabNum)
+    if AboutTabFrame then
+        AboutTabFrame:Hide()
+    end
+    addon.ExpireListings()
+    MainTabFrame:Show()
+    MainTabFrame.isHeroic = isHeroic
+    MainTabFrame.size = size
+    MainTabFrame.isOther = isOther
+    if addon.selectedListing then
+        addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
+    end
+    addon.selectedListing = nil
+    DrawListings(LFGScrollFrame)
+    PanelTemplates_SetTab(GroupieFrame, tabNum)
+end
+
 --Build and show the main LFG board window
 local function BuildGroupieWindow()
     if GroupieFrame ~= nil then
@@ -286,19 +304,7 @@ local function BuildGroupieWindow()
     DungeonTabButton:SetID("1")
     DungeonTabButton:SetScript("OnClick",
         function(self)
-            if AboutTabFrame then
-                AboutTabFrame:Hide()
-            end
-            MainTabFrame:Show()
-            MainTabFrame.isHeroic = false
-            MainTabFrame.size = 5
-            MainTabFrame.isOther = false
-            if addon.selectedListing then
-                addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
-            end
-            addon.selectedListing = nil
-            DrawListings(LFGScrollFrame)
-            PanelTemplates_SetTab(GroupieFrame, 1)
+            addon.TabSwap(false, 5, false, 1)
         end)
 
     local DungeonHTabButton = CreateFrame("Button", "GroupieTab2", GroupieFrame, "CharacterFrameTabButtonTemplate")
@@ -307,19 +313,7 @@ local function BuildGroupieWindow()
     DungeonHTabButton:SetID("2")
     DungeonHTabButton:SetScript("OnClick",
         function(self)
-            if AboutTabFrame then
-                AboutTabFrame:Hide()
-            end
-            MainTabFrame:Show()
-            MainTabFrame.isHeroic = true
-            MainTabFrame.size = 5
-            MainTabFrame.isOther = false
-            if addon.selectedListing then
-                addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
-            end
-            addon.selectedListing = nil
-            DrawListings(LFGScrollFrame)
-            PanelTemplates_SetTab(GroupieFrame, 2)
+            addon.TabSwap(true, 5, false, 2)
         end)
 
     local Raid10TabButton = CreateFrame("Button", "GroupieTab3", GroupieFrame, "CharacterFrameTabButtonTemplate")
@@ -328,19 +322,7 @@ local function BuildGroupieWindow()
     Raid10TabButton:SetID("3")
     Raid10TabButton:SetScript("OnClick",
         function(self)
-            if AboutTabFrame then
-                AboutTabFrame:Hide()
-            end
-            MainTabFrame:Show()
-            MainTabFrame.isHeroic = false
-            MainTabFrame.size = 10
-            MainTabFrame.isOther = false
-            if addon.selectedListing then
-                addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
-            end
-            addon.selectedListing = nil
-            DrawListings(LFGScrollFrame)
-            PanelTemplates_SetTab(GroupieFrame, 3)
+            addon.TabSwap(false, 10, false, 3)
         end)
 
     local Raid25TabButton = CreateFrame("Button", "GroupieTab4", GroupieFrame, "CharacterFrameTabButtonTemplate")
@@ -349,19 +331,7 @@ local function BuildGroupieWindow()
     Raid25TabButton:SetID("4")
     Raid25TabButton:SetScript("OnClick",
         function(self)
-            if AboutTabFrame then
-                AboutTabFrame:Hide()
-            end
-            MainTabFrame:Show()
-            MainTabFrame.isHeroic = false
-            MainTabFrame.size = 25
-            MainTabFrame.isOther = false
-            if addon.selectedListing then
-                addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
-            end
-            addon.selectedListing = nil
-            DrawListings(LFGScrollFrame)
-            PanelTemplates_SetTab(GroupieFrame, 4)
+            addon.TabSwap(false, 25, false, 4)
         end)
 
     local RaidH10TabButton = CreateFrame("Button", "GroupieTab5", GroupieFrame, "CharacterFrameTabButtonTemplate")
@@ -370,19 +340,7 @@ local function BuildGroupieWindow()
     RaidH10TabButton:SetID("5")
     RaidH10TabButton:SetScript("OnClick",
         function(self)
-            if AboutTabFrame then
-                AboutTabFrame:Hide()
-            end
-            MainTabFrame:Show()
-            MainTabFrame.isHeroic = true
-            MainTabFrame.size = 10
-            MainTabFrame.isOther = false
-            if addon.selectedListing then
-                addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
-            end
-            addon.selectedListing = nil
-            DrawListings(LFGScrollFrame)
-            PanelTemplates_SetTab(GroupieFrame, 5)
+            addon.TabSwap(true, 10, false, 5)
         end)
 
     local RaidH25TabButton = CreateFrame("Button", "GroupieTab6", GroupieFrame, "CharacterFrameTabButtonTemplate")
@@ -391,19 +349,7 @@ local function BuildGroupieWindow()
     RaidH25TabButton:SetID("6")
     RaidH25TabButton:SetScript("OnClick",
         function(self)
-            if AboutTabFrame then
-                AboutTabFrame:Hide()
-            end
-            MainTabFrame:Show()
-            MainTabFrame.isHeroic = true
-            MainTabFrame.size = 25
-            MainTabFrame.isOther = false
-            if addon.selectedListing then
-                addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
-            end
-            addon.selectedListing = nil
-            DrawListings(LFGScrollFrame)
-            PanelTemplates_SetTab(GroupieFrame, 6)
+            addon.TabSwap(true, 25, false, 6)
         end)
 
     local OtherTabButton = CreateFrame("Button", "GroupieTab7", GroupieFrame, "CharacterFrameTabButtonTemplate")
@@ -412,19 +358,7 @@ local function BuildGroupieWindow()
     OtherTabButton:SetID("7")
     OtherTabButton:SetScript("OnClick",
         function(self)
-            if AboutTabFrame then
-                AboutTabFrame:Hide()
-            end
-            MainTabFrame:Show()
-            MainTabFrame.isHeroic = nil
-            MainTabFrame.size = nil
-            MainTabFrame.isOther = true
-            if addon.selectedListing then
-                addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
-            end
-            addon.selectedListing = nil
-            DrawListings(LFGScrollFrame)
-            PanelTemplates_SetTab(GroupieFrame, 7)
+            addon.TabSwap(nil, nil, true, 7)
         end)
 
     local AboutTabButton = CreateFrame("Button", "GroupieTab8", GroupieFrame, "CharacterFrameTabButtonTemplate")

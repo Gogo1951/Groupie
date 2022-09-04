@@ -170,7 +170,7 @@ end
 
 --Extract the loot system being used by the party
 local function GetGroupType(messageWords)
-    local lootType = "MS>OS"
+    local lootType = "MS > OS"
     for i = 1, #messageWords do
         local word = messageWords[i]
 
