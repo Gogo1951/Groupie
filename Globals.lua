@@ -2,18 +2,18 @@ local addonName, addon = ...
 
 
 addon.groupieLocaleTable = {
-    ["frFR"] = "French",
-    ["deDE"] = "German",
-    ["enGB"] = "English",
-    ["enUS"] = "English",
-    ["itIT"] = "Italian",
-    ["koKR"] = "Korean",
     ["zhCN"] = "Chinese",
     ["zhTW"] = "Chinese",
+    ["enGB"] = "English",
+    ["enUS"] = "English",
+    ["frFR"] = "French",
+    ["deDE"] = "German",
+    ["itIT"] = "Italian",
+    ["koKR"] = "Korean",
+    ["ptBR"] = "Portuguese",
     ["ruRU"] = "Russian",
     ["esES"] = "Spanish",
     ["esMX"] = "Spanish",
-    ["ptBR"] = "Portuguese",
 }
 
 addon.groupieRoleTable = {
