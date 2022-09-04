@@ -622,7 +622,7 @@ function addon.SetupConfig()
                         name = "",
                         order = 3,
                         width = 2,
-                        get = function(info) return "https://www.curseforge.com/wow/addons/groupie-lfg" end,
+                        get = function(info) return "https://www.curseforge.com/wow/addons/groupie" end,
                         set = function(info, val) return end,
                     },
                     spacerdesc2 = { type = "description", name = " ", width = "full", order = 4 },
@@ -652,7 +652,7 @@ function addon.SetupConfig()
                         name = "",
                         order = 9,
                         width = 2,
-                        get = function(info) return "https://github.com/Gogo1951/Groupie-LFG" end,
+                        get = function(info) return "https://github.com/Gogo1951/Groupie" end,
                         set = function(info, val) return end,
                     },
                 }
