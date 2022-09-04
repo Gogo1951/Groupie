@@ -16,6 +16,21 @@ addon.groupieLocaleTable = {
     ["esMX"] = "Spanish",
 }
 
+--For now, this only supports English, but implemented such that localization would be easy in the future
+--https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes Language Codes
+--https://en.wikipedia.org/wiki/ISO_3166-2 Country Codes
+addon.groupieUnflippedLanguagePatterns = {
+    ["Chinese"]    = "chinese zho chi zh",
+    ["English"]    = "english eng en",
+    ["French"]     = "french fra fr",
+    ["German"]     = "german deu ger de",
+    ["Italian"]    = "italian ita it",
+    ["Korean"]     = "korean kor ko",
+    ["Portuguese"] = "portuguese por pt br",
+    ["Russian"]    = "russian rus ru",
+    ["Spanish"]    = "spanish spa es",
+}
+
 addon.groupieRoleTable = {
     [1] = "Tank",
     [2] = "Healer",
@@ -159,21 +174,6 @@ addon.groupieUnflippedLootPatterns = {
     ["SoftRes"] = "sr softres softreserve soft",
     ["MS > OS"] = "msos",
     ["Other"] = "boost boosts boosting wts xp exp afk selling"
-}
-
---For now, this only supports English, but implemented such that localization would be easy in the future
---https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes Language Codes
---https://en.wikipedia.org/wiki/ISO_3166-2 Country Codes
-addon.groupieUnflippedLanguagePatterns = {
-    ["Chinese"]    = "chinese zho chi zh",
-    ["English"]    = "english eng en",
-    ["French"]     = "french fra fr",
-    ["German"]     = "german deu ger de",
-    ["Italian"]    = "italian ita it",
-    ["Korean"]     = "korean kor ko",
-    ["Portuguese"] = "portuguese por pt br",
-    ["Russian"]    = "russian rus ru",
-    ["Spanish"]    = "spanish spa es",
 }
 
 addon.multiWingInstances = { "Dire Maul - Full Clear", "Maraudon - Full Clear", "Scarlet Monastery - Full Clear" }

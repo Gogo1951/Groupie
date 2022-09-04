@@ -197,6 +197,9 @@ local function ParseMessage(event, msg, author, _, channel)
     local isHeroic = nil
     local groupSize = nil
     local lootType = nil
+    local minLevel = nil
+    local maxLevel = nil
+    local instanceOrder = nil
 
     for i = 1, #messageWords do
         --handle cases of 'LF3M', etc by removing numbers for this part
@@ -212,6 +215,7 @@ local function ParseMessage(event, msg, author, _, channel)
                 tinsert(rolesNeeded, 2)
             elseif patternType == 3 then --Mentions DPS
                 tinsert(rolesNeeded, 3)
+                tinsert(rolesNeeded, 4)
             elseif patternType == 4 then --LFG
                 isLFM = false
                 isLFG = true
@@ -267,6 +271,9 @@ local function ParseMessage(event, msg, author, _, channel)
                 fullName = format("%s - 25", fullName)
             end
         end
+        minLevel = addon.groupieInstanceData[fullName].MinLevel
+        maxLevel = addon.groupieInstanceData[fullName].MaxLevel
+        instanceOrder = addon.groupieInstanceData[fullName].Order
     end
 
     --For some reason sometimes realm name is not included
@@ -274,6 +281,14 @@ local function ParseMessage(event, msg, author, _, channel)
         author = author .. "-" .. gsub(GetRealmName(), " ", "")
     end
 
+    --If no roles are mentioned, assume they are looking for all roles
+    if next(rolesNeeded) == nil then
+        rolesNeeded = { 1, 2, 3, 4 }
+    end
+    --If it is an LFG message, prevent filtering based on role
+    if isLFG then
+        rolesNeeded = { 1, 2, 3, 4 }
+    end
     --Create the listing entry
     addon.db.global.listingTable[author] = {}
     addon.db.global.listingTable[author].isLFM = isLFM
@@ -288,6 +303,12 @@ local function ParseMessage(event, msg, author, _, channel)
     addon.db.global.listingTable[author].rolesNeeded = rolesNeeded
     addon.db.global.listingTable[author].author = author
     addon.db.global.listingTable[author].msg = msg
+    addon.db.global.listingTable[author].words = messageWords
+    addon.db.global.listingTable[author].minLevel = minLevel or 0
+    addon.db.global.listingTable[author].maxLevel = maxLevel or 1000
+    addon.db.global.listingTable[author].order = instanceOrder or -1
+    print(addon.db.global.listingTable[author].order)
+    print(addon.db.char.hideInstances[addon.db.global.listingTable[author].order])
     --Collect data to debug with
     --if addon.debugMenus then
     --tinsert(addon.db.global.debugData, { msg, preprocessedStr, addon.db.global.listingTable[author] })

@@ -43,10 +43,35 @@ local function filterListings()
             if (MainTabFrame.isOther and listing.lootType ~= "Other") then
                 --Wrong tab
                 --Other tab shows groups with 'other' loot type, and 40 man raids
-                --No other filters apply to this tab currently
+                --Loot type filters therefore dont apply to this tab
+            elseif addon.db.global.ignoreWrongLvl ~= false and listing.minLevel and
+                listing.minLevel > (UnitLevel("player") + addon.db.char.recommendedLevelRange) then
+            elseif addon.db.global.ignoreWrongLvl ~= false and listing.maxLevel and
+                listing.maxLevel < UnitLevel("player") then
+                --Instance is outside of level range
+            elseif addon.db.global.ignoreLFM and listing.isLFM then
+                --Ignoring LFM groups
+            elseif addon.db.global.ignoreLFG and listing.isLFG then
+                --Ignoring LFG groups
+            elseif addon.db.global.ignoreWrongRole and
+                (not addon.tableContains(listing.rolesNeeded, addon.db.char.groupieSpec1Role) and
+                    not addon.tableContains(listing.rolesNeeded, addon.db.char.groupieSpec2Role)) then
+                --Roles the player can play arent needed
+            elseif addon.db.global.ignoreAmbiguousLanguage and listing.language ~= addon.groupieLocaleTable[GetLocale()] then
+                --Ignoring groups not explicitly labeled with player's language
+            elseif addon.db.char.hideInstances[listing.order] == true then
+                --Ignoring specifically hidden instances
             else
-                addon.filteredListings[idx] = listing
-                idx = idx + 1
+                local keywordBlacklistHit = false
+                for k, word in pairs(addon.db.global.keywordBlacklist) do
+                    if addon.tableContains(listing.words, word) then
+                        keywordBlacklistHit = true
+                    end
+                end
+                if not keywordBlacklistHit then
+                    addon.filteredListings[idx] = listing
+                    idx = idx + 1
+                end
             end
             total = total + 1
         end
@@ -61,9 +86,39 @@ local function filterListings()
                 --Wrong tab
             elseif listing.lootType == "Other" then
                 --Only show these groups in 'Other' tab
+            elseif addon.db.global.ignoreWrongLvl ~= false and listing.minLevel and
+                listing.minLevel > (UnitLevel("player") + addon.db.char.recommendedLevelRange) then
+            elseif addon.db.global.ignoreWrongLvl ~= false and listing.maxLevel and
+                listing.maxLevel < UnitLevel("player") then
+                --Instance is outside of level range
+            elseif addon.db.global.ignoreLFM and listing.isLFM then
+                --Ignoring LFM groups
+            elseif addon.db.global.ignoreLFG and listing.isLFG then
+                --Ignoring LFG groups
+            elseif addon.db.global.ignoreGDKP and listing.lootType == "GDKP" then
+            elseif addon.db.global.ignoreTicket and listing.lootType == "Ticket" then
+            elseif addon.db.global.ignoreMSOS and listing.lootType == "MS > OS" then
+            elseif addon.db.global.ignoreSoftRes and listing.lootType == "SoftRes" then
+                --Ignoring certain loot styles
+            elseif addon.db.global.ignoreWrongRole and
+                (not addon.tableContains(listing.rolesNeeded, addon.db.char.groupieSpec1Role) and
+                    not addon.tableContains(listing.rolesNeeded, addon.db.char.groupieSpec2Role)) then
+                --Roles the player can play arent needed
+            elseif addon.db.global.ignoreAmbiguousLanguage and listing.language ~= addon.groupieLocaleTable[GetLocale()] then
+                --Ignoring groups not explicitly labeled with player's language
+            elseif addon.db.char.hideInstances[listing.order] == true then
+                --Ignoring specifically hidden instances
             else
-                addon.filteredListings[idx] = listing
-                idx = idx + 1
+                local keywordBlacklistHit = false
+                for k, word in pairs(addon.db.global.keywordBlacklist) do
+                    if addon.tableContains(listing.words, word) then
+                        keywordBlacklistHit = true
+                    end
+                end
+                if not keywordBlacklistHit then
+                    addon.filteredListings[idx] = listing
+                    idx = idx + 1
+                end
             end
             total = total + 1
         end
@@ -243,6 +298,7 @@ end
 --Build and show the main LFG board window
 local function BuildGroupieWindow()
     if GroupieFrame ~= nil then
+        addon.ExpireListings()
         GroupieFrame:Show()
         return
     end
@@ -501,7 +557,7 @@ function addon:OnInitialize()
             ignoreGDKP = false,
             ignoreSoftRes = false,
             ignoreMSOS = false,
-            keywordBlacklist = ""
+            keywordBlacklist = {}
         }
     }
     --Generate defaults for each individual dungeon filter
@@ -738,12 +794,20 @@ function addon.SetupConfig()
                         name = "",
                         order = 17,
                         width = 2,
-                        get = function(info) return addon.db.global.keywordBlacklist end,
-                        set = function(info, val) addon.db.global.keywordBlacklist = val end,
+                        get = function(info)
+                            --print(addon.BlackListToStr(addon.db.global.keywordBlacklist))
+                            return addon.BlackListToStr(addon.db.global.keywordBlacklist)
+                        end,
+                        set = function(info, val)
+                            addon.db.global.keywordBlacklist = addon.BlacklistToTable(val, ",")
+                            for k, v in pairs(addon.db.global.keywordBlacklist) do
+                                print(k, v)
+                            end
+                        end,
                     },
                     header4 = {
                         type = "description",
-                        name = "|cff999999Separate words or phrases using a comma; any post matching any keyword will be ignored.\nExample: \"SWP TRASH, Selling, Boost\"",
+                        name = "|cff999999Separate words or phrases using a comma; any post matching any keyword will be ignored.\nExample: \"swp trash, Selling, Boost\"",
                         order = 18,
                         fontSize = "medium"
                     },

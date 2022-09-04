@@ -1,6 +1,7 @@
 local addonName, addon = ...
 local GetTalentTabInfo = GetTalentTabInfo
 local time = time
+local gmatch = gmatch
 
 --Return the primary talent spec for either main or dual specialization
 function addon.GetSpecByGroupNum(groupnum)
@@ -54,7 +55,7 @@ function addon.GroupieSplit(inputstr, delimiter)
         delimiter = "%s"
     end
     local t = {}
-    for str in string.gmatch(inputstr, "([^" .. delimiter .. "]+)") do
+    for str in gmatch(inputstr, "([^" .. delimiter .. "]+)") do
         if tContains(t, str) == false then
             table.insert(t, str)
         end
@@ -189,4 +190,30 @@ function addon.GetTimeSinceString(timestamp)
     local mins = floor(timediff / 60)
     local secs = timediff - (60 * mins)
     return format("%dm%ds", mins, secs)
+end
+
+--Convert keyword blacklist into a string
+function addon.BlackListToStr(blacklistStr)
+    local out = ""
+    for k, word in pairs(blacklistStr) do
+        out = out .. word .. ","
+    end
+    return strsub(out, 1, -2)
+end
+
+--Convert keyword blacklist into a table
+function addon.BlacklistToTable(blacklistStr)
+    if blacklistStr == nil or blacklistStr == "" then
+        return {}
+    end
+    local delimiter = ","
+    local t = {}
+    blacklistStr = strlower(gsub(gsub(blacklistStr, "[,%s]+$", ""), "^[%s,]+", ""))
+    for str in string.gmatch(blacklistStr, "([^" .. delimiter .. "]+)") do
+        str = gsub(gsub(str, "%s+$", ""), "^%s+", "")
+        if tContains(t, str) == false then
+            table.insert(t, str)
+        end
+    end
+    return t
 end
