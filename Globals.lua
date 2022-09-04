@@ -154,7 +154,7 @@ addon.groupieLFPatterns = {
 }
 
 addon.groupieUnflippedLootPatterns = {
-    ["Ticket"] = "ticket carry selling",
+    ["Ticket"] = "ticket",
     ["GDKP"] = "gdkp",
     ["Soft Reserve"] = "sr softres softreserve soft",
     ["MS>OS"] = "msos",
@@ -162,8 +162,18 @@ addon.groupieUnflippedLootPatterns = {
 }
 
 --For now, this only supports English, but implemented such that localization would be easy in the future
+--https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes Language Codes
+--https://en.wikipedia.org/wiki/ISO_3166-2 Country Codes
 addon.groupieUnflippedLanguagePatterns = {
-    ["English"] = "english eng",
+    ["Chinese"] = "chinese zho chi zh",
+    ["English"] = "english eng en",
+    ["French"] = "french fra fr",
+    ["German"] = "german deu ger de",
+    ["Italian"] = "italian ita it",
+    ["Korean"] = "korean kor ko",
+    ["Portuguese"] = "portuguese por pt br",
+    ["Russian"] = "russian rus ru",
+    ["Spanish"] = "spanish spa es",
 }
 
 addon.groupieDelimiters = { "%-", ":", ",", "%?", "!", "%." }
