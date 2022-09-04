@@ -165,18 +165,16 @@ addon.groupieUnflippedLootPatterns = {
 --https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes Language Codes
 --https://en.wikipedia.org/wiki/ISO_3166-2 Country Codes
 addon.groupieUnflippedLanguagePatterns = {
-    ["Chinese"] = "chinese zho chi zh",
-    ["English"] = "english eng en",
-    ["French"] = "french fra fr",
-    ["German"] = "german deu ger de",
-    ["Italian"] = "italian ita it",
-    ["Korean"] = "korean kor ko",
+    ["Chinese"]    = "chinese zho chi zh",
+    ["English"]    = "english eng en",
+    ["French"]     = "french fra fr",
+    ["German"]     = "german deu ger de",
+    ["Italian"]    = "italian ita it",
+    ["Korean"]     = "korean kor ko",
     ["Portuguese"] = "portuguese por pt br",
-    ["Russian"] = "russian rus ru",
-    ["Spanish"] = "spanish spa es",
+    ["Russian"]    = "russian rus ru",
+    ["Spanish"]    = "spanish spa es",
 }
-
-addon.groupieDelimiters = { "%-", ":", ",", "%?", "!", "%." }
 
 addon.multiWingInstances = { "Dire Maul - Full Clear", "Maraudon - Full Clear", "Scarlet Monastery - Full Clear" }
 

@@ -4,8 +4,6 @@ local GroupieFrame       = nil
 local MainTabFrame       = nil
 local columnCount        = 0
 local LFGScrollFrame     = nil
-local LFGScrollChild     = nil
-local LFGScrollRows      = nil
 local WINDOW_WIDTH       = 1200
 local WINDOW_HEIGHT      = 719
 local WINDOW_OFFSET      = 113
@@ -21,7 +19,6 @@ local COL_MSG            = WINDOW_WIDTH - COL_TIME - COL_LEADER - COL_INSTANCE -
 
 local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0", "AceConsole-3.0", "AceTimer-3.0")
 
-local AceGUI              = LibStub("AceGUI-3.0")
 local SharedMedia         = LibStub("LibSharedMedia-3.0")
 local gsub                = gsub
 addon.groupieBoardButtons = {}
@@ -141,7 +138,7 @@ end
 local function CreateListingButtons()
     addon.groupieBoardButtons = {}
     local currentListing
-    for listcount = 1, 20 do
+    for listcount = 1, BUTTON_TOTAL do
         addon.groupieBoardButtons[listcount] = CreateFrame(
             "Button",
             "ListingBtn" .. tostring(listcount),
@@ -158,24 +155,24 @@ local function CreateListingButtons()
         currentListing:RegisterForClicks("LeftButtonUp", "RightButtonUp")
         currentListing:SetScript("OnClick", ListingOnClick)
 
-        --TIME COLUMN
+        --Time column
         currentListing.time:SetWidth(COL_TIME)
 
-        --LEADER NAME COLUMN
+        --Leader name column
         currentListing.leader = currentListing:CreateFontString("FontString", "OVERLAY", "GameFontNormal")
         currentListing.leader:SetPoint("LEFT", currentListing.time, "RIGHT", 0, 0)
         currentListing.leader:SetWidth(COL_LEADER)
         currentListing.leader:SetJustifyH("LEFT")
         currentListing.leader:SetJustifyV("MIDDLE")
 
-        --INSTANCE NAME COLUMN
+        --Instance name column
         currentListing.instance = currentListing:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
         currentListing.instance:SetPoint("LEFT", currentListing.leader, "RIGHT", 0, 0)
         currentListing.instance:SetWidth(COL_INSTANCE)
         currentListing.instance:SetJustifyH("LEFT")
         currentListing.instance:SetJustifyV("MIDDLE")
 
-        --LOOT TYPE COLUMN
+        --Loot type column
         currentListing.loot = currentListing:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
         currentListing.loot:SetPoint("LEFT", currentListing.instance, "RIGHT", 2, 0)
         currentListing.loot:SetWidth(COL_LOOT)
@@ -183,7 +180,7 @@ local function CreateListingButtons()
         currentListing.loot:SetJustifyV("MIDDLE")
         currentListing.loot:SetTextColor(0, 173, 239)
 
-        --POSTING MESSAGE COLUMN
+        --Posting message column
         currentListing.msg = currentListing:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
         currentListing.msg:SetPoint("LEFT", currentListing.loot, "RIGHT", -4, 0)
         currentListing.msg:SetWidth(COL_MSG)
