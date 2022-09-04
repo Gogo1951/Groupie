@@ -39,13 +39,10 @@ local function GetDungeons(messageWords)
         --Look for dungeon patterns
         local lookupAttempt = addon.groupieInstancePatterns[word]
         if lookupAttempt ~= nil then
-            --Handle the fact that people use MT to mean both mana-tombs and main-tank
-            --Assume that if we find MT and the instance is already set, it means tank
-            if lookupAttempt ~= "Mana-Tombs" or instance == nil then
-                instance = lookupAttempt
-            end
-            --Same situation but with obsidian sanctum and off-spec
-            if lookupAttempt ~= "The Obsidian Sanctum" or instance == nil then
+            --Handle edge cases of instance acronyms that overlap with other words people use
+            --Currently MT, OS, UP
+            --Only use these as valid instance patterns if the instance is nil so far
+            if instance == nil or not addon.tableContains(addon.edgeCaseInstances, lookupAttempt) then
                 instance = lookupAttempt
             end
 

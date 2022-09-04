@@ -180,6 +180,8 @@ addon.groupieDelimiters = { "%-", ":", ",", "%?", "!", "%." }
 
 addon.multiWingInstances = { "Dire Maul - Full Clear", "Maraudon - Full Clear", "Scarlet Monastery - Full Clear" }
 
+addon.edgeCaseInstances = { "Mana-Tombs", "The Obsidian Sanctum", "Utgarde Pinnacle" }
+
 --instanceVersions[instance] = {{size, isHeroic}, ...}
 addon.instanceVersions = {
     ["Ragefire Chasm"]                 = { { 5, false } },

@@ -106,6 +106,9 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 	if unit == "player" and not addon.debugMenus then
 		return
 	end
+	if UnitName("player") == name then
+		return
+	end
 
 	--Check that we have a non nil name, and that the target is a player
 	if name ~= nil then
