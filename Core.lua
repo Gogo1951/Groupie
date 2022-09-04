@@ -800,9 +800,6 @@ function addon.SetupConfig()
                         end,
                         set = function(info, val)
                             addon.db.global.keywordBlacklist = addon.BlacklistToTable(val, ",")
-                            for k, v in pairs(addon.db.global.keywordBlacklist) do
-                                print(k, v)
-                            end
                         end,
                     },
                     header4 = {

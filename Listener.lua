@@ -307,8 +307,6 @@ local function ParseMessage(event, msg, author, _, channel)
     addon.db.global.listingTable[author].minLevel = minLevel or 0
     addon.db.global.listingTable[author].maxLevel = maxLevel or 1000
     addon.db.global.listingTable[author].order = instanceOrder or -1
-    print(addon.db.global.listingTable[author].order)
-    print(addon.db.char.hideInstances[addon.db.global.listingTable[author].order])
     --Collect data to debug with
     --if addon.debugMenus then
     --tinsert(addon.db.global.debugData, { msg, preprocessedStr, addon.db.global.listingTable[author] })
