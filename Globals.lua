@@ -158,7 +158,7 @@ addon.groupieUnflippedLootPatterns = {
     ["GDKP"] = "gdkp",
     ["Soft Reserve"] = "sr softres softreserve soft",
     ["MS>OS"] = "msos",
-    ["Other"] = "boost boosts boosting wts"
+    ["Other"] = "boost boosts boosting wts xp exp afk"
 }
 
 --For now, this only supports English, but implemented such that localization would be easy in the future
