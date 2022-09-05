@@ -88,6 +88,7 @@ end
 -- Menu Hook --
 ---------------
 local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
+
 	if (UIDROPDOWNMENU_MENU_LEVEL > 1) then
 		return
 	end
@@ -135,9 +136,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		local maxTalentSpec, maxTalentsSpent = addon.GetSpecByGroupNum(addon.GetActiveSpecGroup())
 		info.text = "Current Spec : " .. maxTalentSpec
 		info.leftPadding = 8
-		if maxTalentsSpent > 0 then
-			UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
-		end
+		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 
 		--[[
 		info = UIDropDownMenu_CreateInfo()

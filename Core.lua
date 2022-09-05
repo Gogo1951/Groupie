@@ -4,8 +4,9 @@ local GroupieFrame       = nil
 local MainTabFrame       = nil
 local columnCount        = 0
 local LFGScrollFrame     = nil
-local WINDOW_WIDTH       = 1200
-local WINDOW_HEIGHT      = 719
+local WINDOW_WIDTH       = 900
+local WINDOW_HEIGHT      = 599
+local ICON_WIDTH         = 32
 local WINDOW_OFFSET      = 113
 local BUTTON_HEIGHT      = 30
 local BUTTON_TOTAL       = math.floor((WINDOW_HEIGHT - WINDOW_OFFSET) / BUTTON_HEIGHT)
@@ -14,13 +15,14 @@ local COL_TIME           = 75
 local COL_LEADER         = 100
 local COL_INSTANCE       = 175
 local COL_LOOT           = 76
-local COL_MSG            = WINDOW_WIDTH - COL_TIME - COL_LEADER - COL_INSTANCE - COL_LOOT - 44
-
+local COL_MSG            = WINDOW_WIDTH - COL_TIME - COL_LEADER - COL_INSTANCE - COL_LOOT - ICON_WIDTH - 44
+local INFO_WIDTH         = WINDOW_WIDTH - 500
 
 local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0", "AceConsole-3.0", "AceTimer-3.0")
 
-local SharedMedia         = LibStub("LibSharedMedia-3.0")
-local gsub                = gsub
+local SharedMedia = LibStub("LibSharedMedia-3.0")
+local gsub        = gsub
+
 addon.groupieBoardButtons = {}
 addon.filteredListings    = {}
 addon.selectedListing     = nil
@@ -34,13 +36,15 @@ end
 -- User Interface --
 --------------------
 --Create a numerically indexed table of listings for use in the scroller
+--Tab types : 0 - Normal tab | 1 - Other tab | 2 - All tab
 local function filterListings()
     addon.filteredListings = {}
     local idx = 1
     local total = 0
-    if MainTabFrame.isOther then
+
+    if MainTabFrame.tabType == 1 then --"Other" tab
         for author, listing in pairs(addon.db.global.listingTable) do
-            if (MainTabFrame.isOther and listing.lootType ~= "Other") then
+            if listing.lootType ~= "Other" then
                 --Wrong tab
                 --Other tab shows groups with 'other' loot type, and 40 man raids
                 --Loot type filters therefore dont apply to this tab
@@ -78,9 +82,52 @@ local function filterListings()
         MainTabFrame.infotext:SetText(format(
             "Showing %d of %d possible groups. To see more groups adjust your [Group Filters] or [Instance Filters] under Groupie > Settings."
             , idx - 1, total))
-    else
+    elseif MainTabFrame.tabType == 2 then --"All" tab
         for author, listing in pairs(addon.db.global.listingTable) do
-            if listing.isHeroic ~= MainTabFrame.isHeroic and not MainTabFrame.isOther then
+            if listing.lootType == "Other" then
+                --Only show these groups in 'Other' tab
+            elseif addon.db.global.ignoreWrongLvl ~= false and listing.minLevel and
+                listing.minLevel > (UnitLevel("player") + addon.db.char.recommendedLevelRange) then
+            elseif addon.db.global.ignoreWrongLvl ~= false and listing.maxLevel and
+                listing.maxLevel < UnitLevel("player") then
+                --Instance is outside of level range
+            elseif addon.db.global.ignoreLFM and listing.isLFM then
+                --Ignoring LFM groups
+            elseif addon.db.global.ignoreLFG and listing.isLFG then
+                --Ignoring LFG groups
+            elseif addon.db.global.ignoreGDKP and listing.lootType == "GDKP" then
+            elseif addon.db.global.ignoreTicket and listing.lootType == "Ticket" then
+            elseif addon.db.global.ignoreMSOS and listing.lootType == "MS > OS" then
+            elseif addon.db.global.ignoreSoftRes and listing.lootType == "SoftRes" then
+                --Ignoring certain loot styles
+            elseif addon.db.global.ignoreWrongRole and
+                (not addon.tableContains(listing.rolesNeeded, addon.db.char.groupieSpec1Role) and
+                    not addon.tableContains(listing.rolesNeeded, addon.db.char.groupieSpec2Role)) then
+                --Roles the player can play arent needed
+            elseif addon.db.global.ignoreAmbiguousLanguage and listing.language ~= addon.groupieLocaleTable[GetLocale()] then
+                --Ignoring groups not explicitly labeled with player's language
+            elseif addon.db.char.hideInstances[listing.order] == true then
+                --Ignoring specifically hidden instances
+            else
+                local keywordBlacklistHit = false
+                for k, word in pairs(addon.db.global.keywordBlacklist) do
+                    if addon.tableContains(listing.words, word) then
+                        keywordBlacklistHit = true
+                    end
+                end
+                if not keywordBlacklistHit then
+                    addon.filteredListings[idx] = listing
+                    idx = idx + 1
+                end
+            end
+            total = total + 1
+        end
+        MainTabFrame.infotext:SetText(format(
+            "Showing %d of %d possible groups. To see more groups adjust your [Group Filters] or [Instance Filters] under Groupie > Settings."
+            , idx - 1, total))
+    else --Normal tabs
+        for author, listing in pairs(addon.db.global.listingTable) do
+            if listing.isHeroic ~= MainTabFrame.isHeroic then
                 --Wrong tab
             elseif listing.groupSize ~= MainTabFrame.size then
                 --Wrong tab
@@ -154,12 +201,18 @@ local function DrawListings(self)
             else
                 button:UnlockHighlight()
             end
+            local formattedMsg = gsub(gsub(listing.msg, "%{%w+%}", ""), "%s+", " ")
             button.listing = listing
             button.time:SetText(addon.GetTimeSinceString(listing.timestamp))
             button.leader:SetText(gsub(listing.author, "-.+", ""))
             button.instance:SetText(listing.instanceName)
             button.loot:SetText(listing.lootType)
-            button.msg:SetText(gsub(gsub(listing.msg, "%{%w+%}", ""), "%s+", " "))
+            button.msg:SetText(formattedMsg)
+            button:SetScript("OnEnter", function()
+                GameTooltip:SetOwner(button, "ANCHOR_CURSOR")
+                GameTooltip:SetText(formattedMsg)
+                GameTooltip:Show()
+            end)
             button:SetID(idx)
             button:Show()
             btnNum = btnNum + 1
@@ -167,25 +220,67 @@ local function DrawListings(self)
             button:Hide()
         end
     end
-
-    --Hide remaining buttons?
-    --update every 1sec?
-    --ensure select works right
 end
 
 --Onclick for group listings, highlights the selected listing
 local function ListingOnClick(self, button, down)
+    if addon.selectedListing then
+        addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
+    end
+    addon.selectedListing = self.id
+    addon.groupieBoardButtons[addon.selectedListing]:LockHighlight()
+    DrawListings(LFGScrollFrame)
+
+    local fullName = addon.groupieBoardButtons[addon.selectedListing].listing.author
+    local displayName = gsub(fullName, "-.+", "")
+
+    --Select a listing, if shift is held, do a Who Request
     if button == "LeftButton" then
-        if addon.selectedListing then
-            addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
-        end
-        addon.selectedListing = self.id
-        addon.groupieBoardButtons[addon.selectedListing]:LockHighlight()
-        DrawListings(LFGScrollFrame)
         if addon.debugMenus then
             print(addon.selectedListing)
             print(addon.groupieBoardButtons[addon.selectedListing].listing.author)
         end
+        if IsShiftKeyDown() then
+            DEFAULT_CHAT_FRAME.editBox:SetText("/who " .. fullName)
+            ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
+        end
+        --Open Right click Menu
+    elseif button == "RightButton" then
+
+        local maxTalentSpec, maxTalentsSpent = addon.GetSpecByGroupNum(addon.GetActiveSpecGroup())
+        local isIgnored = C_FriendList.IsIgnored(displayName)
+        local ignoreText = "Ignore"
+        if isIgnored then
+            ignoreText = "Stop Ignoring"
+        end
+
+        local ListingRightClick = {
+            { text = displayName, isTitle = true, notCheckable = true },
+            { text = "Invite", notCheckable = true, func = function() InviteUnit(displayName) end },
+            { text = "Whisper", notCheckable = true, func = function()
+                DEFAULT_CHAT_FRAME.editBox:SetText("/w " .. fullName .. " ")
+                ChatEdit_ActivateChat(DEFAULT_CHAT_FRAME.editBox)
+            end },
+            { text = ignoreText, notCheckable = true, func = function()
+                C_FriendList.AddOrDelIgnore(displayName)
+            end },
+            { text = "", disabled = true, notCheckable = true },
+            { text = addonName, isTitle = true, notCheckable = true },
+            { text = "Send My Info...", notClickable = true, notCheckable = true },
+            { text = "Current Spec : " .. maxTalentSpec, notCheckable = true, leftPadding = 8,
+                func = function()
+                    addon.SendPlayerInfo(addon.groupieBoardButtons[addon.selectedListing].listing.author)
+                end },
+        }
+        if GetLocale() == "enUS" then
+            tinsert(ListingRightClick, { text = "Warcraft Logs Link", notCheckable = true, leftPadding = 8,
+                func = function()
+                    addon.SendWCLInfo(addon.groupieBoardButtons[addon.selectedListing].listing.author)
+                end })
+        end
+
+        local f = CreateFrame("Frame", "GroupieListingRightClick", UIParent, "UIDropDownMenuTemplate")
+        EasyMenu(ListingRightClick, f, "cursor", 0, 0, "MENU")
     end
 end
 
@@ -209,6 +304,9 @@ local function CreateListingButtons()
         currentListing:SetSize(BUTTON_WIDTH, BUTTON_HEIGHT)
         currentListing:RegisterForClicks("LeftButtonUp", "RightButtonUp")
         currentListing:SetScript("OnClick", ListingOnClick)
+        currentListing:SetScript("OnLeave", function()
+            GameTooltip:Hide()
+        end)
 
         --Time column
         currentListing.time:SetWidth(COL_TIME)
@@ -220,9 +318,15 @@ local function CreateListingButtons()
         currentListing.leader:SetJustifyH("LEFT")
         currentListing.leader:SetJustifyV("MIDDLE")
 
+        --Instance expansion column
+        currentListing.icon = currentListing:CreateTexture("$parentIcon", "OVERLAY", nil, -8)
+        currentListing.icon:SetSize(ICON_WIDTH, ICON_WIDTH)
+        currentListing.icon:SetPoint("LEFT", currentListing.leader, "RIGHT", 2, 0)
+        currentListing.icon:SetTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\icon64.tga")
+
         --Instance name column
         currentListing.instance = currentListing:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
-        currentListing.instance:SetPoint("LEFT", currentListing.leader, "RIGHT", 0, 0)
+        currentListing.instance:SetPoint("LEFT", currentListing.icon, "RIGHT", 0, 0)
         currentListing.instance:SetWidth(COL_INSTANCE)
         currentListing.instance:SetJustifyH("LEFT")
         currentListing.instance:SetJustifyV("MIDDLE")
@@ -281,12 +385,12 @@ function addon.TimerListingUpdate()
 end
 
 --Set environment variables when switching group tabs
-function addon.TabSwap(isHeroic, size, isOther, tabNum)
+function addon.TabSwap(isHeroic, size, tabType, tabNum)
     addon.ExpireListings()
     MainTabFrame:Show()
     MainTabFrame.isHeroic = isHeroic
     MainTabFrame.size = size
-    MainTabFrame.isOther = isOther
+    MainTabFrame.tabType = tabType
     if addon.selectedListing then
         addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
     end
@@ -353,7 +457,7 @@ local function BuildGroupieWindow()
     DungeonTabButton:SetID("1")
     DungeonTabButton:SetScript("OnClick",
         function(self)
-            addon.TabSwap(false, 5, false, 1)
+            addon.TabSwap(false, 5, 0, 1)
         end)
 
     local DungeonHTabButton = CreateFrame("Button", "GroupieTab2", GroupieFrame, "CharacterFrameTabButtonTemplate")
@@ -362,7 +466,7 @@ local function BuildGroupieWindow()
     DungeonHTabButton:SetID("2")
     DungeonHTabButton:SetScript("OnClick",
         function(self)
-            addon.TabSwap(true, 5, false, 2)
+            addon.TabSwap(true, 5, 0, 2)
         end)
 
     local Raid10TabButton = CreateFrame("Button", "GroupieTab3", GroupieFrame, "CharacterFrameTabButtonTemplate")
@@ -371,7 +475,7 @@ local function BuildGroupieWindow()
     Raid10TabButton:SetID("3")
     Raid10TabButton:SetScript("OnClick",
         function(self)
-            addon.TabSwap(false, 10, false, 3)
+            addon.TabSwap(false, 10, 0, 3)
         end)
 
     local Raid25TabButton = CreateFrame("Button", "GroupieTab4", GroupieFrame, "CharacterFrameTabButtonTemplate")
@@ -380,7 +484,7 @@ local function BuildGroupieWindow()
     Raid25TabButton:SetID("4")
     Raid25TabButton:SetScript("OnClick",
         function(self)
-            addon.TabSwap(false, 25, false, 4)
+            addon.TabSwap(false, 25, 0, 4)
         end)
 
     local RaidH10TabButton = CreateFrame("Button", "GroupieTab5", GroupieFrame, "CharacterFrameTabButtonTemplate")
@@ -389,7 +493,7 @@ local function BuildGroupieWindow()
     RaidH10TabButton:SetID("5")
     RaidH10TabButton:SetScript("OnClick",
         function(self)
-            addon.TabSwap(true, 10, false, 5)
+            addon.TabSwap(true, 10, 0, 5)
         end)
 
     local RaidH25TabButton = CreateFrame("Button", "GroupieTab6", GroupieFrame, "CharacterFrameTabButtonTemplate")
@@ -398,7 +502,7 @@ local function BuildGroupieWindow()
     RaidH25TabButton:SetID("6")
     RaidH25TabButton:SetScript("OnClick",
         function(self)
-            addon.TabSwap(true, 25, false, 6)
+            addon.TabSwap(true, 25, 0, 6)
         end)
 
     local OtherTabButton = CreateFrame("Button", "GroupieTab7", GroupieFrame, "CharacterFrameTabButtonTemplate")
@@ -407,7 +511,16 @@ local function BuildGroupieWindow()
     OtherTabButton:SetID("7")
     OtherTabButton:SetScript("OnClick",
         function(self)
-            addon.TabSwap(nil, nil, true, 7)
+            addon.TabSwap(nil, nil, 1, 7)
+        end)
+
+    local AllTabButton = CreateFrame("Button", "GroupieTab8", GroupieFrame, "CharacterFrameTabButtonTemplate")
+    AllTabButton:SetPoint("LEFT", "GroupieTab7", "RIGHT", -16, 0)
+    AllTabButton:SetText("All")
+    AllTabButton:SetID("8")
+    AllTabButton:SetScript("OnClick",
+        function(self)
+            addon.TabSwap(nil, nil, 2, 8)
         end)
 
     --------------------
@@ -427,17 +540,17 @@ local function BuildGroupieWindow()
     end)
 
     MainTabFrame.infotext = MainTabFrame:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
-    MainTabFrame.infotext:SetWidth(WINDOW_WIDTH - 44)
+    MainTabFrame.infotext:SetWidth(INFO_WIDTH)
     MainTabFrame.infotext:SetJustifyH("CENTER")
-    MainTabFrame.infotext:SetPoint("TOP", 0, 46)
+    MainTabFrame.infotext:SetPoint("TOP", 0, 56)
 
     MainTabFrame.isHeroic = false
     MainTabFrame.size = 5
-    MainTabFrame.isOther = false
+    MainTabFrame.tabType = 0
 
     createColumn("Time", COL_TIME, MainTabFrame)
     createColumn("Leader", COL_LEADER, MainTabFrame)
-    createColumn("Instance", COL_INSTANCE, MainTabFrame)
+    createColumn("Instance", COL_INSTANCE + ICON_WIDTH, MainTabFrame)
     createColumn("Loot Type", COL_LOOT, MainTabFrame)
     createColumn("Message", COL_MSG, MainTabFrame)
 
@@ -487,7 +600,7 @@ local function BuildGroupieWindow()
         end
     end)
 
-    PanelTemplates_SetNumTabs(GroupieFrame, 7)
+    PanelTemplates_SetNumTabs(GroupieFrame, 8)
     PanelTemplates_SetTab(GroupieFrame, 1)
 
     GroupieFrame:Show()
