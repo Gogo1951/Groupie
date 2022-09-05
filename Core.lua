@@ -487,7 +487,7 @@ local function BuildGroupieWindow()
     local icon = GroupieFrame:CreateTexture("$parentIcon", "OVERLAY", nil, -8)
     icon:SetSize(60, 60)
     icon:SetPoint("TOPLEFT", -5, 7)
-    icon:SetTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\icon64.tga")
+    icon:SetTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\icon128.tga")
 
     ------------------------
     --Category Tab Buttons--
