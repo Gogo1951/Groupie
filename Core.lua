@@ -271,6 +271,7 @@ local function ListingOnClick(self, button, down)
         if addon.debugMenus then
             print(addon.selectedListing)
             print(addon.groupieBoardButtons[addon.selectedListing].listing.author)
+            print(addon.groupieBoardButtons[addon.selectedListing].listing.msg)
         end
         if IsShiftKeyDown() then
             DEFAULT_CHAT_FRAME.editBox:SetText("/who " .. fullName)
