@@ -52,7 +52,7 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which)
 	if inactiveTalentsSpent > 0 then
 		otherspecmsg = format(" My Other Spec is %s (%s).", inactiveTalentSpec, inactiveRole)
 	end
-	local groupieMsg = format("{rt3} %s : %s LFG! Level %s %s %s wearing %s item-level gear.%s %s-speaking Player."
+	local groupieMsg = format("{rt3} %s : %s LFG! %s %s %s in %s-level gear.%s %s-speaking Player."
 		,
 		addonName,
 		activeRole,
@@ -76,7 +76,7 @@ function addon.SendWCLInfo(targetName, dropdownMenu, which)
 	local myname = UnitName("player")
 	local myserver = GetRealmName()
 	local link = format("https://classic.warcraftlogs.com/character/us/%s/%s", gsub(myserver, " ", ""), myname)
-	local groupieMsg = "{rt3} " .. addonName .. " : Here's my Warcraft Logs Link " .. link
+	local groupieMsg = "{rt3} " .. addonName .. " : Check My Parses on Warcraft Logs " .. link
 	if which == "BN_FRIEND" then
 		BNSendWhisper(dropdownMenu.accountInfo.bnetAccountID, groupieMsg)
 	else
