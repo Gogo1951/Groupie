@@ -5,10 +5,10 @@ local MainTabFrame       = nil
 local columnCount        = 0
 local LFGScrollFrame     = nil
 local WINDOW_WIDTH       = 900
-local WINDOW_HEIGHT      = 599
+local WINDOW_HEIGHT      = 600
 local ICON_WIDTH         = 32
 local WINDOW_OFFSET      = 113
-local BUTTON_HEIGHT      = 30
+local BUTTON_HEIGHT      = 40
 local BUTTON_TOTAL       = math.floor((WINDOW_HEIGHT - WINDOW_OFFSET) / BUTTON_HEIGHT)
 local BUTTON_WIDTH       = WINDOW_WIDTH - 44
 local COL_TIME           = 75
@@ -40,10 +40,11 @@ end
 -- 1 - Leader Name
 -- 2 - Instance
 -- 3 - Loot Type
-local function GetSortedListingIndex(sortType)
+local function GetSortedListingIndex(sortType, sortDir)
     local idx = 1
     local numindex = {}
     sortType = sortType or 0
+    sortDir = sortDir or false
 
     --Build a numerical index to sort on
     for author, listing in pairs(addon.db.global.listingTable) do
@@ -53,13 +54,29 @@ local function GetSortedListingIndex(sortType)
 
     --Then sort the index
     if sortType == 0 then
-        table.sort(numindex, function(a, b) return a.timestamp > b.timestamp end)
+        if sortDir then
+            table.sort(numindex, function(a, b) return a.timestamp > b.timestamp end)
+        else
+            table.sort(numindex, function(a, b) return a.timestamp < b.timestamp end)
+        end
     elseif sortType == 1 then
-        table.sort(numindex, function(a, b) return a.author < b.author end)
+        if sortDir then
+            table.sort(numindex, function(a, b) return a.author < b.author end)
+        else
+            table.sort(numindex, function(a, b) return a.author > b.author end)
+        end
     elseif sortType == 2 then
-        table.sort(numindex, function(a, b) return a.instanceName < b.instanceName end)
+        if sortDir then
+            table.sort(numindex, function(a, b) return a.instanceName < b.instanceName end)
+        else
+            table.sort(numindex, function(a, b) return a.instanceName > b.instanceName end)
+        end
     elseif sortType == 3 then
-        table.sort(numindex, function(a, b) return a.lootType < b.lootType end)
+        if sortDir then
+            table.sort(numindex, function(a, b) return a.lootType < b.lootType end)
+        else
+            table.sort(numindex, function(a, b) return a.lootType > b.lootType end)
+        end
     end
 
     return numindex
@@ -72,7 +89,8 @@ local function filterListings()
     local idx = 1
     local total = 0
     local sortType = MainTabFrame.sortType or 0
-    local sorted = GetSortedListingIndex(sortType)
+    local sortDir = MainTabFrame.sortDir or false
+    local sorted = GetSortedListingIndex(sortType, sortDir)
 
     if MainTabFrame.tabType == 1 then --"Other" tab
         for key, listing in pairs(sorted) do
@@ -242,7 +260,7 @@ local function DrawListings(self)
             button.msg:SetText(formattedMsg)
             button:SetScript("OnEnter", function()
                 GameTooltip:SetOwner(button, "ANCHOR_CURSOR")
-                GameTooltip:SetText(formattedMsg)
+                GameTooltip:SetText(formattedMsg, 1, 1, 1, 1, true)
                 GameTooltip:Show()
             end)
             button:SetID(idx)
@@ -378,8 +396,7 @@ local function CreateListingButtons()
         currentListing.msg:SetWidth(COL_MSG)
         currentListing.msg:SetJustifyH("LEFT")
         currentListing.msg:SetJustifyV("MIDDLE")
-        currentListing.msg:SetWordWrap(true)
-        currentListing.msg:SetMaxLines(2)
+        currentListing.msg:SetWordWrap(false)
 
         currentListing.id = listcount
         listcount = listcount + 1
@@ -398,6 +415,10 @@ local function createColumn(text, width, parent, sortType)
     Header:SetNormalFontObject("GameFontHighlight")
     Header:SetID(columnCount)
 
+    if text == "Message" then
+        Header:Disable()
+    end
+
     if columnCount == 1 then
         Header:SetPoint("TOPLEFT", parent, "TOPLEFT", 1, 22)
     else
@@ -406,6 +427,7 @@ local function createColumn(text, width, parent, sortType)
     if sortType ~= nil then
         Header:SetScript("OnClick", function()
             MainTabFrame.sortType = sortType
+            MainTabFrame.sortDir = not MainTabFrame.sortDir
             DrawListings(LFGScrollFrame)
         end)
     else
@@ -432,6 +454,7 @@ function addon.TabSwap(isHeroic, size, tabType, tabNum)
     MainTabFrame.size = size
     MainTabFrame.tabType = tabType
     MainTabFrame.sortType = 0
+    MainTabFrame.sortDir = false
     if addon.selectedListing then
         addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
     end
@@ -744,12 +767,13 @@ end
 ---------------------
 function addon.SetupConfig()
     addon.options = {
-        name = addonName,
+        name = "|TInterface\\AddOns\\" .. addonName .. "\\Images\\icon64:32:32:0:12|t" .. addonName,
         desc = "Optional description? for the group of options",
         descStyle = "inline",
         handler = addon,
         type = 'group',
         args = {
+            spacerdesc0 = { type = "description", name = " ", width = "full", order = 0 },
             about = {
                 name = "About",
                 desc = "About Groupie",
