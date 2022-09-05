@@ -235,7 +235,7 @@ local function ParseMessage(event, msg, author, _, channel)
     if isLFM or isLFG then
         groupLanguage = GetLanguage(messageWords) --This can safely be nil
         groupDungeon, isHeroic, groupSize = GetDungeons(messageWords)
-        if groupDungeon == nil then
+        if groupDungeon == nil or strmatch(msg, "|Henchant") or strmatch(msg, "|Htrade") then
             groupDungeon = "Miscellaneous" --No dungeon Found
             lootType = "Other"
             isHeroic = false

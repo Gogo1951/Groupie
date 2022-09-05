@@ -32,18 +32,50 @@ function IgnoreListButtonMixin:OnClick()
     return
 end
 
---------------------
--- User Interface --
---------------------
+------------------
+--User Interface--
+------------------
+--Create a sorted index of listings
+--Sort Types : 0 (default) - Time Posted
+-- 1 - Leader Name
+-- 2 - Instance
+-- 3 - Loot Type
+local function GetSortedListingIndex(sortType)
+    local idx = 1
+    local numindex = {}
+    sortType = sortType or 0
+
+    --Build a numerical index to sort on
+    for author, listing in pairs(addon.db.global.listingTable) do
+        numindex[idx] = listing
+        idx = idx + 1
+    end
+
+    --Then sort the index
+    if sortType == 0 then
+        table.sort(numindex, function(a, b) return a.timestamp > b.timestamp end)
+    elseif sortType == 1 then
+        table.sort(numindex, function(a, b) return a.author < b.author end)
+    elseif sortType == 2 then
+        table.sort(numindex, function(a, b) return a.instanceName < b.instanceName end)
+    elseif sortType == 3 then
+        table.sort(numindex, function(a, b) return a.lootType < b.lootType end)
+    end
+
+    return numindex
+end
+
 --Create a numerically indexed table of listings for use in the scroller
 --Tab types : 0 - Normal tab | 1 - Other tab | 2 - All tab
 local function filterListings()
     addon.filteredListings = {}
     local idx = 1
     local total = 0
+    local sortType = MainTabFrame.sortType or 0
+    local sorted = GetSortedListingIndex(sortType)
 
     if MainTabFrame.tabType == 1 then --"Other" tab
-        for author, listing in pairs(addon.db.global.listingTable) do
+        for key, listing in pairs(sorted) do
             if listing.lootType ~= "Other" then
                 --Wrong tab
                 --Other tab shows groups with 'other' loot type, and 40 man raids
@@ -83,7 +115,7 @@ local function filterListings()
             "Showing %d of %d possible groups. To see more groups adjust your [Group Filters] or [Instance Filters] under Groupie > Settings."
             , idx - 1, total))
     elseif MainTabFrame.tabType == 2 then --"All" tab
-        for author, listing in pairs(addon.db.global.listingTable) do
+        for key, listing in pairs(sorted) do
             if listing.lootType == "Other" then
                 --Only show these groups in 'Other' tab
             elseif addon.db.global.ignoreWrongLvl ~= false and listing.minLevel and
@@ -126,7 +158,7 @@ local function filterListings()
             "Showing %d of %d possible groups. To see more groups adjust your [Group Filters] or [Instance Filters] under Groupie > Settings."
             , idx - 1, total))
     else --Normal tabs
-        for author, listing in pairs(addon.db.global.listingTable) do
+        for key, listing in pairs(sorted) do
             if listing.isHeroic ~= MainTabFrame.isHeroic then
                 --Wrong tab
             elseif listing.groupSize ~= MainTabFrame.size then
@@ -239,6 +271,7 @@ local function ListingOnClick(self, button, down)
         if addon.debugMenus then
             print(addon.selectedListing)
             print(addon.groupieBoardButtons[addon.selectedListing].listing.author)
+            print(addon.groupieBoardButtons[addon.selectedListing].listing.msg)
         end
         if IsShiftKeyDown() then
             DEFAULT_CHAT_FRAME.editBox:SetText("/who " .. fullName)
@@ -355,7 +388,7 @@ local function CreateListingButtons()
 end
 
 --Create column headers for the main tab
-local function createColumn(text, width, parent)
+local function createColumn(text, width, parent, sortType)
     columnCount = columnCount + 1
     local Header = CreateFrame("Button", parent:GetName() .. "Header" .. columnCount, parent,
         "WhoFrameColumnHeaderTemplate")
@@ -370,7 +403,14 @@ local function createColumn(text, width, parent)
     else
         Header:SetPoint("LEFT", parent:GetName() .. "Header" .. columnCount - 1, "RIGHT", 0, 0)
     end
-    Header:SetScript("OnClick", function() return end)
+    if sortType ~= nil then
+        Header:SetScript("OnClick", function()
+            MainTabFrame.sortType = sortType
+            DrawListings(LFGScrollFrame)
+        end)
+    else
+        Header:SetScript("OnClick", function() return end)
+    end
 end
 
 --Listing update timer
@@ -391,6 +431,7 @@ function addon.TabSwap(isHeroic, size, tabType, tabNum)
     MainTabFrame.isHeroic = isHeroic
     MainTabFrame.size = size
     MainTabFrame.tabType = tabType
+    MainTabFrame.sortType = 0
     if addon.selectedListing then
         addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
     end
@@ -548,10 +589,10 @@ local function BuildGroupieWindow()
     MainTabFrame.size = 5
     MainTabFrame.tabType = 0
 
-    createColumn("Time", COL_TIME, MainTabFrame)
-    createColumn("Leader", COL_LEADER, MainTabFrame)
-    createColumn("Instance", COL_INSTANCE + ICON_WIDTH, MainTabFrame)
-    createColumn("Loot Type", COL_LOOT, MainTabFrame)
+    createColumn("Time", COL_TIME, MainTabFrame, 0)
+    createColumn("Leader", COL_LEADER, MainTabFrame, 1)
+    createColumn("Instance", COL_INSTANCE + ICON_WIDTH, MainTabFrame, 2)
+    createColumn("Loot Type", COL_LOOT, MainTabFrame, 3)
     createColumn("Message", COL_MSG, MainTabFrame)
 
     GroupieSettingsButton = CreateFrame("Button", "GroupieTopFrame", MainTabFrame, "UIPanelButtonTemplate")
