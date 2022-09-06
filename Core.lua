@@ -727,7 +727,7 @@ function addon:OnInitialize()
             hideInstances = {}
         },
         global = {
-            preserveData = true,
+            lastServer = nil,
             minsToPreserve = 5,
             font = "Arial Narrow",
             fontSize = 8,
@@ -1227,15 +1227,6 @@ function addon.SetupConfig()
                             end
                         end,
                     },
-                    --spacerdesc2 = { type = "description", name = " ", width = "full", order = 3 },
-                    preserveDataToggle = {
-                        type = "toggle",
-                        name = "Preserve Looking for Group Data When Switching Characters",
-                        order = 4,
-                        width = "full",
-                        get = function(info) return addon.db.global.preserveData end,
-                        set = function(info, val) addon.db.global.preserveData = val end,
-                    },
                     spacerdesc3 = { type = "description", name = " ", width = "full", order = 5 },
                     header2 = {
                         type = "description",
@@ -1326,6 +1317,13 @@ function addon.SetupConfig()
         addon.icon:Hide("GroupieLDB")
     end
     addon.UpdateSpecOptions()
+
+    --Don't preserve Data if switching servers
+    local currentServer = GetRealmName()
+    if currentServer ~= addon.db.global.lastServer then
+        addon.db.global.listingTable = {}
+    end
+    addon.db.global.lastServer = currentServer
 end
 
 function addon:OpenConfig()
