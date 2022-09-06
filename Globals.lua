@@ -693,7 +693,7 @@ addon.groupieUnflippedDungeonPatterns = {
     ["The Steamvault"]          = "sv steamvault steamvaults steam valts",
     ["The Botanica"]            = "botanica bot",
     ["The Arcatraz"]            = "arc arcatraz alcatraz",
-    ["The Black Morass"]        = "morass bm black",
+    ["The Black Morass"]        = "bm morass",
     ["Magisters' Terrace"]      = "mgt terrace magisters magister",
 
     ["Karazhan"]             = "kara karazhan",
