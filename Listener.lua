@@ -124,6 +124,11 @@ local function GetDungeons(messageWords)
         end
     end
 
+    --Return early if PVP
+    if instance == "PVP" then
+        return instance, false, 5
+    end
+
     --Handle "TOC" disambiguation
     if instance == "TOC-SPECIALCASE" then
         --If size specified, it is the raid
@@ -243,6 +248,12 @@ local function ParseMessage(event, msg, author, _, channel)
             isHeroic = false
             groupSize = 5
         end
+        if groupDungeon == "PVP" then -- Support for PVP tab
+            lootType = "PVP"
+            isHeroic = false
+            groupSize = 5
+            icon = "PVP.tga"
+        end
         if lootType == nil then
             lootType = GetGroupType(messageWords) --Defaults to MS>OS if not mentioned
         end
@@ -262,7 +273,7 @@ local function ParseMessage(event, msg, author, _, channel)
 
     --The full versioned instance name for use in data table
     local fullName = groupDungeon
-    if groupDungeon ~= "Miscellaneous" then
+    if groupDungeon ~= "Miscellaneous" and groupDungeon ~= "PVP" then
         if isHeroic then
             fullName = format("Heroic %s", fullName)
         end

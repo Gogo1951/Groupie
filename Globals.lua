@@ -731,6 +731,8 @@ addon.groupieUnflippedDungeonPatterns = {
     ["Icecrown Citadel"]            = "icc",
     ["The Ruby Sanctum"]            = "rs rubysanctum rubysanc ruby",
     ["Trial of the Grand Crusader"] = "togc grand",
+
+    ["PVP"] = "av alterac ab basin eots storm gurubashi ioc conquest sota strand wg wsg warsong gulch wintergrasp PVP 5s 3s 2s arena fta fth cta challenger rival duelist gladiator glad",
 }
 
 

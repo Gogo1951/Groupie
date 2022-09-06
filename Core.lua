@@ -84,7 +84,7 @@ local function GetSortedListingIndex(sortType, sortDir)
 end
 
 --Create a numerically indexed table of listings for use in the scroller
---Tab types : 0 - Normal tab | 1 - Other tab | 2 - All tab
+--Tab types : 0 - Normal tab | 1 - Other tab | 2 - All tab | 3 - PVP tab
 local function filterListings()
     addon.filteredListings = {}
     local idx = 1
@@ -182,13 +182,44 @@ local function filterListings()
         MainTabFrame.infotext:SetText(format(
             "Showing %d of %d possible groups. To see more groups adjust your [Group Filters] or [Instance Filters] under Groupie > Settings."
             , idx - 1, total))
+    elseif MainTabFrame.tabType == 3 then -- PVP tab
+        for key, listing in pairs(sorted) do
+            if listing.lootType ~= "PVP" then
+                --Wrong tab
+                --Other tab shows groups with 'pvp' loot type
+                --most filters do not apply to this tab
+            elseif now - listing.timestamp > addon.db.global.minsToPreserve * 60 then
+                --Expired based on user settings
+            elseif addon.db.global.ignoreWrongRole and
+                (not addon.tableContains(listing.rolesNeeded, addon.db.char.groupieSpec1Role) and
+                    not addon.tableContains(listing.rolesNeeded, addon.db.char.groupieSpec2Role)) then
+                --Roles the player can play arent needed
+            elseif addon.db.global.ignoreAmbiguousLanguage and listing.language ~= addon.groupieLocaleTable[GetLocale()] then
+                --Ignoring groups not explicitly labeled with player's language
+            else
+                local keywordBlacklistHit = false
+                for k, word in pairs(addon.db.global.keywordBlacklist) do
+                    if addon.tableContains(listing.words, word) then
+                        keywordBlacklistHit = true
+                    end
+                end
+                if not keywordBlacklistHit then
+                    addon.filteredListings[idx] = listing
+                    idx = idx + 1
+                end
+            end
+            total = total + 1
+        end
+        MainTabFrame.infotext:SetText(format(
+            "Showing %d of %d possible groups. To see more groups adjust your [Group Filters] or [Instance Filters] under Groupie > Settings."
+            , idx - 1, total))
     else --Normal tabs
         for key, listing in pairs(sorted) do
             if listing.isHeroic ~= MainTabFrame.isHeroic then
                 --Wrong tab
             elseif listing.groupSize ~= MainTabFrame.size then
                 --Wrong tab
-            elseif listing.lootType == "Other" then
+            elseif listing.lootType == "Other" or listing.lootType == "PVP" then
                 --Only show these groups in 'Other' tab
             elseif now - listing.timestamp > addon.db.global.minsToPreserve * 60 then
                 --Expired based on user settings
@@ -597,6 +628,15 @@ local function BuildGroupieWindow()
             addon.TabSwap(nil, nil, 2, 8)
         end)
 
+    local PVPTabButton = CreateFrame("Button", "GroupieTab9", GroupieFrame, "CharacterFrameTabButtonTemplate")
+    PVPTabButton:SetPoint("LEFT", "GroupieTab8", "RIGHT", -16, 0)
+    PVPTabButton:SetText("PVP")
+    PVPTabButton:SetID("9")
+    PVPTabButton:SetScript("OnClick",
+        function(self)
+            addon.TabSwap(nil, nil, 3, 9)
+        end)
+
     --------------------
     -- Main Tab Frame --
     --------------------
@@ -674,7 +714,7 @@ local function BuildGroupieWindow()
         end
     end)
 
-    PanelTemplates_SetNumTabs(GroupieFrame, 8)
+    PanelTemplates_SetNumTabs(GroupieFrame, 9)
     PanelTemplates_SetTab(GroupieFrame, 1)
 
     GroupieFrame:Show()
