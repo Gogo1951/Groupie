@@ -22,6 +22,7 @@ local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0
 
 local SharedMedia = LibStub("LibSharedMedia-3.0")
 local gsub        = gsub
+local time        = time
 
 addon.groupieBoardButtons = {}
 addon.filteredListings    = {}
@@ -73,6 +74,7 @@ local function filterListings()
     local total = 0
     local sortType = MainTabFrame.sortType or 0
     local sorted = GetSortedListingIndex(sortType)
+    local now = time()
 
     if MainTabFrame.tabType == 1 then --"Other" tab
         for key, listing in pairs(sorted) do
@@ -80,6 +82,8 @@ local function filterListings()
                 --Wrong tab
                 --Other tab shows groups with 'other' loot type, and 40 man raids
                 --Loot type filters therefore dont apply to this tab
+            elseif now - listing.timestamp > addon.db.global.minsToPreserve * 60 then
+                --Expired based on user settings
             elseif addon.db.global.ignoreWrongLvl ~= false and listing.minLevel and
                 listing.minLevel > (UnitLevel("player") + addon.db.char.recommendedLevelRange) then
             elseif addon.db.global.ignoreWrongLvl ~= false and listing.maxLevel and
@@ -118,6 +122,8 @@ local function filterListings()
         for key, listing in pairs(sorted) do
             if listing.lootType == "Other" then
                 --Only show these groups in 'Other' tab
+            elseif now - listing.timestamp > addon.db.global.minsToPreserve * 60 then
+                --Expired based on user settings
             elseif addon.db.global.ignoreWrongLvl ~= false and listing.minLevel and
                 listing.minLevel > (UnitLevel("player") + addon.db.char.recommendedLevelRange) then
             elseif addon.db.global.ignoreWrongLvl ~= false and listing.maxLevel and
@@ -165,6 +171,8 @@ local function filterListings()
                 --Wrong tab
             elseif listing.lootType == "Other" then
                 --Only show these groups in 'Other' tab
+            elseif now - listing.timestamp > addon.db.global.minsToPreserve * 60 then
+                --Expired based on user settings
             elseif addon.db.global.ignoreWrongLvl ~= false and listing.minLevel and
                 listing.minLevel > (UnitLevel("player") + addon.db.char.recommendedLevelRange) then
             elseif addon.db.global.ignoreWrongLvl ~= false and listing.maxLevel and
@@ -695,7 +703,7 @@ function addon:OnInitialize()
         },
         global = {
             preserveData = true,
-            minsToPreserve = 2,
+            minsToPreserve = 5,
             font = "Arial Narrow",
             fontSize = 8,
             debugData = {},
@@ -1181,7 +1189,7 @@ function addon.SetupConfig()
                         name = "",
                         order = 7,
                         width = 1.4,
-                        values = { [2] = "2 Minutes", [3] = "3 Minutes", [4] = "4 Minutes", [5] = "5 Minutes" },
+                        values = { [2] = "2 Minutes", [5] = "5 Minutes", [10] = "10 Minutes", [20] = "20 Minutes" },
                         set = function(info, val) addon.db.global.minsToPreserve = val end,
                         get = function(info) return addon.db.global.minsToPreserve end,
                     },

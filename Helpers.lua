@@ -176,7 +176,9 @@ end
 
 --Remove expired listings from the listing table
 function addon.ExpireListings()
-    local expirytimediff = addon.db.global.minsToPreserve * 60
+    --Save 20 mins of data for everyone
+    --Filter this based on their settings in filterListings in core.lua
+    local expirytimediff = 1200
     for key, val in pairs(addon.db.global.listingTable) do
         if time() - val.timestamp > expirytimediff then
             addon.db.global.listingTable[key] = nil
