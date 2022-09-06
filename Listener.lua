@@ -61,7 +61,7 @@ local function GetDungeons(messageWords)
                     instance = lookupAttempt
                 end
             end
-        else
+        elseif instance == nil then -- We shouldn't try matching for instance+heroic+size patterns if we've already found one
             --If we couldn't recognize an instance, try removing heroic/size patterns from the start and end of the word
             for key, val in pairs(addon.groupieVersionPatterns) do
                 if addon.EndsWith(word, key) then
