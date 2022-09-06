@@ -200,6 +200,8 @@ local function ParseMessage(event, msg, author, _, channel)
     local minLevel = nil
     local maxLevel = nil
     local instanceOrder = nil
+    local instanceID = -1
+    local icon = "Other.tga"
 
     for i = 1, #messageWords do
         --handle cases of 'LF3M', etc by removing numbers for this part
@@ -274,6 +276,8 @@ local function ParseMessage(event, msg, author, _, channel)
         minLevel = addon.groupieInstanceData[fullName].MinLevel
         maxLevel = addon.groupieInstanceData[fullName].MaxLevel
         instanceOrder = addon.groupieInstanceData[fullName].Order
+        icon = addon.groupieInstanceData[fullName].Icon
+        instanceID = addon.groupieInstanceData[fullName].InstanceID
     end
 
     --For some reason sometimes realm name is not included
@@ -307,6 +311,8 @@ local function ParseMessage(event, msg, author, _, channel)
     addon.db.global.listingTable[author].minLevel = minLevel or 0
     addon.db.global.listingTable[author].maxLevel = maxLevel or 1000
     addon.db.global.listingTable[author].order = instanceOrder or -1
+    addon.db.global.listingTable[author].instanceID = instanceID
+    addon.db.global.listingTable[author].icon = icon
     --Collect data to debug with
     --if addon.debugMenus then
     --tinsert(addon.db.global.debugData, { msg, preprocessedStr, addon.db.global.listingTable[author] })
@@ -340,4 +346,27 @@ end
 addon:RegisterEvent("CHAT_MSG_CHANNEL", GroupieEventHandlers)
 addon:RegisterEvent("CHAT_MSG_GUILD", GroupieEventHandlers)
 
---Handle spec update event
+-------------------------------
+--DEBUG FUNCTIONS FOR TESTING--
+-------------------------------
+
+local function testfunc(_, msg, ...)
+    if not addon.debugMenus then
+        return
+    end
+    if msg == "clear" then
+        addon.db.global.listingTable = {}
+    elseif msg == "all" then
+        addon.db.global.listingTable = {}
+        local idx = 0
+        for key, val in pairs(addon.groupieUnflippedDungeonPatterns) do
+            local temppattern = gsub(val, " .+", "")
+            ParseMessage(nil, "lfm " .. temppattern, tostring(idx), nil, nil)
+            idx = idx + 1
+        end
+        ParseMessage(nil, "lfm togc", tostring(idx + 1), nil, nil)
+        ParseMessage(nil, "lfm icc 25h", tostring(idx + 2), nil, nil)
+    end
+end
+
+addon:RegisterEvent("CHAT_MSG_WHISPER", testfunc)

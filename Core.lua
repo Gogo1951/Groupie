@@ -267,6 +267,7 @@ local function DrawListings(self)
             button.instance:SetText(listing.instanceName)
             button.loot:SetText(listing.lootType)
             button.msg:SetText(formattedMsg)
+            button.icon:SetTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\InstanceIcons\\" .. listing.icon)
             button:SetScript("OnEnter", function()
                 GameTooltip:SetOwner(button, "ANCHOR_CURSOR")
                 GameTooltip:SetText(formattedMsg, 1, 1, 1, 1, true)
@@ -380,9 +381,9 @@ local function CreateListingButtons()
 
         --Instance expansion column
         currentListing.icon = currentListing:CreateTexture("$parentIcon", "OVERLAY", nil, -8)
-        currentListing.icon:SetSize(ICON_WIDTH, ICON_WIDTH)
+        currentListing.icon:SetSize(ICON_WIDTH, ICON_WIDTH / 2)
         currentListing.icon:SetPoint("LEFT", currentListing.leader, "RIGHT", 2, 0)
-        currentListing.icon:SetTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\icon64.tga")
+        currentListing.icon:SetTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\InstanceIcons\\Other.tga")
 
         --Instance name column
         currentListing.instance = currentListing:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
