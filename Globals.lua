@@ -449,7 +449,7 @@ addon.groupieInstanceData = {
     ["Black Temple"] = { Active = true, Expac = "The Burning Crusade", InstanceType = "The Burning Crusade Raids",
         InstanceID = 564, MinLevel = 70, MaxLevel = 70, GroupSize = 25, Order = 2390, Icon = "BT.tga" },
     ["Hyjal Summit"] = { Active = true, Expac = "The Burning Crusade", InstanceType = "The Burning Crusade Raids",
-        InstanceID = 534, MinLevel = 70, MaxLevel = 70, GroupSize = 25, Order = 2380, Icon = ".tga" },
+        InstanceID = 534, MinLevel = 70, MaxLevel = 70, GroupSize = 25, Order = 2380, Icon = "MH.tga" },
     ["The Eye"] = { Active = true, Expac = "The Burning Crusade", InstanceType = "The Burning Crusade Raids",
         InstanceID = 550, MinLevel = 70, MaxLevel = 70, GroupSize = 25, Order = 2370, Icon = "TK.tga" },
     ["Serpentshrine Cavern"] = { Active = true, Expac = "The Burning Crusade", InstanceType = "The Burning Crusade Raids",
@@ -694,12 +694,12 @@ addon.groupieUnflippedDungeonPatterns = {
     ["Magisters' Terrace"]      = "mgt terrace magisters magister",
 
     ["Karazhan"]             = "kara karazhan karazan",
-    ["Zul'Aman"]             = "za zulaman aman hsh",
+    ["Zul'Aman"]             = "za zulaman aman hsh", --hexshrunken head
     ["Gruul's Lair"]         = "gl gruul gruuls",
     ["Magtheridon's Lair"]   = "mag magtheridon magth",
     ["Serpentshrine Cavern"] = "ssc serpentshrine",
     ["The Eye"]              = "tk tempest tempestkeep",
-    ["Hyjal Summit"]         = "hyjal hs hyj",
+    ["Hyjal Summit"]         = "hyjal hs hyj mh",
     ["Black Temple"]         = "bt blacktemple glaive",
     ["Sunwell Plateau"]      = "swp sunwell plateau plataeu sunwel",
 

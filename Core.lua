@@ -44,7 +44,7 @@ end
 local function GetSortedListingIndex(sortType, sortDir)
     local idx = 1
     local numindex = {}
-    sortType = sortType or 0
+    sortType = sortType or -1
     sortDir = sortDir or false
 
     --Build a numerical index to sort on
@@ -54,7 +54,9 @@ local function GetSortedListingIndex(sortType, sortDir)
     end
 
     --Then sort the index
-    if sortType == 0 then
+    if sortType == -1 then
+        table.sort(numindex, function(a, b) return a.createdat < b.createdat end)
+    elseif sortType == 0 then
         if sortDir then
             table.sort(numindex, function(a, b) return a.timestamp > b.timestamp end)
         else
@@ -89,7 +91,7 @@ local function filterListings()
     addon.filteredListings = {}
     local idx = 1
     local total = 0
-    local sortType = MainTabFrame.sortType or 0
+    local sortType = MainTabFrame.sortType or -1
     local now = time()
     local sortDir = MainTabFrame.sortDir or false
     local sorted = GetSortedListingIndex(sortType, sortDir)
@@ -462,7 +464,7 @@ function addon.TabSwap(isHeroic, size, tabType, tabNum)
     MainTabFrame.isHeroic = isHeroic
     MainTabFrame.size = size
     MainTabFrame.tabType = tabType
-    MainTabFrame.sortType = 0
+    MainTabFrame.sortType = -1
     MainTabFrame.sortDir = false
     if addon.selectedListing then
         addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()

@@ -304,8 +304,17 @@ local function ParseMessage(event, msg, author, _, channel)
     if isLFG then
         rolesNeeded = { 1, 2, 3, 4 }
     end
+
+    --Create a new entry for the author if one doesnt exist
+    --Used in listing board to prevent jumpy data by default
+    if addon.db.global.listingTable[author] == nil then
+        addon.db.global.listingTable[author] = {}
+    end
+    if addon.db.global.listingTable[author].createdat == nil then
+        addon.db.global.listingTable[author].createdat = time()
+    end
+
     --Create the listing entry
-    addon.db.global.listingTable[author] = {}
     addon.db.global.listingTable[author].isLFM = isLFM
     addon.db.global.listingTable[author].isLFG = isLFG
     addon.db.global.listingTable[author].timestamp = groupTimestamp
