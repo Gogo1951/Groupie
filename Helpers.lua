@@ -164,7 +164,7 @@ function addon.GetTimeSinceString(timestamp)
     local timediff = time() - timestamp
     local mins = floor(timediff / 60)
     local secs = timediff - (60 * mins)
-    return format("%dm%ds", mins, secs)
+    return format("%02dm %02ds", mins, secs)
 end
 
 --Convert keyword blacklist into a string
