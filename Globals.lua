@@ -182,6 +182,7 @@ addon.lootTypeColors = {
     ["SoftRes"] = "9C27B0",
     ["MS > OS"] = "2196F3",
     ["Other"] = "FFFFFF",
+    ["PVP"] = "F44336",
 }
 
 addon.multiWingInstances = { "Dire Maul - Full Clear", "Maraudon - Full Clear", "Scarlet Monastery - Full Clear" }
