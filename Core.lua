@@ -235,6 +235,9 @@ local function filterListings()
                     if listing.instanceID == savedInstance[1] and
                         listing.isHeroic == savedDiff and
                         listing.groupSize == savedInstance[3] then
+                        if addon.debugMenus then
+                            print("FILTERED: ", listing.fullName, savedInstance[1], savedInstance[2], savedInstance[3])
+                        end
                         savedHit = true
                     end
                 end
