@@ -177,7 +177,7 @@ addon.groupieUnflippedLootPatterns = {
 }
 
 addon.lootTypeColors = {
-    ["Ticket"] = "F44336",
+    ["Ticket"] = "FFC107",
     ["GDKP"] = "4CAF50",
     ["SoftRes"] = "9C27B0",
     ["MS > OS"] = "2196F3",
