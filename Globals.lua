@@ -176,6 +176,14 @@ addon.groupieUnflippedLootPatterns = {
     ["Other"] = "boost boosts boosting wts xp exp afk selling"
 }
 
+addon.lootTypeColors = {
+    ["Ticket"] = "F44336",
+    ["GDKP"] = "4CAF50",
+    ["SoftRes"] = "9C27B0",
+    ["MS > OS"] = "2196F3",
+    ["Other"] = "FFFFFF",
+}
+
 addon.multiWingInstances = { "Dire Maul - Full Clear", "Maraudon - Full Clear", "Scarlet Monastery - Full Clear" }
 
 addon.edgeCaseInstances = { "Mana-Tombs", "The Obsidian Sanctum", "Utgarde Pinnacle" }

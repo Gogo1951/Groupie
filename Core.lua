@@ -262,11 +262,12 @@ local function DrawListings(self)
                 button:UnlockHighlight()
             end
             local formattedMsg = gsub(gsub(listing.msg, "%{%w+%}", ""), "%s+", " ")
+            local lootColor = addon.lootTypeColors[listing.lootType]
             button.listing = listing
             button.time:SetText(addon.GetTimeSinceString(listing.timestamp))
             button.leader:SetText(gsub(listing.author, "-.+", ""))
             button.instance:SetText(" " .. listing.instanceName)
-            button.loot:SetText(listing.lootType)
+            button.loot:SetText("|cFF" .. lootColor .. listing.lootType)
             button.msg:SetText(formattedMsg)
             button.icon:SetTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\InstanceIcons\\" .. listing.icon)
             button:SetScript("OnEnter", function()
