@@ -139,43 +139,11 @@ local function filterListings()
             , idx - 1, total))
     elseif MainTabFrame.tabType == 2 then --"All" tab
         for key, listing in pairs(sorted) do
-            if listing.lootType == "Other" then
-                --Only show these groups in 'Other' tab
-            elseif now - listing.timestamp > addon.db.global.minsToPreserve * 60 then
+            if now - listing.timestamp > addon.db.global.minsToPreserve * 60 then
                 --Expired based on user settings
-            elseif addon.db.global.ignoreWrongLvl ~= false and listing.minLevel and
-                listing.minLevel > (UnitLevel("player") + addon.db.char.recommendedLevelRange) then
-            elseif addon.db.global.ignoreWrongLvl ~= false and listing.maxLevel and
-                listing.maxLevel < UnitLevel("player") then
-                --Instance is outside of level range
-            elseif addon.db.global.ignoreLFM and listing.isLFM then
-                --Ignoring LFM groups
-            elseif addon.db.global.ignoreLFG and listing.isLFG then
-                --Ignoring LFG groups
-            elseif addon.db.global.ignoreGDKP and listing.lootType == "GDKP" then
-            elseif addon.db.global.ignoreTicket and listing.lootType == "Ticket" then
-            elseif addon.db.global.ignoreMSOS and listing.lootType == "MS > OS" then
-            elseif addon.db.global.ignoreSoftRes and listing.lootType == "SoftRes" then
-                --Ignoring certain loot styles
-            elseif addon.db.global.ignoreWrongRole and
-                (not addon.tableContains(listing.rolesNeeded, addon.db.char.groupieSpec1Role) and
-                    not addon.tableContains(listing.rolesNeeded, addon.db.char.groupieSpec2Role)) then
-                --Roles the player can play arent needed
-            elseif addon.db.global.ignoreAmbiguousLanguage and listing.language ~= addon.groupieLocaleTable[GetLocale()] then
-                --Ignoring groups not explicitly labeled with player's language
-            elseif addon.db.char.hideInstances[listing.order] == true then
-                --Ignoring specifically hidden instances
             else
-                local keywordBlacklistHit = false
-                for k, word in pairs(addon.db.global.keywordBlacklist) do
-                    if addon.tableContains(listing.words, word) then
-                        keywordBlacklistHit = true
-                    end
-                end
-                if not keywordBlacklistHit then
-                    addon.filteredListings[idx] = listing
-                    idx = idx + 1
-                end
+                addon.filteredListings[idx] = listing
+                idx = idx + 1
             end
             total = total + 1
         end
@@ -295,7 +263,7 @@ local function DrawListings(self)
             button.listing = listing
             button.time:SetText(addon.GetTimeSinceString(listing.timestamp))
             button.leader:SetText(gsub(listing.author, "-.+", ""))
-            button.instance:SetText(listing.instanceName)
+            button.instance:SetText(" " .. listing.instanceName)
             button.loot:SetText(listing.lootType)
             button.msg:SetText(formattedMsg)
             button.icon:SetTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\InstanceIcons\\" .. listing.icon)
