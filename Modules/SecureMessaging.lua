@@ -59,8 +59,8 @@ function SecureMessaging.CHAT_MSG_WHISPER(message)
     end
 end
 
-addon:RegisterEvent("CHAT_MSG_WHISPER", SecureMessaging.CHAT_MSG_WHISPER);
-addon:RegisterEvent("PLAYER_ENTERING_WORLD", SecureMessaging.PLAYER_ENTERING_WORLD);
-addon:RegisterEvent("CHAT_MSG_ADDON", SecureMessaging.CHAT_MSG_ADDON);
+--addon:RegisterEvent("CHAT_MSG_WHISPER", SecureMessaging.CHAT_MSG_WHISPER);
+--addon:RegisterEvent("PLAYER_ENTERING_WORLD", SecureMessaging.PLAYER_ENTERING_WORLD);
+--addon:RegisterEvent("CHAT_MSG_ADDON", SecureMessaging.CHAT_MSG_ADDON);
 
 addon.SM = SecureMessaging;

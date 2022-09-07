@@ -184,6 +184,7 @@ local function filterListings()
             "Showing %d of %d possible groups. To see more groups adjust your [Group Filters] or [Instance Filters] under Groupie > Settings."
             , idx - 1, total))
     else --Normal tabs
+        local savedInstances = addon.addon.GetSavedInstances()
         for key, listing in pairs(sorted) do
             if listing.isHeroic ~= MainTabFrame.isHeroic then
                 --Wrong tab
@@ -216,13 +217,28 @@ local function filterListings()
             elseif addon.db.char.hideInstances[listing.order] == true then
                 --Ignoring specifically hidden instances
             else
+                --Check for blacklisted words
                 local keywordBlacklistHit = false
                 for k, word in pairs(addon.db.global.keywordBlacklist) do
                     if addon.tableContains(listing.words, word) then
                         keywordBlacklistHit = true
                     end
                 end
-                if not keywordBlacklistHit then
+                --Check if player is saved to this instance ID, Difficulty, and Size
+                local savedHit = false
+                local isSaved = false
+                local savedDiff = false
+                for _, savedInstance in ipairs(savedInstances) do
+                    if savedInstance[2] == "Heroic" then
+                        savedDiff = true
+                    end
+                    if listing.instanceID == savedInstance[1] and
+                        listing.isHeroic == savedDiff and
+                        listing.groupSize == savedInstance[3] then
+                        savedHit = true
+                    end
+                end
+                if not keywordBlacklistHit and not savedHit then
                     addon.filteredListings[idx] = listing
                     idx = idx + 1
                 end

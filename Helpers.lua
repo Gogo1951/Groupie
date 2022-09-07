@@ -220,3 +220,16 @@ function addon.RunSlashCmd(cmd)
         i = i + 1
     end
 end
+
+--Return a table of instance IDs the player is saved to
+function addon.GetSavedInstances()
+    local t = {}
+    for i = 1, GetNumSavedInstances() do
+        local name, id, reset, difficulty, locked, extended, instanceIDMostSig, isRaid, maxPlayers,
+        difficultyName, numEncounters, encounterProgress = GetSavedInstanceInfo(i)
+        if locked then
+            tinsert(t, { id, difficulty, maxPlayers })
+        end
+    end
+    return t
+end
