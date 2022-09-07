@@ -184,7 +184,7 @@ local function filterListings()
             "Showing %d of %d possible groups. To see more groups adjust your [Group Filters] or [Instance Filters] under Groupie > Settings."
             , idx - 1, total))
     else --Normal tabs
-        local savedInstances = addon.addon.GetSavedInstances()
+        local savedInstances = addon.GetSavedInstances()
         for key, listing in pairs(sorted) do
             if listing.isHeroic ~= MainTabFrame.isHeroic then
                 --Wrong tab
