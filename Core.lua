@@ -1,22 +1,28 @@
-local addonName, Groupie = ...
+local addonName, Groupie   = ...
 --Main UI variables
-local GroupieFrame       = nil
-local MainTabFrame       = nil
-local columnCount        = 0
-local LFGScrollFrame     = nil
-local WINDOW_WIDTH       = 900
-local WINDOW_HEIGHT      = 600
-local ICON_WIDTH         = 32
-local WINDOW_OFFSET      = 113
-local BUTTON_HEIGHT      = 40
-local BUTTON_TOTAL       = math.floor((WINDOW_HEIGHT - WINDOW_OFFSET) / BUTTON_HEIGHT)
-local BUTTON_WIDTH       = WINDOW_WIDTH - 44
-local COL_TIME           = 75
-local COL_LEADER         = 100
-local COL_INSTANCE       = 175
-local COL_LOOT           = 76
-local COL_MSG            = WINDOW_WIDTH - COL_TIME - COL_LEADER - COL_INSTANCE - COL_LOOT - ICON_WIDTH - 44
-local INFO_WIDTH         = WINDOW_WIDTH - 500
+local GroupieFrame         = nil
+local MainTabFrame         = nil
+local GroupieRoleDropdown  = nil
+local GroupieLootDropdown  = nil
+local GroupieLangDropdown  = nil
+local GroupieLevelCheckbox = nil
+local columnCount          = 0
+local LFGScrollFrame       = nil
+local WINDOW_WIDTH         = 980
+local WINDOW_HEIGHT        = 640
+local ICON_WIDTH           = 32
+local WINDOW_OFFSET        = 133
+local BUTTON_HEIGHT        = 40
+local BUTTON_TOTAL         = math.floor((WINDOW_HEIGHT - WINDOW_OFFSET) / BUTTON_HEIGHT)
+local BUTTON_WIDTH         = WINDOW_WIDTH - 44
+local COL_TIME             = 75
+local COL_LEADER           = 100
+local COL_INSTANCE         = 175
+local COL_LOOT             = 76
+local COL_MSG              = WINDOW_WIDTH - COL_TIME - COL_LEADER - COL_INSTANCE - COL_LOOT - ICON_WIDTH - 44
+local DROPDOWN_WIDTH       = 100
+local DROPDOWN_HEIGHT      = 25
+local DROPDOWN_PAD         = 60
 
 local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0", "AceConsole-3.0", "AceTimer-3.0")
 
@@ -44,7 +50,7 @@ end
 local function GetSortedListingIndex(sortType, sortDir)
     local idx = 1
     local numindex = {}
-    sortType = sortType or 0
+    sortType = sortType or -1
     sortDir = sortDir or false
 
     --Build a numerical index to sort on
@@ -54,7 +60,9 @@ local function GetSortedListingIndex(sortType, sortDir)
     end
 
     --Then sort the index
-    if sortType == 0 then
+    if sortType == -1 then
+        table.sort(numindex, function(a, b) return a.createdat < b.createdat end)
+    elseif sortType == 0 then
         if sortDir then
             table.sort(numindex, function(a, b) return a.timestamp > b.timestamp end)
         else
@@ -88,8 +96,7 @@ end
 local function filterListings()
     addon.filteredListings = {}
     local idx = 1
-    local total = 0
-    local sortType = MainTabFrame.sortType or 0
+    local sortType = MainTabFrame.sortType or -1
     local now = time()
     local sortDir = MainTabFrame.sortDir or false
     local sorted = GetSortedListingIndex(sortType, sortDir)
@@ -103,21 +110,10 @@ local function filterListings()
                 --Loot type filters therefore dont apply to this tab
             elseif now - listing.timestamp > addon.db.global.minsToPreserve * 60 then
                 --Expired based on user settings
-            elseif addon.db.global.ignoreWrongLvl ~= false and listing.minLevel and
-                listing.minLevel > (UnitLevel("player") + addon.db.char.recommendedLevelRange) then
-            elseif addon.db.global.ignoreWrongLvl ~= false and listing.maxLevel and
-                listing.maxLevel < UnitLevel("player") then
-                --Instance is outside of level range
             elseif addon.db.global.ignoreLFM and listing.isLFM then
                 --Ignoring LFM groups
             elseif addon.db.global.ignoreLFG and listing.isLFG then
                 --Ignoring LFG groups
-            elseif addon.db.global.ignoreWrongRole and
-                (not addon.tableContains(listing.rolesNeeded, addon.db.char.groupieSpec1Role) and
-                    not addon.tableContains(listing.rolesNeeded, addon.db.char.groupieSpec2Role)) then
-                --Roles the player can play arent needed
-            elseif addon.db.global.ignoreAmbiguousLanguage and listing.language ~= addon.groupieLocaleTable[GetLocale()] then
-                --Ignoring groups not explicitly labeled with player's language
             elseif addon.db.char.hideInstances[listing.order] == true then
                 --Ignoring specifically hidden instances
             else
@@ -132,56 +128,16 @@ local function filterListings()
                     idx = idx + 1
                 end
             end
-            total = total + 1
         end
-        MainTabFrame.infotext:SetText(format(
-            "Showing %d of %d possible groups. To see more groups adjust your [Group Filters] or [Instance Filters] under Groupie > Settings."
-            , idx - 1, total))
     elseif MainTabFrame.tabType == 2 then --"All" tab
         for key, listing in pairs(sorted) do
-            if listing.lootType == "Other" then
-                --Only show these groups in 'Other' tab
-            elseif now - listing.timestamp > addon.db.global.minsToPreserve * 60 then
+            if now - listing.timestamp > addon.db.global.minsToPreserve * 60 then
                 --Expired based on user settings
-            elseif addon.db.global.ignoreWrongLvl ~= false and listing.minLevel and
-                listing.minLevel > (UnitLevel("player") + addon.db.char.recommendedLevelRange) then
-            elseif addon.db.global.ignoreWrongLvl ~= false and listing.maxLevel and
-                listing.maxLevel < UnitLevel("player") then
-                --Instance is outside of level range
-            elseif addon.db.global.ignoreLFM and listing.isLFM then
-                --Ignoring LFM groups
-            elseif addon.db.global.ignoreLFG and listing.isLFG then
-                --Ignoring LFG groups
-            elseif addon.db.global.ignoreGDKP and listing.lootType == "GDKP" then
-            elseif addon.db.global.ignoreTicket and listing.lootType == "Ticket" then
-            elseif addon.db.global.ignoreMSOS and listing.lootType == "MS > OS" then
-            elseif addon.db.global.ignoreSoftRes and listing.lootType == "SoftRes" then
-                --Ignoring certain loot styles
-            elseif addon.db.global.ignoreWrongRole and
-                (not addon.tableContains(listing.rolesNeeded, addon.db.char.groupieSpec1Role) and
-                    not addon.tableContains(listing.rolesNeeded, addon.db.char.groupieSpec2Role)) then
-                --Roles the player can play arent needed
-            elseif addon.db.global.ignoreAmbiguousLanguage and listing.language ~= addon.groupieLocaleTable[GetLocale()] then
-                --Ignoring groups not explicitly labeled with player's language
-            elseif addon.db.char.hideInstances[listing.order] == true then
-                --Ignoring specifically hidden instances
             else
-                local keywordBlacklistHit = false
-                for k, word in pairs(addon.db.global.keywordBlacklist) do
-                    if addon.tableContains(listing.words, word) then
-                        keywordBlacklistHit = true
-                    end
-                end
-                if not keywordBlacklistHit then
-                    addon.filteredListings[idx] = listing
-                    idx = idx + 1
-                end
+                addon.filteredListings[idx] = listing
+                idx = idx + 1
             end
-            total = total + 1
         end
-        MainTabFrame.infotext:SetText(format(
-            "Showing %d of %d possible groups. To see more groups adjust your [Group Filters] or [Instance Filters] under Groupie > Settings."
-            , idx - 1, total))
     elseif MainTabFrame.tabType == 3 then -- PVP tab
         for key, listing in pairs(sorted) do
             if listing.lootType ~= "PVP" then
@@ -190,12 +146,6 @@ local function filterListings()
                 --most filters do not apply to this tab
             elseif now - listing.timestamp > addon.db.global.minsToPreserve * 60 then
                 --Expired based on user settings
-            elseif addon.db.global.ignoreWrongRole and
-                (not addon.tableContains(listing.rolesNeeded, addon.db.char.groupieSpec1Role) and
-                    not addon.tableContains(listing.rolesNeeded, addon.db.char.groupieSpec2Role)) then
-                --Roles the player can play arent needed
-            elseif addon.db.global.ignoreAmbiguousLanguage and listing.language ~= addon.groupieLocaleTable[GetLocale()] then
-                --Ignoring groups not explicitly labeled with player's language
             else
                 local keywordBlacklistHit = false
                 for k, word in pairs(addon.db.global.keywordBlacklist) do
@@ -208,12 +158,9 @@ local function filterListings()
                     idx = idx + 1
                 end
             end
-            total = total + 1
         end
-        MainTabFrame.infotext:SetText(format(
-            "Showing %d of %d possible groups. To see more groups adjust your [Group Filters] or [Instance Filters] under Groupie > Settings."
-            , idx - 1, total))
     else --Normal tabs
+        local savedInstances = addon.GetSavedInstances()
         for key, listing in pairs(sorted) do
             if listing.isHeroic ~= MainTabFrame.isHeroic then
                 --Wrong tab
@@ -223,45 +170,43 @@ local function filterListings()
                 --Only show these groups in 'Other' tab
             elseif now - listing.timestamp > addon.db.global.minsToPreserve * 60 then
                 --Expired based on user settings
-            elseif addon.db.global.ignoreWrongLvl ~= false and listing.minLevel and
-                listing.minLevel > (UnitLevel("player") + addon.db.char.recommendedLevelRange) then
-            elseif addon.db.global.ignoreWrongLvl ~= false and listing.maxLevel and
-                listing.maxLevel < UnitLevel("player") then
-                --Instance is outside of level range
             elseif addon.db.global.ignoreLFM and listing.isLFM then
                 --Ignoring LFM groups
             elseif addon.db.global.ignoreLFG and listing.isLFG then
                 --Ignoring LFG groups
-            elseif addon.db.global.ignoreGDKP and listing.lootType == "GDKP" then
-            elseif addon.db.global.ignoreTicket and listing.lootType == "Ticket" then
-            elseif addon.db.global.ignoreMSOS and listing.lootType == "MS > OS" then
-            elseif addon.db.global.ignoreSoftRes and listing.lootType == "SoftRes" then
-                --Ignoring certain loot styles
-            elseif addon.db.global.ignoreWrongRole and
-                (not addon.tableContains(listing.rolesNeeded, addon.db.char.groupieSpec1Role) and
-                    not addon.tableContains(listing.rolesNeeded, addon.db.char.groupieSpec2Role)) then
-                --Roles the player can play arent needed
-            elseif addon.db.global.ignoreAmbiguousLanguage and listing.language ~= addon.groupieLocaleTable[GetLocale()] then
-                --Ignoring groups not explicitly labeled with player's language
             elseif addon.db.char.hideInstances[listing.order] == true then
                 --Ignoring specifically hidden instances
             else
+                --Check for blacklisted words
                 local keywordBlacklistHit = false
                 for k, word in pairs(addon.db.global.keywordBlacklist) do
                     if addon.tableContains(listing.words, word) then
                         keywordBlacklistHit = true
                     end
                 end
-                if not keywordBlacklistHit then
+                --Check if player is saved to this instance ID, Difficulty, and Size
+                local savedHit = false
+                local isSaved = false
+                local savedDiff = false
+                for _, savedInstance in ipairs(savedInstances) do
+                    if savedInstance[2] == "Heroic" then
+                        savedDiff = true
+                    end
+                    if listing.instanceID == savedInstance[1] and
+                        listing.isHeroic == savedDiff and
+                        listing.groupSize == savedInstance[3] then
+                        if addon.debugMenus then
+                            print("FILTERED: ", listing.fullName, savedInstance[1], savedInstance[2], savedInstance[3])
+                        end
+                        savedHit = true
+                    end
+                end
+                if not keywordBlacklistHit and not savedHit then
                     addon.filteredListings[idx] = listing
                     idx = idx + 1
                 end
             end
-            total = total + 1
         end
-        MainTabFrame.infotext:SetText(format(
-            "Showing %d of %d possible groups. To see more groups adjust your [Group Filters] or [Instance Filters] under Groupie > Settings."
-            , idx - 1, total))
     end
 end
 
@@ -292,11 +237,12 @@ local function DrawListings(self)
                 button:UnlockHighlight()
             end
             local formattedMsg = gsub(gsub(listing.msg, "%{%w+%}", ""), "%s+", " ")
+            local lootColor = addon.lootTypeColors[listing.lootType]
             button.listing = listing
             button.time:SetText(addon.GetTimeSinceString(listing.timestamp))
             button.leader:SetText(gsub(listing.author, "-.+", ""))
-            button.instance:SetText(listing.instanceName)
-            button.loot:SetText(listing.lootType)
+            button.instance:SetText(" " .. listing.instanceName)
+            button.loot:SetText("|cFF" .. lootColor .. listing.lootType)
             button.msg:SetText(formattedMsg)
             button.icon:SetTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\InstanceIcons\\" .. listing.icon)
             button:SetScript("OnEnter", function()
@@ -494,12 +440,23 @@ function addon.TabSwap(isHeroic, size, tabType, tabNum)
     MainTabFrame.isHeroic = isHeroic
     MainTabFrame.size = size
     MainTabFrame.tabType = tabType
-    MainTabFrame.sortType = 0
+    MainTabFrame.sortType = -1
     MainTabFrame.sortDir = false
+    --Clear selected listing
     if addon.selectedListing then
         addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
     end
     addon.selectedListing = nil
+
+    --Only show level checkbox on dungeons tab
+    if tabNum == 1 then
+        GroupieLevelCheckbox:SetEnabled(true)
+        GroupieLevelCheckbox:Show()
+    else
+        GroupieLevelCheckbox:SetEnabled(false)
+        GroupieLevelCheckbox:Hide()
+    end
+
     DrawListings(LFGScrollFrame)
     PanelTemplates_SetTab(GroupieFrame, tabNum)
 end
@@ -642,7 +599,7 @@ local function BuildGroupieWindow()
     --------------------
     MainTabFrame = CreateFrame("Frame", "GroupieFrame1", GroupieFrame, "InsetFrameTemplate")
     MainTabFrame:SetWidth(WINDOW_WIDTH - 19)
-    MainTabFrame:SetHeight(WINDOW_HEIGHT - WINDOW_OFFSET)
+    MainTabFrame:SetHeight(WINDOW_HEIGHT - WINDOW_OFFSET + 20)
     MainTabFrame:SetPoint("TOPLEFT", GroupieFrame, "TOPLEFT", 8, -84)
     MainTabFrame:SetScript("OnShow",
         function(self)
@@ -652,11 +609,6 @@ local function BuildGroupieWindow()
     MainTabFrame:HookScript("OnUpdate", function()
         addon.TimerListingUpdate()
     end)
-
-    MainTabFrame.infotext = MainTabFrame:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
-    MainTabFrame.infotext:SetWidth(INFO_WIDTH)
-    MainTabFrame.infotext:SetJustifyH("CENTER")
-    MainTabFrame.infotext:SetPoint("TOP", 0, 56)
 
     MainTabFrame.isHeroic = false
     MainTabFrame.size = 5
@@ -668,20 +620,140 @@ local function BuildGroupieWindow()
     createColumn("Loot Type", COL_LOOT, MainTabFrame, 3)
     createColumn("Message", COL_MSG, MainTabFrame)
 
-    GroupieSettingsButton = CreateFrame("Button", "GroupieTopFrame", MainTabFrame, "UIPanelButtonTemplate")
-    GroupieSettingsButton:SetSize(100, 22)
-    GroupieSettingsButton:SetText("Settings")
-    GroupieSettingsButton:SetPoint("TOPRIGHT", -0, 50)
-    GroupieSettingsButton:SetScript("OnClick", function()
-        GroupieFrame:Hide()
-        addon:OpenConfig()
+
+    ---------------------------------
+    --Group Listing Board Dropdowns--
+    ---------------------------------
+    --Role Dropdown
+    GroupieRoleDropdown = CreateFrame("Frame", "GroupieRoleDropdown", MainTabFrame, "UIDropDownMenuTemplate")
+    GroupieRoleDropdown:SetSize(DROPDOWN_WIDTH, DROPDOWN_HEIGHT)
+    GroupieRoleDropdown:SetPoint("TOPLEFT", 75, 55)
+    local function RoleDropdownOnClick(self, arg1)
+        if arg1 == 0 then
+            UIDropDownMenu_SetText(GroupieRoleDropdown, "LF Any Role")
+            MainTabFrame.roleType = nil
+        elseif arg1 == 1 then
+            UIDropDownMenu_SetText(GroupieRoleDropdown, "LF Tank")
+            MainTabFrame.roleType = 1
+        elseif arg1 == 2 then
+            UIDropDownMenu_SetText(GroupieRoleDropdown, "LF Healer")
+            MainTabFrame.roleType = 2
+        elseif arg1 == 3 then
+            UIDropDownMenu_SetText(GroupieRoleDropdown, "LF DPS")
+            MainTabFrame.roleType = 3
+        end
+    end
+
+    local function RoleDropdownInit()
+        --Create menu list
+        local info = UIDropDownMenu_CreateInfo()
+        info.func = RoleDropdownOnClick
+        info.text, info.arg1, info.notCheckable = "LF Any Role", 0, true
+        UIDropDownMenu_AddButton(info)
+        info.text, info.arg1, info.notCheckable = "LF Tank", 1, true
+        UIDropDownMenu_AddButton(info)
+        info.text, info.arg1, info.notCheckable = "LF Healer", 2, true
+        UIDropDownMenu_AddButton(info)
+        info.text, info.arg1, info.notCheckable = "LF DPS", 3, true
+        UIDropDownMenu_AddButton(info)
+    end
+
+    --Initialize Shown Value
+    UIDropDownMenu_Initialize(GroupieRoleDropdown, RoleDropdownInit)
+    UIDropDownMenu_SetText(GroupieRoleDropdown, "LF Any Role")
+    MainTabFrame.roleType = nil
+
+    --Loot Type Dropdown
+    GroupieLootDropdown = CreateFrame("Frame", "GroupieLootDropdown", GroupieRoleDropdown, "UIDropDownMenuTemplate")
+    GroupieLootDropdown:SetSize(DROPDOWN_WIDTH, DROPDOWN_HEIGHT)
+    GroupieLootDropdown:SetPoint("RIGHT", DROPDOWN_WIDTH + DROPDOWN_PAD, 0)
+    local function LootDropdownOnClick(self, arg1)
+        if arg1 == 0 then
+            UIDropDownMenu_SetText(GroupieLootDropdown, "All Loot Styles")
+            MainTabFrame.lootType = nil
+        elseif arg1 == 1 then
+            UIDropDownMenu_SetText(GroupieLootDropdown, "MS > OS")
+            MainTabFrame.lootType = "MS > OS"
+        elseif arg1 == 2 then
+            UIDropDownMenu_SetText(GroupieLootDropdown, "SoftRes")
+            MainTabFrame.lootType = "SoftRes"
+        elseif arg1 == 3 then
+            UIDropDownMenu_SetText(GroupieLootDropdown, "GDKP")
+            MainTabFrame.lootType = "GDKP"
+        elseif arg1 == 4 then
+            UIDropDownMenu_SetText(GroupieLootDropdown, "TICKET")
+            MainTabFrame.lootType = "TICKET"
+        end
+    end
+
+    local function LootDropdownInit()
+        --Create menu list
+        local info = UIDropDownMenu_CreateInfo()
+        info.func = LootDropdownOnClick
+        info.text, info.arg1, info.notCheckable = "All Loot Styles", 0, true
+        UIDropDownMenu_AddButton(info)
+        info.text, info.arg1, info.notCheckable = "MS > OS", 1, true
+        UIDropDownMenu_AddButton(info)
+        info.text, info.arg1, info.notCheckable = "SoftRes", 2, true
+        UIDropDownMenu_AddButton(info)
+        info.text, info.arg1, info.notCheckable = "GDKP", 3, true
+        UIDropDownMenu_AddButton(info)
+        info.text, info.arg1, info.notCheckable = "TICKET", 4, true
+        UIDropDownMenu_AddButton(info)
+    end
+
+    --Initialize Shown Value
+    UIDropDownMenu_Initialize(GroupieLootDropdown, LootDropdownInit)
+    UIDropDownMenu_SetText(GroupieLootDropdown, "All Loot Styles")
+    MainTabFrame.lootType = nil
+
+    --Language Dropdown
+    GroupieLangDropdown = CreateFrame("Frame", "GroupieLangDropdown", GroupieLootDropdown, "UIDropDownMenuTemplate")
+    GroupieLangDropdown:SetSize(DROPDOWN_WIDTH, DROPDOWN_HEIGHT)
+    GroupieLangDropdown:SetPoint("RIGHT", DROPDOWN_WIDTH + DROPDOWN_PAD, 0)
+    local function LangDropdownOnClick(self, arg1)
+        if arg1 == 0 then
+            UIDropDownMenu_SetText(GroupieLangDropdown, "All Languages")
+            MainTabFrame.lang = nil
+        else
+            UIDropDownMenu_SetText(GroupieLangDropdown, addon.groupieLangList[arg1])
+            MainTabFrame.lang = arg1
+            print(MainTabFrame.lang, addon.groupieLangList[arg1])
+        end
+    end
+
+    local function LangDropdownInit()
+        --Create menu list
+        local info = UIDropDownMenu_CreateInfo()
+        info.func = LangDropdownOnClick
+        info.text, info.arg1, info.notCheckable = "All Languages", 0, true
+        UIDropDownMenu_AddButton(info)
+
+        for i = 1, #addon.groupieLangList do
+            info.text, info.arg1, info.notCheckable = addon.groupieLangList[i], i, true
+            UIDropDownMenu_AddButton(info)
+        end
+    end
+
+    --Initialize Shown Value
+    UIDropDownMenu_Initialize(GroupieLangDropdown, LangDropdownInit)
+    UIDropDownMenu_SetText(GroupieLangDropdown, "All Languages")
+    MainTabFrame.lang = nil
+
+    --Dungeon Level Filter Checkbox
+    GroupieLevelCheckbox = CreateFrame("CheckButton", "GroupieLevelCheckbox", GroupieLangDropdown,
+        "ChatConfigCheckButtonTemplate")
+    GroupieLevelCheckbox:SetPoint("RIGHT", DROPDOWN_WIDTH, 0)
+    GroupieLevelCheckboxText:SetText("Ignore Instances Outside of Current Character's Recommended Level Range")
+    GroupieLevelCheckboxText:SetWidth(WINDOW_WIDTH - 700)
+    GroupieLevelCheckbox:SetScript("OnClick", function()
+        MainTabFrame.levelFilter = GroupieLevelCheckbox:GetChecked()
     end)
 
     ------------------
     --Scroller Frame--
     ------------------
     LFGScrollFrame = CreateFrame("ScrollFrame", "LFGScrollFrame", MainTabFrame, "FauxScrollFrameTemplate")
-
     LFGScrollFrame:SetWidth(WINDOW_WIDTH - 46)
     LFGScrollFrame:SetHeight(BUTTON_TOTAL * BUTTON_HEIGHT)
     LFGScrollFrame:SetPoint("TOPLEFT", 0, -4)
@@ -774,17 +846,11 @@ function addon:OnInitialize()
             debugData = {},
             listingTable = {},
             showMinimap = true,
-            ignoreWrongLvl = true,
             ignoreSavedInstances = true,
             ignoreLFM = false,
             ignoreLFG = false,
-            ignoreWrongRole = false,
-            ignoreAmbiguousLanguage = false,
-            ignoreTicket = false,
-            ignoreGDKP = false,
-            ignoreSoftRes = false,
-            ignoreMSOS = false,
-            keywordBlacklist = {}
+            keywordBlacklist = {},
+            savedInstanceInfo = {}
         }
     }
     --Generate defaults for each individual dungeon filter
@@ -957,14 +1023,6 @@ function addon.SetupConfig()
                         order = 2,
                         fontSize = "medium"
                     },
-                    levelRangeToggle = {
-                        type = "toggle",
-                        name = "Ignore Instances Outside of your Recommended Level Range",
-                        order = 3,
-                        width = "full",
-                        get = function(info) return addon.db.global.ignoreWrongLvl end,
-                        set = function(info, val) addon.db.global.ignoreWrongLvl = val end,
-                    },
                     savedToggle = {
                         type = "toggle",
                         name = "Ignore Instances You Are Already Saved To on Current Character",
@@ -988,61 +1046,6 @@ function addon.SetupConfig()
                         width = "full",
                         get = function(info) return addon.db.global.ignoreLFM end,
                         set = function(info, val) addon.db.global.ignoreLFM = val end,
-                    },
-                    roleToggle = {
-                        type = "toggle",
-                        name = "Ignore Groups that are Not Looking for a Role You Can Play",
-                        order = 7,
-                        width = "full",
-                        get = function(info) return addon.db.global.ignoreWrongRole end,
-                        set = function(info, val) addon.db.global.ignoreWrongRole = val end,
-                    },
-                    languageToggle = {
-                        type = "toggle",
-                        name = "Ignore Groups Not Explicitly Labeled as your Default Language",
-                        order = 8,
-                        width = "full",
-                        get = function(info) return addon.db.global.ignoreAmbiguousLanguage end,
-                        set = function(info, val) addon.db.global.ignoreAmbiguousLanguage = val end,
-                    },
-                    spacerdesc2 = { type = "description", name = " ", width = "full", order = 9 },
-                    header2 = {
-                        type = "description",
-                        name = "|cffffd900Filter By Reward Distribution Style",
-                        order = 10,
-                        fontSize = "medium"
-                    },
-                    ticketToggle = {
-                        type = "toggle",
-                        name = "Ignore Ticket Run Reward Distribution Style Groups",
-                        order = 11,
-                        width = "full",
-                        get = function(info) return addon.db.global.ignoreTicket end,
-                        set = function(info, val) addon.db.global.ignoreTicket = val end,
-                    },
-                    gdkpToggle = {
-                        type = "toggle",
-                        name = "Ignore GDKP Reward Distribution Style Groups",
-                        order = 12,
-                        width = "full",
-                        get = function(info) return addon.db.global.ignoreGDKP end,
-                        set = function(info, val) addon.db.global.ignoreGDKP = val end,
-                    },
-                    softresToggle = {
-                        type = "toggle",
-                        name = "Ignore Soft Reserve Reward Distribution Style Groups",
-                        order = 13,
-                        width = "full",
-                        get = function(info) return addon.db.global.ignoreSoftRes end,
-                        set = function(info, val) addon.db.global.ignoreSoftRes = val end,
-                    },
-                    msosToggle = {
-                        type = "toggle",
-                        name = "Ignore MS > OS Reward Distribution Style Groups",
-                        order = 14,
-                        width = "full",
-                        get = function(info) return addon.db.global.ignoreMSOS end,
-                        set = function(info, val) addon.db.global.ignoreMSOS = val end,
                     },
                     spacerdesc3 = { type = "description", name = " ", width = "full", order = 15 },
                     header3 = {

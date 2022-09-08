@@ -1,16 +1,16 @@
 local addonName, addon = ...
 
 local COLOR = {
-    RED = "FFFF0000",
+    RED = "FFF44336",
 }
 
 local SecureMessaging = {
-    verified={},
-    ADDON_PREFIX="Groupie.SM",
-    WHISPER_MATCHES={
-        [1]="groupie:",
+    verified = {},
+    ADDON_PREFIX = "Groupie.SM",
+    WHISPER_MATCHES = {
+        [1] = "{rt3} groupie :",
     },
-    WARNING_MESSAGE="the following message was not sent by Groupie"
+    WARNING_MESSAGE = "the following message was not sent by Groupie"
 };
 
 function SecureMessaging:SendSecureMessage(message, chatType, target)
@@ -59,12 +59,13 @@ function SecureMessaging.CHAT_MSG_WHISPER(self, message)
     if SecureMessaging:IsGroupieWhisper(message) then
         if not SecureMessaging:verify(message) then
             print(WrapTextInColorCode("Groupie:", COLOR.RED), WrapTextInColorCode(SecureMessaging.WARNING_MESSAGE, COLOR.RED));
+            SecureMessaging:SendChatMessage("Groupie :" .. SecureMessaging.WARNING_MESSAGE, chatType, target)
         end
     end
 end
 
-addon:RegisterEvent("CHAT_MSG_WHISPER", SecureMessaging.CHAT_MSG_WHISPER);
-addon:RegisterEvent("PLAYER_ENTERING_WORLD", SecureMessaging.PLAYER_ENTERING_WORLD);
-addon:RegisterEvent("CHAT_MSG_ADDON", SecureMessaging.CHAT_MSG_ADDON);
+--addon:RegisterEvent("CHAT_MSG_WHISPER", SecureMessaging.CHAT_MSG_WHISPER);
+--addon:RegisterEvent("PLAYER_ENTERING_WORLD", SecureMessaging.PLAYER_ENTERING_WORLD);
+--addon:RegisterEvent("CHAT_MSG_ADDON", SecureMessaging.CHAT_MSG_ADDON);
 
 addon.SM = SecureMessaging;

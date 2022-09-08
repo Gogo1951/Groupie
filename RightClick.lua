@@ -138,19 +138,6 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		info.leftPadding = 8
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 
-		--[[
-		info = UIDropDownMenu_CreateInfo()
-		info.dist = 0
-		info.notCheckable = true
-		info.func = function() SendPlayerInfo(2, name) end
-		maxTalentSpec, maxTalentsSpent = addon.GetSpecByGroupNum(2)
-		info.text = "Spec 2 : " .. maxTalentSpec
-		info.leftPadding = 8
-		if maxTalentsSpent > 0 then
-			UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
-		end
-		--]]
-
 		--Only US region supported for now
 		if GetLocale() == "enUS" then
 			info = UIDropDownMenu_CreateInfo()

@@ -164,7 +164,7 @@ function addon.GetTimeSinceString(timestamp)
     local timediff = time() - timestamp
     local mins = floor(timediff / 60)
     local secs = timediff - (60 * mins)
-    return format("%dm%ds", mins, secs)
+    return format("%02dm %02ds", mins, secs)
 end
 
 --Convert keyword blacklist into a string
@@ -219,4 +219,17 @@ function addon.RunSlashCmd(cmd)
         end
         i = i + 1
     end
+end
+
+--Return a table of instance IDs the player is saved to
+function addon.GetSavedInstances()
+    local t = {}
+    for i = 1, GetNumSavedInstances() do
+        local name, id, reset, difficulty, locked, extended, instanceIDMostSig, isRaid, maxPlayers,
+        difficultyName, numEncounters, encounterProgress = GetSavedInstanceInfo(i)
+        if locked then
+            tinsert(t, { id, difficulty, maxPlayers })
+        end
+    end
+    return t
 end

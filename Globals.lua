@@ -31,6 +31,18 @@ addon.groupieUnflippedLanguagePatterns = {
     ["Spanish"]    = "spanish spa es",
 }
 
+addon.groupieLangList = {
+    [1] = "Chinese",
+    [2] = "English",
+    [3] = "French",
+    [4] = "German",
+    [5] = "Italian",
+    [6] = "Korean",
+    [7] = "Portuguese",
+    [8] = "Russian",
+    [9] = "Spanish",
+}
+
 addon.groupieRoleTable = {
     [1] = "Tank",
     [2] = "Healer",
@@ -174,6 +186,15 @@ addon.groupieUnflippedLootPatterns = {
     ["SoftRes"] = "sr softres softreserve soft",
     ["MS > OS"] = "msos",
     ["Other"] = "boost boosts boosting wts xp exp afk selling"
+}
+
+addon.lootTypeColors = {
+    ["Ticket"] = "FFC107",
+    ["GDKP"] = "4CAF50",
+    ["SoftRes"] = "9C27B0",
+    ["MS > OS"] = "2196F3",
+    ["Other"] = "FFFFFF",
+    ["PVP"] = "F44336",
 }
 
 addon.multiWingInstances = { "Dire Maul - Full Clear", "Maraudon - Full Clear", "Scarlet Monastery - Full Clear" }
@@ -449,7 +470,7 @@ addon.groupieInstanceData = {
     ["Black Temple"] = { Active = true, Expac = "The Burning Crusade", InstanceType = "The Burning Crusade Raids",
         InstanceID = 564, MinLevel = 70, MaxLevel = 70, GroupSize = 25, Order = 2390, Icon = "BT.tga" },
     ["Hyjal Summit"] = { Active = true, Expac = "The Burning Crusade", InstanceType = "The Burning Crusade Raids",
-        InstanceID = 534, MinLevel = 70, MaxLevel = 70, GroupSize = 25, Order = 2380, Icon = ".tga" },
+        InstanceID = 534, MinLevel = 70, MaxLevel = 70, GroupSize = 25, Order = 2380, Icon = "MH.tga" },
     ["The Eye"] = { Active = true, Expac = "The Burning Crusade", InstanceType = "The Burning Crusade Raids",
         InstanceID = 550, MinLevel = 70, MaxLevel = 70, GroupSize = 25, Order = 2370, Icon = "TK.tga" },
     ["Serpentshrine Cavern"] = { Active = true, Expac = "The Burning Crusade", InstanceType = "The Burning Crusade Raids",
@@ -694,12 +715,12 @@ addon.groupieUnflippedDungeonPatterns = {
     ["Magisters' Terrace"]      = "mgt terrace magisters magister",
 
     ["Karazhan"]             = "kara karazhan karazan",
-    ["Zul'Aman"]             = "za zulaman aman hsh",
+    ["Zul'Aman"]             = "za zulaman aman hsh", --hexshrunken head
     ["Gruul's Lair"]         = "gl gruul gruuls",
     ["Magtheridon's Lair"]   = "mag magtheridon magth",
     ["Serpentshrine Cavern"] = "ssc serpentshrine",
     ["The Eye"]              = "tk tempest tempestkeep",
-    ["Hyjal Summit"]         = "hyjal hs hyj",
+    ["Hyjal Summit"]         = "hyjal hs hyj mh",
     ["Black Temple"]         = "bt blacktemple glaive",
     ["Sunwell Plateau"]      = "swp sunwell plateau plataeu sunwel",
 
