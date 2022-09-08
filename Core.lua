@@ -16,14 +16,16 @@ local WINDOW_OFFSET        = 153
 local BUTTON_HEIGHT        = 40
 local BUTTON_TOTAL         = math.floor((WINDOW_HEIGHT - WINDOW_OFFSET) / BUTTON_HEIGHT) + 1
 local BUTTON_WIDTH         = WINDOW_WIDTH - 44
+local COL_CREATED          = 75
 local COL_TIME             = 75
 local COL_LEADER           = 100
 local COL_INSTANCE         = 175
 local COL_LOOT             = 76
-local COL_MSG              = WINDOW_WIDTH - COL_TIME - COL_LEADER - COL_INSTANCE - COL_LOOT - ICON_WIDTH - 44
 local DROPDOWN_WIDTH       = 100
 local DROPDOWN_HEIGHT      = 25
 local DROPDOWN_PAD         = 60
+
+local COL_MSG = WINDOW_WIDTH - COL_CREATED - COL_TIME - COL_LEADER - COL_INSTANCE - COL_LOOT - ICON_WIDTH - 44
 
 local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0", "AceConsole-3.0", "AceTimer-3.0")
 
@@ -44,7 +46,8 @@ end
 --User Interface--
 ------------------
 --Create a sorted index of listings
---Sort Types : 0 (default) - Time Posted
+--Sort Types : -1 (default) - Time Posted
+-- 0 - Time Updated
 -- 1 - Leader Name
 -- 2 - Instance
 -- 3 - Loot Type
@@ -62,7 +65,11 @@ local function GetSortedListingIndex(sortType, sortDir)
 
     --Then sort the index
     if sortType == -1 then
-        table.sort(numindex, function(a, b) return a.createdat < b.createdat end)
+        if sortDir then
+            table.sort(numindex, function(a, b) return a.createdat > b.createdat end)
+        else
+            table.sort(numindex, function(a, b) return a.createdat < b.createdat end)
+        end
     elseif sortType == 0 then
         if sortDir then
             table.sort(numindex, function(a, b) return a.timestamp > b.timestamp end)
@@ -292,6 +299,7 @@ local function DrawListings(self)
             local formattedMsg = gsub(gsub(listing.msg, "%{%w+%}", ""), "%s+", " ")
             local lootColor = addon.lootTypeColors[listing.lootType]
             button.listing = listing
+            button.created:SetText(addon.GetTimeSinceString(listing.createdat))
             button.time:SetText(addon.GetTimeSinceString(listing.timestamp))
             button.leader:SetText(gsub(listing.author, "-.+", ""))
             button.instance:SetText(" " .. listing.instanceName)
@@ -399,8 +407,15 @@ local function CreateListingButtons()
             GameTooltip:Hide()
         end)
 
+        --Created at column
+        currentListing.created:SetWidth(COL_CREATED)
+
         --Time column
+        currentListing.time = currentListing:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
+        currentListing.time:SetPoint("LEFT", currentListing.created, "RIGHT", 0, 0)
         currentListing.time:SetWidth(COL_TIME)
+        currentListing.time:SetJustifyH("LEFT")
+        currentListing.time:SetJustifyV("MIDDLE")
 
         --Leader name column
         currentListing.leader = currentListing:CreateFontString("FontString", "OVERLAY", "GameFontNormal")
@@ -686,7 +701,8 @@ local function BuildGroupieWindow()
     MainTabFrame.size = 5
     MainTabFrame.tabType = 0
 
-    createColumn("Time", COL_TIME, MainTabFrame, 0)
+    createColumn("Created", COL_CREATED, MainTabFrame, -1)
+    createColumn("Updated", COL_TIME, MainTabFrame, 0)
     createColumn("Leader", COL_LEADER, MainTabFrame, 1)
     createColumn("Instance", COL_INSTANCE + ICON_WIDTH, MainTabFrame, 2)
     createColumn("Loot Type", COL_LOOT, MainTabFrame, 3)
