@@ -31,6 +31,18 @@ addon.groupieUnflippedLanguagePatterns = {
     ["Spanish"]    = "spanish spa es",
 }
 
+addon.groupieLangList = {
+    [1] = "Chinese",
+    [2] = "English",
+    [3] = "French",
+    [4] = "German",
+    [5] = "Italian",
+    [6] = "Korean",
+    [7] = "Portuguese",
+    [8] = "Russian",
+    [9] = "Spanish",
+}
+
 addon.groupieRoleTable = {
     [1] = "Tank",
     [2] = "Healer",
