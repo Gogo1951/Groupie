@@ -49,11 +49,16 @@ function SecureMessaging.CHAT_MSG_ADDON(self, prefix, message, ...)
     end
 end
 
+function SecureMessaging.verify(self, message)
+    local verified = SecureMessaging.verified[message];
+    SecureMessaging.verified[message] = nil
+    return verified;
+end
+
 function SecureMessaging.CHAT_MSG_WHISPER(self, message)
     if SecureMessaging:IsGroupieWhisper(message) then
-        if not SecureMessaging.verified[message] then
-            print(WrapTextInColorCode("Groupie :", COLOR.RED),
-                WrapTextInColorCode(SecureMessaging.WARNING_MESSAGE, COLOR.RED));
+        if not SecureMessaging:verify(message) then
+            print(WrapTextInColorCode("Groupie:", COLOR.RED), WrapTextInColorCode(SecureMessaging.WARNING_MESSAGE, COLOR.RED));
             SecureMessaging:SendChatMessage("Groupie :" .. SecureMessaging.WARNING_MESSAGE, chatType, target)
         end
     end
