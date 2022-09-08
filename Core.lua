@@ -210,6 +210,14 @@ local function filterListings()
                 --Doesnt match loot type in the dropdown
             elseif MainTabFrame.lang ~= nil and MainTabFrame.lang ~= listing.language then
                 --Doesnt match language in the dropdown
+            elseif MainTabFrame.levelFilter and listing.minLevel and
+                MainTabFrame.size == 5 and MainTabFrame.isHeroic == false
+                and listing.minLevel > (UnitLevel("player") + addon.db.char.recommendedLevelRange) then
+                --Instance is outside of level range (ONLY for normal dungeons)
+            elseif MainTabFrame.levelFilter and listing.maxLevel and
+                MainTabFrame.size == 5 and MainTabFrame.isHeroic == false
+                and listing.maxLevel < UnitLevel("player") then
+                --Instance is outside of level range (ONLY for normal dungeons)
             elseif addon.db.char.hideInstances[listing.order] == true then
                 --Ignoring specifically hidden instances
             else
