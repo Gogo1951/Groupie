@@ -5,14 +5,14 @@ local MainTabFrame         = nil
 local GroupieRoleDropdown  = nil
 local GroupieLootDropdown  = nil
 local GroupieLangDropdown  = nil
-local GroupieLevelCheckbox = nil
+local GroupieLevelDropdown = nil
 local columnCount          = 0
 local LFGScrollFrame       = nil
 local WINDOW_WIDTH         = 960
-local WINDOW_HEIGHT        = 660
-local WINDOW_YOFFSET       = -112
+local WINDOW_HEIGHT        = 640
+local WINDOW_YOFFSET       = -84
 local ICON_WIDTH           = 32
-local WINDOW_OFFSET        = 153
+local WINDOW_OFFSET        = 133
 local BUTTON_HEIGHT        = 40
 local BUTTON_TOTAL         = math.floor((WINDOW_HEIGHT - WINDOW_OFFSET) / BUTTON_HEIGHT) + 1
 local BUTTON_WIDTH         = WINDOW_WIDTH - 44
@@ -23,7 +23,7 @@ local COL_INSTANCE         = 175
 local COL_LOOT             = 76
 local DROPDOWN_WIDTH       = 100
 local DROPDOWN_HEIGHT      = 25
-local DROPDOWN_PAD         = 60
+local DROPDOWN_PAD         = 32
 
 local COL_MSG = WINDOW_WIDTH - COL_CREATED - COL_TIME - COL_LEADER - COL_INSTANCE - COL_LOOT - ICON_WIDTH - 44
 
@@ -516,23 +516,29 @@ function addon.TabSwap(isHeroic, size, tabType, tabNum)
     end
     addon.selectedListing = nil
 
-    --Only show level checkbox on dungeons tab
+    --Only show level dropdown on normal dungeon tab
     --Show no filters on pvp tab
-    if tabNum == 1 then
-        GroupieLevelCheckbox:SetEnabled(true)
-        GroupieLevelCheckbox:Show()
+    if tabNum == 1 then --Normal dungeons
+        GroupieLangDropdown:SetPoint("TOPLEFT", 75 + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
+        GroupieLevelDropdown:Show()
         GroupieRoleDropdown:Show()
         GroupieLootDropdown:Show()
         GroupieLangDropdown:Show()
-    elseif tabNum == 7 then
-        GroupieLevelCheckbox:SetEnabled(false)
-        GroupieLevelCheckbox:Hide()
+    elseif tabNum == 8 then --Other
+        GroupieLangDropdown:SetPoint("TOPLEFT", 75 + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 1, 55)
+        GroupieLevelDropdown:Hide()
+        GroupieRoleDropdown:Show()
+        GroupieLootDropdown:Hide()
+        GroupieLangDropdown:Show()
+    elseif tabNum == 7 then --PVP
+        GroupieLangDropdown:SetPoint("TOPLEFT", 75 + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
+        GroupieLevelDropdown:Hide()
         GroupieRoleDropdown:Hide()
         GroupieLootDropdown:Hide()
         GroupieLangDropdown:Hide()
-    else
-        GroupieLevelCheckbox:SetEnabled(false)
-        GroupieLevelCheckbox:Hide()
+    else --All other tabs
+        GroupieLangDropdown:SetPoint("TOPLEFT", 75 + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
+        GroupieLevelDropdown:Hide()
         GroupieRoleDropdown:Show()
         GroupieLootDropdown:Show()
         GroupieLangDropdown:Show()
@@ -714,8 +720,8 @@ local function BuildGroupieWindow()
     ---------------------------------
     --Role Dropdown
     GroupieRoleDropdown = CreateFrame("Frame", "GroupieRoleDropdown", MainTabFrame, "UIDropDownMenuTemplate")
-    GroupieRoleDropdown:SetSize(DROPDOWN_WIDTH, DROPDOWN_HEIGHT)
-    GroupieRoleDropdown:SetPoint("TOPLEFT", 75, 83)
+    UIDropDownMenu_SetWidth(GroupieRoleDropdown, DROPDOWN_WIDTH, DROPDOWN_PAD)
+    GroupieRoleDropdown:SetPoint("TOPLEFT", 75, 55)
     local function RoleDropdownOnClick(self, arg1)
         if arg1 == 0 then
             UIDropDownMenu_SetText(GroupieRoleDropdown, "LF Any Role")
@@ -752,9 +758,9 @@ local function BuildGroupieWindow()
     MainTabFrame.roleType = nil
 
     --Loot Type Dropdown
-    GroupieLootDropdown = CreateFrame("Frame", "GroupieLootDropdown", GroupieRoleDropdown, "UIDropDownMenuTemplate")
-    GroupieLootDropdown:SetSize(DROPDOWN_WIDTH, DROPDOWN_HEIGHT)
-    GroupieLootDropdown:SetPoint("RIGHT", DROPDOWN_WIDTH + DROPDOWN_PAD, 0)
+    GroupieLootDropdown = CreateFrame("Frame", "GroupieLootDropdown", MainTabFrame, "UIDropDownMenuTemplate")
+    UIDropDownMenu_SetWidth(GroupieLootDropdown, DROPDOWN_WIDTH, DROPDOWN_PAD)
+    GroupieLootDropdown:SetPoint("TOPLEFT", 75 + DROPDOWN_WIDTH + DROPDOWN_PAD, 55)
     local function LootDropdownOnClick(self, arg1)
         if arg1 == 0 then
             UIDropDownMenu_SetText(GroupieLootDropdown, "All Loot Styles")
@@ -796,9 +802,9 @@ local function BuildGroupieWindow()
     MainTabFrame.lootType = nil
 
     --Language Dropdown
-    GroupieLangDropdown = CreateFrame("Frame", "GroupieLangDropdown", GroupieLootDropdown, "UIDropDownMenuTemplate")
-    GroupieLangDropdown:SetSize(DROPDOWN_WIDTH, DROPDOWN_HEIGHT)
-    GroupieLangDropdown:SetPoint("RIGHT", DROPDOWN_WIDTH + DROPDOWN_PAD, 0)
+    GroupieLangDropdown = CreateFrame("Frame", "GroupieLangDropdown", MainTabFrame, "UIDropDownMenuTemplate")
+    UIDropDownMenu_SetWidth(GroupieLangDropdown, DROPDOWN_WIDTH, DROPDOWN_PAD)
+    GroupieLangDropdown:SetPoint("TOPLEFT", 75 + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
     local function LangDropdownOnClick(self, arg1)
         if arg1 == 0 then
             UIDropDownMenu_SetText(GroupieLangDropdown, "All Languages")
@@ -806,7 +812,6 @@ local function BuildGroupieWindow()
         else
             UIDropDownMenu_SetText(GroupieLangDropdown, addon.groupieLangList[arg1])
             MainTabFrame.lang = arg1
-            print(MainTabFrame.lang, addon.groupieLangList[arg1])
         end
     end
 
@@ -828,14 +833,34 @@ local function BuildGroupieWindow()
     UIDropDownMenu_SetText(GroupieLangDropdown, "All Languages")
     MainTabFrame.lang = nil
 
-    --Dungeon Level Filter Checkbox
-    GroupieLevelCheckbox = CreateFrame("CheckButton", "GroupieLevelCheckbox", GroupieRoleDropdown,
-        "ChatConfigCheckButtonTemplate")
-    GroupieLevelCheckbox:SetPoint("BOTTOMLEFT", 16, -24)
-    GroupieLevelCheckboxText:SetText("Ignore Instances Outside of Current Character's Recommended Level Range")
-    GroupieLevelCheckbox:SetScript("OnClick", function()
-        MainTabFrame.levelFilter = GroupieLevelCheckbox:GetChecked()
-    end)
+    --Dungeon Level Dropdown
+    GroupieLevelDropdown = CreateFrame("Frame", "GroupieLevelDropdown", MainTabFrame, "UIDropDownMenuTemplate")
+    UIDropDownMenu_SetWidth(GroupieLevelDropdown, DROPDOWN_WIDTH * 2, DROPDOWN_PAD)
+    GroupieLevelDropdown:SetPoint("TOPLEFT", 75 + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 3, 55)
+    local function LevelDropdownOnClick(self, arg1)
+        if arg1 == 0 then
+            UIDropDownMenu_SetText(GroupieLevelDropdown, "Recommended Level Dungeons")
+            MainTabFrame.levelFilter = true
+        else
+            UIDropDownMenu_SetText(GroupieLevelDropdown, "All Dungeons")
+            MainTabFrame.levelFilter = false
+        end
+    end
+
+    local function LevelDropdownInit()
+        --Create menu list
+        local info = UIDropDownMenu_CreateInfo()
+        info.func = LevelDropdownOnClick
+        info.text, info.arg1, info.notCheckable = "Recommended Level Dungeons", 0, true
+        UIDropDownMenu_AddButton(info)
+        info.text, info.arg1, info.notCheckable = "All Dungeons", 1, true
+        UIDropDownMenu_AddButton(info)
+    end
+
+    --Initialize Shown Value
+    UIDropDownMenu_Initialize(GroupieLevelDropdown, LevelDropdownInit)
+    UIDropDownMenu_SetText(GroupieLevelDropdown, "Recommended Level Dungeons")
+    MainTabFrame.levelFilter = true
 
     ------------------
     --Scroller Frame--
