@@ -8,12 +8,13 @@ local GroupieLangDropdown  = nil
 local GroupieLevelCheckbox = nil
 local columnCount          = 0
 local LFGScrollFrame       = nil
-local WINDOW_WIDTH         = 980
-local WINDOW_HEIGHT        = 640
+local WINDOW_WIDTH         = 960
+local WINDOW_HEIGHT        = 660
+local WINDOW_YOFFSET       = -112
 local ICON_WIDTH           = 32
-local WINDOW_OFFSET        = 133
+local WINDOW_OFFSET        = 153
 local BUTTON_HEIGHT        = 40
-local BUTTON_TOTAL         = math.floor((WINDOW_HEIGHT - WINDOW_OFFSET + 40) / BUTTON_HEIGHT)
+local BUTTON_TOTAL         = math.floor((WINDOW_HEIGHT - WINDOW_OFFSET) / BUTTON_HEIGHT) + 1
 local BUTTON_WIDTH         = WINDOW_WIDTH - 44
 local COL_TIME             = 75
 local COL_LEADER           = 100
@@ -659,7 +660,7 @@ local function BuildGroupieWindow()
     MainTabFrame = CreateFrame("Frame", "GroupieFrame1", GroupieFrame, "InsetFrameTemplate")
     MainTabFrame:SetWidth(WINDOW_WIDTH - 19)
     MainTabFrame:SetHeight(WINDOW_HEIGHT - WINDOW_OFFSET + 20)
-    MainTabFrame:SetPoint("TOPLEFT", GroupieFrame, "TOPLEFT", 8, -84)
+    MainTabFrame:SetPoint("TOPLEFT", GroupieFrame, "TOPLEFT", 8, WINDOW_YOFFSET)
     MainTabFrame:SetScript("OnShow",
         function(self)
             return
@@ -690,7 +691,7 @@ local function BuildGroupieWindow()
     --Role Dropdown
     GroupieRoleDropdown = CreateFrame("Frame", "GroupieRoleDropdown", MainTabFrame, "UIDropDownMenuTemplate")
     GroupieRoleDropdown:SetSize(DROPDOWN_WIDTH, DROPDOWN_HEIGHT)
-    GroupieRoleDropdown:SetPoint("TOPLEFT", 75, 55)
+    GroupieRoleDropdown:SetPoint("TOPLEFT", 75, 83)
     local function RoleDropdownOnClick(self, arg1)
         if arg1 == 0 then
             UIDropDownMenu_SetText(GroupieRoleDropdown, "LF Any Role")
@@ -804,11 +805,10 @@ local function BuildGroupieWindow()
     MainTabFrame.lang = nil
 
     --Dungeon Level Filter Checkbox
-    GroupieLevelCheckbox = CreateFrame("CheckButton", "GroupieLevelCheckbox", GroupieLangDropdown,
+    GroupieLevelCheckbox = CreateFrame("CheckButton", "GroupieLevelCheckbox", GroupieRoleDropdown,
         "ChatConfigCheckButtonTemplate")
-    GroupieLevelCheckbox:SetPoint("RIGHT", DROPDOWN_WIDTH, 0)
+    GroupieLevelCheckbox:SetPoint("BOTTOMLEFT", 16, -24)
     GroupieLevelCheckboxText:SetText("Ignore Instances Outside of Current Character's Recommended Level Range")
-    GroupieLevelCheckboxText:SetWidth(WINDOW_WIDTH - 700)
     GroupieLevelCheckbox:SetScript("OnClick", function()
         MainTabFrame.levelFilter = GroupieLevelCheckbox:GetChecked()
     end)
