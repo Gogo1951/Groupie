@@ -37,19 +37,19 @@ function SecureMessaging:IsGroupieWhisper(message)
     return false;
 end
 
-function SecureMessaging.PLAYER_ENTERING_WORLD(event, isLogin, isReload)
+function SecureMessaging.PLAYER_ENTERING_WORLD(self, event, isLogin, isReload)
     if isLogin or isReload then
         C_ChatInfo.RegisterAddonMessagePrefix(SecureMessaging.ADDON_PREFIX);
     end
 end
 
-function SecureMessaging.CHAT_MSG_ADDON(prefix, message, ...)
+function SecureMessaging.CHAT_MSG_ADDON(self, prefix, message, ...)
     if SecureMessaging:IsGroupiePrefix(prefix) then
         SecureMessaging.verified[message] = true;
     end
 end
 
-function SecureMessaging.CHAT_MSG_WHISPER(message)
+function SecureMessaging.CHAT_MSG_WHISPER(self, message)
     if SecureMessaging:IsGroupieWhisper(message) then
         if not SecureMessaging.verified[message] then
             print(WrapTextInColorCode("Groupie :", COLOR.RED),
