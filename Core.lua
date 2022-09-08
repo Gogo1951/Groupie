@@ -13,7 +13,7 @@ local WINDOW_HEIGHT        = 640
 local ICON_WIDTH           = 32
 local WINDOW_OFFSET        = 133
 local BUTTON_HEIGHT        = 40
-local BUTTON_TOTAL         = math.floor((WINDOW_HEIGHT - WINDOW_OFFSET) / BUTTON_HEIGHT)
+local BUTTON_TOTAL         = math.floor((WINDOW_HEIGHT - WINDOW_OFFSET + 40) / BUTTON_HEIGHT)
 local BUTTON_WIDTH         = WINDOW_WIDTH - 44
 local COL_TIME             = 75
 local COL_LEADER           = 100
@@ -92,53 +92,21 @@ local function GetSortedListingIndex(sortType, sortDir)
 end
 
 --Create a numerically indexed table of listings for use in the scroller
---Tab types : 0 - Normal tab | 1 - Other tab | 2 - All tab | 3 - PVP tab
+--Tab numbers:
+-- 1 - Dungeons | 2 - Heroic Dungeons | 3 - 10 Raids
+-- 4 - 25 Raids | 5 - Heroic 10 Raids | 6 - Heroic 25 Raids
+-- 7 - PVP | 8 - Other | 9 - All
 local function filterListings()
     addon.filteredListings = {}
     local idx = 1
+    local total = 0
     local sortType = MainTabFrame.sortType or -1
     local now = time()
     local sortDir = MainTabFrame.sortDir or false
     local sorted = GetSortedListingIndex(sortType, sortDir)
 
 
-    if MainTabFrame.tabType == 1 then --"Other" tab
-        for key, listing in pairs(sorted) do
-            if listing.lootType ~= "Other" then
-                --Wrong tab
-                --Other tab shows groups with 'other' loot type, and 40 man raids
-                --Loot type filters therefore dont apply to this tab
-            elseif now - listing.timestamp > addon.db.global.minsToPreserve * 60 then
-                --Expired based on user settings
-            elseif addon.db.global.ignoreLFM and listing.isLFM then
-                --Ignoring LFM groups
-            elseif addon.db.global.ignoreLFG and listing.isLFG then
-                --Ignoring LFG groups
-            elseif addon.db.char.hideInstances[listing.order] == true then
-                --Ignoring specifically hidden instances
-            else
-                local keywordBlacklistHit = false
-                for k, word in pairs(addon.db.global.keywordBlacklist) do
-                    if addon.tableContains(listing.words, word) then
-                        keywordBlacklistHit = true
-                    end
-                end
-                if not keywordBlacklistHit then
-                    addon.filteredListings[idx] = listing
-                    idx = idx + 1
-                end
-            end
-        end
-    elseif MainTabFrame.tabType == 2 then --"All" tab
-        for key, listing in pairs(sorted) do
-            if now - listing.timestamp > addon.db.global.minsToPreserve * 60 then
-                --Expired based on user settings
-            else
-                addon.filteredListings[idx] = listing
-                idx = idx + 1
-            end
-        end
-    elseif MainTabFrame.tabType == 3 then -- PVP tab
+    if MainTabFrame.tabType == 7 then --PVP
         for key, listing in pairs(sorted) do
             if listing.lootType ~= "PVP" then
                 --Wrong tab
@@ -158,8 +126,68 @@ local function filterListings()
                     idx = idx + 1
                 end
             end
+            total = total + 1
         end
-    else --Normal tabs
+    elseif MainTabFrame.tabType == 8 then --Other
+        for key, listing in pairs(sorted) do
+            if listing.lootType ~= "Other" then
+                --Wrong tab
+                --Other tab shows groups with 'other' loot type, and 40 man raids
+                --Loot type filters therefore dont apply to this tab
+            elseif now - listing.timestamp > addon.db.global.minsToPreserve * 60 then
+                --Expired based on user settings
+            elseif addon.db.global.ignoreLFM and listing.isLFM then
+                --Ignoring LFM groups
+            elseif addon.db.global.ignoreLFG and listing.isLFG then
+                --Ignoring LFG groups
+            elseif MainTabFrame.roleType ~= nil and
+                not addon.tableContains(listing.rolesNeeded, MainTabFrame.roleType) then
+                --Doesnt match role in the dropdown
+            elseif MainTabFrame.lang ~= nil and MainTabFrame.lang ~= listing.language then
+                --Doesnt match language in the dropdown
+            elseif addon.db.char.hideInstances[listing.order] == true then
+                --Ignoring specifically hidden instances
+            else
+                local keywordBlacklistHit = false
+                for k, word in pairs(addon.db.global.keywordBlacklist) do
+                    if addon.tableContains(listing.words, word) then
+                        keywordBlacklistHit = true
+                    end
+                end
+                if not keywordBlacklistHit then
+                    addon.filteredListings[idx] = listing
+                    idx = idx + 1
+                end
+            end
+            total = total + 1
+        end
+    elseif MainTabFrame.tabType == 9 then --All
+        for key, listing in pairs(sorted) do
+            if now - listing.timestamp > addon.db.global.minsToPreserve * 60 then
+                --Expired based on user settings
+            elseif MainTabFrame.roleType ~= nil and
+                not addon.tableContains(listing.rolesNeeded, MainTabFrame.roleType) then
+                --Doesnt match role in the dropdown
+            elseif MainTabFrame.lootType ~= nil and MainTabFrame.lootType ~= listing.lootType then
+                --Doesnt match loot type in the dropdown
+            elseif MainTabFrame.lang ~= nil and MainTabFrame.lang ~= listing.language then
+                --Doesnt match language in the dropdown
+            else
+                local keywordBlacklistHit = false
+                for k, word in pairs(addon.db.global.keywordBlacklist) do
+                    if addon.tableContains(listing.words, word) then
+                        keywordBlacklistHit = true
+                    end
+                end
+                if not keywordBlacklistHit then
+                    addon.filteredListings[idx] = listing
+                    idx = idx + 1
+                end
+            end
+            total = total + 1
+        end
+    else --Dungeon/Raid tabs
+        --TODO: make sure level range only applies to normal dungeons
         local savedInstances = addon.GetSavedInstances()
         for key, listing in pairs(sorted) do
             if listing.isHeroic ~= MainTabFrame.isHeroic then
@@ -167,13 +195,20 @@ local function filterListings()
             elseif listing.groupSize ~= MainTabFrame.size then
                 --Wrong tab
             elseif listing.lootType == "Other" or listing.lootType == "PVP" then
-                --Only show these groups in 'Other' tab
+                --Only show these groups in 'Other' and 'PVP' tabs
             elseif now - listing.timestamp > addon.db.global.minsToPreserve * 60 then
                 --Expired based on user settings
             elseif addon.db.global.ignoreLFM and listing.isLFM then
                 --Ignoring LFM groups
             elseif addon.db.global.ignoreLFG and listing.isLFG then
                 --Ignoring LFG groups
+            elseif MainTabFrame.roleType ~= nil and
+                not addon.tableContains(listing.rolesNeeded, MainTabFrame.roleType) then
+                --Doesnt match role in the dropdown
+            elseif MainTabFrame.lootType ~= nil and MainTabFrame.lootType ~= listing.lootType then
+                --Doesnt match loot type in the dropdown
+            elseif MainTabFrame.lang ~= nil and MainTabFrame.lang ~= listing.language then
+                --Doesnt match language in the dropdown
             elseif addon.db.char.hideInstances[listing.order] == true then
                 --Ignoring specifically hidden instances
             else
@@ -206,7 +241,16 @@ local function filterListings()
                     idx = idx + 1
                 end
             end
+            total = total + 1
         end
+    end
+    MainTabFrame.infotext:SetText(format(
+        "Showing %d of %d possible groups. To see more groups adjust your [Group Filters] or [Instance Filters] under Groupie > Settings."
+        , idx - 1, total))
+    if addon.debugMenus then
+        MainTabFrame.infotext:Show()
+    else
+        MainTabFrame.infotext:Hide()
     end
 end
 
@@ -439,7 +483,7 @@ function addon.TabSwap(isHeroic, size, tabType, tabNum)
     MainTabFrame:Show()
     MainTabFrame.isHeroic = isHeroic
     MainTabFrame.size = size
-    MainTabFrame.tabType = tabType
+    MainTabFrame.tabType = tabNum
     MainTabFrame.sortType = -1
     MainTabFrame.sortDir = false
     --Clear selected listing
@@ -449,12 +493,25 @@ function addon.TabSwap(isHeroic, size, tabType, tabNum)
     addon.selectedListing = nil
 
     --Only show level checkbox on dungeons tab
+    --Show no filters on pvp tab
     if tabNum == 1 then
         GroupieLevelCheckbox:SetEnabled(true)
         GroupieLevelCheckbox:Show()
+        GroupieRoleDropdown:Show()
+        GroupieLootDropdown:Show()
+        GroupieLangDropdown:Show()
+    elseif tabNum == 7 then
+        GroupieLevelCheckbox:SetEnabled(false)
+        GroupieLevelCheckbox:Hide()
+        GroupieRoleDropdown:Hide()
+        GroupieLootDropdown:Hide()
+        GroupieLangDropdown:Hide()
     else
         GroupieLevelCheckbox:SetEnabled(false)
         GroupieLevelCheckbox:Hide()
+        GroupieRoleDropdown:Show()
+        GroupieLootDropdown:Show()
+        GroupieLangDropdown:Show()
     end
 
     DrawListings(LFGScrollFrame)
@@ -567,32 +624,34 @@ local function BuildGroupieWindow()
             addon.TabSwap(true, 25, 0, 6)
         end)
 
-    local OtherTabButton = CreateFrame("Button", "GroupieTab7", GroupieFrame, "CharacterFrameTabButtonTemplate")
-    OtherTabButton:SetPoint("LEFT", "GroupieTab6", "RIGHT", -16, 0)
-    OtherTabButton:SetText("Other")
-    OtherTabButton:SetID("7")
-    OtherTabButton:SetScript("OnClick",
-        function(self)
-            addon.TabSwap(nil, nil, 1, 7)
-        end)
-
-    local AllTabButton = CreateFrame("Button", "GroupieTab8", GroupieFrame, "CharacterFrameTabButtonTemplate")
-    AllTabButton:SetPoint("LEFT", "GroupieTab7", "RIGHT", -16, 0)
-    AllTabButton:SetText("All")
-    AllTabButton:SetID("8")
-    AllTabButton:SetScript("OnClick",
-        function(self)
-            addon.TabSwap(nil, nil, 2, 8)
-        end)
-
-    local PVPTabButton = CreateFrame("Button", "GroupieTab9", GroupieFrame, "CharacterFrameTabButtonTemplate")
-    PVPTabButton:SetPoint("LEFT", "GroupieTab8", "RIGHT", -16, 0)
+    local PVPTabButton = CreateFrame("Button", "GroupieTab7", GroupieFrame, "CharacterFrameTabButtonTemplate")
+    PVPTabButton:SetPoint("LEFT", "GroupieTab6", "RIGHT", -16, 0)
     PVPTabButton:SetText("PVP")
-    PVPTabButton:SetID("9")
+    PVPTabButton:SetID("7")
     PVPTabButton:SetScript("OnClick",
         function(self)
-            addon.TabSwap(nil, nil, 3, 9)
+            addon.TabSwap(nil, nil, 3, 7)
         end)
+
+    local OtherTabButton = CreateFrame("Button", "GroupieTab8", GroupieFrame, "CharacterFrameTabButtonTemplate")
+    OtherTabButton:SetPoint("LEFT", "GroupieTab7", "RIGHT", -16, 0)
+    OtherTabButton:SetText("Other")
+    OtherTabButton:SetID("8")
+    OtherTabButton:SetScript("OnClick",
+        function(self)
+            addon.TabSwap(nil, nil, 1, 8)
+        end)
+
+    local AllTabButton = CreateFrame("Button", "GroupieTab9", GroupieFrame, "CharacterFrameTabButtonTemplate")
+    AllTabButton:SetPoint("LEFT", "GroupieTab8", "RIGHT", -16, 0)
+    AllTabButton:SetText("All")
+    AllTabButton:SetID("9")
+    AllTabButton:SetScript("OnClick",
+        function(self)
+            addon.TabSwap(nil, nil, 2, 9)
+        end)
+
+
 
     --------------------
     -- Main Tab Frame --
@@ -605,10 +664,14 @@ local function BuildGroupieWindow()
         function(self)
             return
         end)
+    MainTabFrame.infotext = MainTabFrame:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
+    MainTabFrame.infotext:SetJustifyH("CENTER")
+    MainTabFrame.infotext:SetPoint("TOP", 0, 150)
     --This frame is the main container for all listing categories, so do the update here
     MainTabFrame:HookScript("OnUpdate", function()
         addon.TimerListingUpdate()
     end)
+    MainTabFrame.infotext:Hide()
 
     MainTabFrame.isHeroic = false
     MainTabFrame.size = 5
@@ -797,11 +860,18 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
     type = "data source",
     text = addonName,
     icon = "Interface\\AddOns\\" .. addonName .. "\\Images\\icon64.tga",
-    OnClick = BuildGroupieWindow,
+    OnClick = function(self, button, down)
+        if button == "LeftButton" then
+            BuildGroupieWindow()
+        else
+            addon.OpenConfig()
+        end
+    end,
     OnTooltipShow = function(tooltip)
         tooltip:AddLine(addonName)
         tooltip:AddLine("A better LFG tool for Classic WoW.", 255, 255, 255, false)
-        tooltip:AddLine("Click to open " .. addonName, 255, 255, 255, false)
+        tooltip:AddLine("Left Click to open " .. addonName, 255, 255, 255, false)
+        tooltip:AddLine("Right Click to open Settings", 255, 255, 255, false)
     end
 })
 
