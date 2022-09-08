@@ -185,7 +185,7 @@ addon.groupieUnflippedLootPatterns = {
     ["GDKP"] = "gdkp",
     ["SoftRes"] = "sr softres softreserve soft",
     ["MS > OS"] = "msos",
-    ["Other"] = "boost boosts boosting wts xp exp afk selling recruiting roster recruit recruits"
+    ["Other"] = "afk boost boosting boosts exp mob mobs recruit recruiting recruits roster selling wts xp"
 }
 
 addon.lootTypeColors = {
@@ -753,7 +753,7 @@ addon.groupieUnflippedDungeonPatterns = {
     ["The Ruby Sanctum"]            = "rs rubysanctum rubysanc ruby",
     ["Trial of the Grand Crusader"] = "togc grand",
 
-    ["PVP"] = "av alterac ab basin eots storm gurubashi ioc conquest sota strand wg wsg warsong gulch wintergrasp PVP 5s 3s 2s arena fta fth cta challenger rival duelist gladiator glad",
+    ["PVP"] = "2s 3s 5s ab alterac arena av basin challenger conquest cta duelist eots fta fth glad gladiator gulch gurubashi ioc premade PVP rival sota storm strand warsong wg wintergrasp wsg",
 }
 
 
