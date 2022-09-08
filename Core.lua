@@ -195,7 +195,6 @@ local function filterListings()
             total = total + 1
         end
     else --Dungeon/Raid tabs
-        --TODO: make sure level range only applies to normal dungeons
         local savedInstances = addon.GetSavedInstances()
         for key, listing in pairs(sorted) do
             if listing.isHeroic ~= MainTabFrame.isHeroic then
@@ -811,7 +810,7 @@ local function BuildGroupieWindow()
             MainTabFrame.lang = nil
         else
             UIDropDownMenu_SetText(GroupieLangDropdown, addon.groupieLangList[arg1])
-            MainTabFrame.lang = arg1
+            MainTabFrame.lang = addon.groupieLangList[arg1]
         end
     end
 
