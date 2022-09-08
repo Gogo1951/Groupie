@@ -103,7 +103,7 @@ function addon.EndsWith(str, pattern)
 end
 
 --Generate toggles for all instances of a specified type
-function addon.GenerateInstanceToggles(order, instanceType, showMaxLevel, configGroup)
+function addon.GenerateInstanceToggles(order, instanceType, instanceSize, showMaxLevel, configGroup)
     local initorder = order
     addon.options.args[configGroup].args[tostring(initorder) .. "headerspacer"] = {
         type = "description",

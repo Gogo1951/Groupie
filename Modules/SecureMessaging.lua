@@ -58,8 +58,9 @@ end
 function SecureMessaging.CHAT_MSG_WHISPER(self, message)
     if SecureMessaging:IsGroupieWhisper(message) then
         if not SecureMessaging:verify(message) then
-            print(WrapTextInColorCode("Groupie:", COLOR.RED), WrapTextInColorCode(SecureMessaging.WARNING_MESSAGE, COLOR.RED));
-            SecureMessaging:SendChatMessage("Groupie :" .. SecureMessaging.WARNING_MESSAGE, chatType, target)
+            print(WrapTextInColorCode("{rt3} Groupie :", COLOR.RED),
+                WrapTextInColorCode(SecureMessaging.WARNING_MESSAGE, COLOR.RED));
+            SecureMessaging:SendChatMessage("{rt3} Groupie :" .. SecureMessaging.WARNING_MESSAGE, chatType, target)
         end
     end
 end

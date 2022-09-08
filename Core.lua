@@ -1292,7 +1292,9 @@ function addon.SetupConfig()
                         type = "description",
                         name = "|cffffd900Font",
                         order = 9,
-                        fontSize = "medium"
+                        fontSize = "medium",
+                        hidden = true,
+                        disabled = true,
                     },
                     fontDropdown = {
                         type = "select",
@@ -1301,6 +1303,8 @@ function addon.SetupConfig()
                         order = 10,
                         width = 1.4,
                         values = addon.TableFlip(SharedMedia:HashTable("font")),
+                        hidden = true,
+                        disabled = true,
                         set = function(info, val) addon.db.global.font = val end,
                         get = function(info) return addon.db.global.font end,
                     },
@@ -1309,7 +1313,9 @@ function addon.SetupConfig()
                         type = "description",
                         name = "|cffffd900Base Font Size",
                         order = 12,
-                        fontSize = "medium"
+                        fontSize = "medium",
+                        hidden = true,
+                        disabled = true,
                     },
                     fontSizeDropdown = {
                         type = "select",
@@ -1326,6 +1332,8 @@ function addon.SetupConfig()
                             [18] = "18 pt",
                             [20] = "20 pt",
                         },
+                        hidden = true,
+                        disabled = true,
                         set = function(info, val) addon.db.global.fontSize = val end,
                         get = function(info) return addon.db.global.fontSize end,
                     },
