@@ -311,6 +311,10 @@ local function ParseMessage(event, msg, author, _, channel)
         addon.db.global.listingTable[author] = {}
     end
     if addon.db.global.listingTable[author].createdat == nil then
+        --Set the created time if it isnt already set
+        addon.db.global.listingTable[author].createdat = time()
+    elseif addon.db.global.listingTable[author].instanceName ~= groupDungeon then
+        --Also, update the created time if the instance has changed since last posting, as this is functionally a new group
         addon.db.global.listingTable[author].createdat = time()
     end
 
