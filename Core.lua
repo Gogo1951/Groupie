@@ -355,8 +355,7 @@ local function ListingOnClick(self, button, down)
             { text = displayName, isTitle = true, notCheckable = true },
             { text = "Invite", notCheckable = true, func = function() InviteUnit(displayName) end },
             { text = "Whisper", notCheckable = true, func = function()
-                DEFAULT_CHAT_FRAME.editBox:SetText("/w " .. fullName .. " ")
-                ChatEdit_ActivateChat(DEFAULT_CHAT_FRAME.editBox)
+                ChatFrame_OpenChat("/w " .. fullName .. " ")
             end },
             { text = ignoreText, notCheckable = true, func = function()
                 C_FriendList.AddOrDelIgnore(displayName)
