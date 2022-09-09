@@ -1028,7 +1028,7 @@ function addon.SetupConfig()
                 type = "group",
                 width = "double",
                 inline = false,
-                order = 7,
+                order = 11,
                 args = {
                     header1 = {
                         type = "description",
@@ -1083,8 +1083,8 @@ function addon.SetupConfig()
                     },
                 }
             },
-            instancefiltersWrath = {
-                name = "Instance Filters - Wrath",
+            instancefilters25H = {
+                name = "Filters - Raid 25 (H)",
                 desc = "Filter Groups by Instance",
                 type = "group",
                 width = "double",
@@ -1093,15 +1093,15 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " | Instance Filters - Wrath",
+                        name = "|cffffd900" .. addonName .. " | Filters - Raid 25 (H)",
                         order = 0,
                         fontSize = "large"
                     },
 
                 }
             },
-            instancefiltersTBC = {
-                name = "Instance Filters - TBC",
+            instancefilters10H = {
+                name = "Filters - Raid 10 (H)",
                 desc = "Filter Groups by Instance",
                 type = "group",
                 width = "double",
@@ -1110,15 +1110,15 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " | Instance Filters - TBC",
+                        name = "|cffffd900" .. addonName .. " | Filters - Raid 10 (H)",
                         order = 0,
                         fontSize = "large"
                     },
 
                 }
             },
-            instancefiltersClassic = {
-                name = "Instance Filters - Classic",
+            instancefilters25 = {
+                name = "Filters - Raid 25",
                 desc = "Filter Groups by Instance",
                 type = "group",
                 width = "double",
@@ -1127,7 +1127,75 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " | Instance Filters - Classic",
+                        name = "|cffffd900" .. addonName .. " | Filters - Raid 25",
+                        order = 0,
+                        fontSize = "large"
+                    },
+
+                }
+            },
+            instancefilters10 = {
+                name = "Filters - Raid 10",
+                desc = "Filter Groups by Instance",
+                type = "group",
+                width = "double",
+                inline = false,
+                order = 7,
+                args = {
+                    header1 = {
+                        type = "description",
+                        name = "|cffffd900" .. addonName .. " | Filters - Raid 10",
+                        order = 0,
+                        fontSize = "large"
+                    },
+
+                }
+            },
+            instancefilters5H = {
+                name = "Filters - Dungeons (H)",
+                desc = "Filter Groups by Instance",
+                type = "group",
+                width = "double",
+                inline = false,
+                order = 8,
+                args = {
+                    header1 = {
+                        type = "description",
+                        name = "|cffffd900" .. addonName .. " | Filters - Dungeons (H)",
+                        order = 0,
+                        fontSize = "large"
+                    },
+
+                }
+            },
+            instancefilters5 = {
+                name = "Filters - Dungeons",
+                desc = "Filter Groups by Instance",
+                type = "group",
+                width = "double",
+                inline = false,
+                order = 9,
+                args = {
+                    header1 = {
+                        type = "description",
+                        name = "|cffffd900" .. addonName .. " | Filters - Dungeons",
+                        order = 0,
+                        fontSize = "large"
+                    },
+
+                }
+            },
+            instancefiltersother = {
+                name = "Filters - Classic Raids",
+                desc = "Filter Groups by Instance",
+                type = "group",
+                width = "double",
+                inline = false,
+                order = 10,
+                args = {
+                    header1 = {
+                        type = "description",
+                        name = "|cffffd900" .. addonName .. " | Filters - Classic Raids",
                         order = 0,
                         fontSize = "large"
                     },
@@ -1476,17 +1544,20 @@ function addon.SetupConfig()
     ---------------------------------------
     -- Generate Instance Filter Controls --
     ---------------------------------------
-    addon.GenerateInstanceToggles(1, "Wrath of the Lich King Heroic Raids - 25", false, "instancefiltersWrath")
-    addon.GenerateInstanceToggles(101, "Wrath of the Lich King Heroic Raids - 10", false, "instancefiltersWrath")
-    addon.GenerateInstanceToggles(201, "Wrath of the Lich King Raids - 25", false, "instancefiltersWrath")
-    addon.GenerateInstanceToggles(301, "Wrath of the Lich King Raids - 10", false, "instancefiltersWrath")
-    addon.GenerateInstanceToggles(401, "Wrath of the Lich King Heroic Dungeons", false, "instancefiltersWrath")
-    addon.GenerateInstanceToggles(501, "Wrath of the Lich King Dungeons", true, "instancefiltersWrath")
-    addon.GenerateInstanceToggles(601, "The Burning Crusade Raids", false, "instancefiltersTBC")
-    addon.GenerateInstanceToggles(701, "The Burning Crusade Heroic Dungeons", true, "instancefiltersTBC")
-    addon.GenerateInstanceToggles(801, "The Burning Crusade Dungeons", true, "instancefiltersTBC")
-    addon.GenerateInstanceToggles(901, "Classic Raids", false, "instancefiltersClassic")
-    addon.GenerateInstanceToggles(1001, "Classic Dungeons", true, "instancefiltersClassic")
+    addon.GenerateInstanceToggles(1, "Wrath of the Lich King Heroic Raids - 25", false, "instancefilters25H")
+    addon.GenerateInstanceToggles(1, "Wrath of the Lich King Heroic Raids - 10", false, "instancefilters10H")
+    addon.GenerateInstanceToggles(1, "Wrath of the Lich King Raids - 25", false, "instancefilters25", 25, false)
+    addon.GenerateInstanceToggles(101, "The Burning Crusade Raids", false, "instancefilters25", 25, false)
+    addon.GenerateInstanceToggles(1, "Wrath of the Lich King Raids - 10", false, "instancefilters10", 10, false)
+    addon.GenerateInstanceToggles(101, "The Burning Crusade Raids", false, "instancefilters10", 10, false)
+    addon.GenerateInstanceToggles(201, "Classic Raids", false, "instancefilters10", 10, false)
+
+    addon.GenerateInstanceToggles(1, "Wrath of the Lich King Heroic Dungeons", false, "instancefilters5H", 5, true)
+    addon.GenerateInstanceToggles(101, "The Burning Crusade Heroic Dungeons", true, "instancefilters5H", 5, true)
+    addon.GenerateInstanceToggles(1, "Wrath of the Lich King Dungeons", true, "instancefilters5", 5, false)
+    addon.GenerateInstanceToggles(101, "The Burning Crusade Dungeons", true, "instancefilters5", 5, false)
+    addon.GenerateInstanceToggles(201, "Classic Dungeons", true, "instancefilters5", 5, false)
+    addon.GenerateInstanceToggles(1, "Classic Raids", false, "instancefiltersother")
     ----------------------------------
     -- End Instance Filter Controls --
     ----------------------------------

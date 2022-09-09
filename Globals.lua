@@ -652,8 +652,12 @@ for key, val in pairs(addon.groupieInstanceData) do
         InstanceType = val.InstanceType,
         MinLevel = val.MinLevel,
         MaxLevel = val.MaxLevel,
-        GroupSize = val.GroupSize
+        GroupSize = val.GroupSize,
+        IsHeroic = false
     }
+    if strmatch(addon.instanceConfigData[val.Order].Name, "Heroic") then
+        addon.instanceConfigData[val.Order].IsHeroic = true
+    end
 end
 sort(addon.instanceOrders, function(a, b) return a > b end)
 
