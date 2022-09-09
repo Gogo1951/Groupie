@@ -27,7 +27,7 @@ local DROPDOWN_PAD         = 32
 
 local COL_MSG = WINDOW_WIDTH - COL_CREATED - COL_TIME - COL_LEADER - COL_INSTANCE - COL_LOOT - ICON_WIDTH - 44
 
-local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0", "AceConsole-3.0", "AceTimer-3.0")
+local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0", "AceConsole-3.0", "AceTimer-3.0", "Events-1.0")
 
 local SharedMedia = LibStub("LibSharedMedia-3.0")
 local gsub        = gsub
@@ -66,9 +66,9 @@ local function GetSortedListingIndex(sortType, sortDir)
     --Then sort the index
     if sortType == -1 then
         if sortDir then
-            table.sort(numindex, function(a, b) return a.createdat > b.createdat end)
+            table.sort(numindex, function(a, b) return (a.createdat or 0) > (b.createdat or 0) end)
         else
-            table.sort(numindex, function(a, b) return a.createdat < b.createdat end)
+            table.sort(numindex, function(a, b) return (a.createdat or 0) < (b.createdat or 0) end)
         end
     elseif sortType == 0 then
         if sortDir then
@@ -1007,6 +1007,23 @@ function addon:OnInitialize()
         addon.debugMenus = not addon.debugMenus
         print("GROUPIE DEBUG MODE: " .. tostring(addon.debugMenus))
     end
+    SLASH_GROUPIETEST1 = "/groupietest"
+    SlashCmdList["GROUPIETEST"] = function(args)
+        local module = args:match("^%s*(%S+)%s*$")
+        module = module and module:lower()
+
+        local modules = {}
+        for k, v in pairs(addon) do
+            if type(v) == "table" and v.SPEC then
+                modules[k:lower()] = v
+            end
+        end
+        if modules[module] then
+            modules[module].SPEC:run()
+        else
+            print("No testable module found for " .. module)
+        end
+    end
     addon.isInitialized = true
 end
 
@@ -1588,7 +1605,7 @@ function addon:OpenConfig()
 end
 
 --This must be done after player entering world event so that we can pull spec
-addon:RegisterEvent("PLAYER_ENTERING_WORLD", addon.SetupConfig)
+addon:OnEvent("PLAYER_ENTERING_WORLD", addon.SetupConfig)
 
 --Update our options menu dropdowns when the player's specialization changes
 function addon.UpdateSpecOptions()
@@ -1629,5 +1646,5 @@ end
 
 --Leave this commented for now, may trigger when swapping dual specs, which we dont want to reset settings
 --Only actual talent changes
---addon:RegisterEvent("PLAYER_TALENT_UPDATE", addon.UpdateSpecOptions)
-addon:RegisterEvent("CHARACTER_POINTS_CHANGED", addon.UpdateSpecOptions)
+--addon:OnEvent("PLAYER_TALENT_UPDATE", addon.UpdateSpecOptions)
+addon:OnEvent("CHARACTER_POINTS_CHANGED", addon.UpdateSpecOptions)

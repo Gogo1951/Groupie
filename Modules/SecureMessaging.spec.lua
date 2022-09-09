@@ -55,11 +55,4 @@ function SPEC.run()
     run(allTests, run)
 end
 
-SLASH_GROUPIE1 = "/groupie"
-function SlashCmdList.GROUPIE(args)
-    local module, command = args:match("^%s*(%S+)%s+(%S+)%s*$")
-    print(module, command)
-    if module:lower() == "sm" and command:lower() == "test" then SPEC.run() end
-end
-
 addon.SM.SPEC = SPEC

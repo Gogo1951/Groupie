@@ -367,8 +367,8 @@ local function GroupieEventHandlers(...)
     return true
 end
 
-addon:RegisterEvent("CHAT_MSG_CHANNEL", GroupieEventHandlers)
-addon:RegisterEvent("CHAT_MSG_GUILD", GroupieEventHandlers)
+addon:OnEvent("CHAT_MSG_CHANNEL", GroupieEventHandlers)
+addon:OnEvent("CHAT_MSG_GUILD", GroupieEventHandlers)
 
 -------------------------------
 --DEBUG FUNCTIONS FOR TESTING--
@@ -393,4 +393,4 @@ local function testfunc(_, msg, ...)
     end
 end
 
-addon:RegisterEvent("CHAT_MSG_WHISPER", testfunc)
+addon:OnEvent("CHAT_MSG_WHISPER", testfunc)

@@ -70,13 +70,13 @@ local ForLoginReload = WithEventFilter(function(_, isLogin, isReload)
     return isLogin or isReload
 end)
 
-addon:RegisterEvent("CHAT_MSG_WHISPER", function(...)
+addon:OnEvent("CHAT_MSG_WHISPER", function(...)
     ForVerified(SecureMessaging.CHAT_MSG_WHISPER)(...)
 end)
---[[addon:RegisterEvent("PLAYER_ENTERING_WORLD", function(...)
+addon:OnEvent("PLAYER_ENTERING_WORLD",function(...)
     ForLoginReload(SecureMessaging.PLAYER_ENTERING_WORLD)(...)
-end)--]]
-addon:RegisterEvent("CHAT_MSG_ADDON", function(...)
+end)
+addon:OnEvent("CHAT_MSG_ADDON", function(...)
     ForPrefix(SecureMessaging.CHAT_MSG_ADDON)(...)
 end)
 
