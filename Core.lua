@@ -504,11 +504,22 @@ end
 function addon.TabSwap(isHeroic, size, tabType, tabNum)
     addon.ExpireListings()
     MainTabFrame:Show()
+    --Reset environment values
     MainTabFrame.isHeroic = isHeroic
     MainTabFrame.size = size
     MainTabFrame.tabType = tabNum
     MainTabFrame.sortType = -1
     MainTabFrame.sortDir = false
+    --Reset dropdowns
+    UIDropDownMenu_SetText(GroupieRoleDropdown, "LF Any Role")
+    MainTabFrame.roleType = nil
+    UIDropDownMenu_SetText(GroupieLootDropdown, "All Loot Styles")
+    MainTabFrame.lootType = nil
+    UIDropDownMenu_SetText(GroupieLangDropdown, "All Languages")
+    MainTabFrame.lang = nil
+    UIDropDownMenu_SetText(GroupieLevelDropdown, "Recommended Level Dungeons")
+    MainTabFrame.levelFilter = true
+
     --Clear selected listing
     if addon.selectedListing then
         addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
