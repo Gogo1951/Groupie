@@ -1,14 +1,15 @@
-local addonName, addon = ...
-local List = addon.List
+local addonName, Groupie = ...
 
-local COLOR = { RED = "FFF44336", GREEN = "FF4CAF50" }
+local List = LibStub("List-1.0")
 
-local SecureMessaging = {
+local COLOR = {RED = "FFF44336", GREEN = "FF4CAF50"}
+
+local prototype = {
     print = print,
     verified = List:new(),
     COLOR = COLOR,
     ADDON_PREFIX = "Groupie.SM",
-    PROTECTED_TOKENS = List:new {
+    PROTECTED_TOKENS = List:new{
         [1] = "{rt3}%s*groupie%s*:",
         [2] = "groupie%s*{rt3}%s*:"
     },
@@ -16,6 +17,11 @@ local SecureMessaging = {
         "Groupie {rt3} : the following message was not sent by Groupie",
         COLOR.RED)
 }
+
+local SecureMessaging = Groupie:NewModule("SecureMessaging", prototype,
+                                          "AceEvent-3.0")
+
+Groupie.SM = SecureMessaging
 
 function WithEventFilter(filter)
     return function(handler)
@@ -33,7 +39,7 @@ end
 
 function SecureMessaging:SendSecureMessage(message, chatType, target)
     C_ChatInfo.SendAddonMessage(SecureMessaging.ADDON_PREFIX, message, chatType,
-        target)
+                                target)
 end
 
 -- Use this for sending secure messages. It will send the message as per regular SendChatMessage, but will also send a prior addon message to verify the message.
@@ -70,14 +76,12 @@ local ForLoginReload = WithEventFilter(function(_, isLogin, isReload)
     return isLogin or isReload
 end)
 
-addon:OnEvent("CHAT_MSG_WHISPER", function(...)
+SecureMessaging:RegisterEvent("CHAT_MSG_WHISPER", function(...)
     ForVerified(SecureMessaging.CHAT_MSG_WHISPER)(...)
 end)
-addon:OnEvent("PLAYER_ENTERING_WORLD",function(...)
+SecureMessaging:RegisterEvent("PLAYER_ENTERING_WORLD", function(...)
     ForLoginReload(SecureMessaging.PLAYER_ENTERING_WORLD)(...)
 end)
-addon:OnEvent("CHAT_MSG_ADDON", function(...)
+SecureMessaging:RegisterEvent("CHAT_MSG_ADDON", function(...)
     ForPrefix(SecureMessaging.CHAT_MSG_ADDON)(...)
 end)
-
-addon.SM = SecureMessaging

@@ -27,7 +27,7 @@ local DROPDOWN_PAD         = 32
 
 local COL_MSG = WINDOW_WIDTH - COL_CREATED - COL_TIME - COL_LEADER - COL_INSTANCE - COL_LOOT - ICON_WIDTH - 44
 
-local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0", "AceConsole-3.0", "AceTimer-3.0", "Events-1.0")
+local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0", "AceConsole-3.0", "AceTimer-3.0")
 
 local SharedMedia = LibStub("LibSharedMedia-3.0")
 local gsub        = gsub
@@ -926,7 +926,7 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         if button == "LeftButton" then
             BuildGroupieWindow()
         else
-            addon.OpenConfig()
+            addon:OpenConfig()
         end
     end,
     OnTooltipShow = function(tooltip)
@@ -991,25 +991,23 @@ function addon:OnInitialize()
     end
     addon.db = LibStub("AceDB-3.0"):New("GroupieDB", defaults)
     addon.icon = LibStub("LibDBIcon-1.0")
-    addon.icon:Register("GroupieLDB", addon.groupieLDB, addon.db.global)
+
+    addon.icon:Register("GroupieLDB", addon.groupieLDB, addon.db.global or defaults.global)
     addon.icon:Hide("GroupieLDB")
 
     BuildGroupieWindow()
 
     addon.debugMenus = false
+
     --Setup Slash Commands
-    SLASH_GROUPIE1 = "/groupie"
-    SlashCmdList["GROUPIE"] = BuildGroupieWindow
-    SLASH_GROUPIECFG1 = "/groupiecfg"
-    SlashCmdList["GROUPIECFG"] = addon.OpenConfig
-    SLASH_GROUPIEDEBUG1 = "/groupiedebug"
-    SlashCmdList["GROUPIEDEBUG"] = function()
+
+    local function ToggleDebugMode()
         addon.debugMenus = not addon.debugMenus
         print("GROUPIE DEBUG MODE: " .. tostring(addon.debugMenus))
     end
-    SLASH_GROUPIETEST1 = "/groupietest"
-    SlashCmdList["GROUPIETEST"] = function(args)
-        local module = args:match("^%s*(%S+)%s*$")
+
+    local function TestRunner(...)
+        local module = addon:GetArgs(..., 1)
         module = module and module:lower()
 
         local modules = {}
@@ -1024,6 +1022,12 @@ function addon:OnInitialize()
             print("No testable module found for " .. module)
         end
     end
+
+    addon:RegisterChatCommand("groupie", BuildGroupieWindow)
+    addon:RegisterChatCommand("groupiecfg", addon.OpenConfig)
+    addon:RegisterChatCommand("groupiedebug", ToggleDebugMode)
+    addon:RegisterChatCommand("groupietest", TestRunner)
+
     addon.isInitialized = true
 end
 
@@ -1605,7 +1609,7 @@ function addon:OpenConfig()
 end
 
 --This must be done after player entering world event so that we can pull spec
-addon:OnEvent("PLAYER_ENTERING_WORLD", addon.SetupConfig)
+addon:RegisterEvent("PLAYER_ENTERING_WORLD", addon.SetupConfig)
 
 --Update our options menu dropdowns when the player's specialization changes
 function addon.UpdateSpecOptions()
@@ -1646,5 +1650,5 @@ end
 
 --Leave this commented for now, may trigger when swapping dual specs, which we dont want to reset settings
 --Only actual talent changes
---addon:OnEvent("PLAYER_TALENT_UPDATE", addon.UpdateSpecOptions)
-addon:OnEvent("CHARACTER_POINTS_CHANGED", addon.UpdateSpecOptions)
+--addon:RegisterEvent("PLAYER_TALENT_UPDATE", addon.UpdateSpecOptions)
+addon:RegisterEvent("CHARACTER_POINTS_CHANGED", addon.UpdateSpecOptions)
