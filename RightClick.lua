@@ -2,7 +2,7 @@ local addonName, addon = ...
 -------------------------------
 -- Right Click Functionality --
 -------------------------------
-function addon.SendPlayerInfo(targetName, dropdownMenu, which)
+function addon.SendPlayerInfo(targetName, dropdownMenu, which, instanceName)
 	addon.UpdateSpecOptions()
 	--Calculate average itemlevel
 	local iLevelSum = 0
@@ -52,10 +52,18 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which)
 	if inactiveTalentsSpent > 0 then
 		otherspecmsg = format(" My Other Spec is %s (%s).", inactiveTalentSpec, inactiveRole)
 	end
-	local groupieMsg = format("{rt3} %s : %s LFG! %s %s %s in %s-level gear.%s %s-speaking Player."
+
+	local lfgStr = "LFG"
+	--Include instance name if whispering from a listing
+	if instanceName then
+		lfgStr = "for " .. instanceName
+	end
+
+	local groupieMsg = format("{rt3} %s : %s %s! %s %s %s in %s-level gear.%s %s-speaking Player."
 		,
 		addonName,
 		activeRole,
+		lfgStr,
 		mylevel,
 		activeTalentSpec,
 		myclass,
