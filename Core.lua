@@ -321,6 +321,9 @@ end
 
 --Onclick for group listings, highlights the selected listing
 local function ListingOnClick(self, button, down)
+    local fullName = addon.groupieBoardButtons[addon.selectedListing].listing.author
+    local displayName = gsub(fullName, "-.+", "")
+
     if addon.selectedListing then
         addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
     end
@@ -328,14 +331,11 @@ local function ListingOnClick(self, button, down)
     addon.groupieBoardButtons[addon.selectedListing]:LockHighlight()
     DrawListings(LFGScrollFrame)
 
-    local fullName = addon.groupieBoardButtons[addon.selectedListing].listing.author
-    local displayName = gsub(fullName, "-.+", "")
-
     --Select a listing, if shift is held, do a Who Request
     if button == "LeftButton" then
         if addon.debugMenus then
             print(addon.selectedListing)
-            print(addon.groupieBoardButtons[addon.selectedListing].listing.author)
+            print(fullName)
             print(addon.groupieBoardButtons[addon.selectedListing].listing.msg)
         end
         if IsShiftKeyDown() then
@@ -344,10 +344,10 @@ local function ListingOnClick(self, button, down)
         end
         --Open Right click Menu
     elseif button == "RightButton" then
-
         local maxTalentSpec, maxTalentsSpent = addon.GetSpecByGroupNum(addon.GetActiveSpecGroup())
         local isIgnored = C_FriendList.IsIgnored(displayName)
         local ignoreText = "Ignore"
+
         if isIgnored then
             ignoreText = "Stop Ignoring"
         end
@@ -367,13 +367,13 @@ local function ListingOnClick(self, button, down)
             { text = "Send My Info...", notClickable = true, notCheckable = true },
             { text = "Current Spec : " .. maxTalentSpec, notCheckable = true, leftPadding = 8,
                 func = function()
-                    addon.SendPlayerInfo(addon.groupieBoardButtons[addon.selectedListing].listing.author)
+                    addon.SendPlayerInfo(fullName)
                 end },
         }
         if GetLocale() == "enUS" then
             tinsert(ListingRightClick, { text = "Warcraft Logs Link", notCheckable = true, leftPadding = 8,
                 func = function()
-                    addon.SendWCLInfo(addon.groupieBoardButtons[addon.selectedListing].listing.author)
+                    addon.SendWCLInfo(fullName)
                 end })
         end
 
