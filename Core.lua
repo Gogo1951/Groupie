@@ -321,14 +321,13 @@ end
 
 --Onclick for group listings, highlights the selected listing
 local function ListingOnClick(self, button, down)
-    local fullName = addon.groupieBoardButtons[addon.selectedListing].listing.author
-    local displayName = gsub(fullName, "-.+", "")
-
     if addon.selectedListing then
         addon.groupieBoardButtons[addon.selectedListing]:UnlockHighlight()
     end
     addon.selectedListing = self.id
     addon.groupieBoardButtons[addon.selectedListing]:LockHighlight()
+    local fullName = addon.groupieBoardButtons[addon.selectedListing].listing.author
+    local displayName = gsub(fullName, "-.+", "")
     DrawListings(LFGScrollFrame)
 
     --Select a listing, if shift is held, do a Who Request
