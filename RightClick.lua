@@ -50,7 +50,7 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which)
 	local otherspecmsg = ""
 	--Send other spec role if dual spec is purchased and used
 	if inactiveTalentsSpent > 0 then
-		otherspecmsg = format(" My Other Spec is %s (%s).", inactiveTalentSpec, inactiveRole)
+		otherspecmsg = format(" (My Other Spec is %s %s.)", inactiveTalentSpec, inactiveRole)
 	end
 	local groupieMsg = format("{rt3} %s : %s LFG! %s %s %s in %s-level gear.%s %s-speaking Player."
 		,
