@@ -166,11 +166,21 @@ function addon.ExpireListings()
 end
 
 --Convert a timestamp into a XXMin:XXSec string
-function addon.GetTimeSinceString(timestamp)
-    local timediff = time() - timestamp
-    local mins = floor(timediff / 60)
-    local secs = timediff - (60 * mins)
-    return format("%02dm %02ds", mins, secs)
+function addon.GetTimeSinceString(timestamp, displayLen)
+    local timediff = abs(time() - timestamp)
+    local days = floor(timediff / 86400)
+    local hours = floor(mod(timediff, 86400) / 3600)
+    local mins = floor(mod(timediff, 3600) / 60)
+    local secs = floor(mod(timediff, 60))
+    if displayLen == 4 then
+        return format("%02dd %02dh %02dm %02ds", days, hours, mins, secs)
+    elseif displayLen == 3 then
+        return format("%02dh %02dm %02ds", hours, mins, secs)
+    elseif displayLen == 2 then
+        return format("%02dm %02ds", mins, secs)
+    else
+        return format("%02ds", secs)
+    end
 end
 
 --Convert keyword blacklist into a string
@@ -273,3 +283,51 @@ function addon.UpdateSavedInstances()
         end
     end
 end
+
+--Inject test data for instance filtering/minimap based on saved instances
+--[[
+addon.db.global.savedInstanceInfo[2330] = {}
+addon.db.global.savedInstanceInfo[2330][UnitName("player")] = {
+    characterName = "Cooltestguy",
+    classColor = addon.classColors[UnitClass("player")],
+    instance = "Zul'Aman",
+    isHeroic = false,
+    groupSize = 10,
+    resetTime = 41595 + time()
+}
+addon.db.global.savedInstanceInfo[2160] = {}
+addon.db.global.savedInstanceInfo[2160][UnitName("player")] = {
+    characterName = "Cooltestguy",
+    classColor = addon.classColors[UnitClass("player")],
+    instance = "Coilfang: The Underbog",
+    isHeroic = true,
+    groupSize = 5,
+    resetTime = 41595 + time()
+}
+addon.db.global.savedInstanceInfo[2370] = {}
+addon.db.global.savedInstanceInfo[2370][UnitName("player")] = {
+    characterName = "Cooltestguy",
+    classColor = addon.classColors[UnitClass("player")],
+    instance = "Tempest Keep",
+    isHeroic = false,
+    groupSize = 25,
+    resetTime = 386957 + time()
+}
+addon.db.global.savedInstanceInfo[2330]["OtherGuy"] = {
+    characterName = "OtherGuy",
+    classColor = addon.classColors["Death Knight"],
+    instance = "Zul'Aman",
+    isHeroic = false,
+    groupSize = 10,
+    resetTime = 41595 + time()
+}
+addon.db.global.savedInstanceInfo[2390] = {}
+addon.db.global.savedInstanceInfo[2390]["Cooltestguy"] = {
+    characterName = "OtherGuy",
+    classColor = addon.classColors["Death Knight"],
+    instance = "Black Temple",
+    isHeroic = false,
+    groupSize = 25,
+    resetTime = 386957 + time()
+}
+--]]

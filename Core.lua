@@ -295,8 +295,8 @@ local function DrawListings(self)
             local formattedMsg = gsub(gsub(listing.msg, "%{%w+%}", ""), "%s+", " ")
             local lootColor = addon.lootTypeColors[listing.lootType]
             button.listing = listing
-            button.created:SetText(addon.GetTimeSinceString(listing.createdat))
-            button.time:SetText(addon.GetTimeSinceString(listing.timestamp))
+            button.created:SetText(addon.GetTimeSinceString(listing.createdat, 2))
+            button.time:SetText(addon.GetTimeSinceString(listing.timestamp, 2))
             button.leader:SetText(gsub(listing.author, "-.+", ""))
             button.instance:SetText(" " .. listing.instanceName)
             button.loot:SetText("|cFF" .. lootColor .. listing.lootType)
@@ -927,10 +927,29 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         end
     end,
     OnTooltipShow = function(tooltip)
+        local now = time()
+        sort(addon.db.global.savedInstanceInfo)
         tooltip:AddLine(addonName)
         tooltip:AddLine("A better LFG tool for Classic WoW.", 255, 255, 255, false)
-        tooltip:AddLine("Left Click to open " .. addonName, 255, 255, 255, false)
-        tooltip:AddLine("Right Click to open Settings", 255, 255, 255, false)
+        tooltip:AddLine(" ")
+        tooltip:AddLine("Click |cffffffffor|r /groupie |cffffffff: Open " .. addonName .. "|r ")
+        tooltip:AddLine(" ")
+        tooltip:AddLine("Right Click |cffffffff: Open " .. addonName .. " Settings|r ")
+        tooltip:AddLine(" ")
+        --TODO: Version check
+        for order, val in pairs(addon.db.global.savedInstanceInfo) do
+            local titleFlag = false
+            for player, lockout in pairs(val) do
+                if lockout.resetTime > now then
+                    if not titleFlag then
+                        titleFlag = true
+                        tooltip:AddLine(lockout.instance, 255, 255, 255, false)
+                        tooltip:AddLine("|cff9E9E9E  Reset : " .. addon.GetTimeSinceString(lockout.resetTime, 4))
+                    end
+                    tooltip:AddLine("    |cff" .. lockout.classColor .. player .. "|r")
+                end
+            end
+        end
     end
 })
 
