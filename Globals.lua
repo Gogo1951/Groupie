@@ -778,3 +778,22 @@ addon.groupieUnflippedDungeonPatterns = {
 addon.groupieInstancePatterns = addon.TableFlip(addon.groupieUnflippedDungeonPatterns)
 addon.groupieLootPatterns = addon.TableFlip(addon.groupieUnflippedLootPatterns)
 addon.groupieLanguagePatterns = addon.TableFlip(addon.groupieUnflippedLanguagePatterns)
+
+addon.GroupieDevs = {
+    ["Player-4408-044DE7F9"] = "Team Member", -- Gogodeekay-Faerlina
+    ["Player-4408-03D2C535"] = "Team Member", -- Gogodruid-Faerlina
+    ["Player-4408-03D2C53D"] = "Team Member", -- Gogohunter-Faerlina
+    ["Player-4408-03D2C27F"] = "Team Member", -- Gogomage-Faerlina
+    ["Player-4408-03D2C4A6"] = "Team Member", -- Gogopaladin-Faerlina
+    ["Player-4408-03D2C57D"] = "Team Member", -- Gogopriest-Faerlina
+    ["Player-4408-03D2C295"] = "Team Member", -- Gogorogue-Faerlina
+    ["Player-4408-03D2C5E2"] = "Team Member", -- Gogoshaman-Faerlina
+    ["Player-4408-03D2C21E"] = "Team Member", -- Gogowarlock-Faerlina
+    ["Player-4408-03D2C4C4"] = "Team Member", -- Gogowarrior-Faerlina
+
+    ["Player-4408-039B90A8"] = "Team Member", -- Aevala-Faerlina
+    ["Player-4408-03AA25B2"] = "Team Member", -- Kattz-Faerlina
+    ["Player-4467-02AB80C7"] = "Team Member", -- Raegen-Firemaw
+
+    ["Player-4728-03F542F0"] = "Team Member", -- Cooltestguy-Benediction
+}

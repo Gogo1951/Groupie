@@ -935,7 +935,7 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         tooltip:AddLine(" ")
         tooltip:AddLine("Right Click |cffffffff: Open " .. addonName .. " Settings|r ")
         tooltip:AddLine(" ")
-        --TODO: Version check
+        --TODO: Version check, sort by instance order and then player name alphabetically
         for order, val in pairs(addon.db.global.savedInstanceInfo) do
             local titleFlag = false
             for player, lockout in pairs(val) do
@@ -1010,12 +1010,22 @@ function addon:OnInitialize()
     addon.icon:Register("GroupieLDB", addon.groupieLDB, addon.db.global or defaults.global)
     addon.icon:Hide("GroupieLDB")
 
+    --Build the main UI
     BuildGroupieWindow()
 
+    --Debug variable defaults to false
     addon.debugMenus = false
 
-    --Setup Slash Commands
+    --Setup team member tooltips
+    GameTooltip:HookScript("OnTooltipSetUnit", function(...)
+        local curMouseOver = UnitGUID("MouseOver")
+        if addon.GroupieDevs[curMouseOver] then
+            GameTooltip:AddLine(format("|TInterface\\AddOns\\" .. addonName .. "\\Images\\icon64:16:16:0:0|t %s : %s",
+                addonName, addon.GroupieDevs[curMouseOver]))
+        end
+    end)
 
+    --Setup Slash Commands
     local function ToggleDebugMode()
         addon.debugMenus = not addon.debugMenus
         print("GROUPIE DEBUG MODE: " .. tostring(addon.debugMenus))
