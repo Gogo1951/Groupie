@@ -227,15 +227,49 @@ function addon.RunSlashCmd(cmd)
     end
 end
 
---Return a table of instance IDs the player is saved to
-function addon.GetSavedInstances()
-    local t = {}
+--Update a character's saved instances
+--Stored in a double nested table with form:
+--savedInstanceInfo[instanceOrder][playerName]
+function addon.UpdateSavedInstances()
+    local isHeroic, shouldBeHeroic = false, false
+    local playerName = UnitName("player")
     for i = 1, GetNumSavedInstances() do
-        local name, id, reset, difficulty, locked, extended, instanceIDMostSig, isRaid, maxPlayers,
-        difficultyName, numEncounters, encounterProgress = GetSavedInstanceInfo(i)
-        if locked then
-            tinsert(t, { id, difficulty, maxPlayers })
+        local name, _, reset, _, locked, _, _, _, maxPlayers, difficultyName, _, _ = GetSavedInstanceInfo(i)
+        if locked and (reset > 0) then --check that the lockout is active
+            for key, val in pairs(addon.groupieInstanceData) do
+                if strfind(key, name) then --Check that the name matches
+                    if strfind(difficultyName, "Heroic") then
+                        isHeroic = true
+                    end
+                    if strfind(key, "Heroic") then
+                        shouldBeHeroic = true
+                    end
+                    --Check that we've found the correct difficulty and size, then use this order
+                    if isHeroic == shouldBeHeroic and maxPlayers == val.GroupSize then
+                        if not addon.db.global.savedInstanceInfo[val.Order] then
+                            addon.db.global.savedInstanceInfo[val.Order] = {}
+                        end
+                        addon.db.global.savedInstanceInfo[val.Order][playerName] = {
+                            characterName = playerName,
+                            classColor = addon.classColors[UnitClass("player")],
+                            instance = name,
+                            isHeroic = isHeroic,
+                            groupSize = maxPlayers,
+                            resetTime = reset + time()
+                        }
+                    end
+                end
+            end
         end
     end
-    return t
+
+    --Expire out of date lockouts
+    local now = time()
+    for order, val in pairs(addon.db.global.savedInstanceInfo) do
+        for player, lockout in pairs(val) do
+            if lockout.resetTime < now then
+                addon.db.global.savedInstanceInfo[order][player] = nil
+            end
+        end
+    end
 end

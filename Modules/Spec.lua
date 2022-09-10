@@ -6,7 +6,7 @@ if not Spec then return end -- No upgrade needed
 local function createAssertHandler()
     function Assert(result, success, failure)
         return result and WrapTextInColorCode(success, "FF4CAF50") or
-                   WrapTextInColorCode(failure, "FFF44336")
+            WrapTextInColorCode(failure, "FFF44336")
     end
 
     local assertions = {}
@@ -30,13 +30,17 @@ function Spec:new(name, create)
 
             if #tests > 0 then next(tests) end
         end
+
         test.test(assert, done)
     end
+
     local function It(describe, fn)
-        table.insert(tests, {describe = describe, test = fn})
+        table.insert(tests, { describe = describe, test = fn })
     end
+
     local o = {}
     function o.run() next(tests) end
+
     create(It)
     setmetatable(o, self)
     self.__index = self

@@ -35,14 +35,13 @@ local function GetDungeons(messageWords)
     local forceSize = nil
     for i = 1, #messageWords do
         local word = messageWords[i]
-
         --Look for dungeon patterns
         local lookupAttempt = addon.groupieInstancePatterns[word]
         if lookupAttempt ~= nil then
             --Handle edge cases of instance acronyms that overlap with other words people use
             --Currently MT, OS, UP
             --Only use these as valid instance patterns if the instance is nil so far
-            if instance == nil or not addon.tableContains(addon.edgeCaseInstances, lookupAttempt) then
+            if instance == nil or not addon.tableContains(addon.edgeCasePatterns, word) then
                 instance = lookupAttempt
             end
 

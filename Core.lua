@@ -110,6 +110,7 @@ local function filterListings()
     local total = 0
     local sortType = MainTabFrame.sortType or -1
     local now = time()
+    local playerName = UnitName("player")
     local sortDir = MainTabFrame.sortDir or false
     local sorted = GetSortedListingIndex(sortType, sortDir)
 
@@ -155,6 +156,13 @@ local function filterListings()
                 --Doesnt match language in the dropdown
             elseif addon.db.char.hideInstances[listing.order] == true then
                 --Ignoring specifically hidden instances
+            elseif addon.db.global.ignoreSavedInstances and addon.db.global.savedInstanceInfo[listing.order] and
+                addon.db.global.savedInstanceInfo[listing.order][playerName] and
+                (addon.db.global.savedInstanceInfo[listing.order][playerName].resetTime > now) then
+                --Ignore instances the player is saved to
+                if addon.debugMenus then
+                    print("FILTERED DUE TO LOCKOUT: ", listing.fullName)
+                end
             else
                 local keywordBlacklistHit = false
                 for k, word in pairs(addon.db.global.keywordBlacklist) do
@@ -195,7 +203,6 @@ local function filterListings()
             total = total + 1
         end
     else --Dungeon/Raid tabs
-        local savedInstances = addon.GetSavedInstances()
         for key, listing in pairs(sorted) do
             if listing.isHeroic ~= MainTabFrame.isHeroic then
                 --Wrong tab
@@ -226,6 +233,13 @@ local function filterListings()
                 --Instance is outside of level range (ONLY for normal dungeons)
             elseif addon.db.char.hideInstances[listing.order] == true then
                 --Ignoring specifically hidden instances
+            elseif addon.db.global.ignoreSavedInstances and addon.db.global.savedInstanceInfo[listing.order] and
+                addon.db.global.savedInstanceInfo[listing.order][playerName] and
+                (addon.db.global.savedInstanceInfo[listing.order][playerName].resetTime > now) then
+                --Ignore instances the player is saved to
+                if addon.debugMenus then
+                    print("FILTERED DUE TO LOCKOUT: ", listing.fullName)
+                end
             else
                 --Check for blacklisted words
                 local keywordBlacklistHit = false
@@ -234,24 +248,7 @@ local function filterListings()
                         keywordBlacklistHit = true
                     end
                 end
-                --Check if player is saved to this instance ID, Difficulty, and Size
-                local savedHit = false
-                local isSaved = false
-                local savedDiff = false
-                for _, savedInstance in ipairs(savedInstances) do
-                    if savedInstance[2] == "Heroic" then
-                        savedDiff = true
-                    end
-                    if listing.instanceID == savedInstance[1] and
-                        listing.isHeroic == savedDiff and
-                        listing.groupSize == savedInstance[3] then
-                        if addon.debugMenus then
-                            print("FILTERED: ", listing.fullName, savedInstance[1], savedInstance[2], savedInstance[3])
-                        end
-                        savedHit = true
-                    end
-                end
-                if not keywordBlacklistHit and not savedHit then
+                if not keywordBlacklistHit then
                     addon.filteredListings[idx] = listing
                     idx = idx + 1
                 end
@@ -1591,7 +1588,10 @@ function addon.SetupConfig()
     if addon.db.global.showMinimap == false then
         addon.icon:Hide("GroupieLDB")
     end
+
+    --Update some saved variables for the current character
     addon.UpdateSpecOptions()
+    addon.UpdateSavedInstances()
 
     --Don't preserve Data if switching servers
     local currentServer = GetRealmName()
@@ -1652,3 +1652,4 @@ end
 --Only actual talent changes
 --addon:RegisterEvent("PLAYER_TALENT_UPDATE", addon.UpdateSpecOptions)
 addon:RegisterEvent("CHARACTER_POINTS_CHANGED", addon.UpdateSpecOptions)
+addon:RegisterEvent("BOSS_KILL", addon.UpdateSavedInstances)

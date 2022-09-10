@@ -197,9 +197,23 @@ addon.lootTypeColors = {
     ["PVP"] = "F44336",
 }
 
+addon.classColors = {
+    ["Death Knight"] = "C41F3B",
+    ["Druid"] = "FF7D0A",
+    ["Hunter"] = "ABD473",
+    ["Mage"] = "69CCF0",
+    ["Monk"] = "00FF96",
+    ["Paladin"] = "F58CBA",
+    ["Priest"] = "FFFFFF",
+    ["Rogue"] = "FFF569",
+    ["Shaman"] = "0070DE",
+    ["Warlock"] = "9482C9",
+    ["Warrior"] = "C79C6E",
+}
+
 addon.multiWingInstances = { "Dire Maul - Full Clear", "Maraudon - Full Clear", "Scarlet Monastery - Full Clear" }
 
-addon.edgeCaseInstances = { "Mana-Tombs", "The Obsidian Sanctum", "Utgarde Pinnacle" }
+addon.edgeCasePatterns = { "mt", "os", "up", "dk", "eye" }
 
 --instanceVersions[instance] = {{size, isHeroic}, ...}
 addon.instanceVersions = {
@@ -732,7 +746,7 @@ addon.groupieUnflippedDungeonPatterns = {
     ["The Nexus"]                  = "nexus",
     ["Ajzol-Nerub"]                = "an azjol nerub",
     ["Ahn'kahet: The Old Kingdom"] = "ok atok ahnkahet ankahet kahet",
-    ["Drak'Tharon Keep"]           = "dtk tharon", -- dk
+    ["Drak'Tharon Keep"]           = "dtk tharon dk",
     ["The Violet Hold"]            = "vh violet violethold",
     ["Gundrak"]                    = "gundrak",
     ["Halls of Stone"]             = "hos stone",
@@ -748,7 +762,7 @@ addon.groupieUnflippedDungeonPatterns = {
     --["Naxxramas"]            = "",
     ["The Obsidian Sanctum"] = "os obsidian obssanc obsanc obsidiansanctum",
     ["Vault of Archavon"]    = "voa archavon vault",
-    ["The Eye of Eternity"]  = "eoe", --eye
+    ["The Eye of Eternity"]  = "eoe eye",
     --["Onyxia's Lair"]        = "",
     ["Ulduar"]               = "uld uldu ulduar",
 
