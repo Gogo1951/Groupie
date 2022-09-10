@@ -928,7 +928,6 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
     end,
     OnTooltipShow = function(tooltip)
         local now = time()
-        sort(addon.db.global.savedInstanceInfo)
         tooltip:AddLine(addonName)
         tooltip:AddLine("A better LFG tool for Classic WoW.", 255, 255, 255, false)
         tooltip:AddLine(" ")
