@@ -66,9 +66,9 @@ local function GetSortedListingIndex(sortType, sortDir)
     --Then sort the index
     if sortType == -1 then
         if sortDir then
-            table.sort(numindex, function(a, b) return a.createdat > b.createdat end)
+            table.sort(numindex, function(a, b) return (a.createdat or 0) > (b.createdat or 0) end)
         else
-            table.sort(numindex, function(a, b) return a.createdat < b.createdat end)
+            table.sort(numindex, function(a, b) return (a.createdat or 0) < (b.createdat or 0) end)
         end
     elseif sortType == 0 then
         if sortDir then
@@ -926,7 +926,7 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         if button == "LeftButton" then
             BuildGroupieWindow()
         else
-            addon.OpenConfig()
+            addon:OpenConfig()
         end
     end,
     OnTooltipShow = function(tooltip)
@@ -991,22 +991,43 @@ function addon:OnInitialize()
     end
     addon.db = LibStub("AceDB-3.0"):New("GroupieDB", defaults)
     addon.icon = LibStub("LibDBIcon-1.0")
-    addon.icon:Register("GroupieLDB", addon.groupieLDB, addon.db.global)
+
+    addon.icon:Register("GroupieLDB", addon.groupieLDB, addon.db.global or defaults.global)
     addon.icon:Hide("GroupieLDB")
 
     BuildGroupieWindow()
 
     addon.debugMenus = false
+
     --Setup Slash Commands
-    SLASH_GROUPIE1 = "/groupie"
-    SlashCmdList["GROUPIE"] = BuildGroupieWindow
-    SLASH_GROUPIECFG1 = "/groupiecfg"
-    SlashCmdList["GROUPIECFG"] = addon.OpenConfig
-    SLASH_GROUPIEDEBUG1 = "/groupiedebug"
-    SlashCmdList["GROUPIEDEBUG"] = function()
+
+    local function ToggleDebugMode()
         addon.debugMenus = not addon.debugMenus
         print("GROUPIE DEBUG MODE: " .. tostring(addon.debugMenus))
     end
+
+    local function TestRunner(...)
+        local module = addon:GetArgs(..., 1)
+        module = module and module:lower()
+
+        local modules = {}
+        for k, v in pairs(addon) do
+            if type(v) == "table" and v.SPEC then
+                modules[k:lower()] = v
+            end
+        end
+        if modules[module] then
+            modules[module].SPEC:run()
+        else
+            print("No testable module found for " .. module)
+        end
+    end
+
+    addon:RegisterChatCommand("groupie", BuildGroupieWindow)
+    addon:RegisterChatCommand("groupiecfg", addon.OpenConfig)
+    addon:RegisterChatCommand("groupiedebug", ToggleDebugMode)
+    addon:RegisterChatCommand("groupietest", TestRunner)
+
     addon.isInitialized = true
 end
 

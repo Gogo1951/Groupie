@@ -1,5 +1,7 @@
-local addonName, addon = ...
-local List = {}
+local MAJOR, MINOR = "List-1.0", 1
+local List = LibStub:NewLibrary(MAJOR, MINOR)
+
+if not List then return end -- No upgrade needed
 
 function List:new(o)
     o = o or {}
@@ -88,5 +90,3 @@ function List:some(handler)
     for i = 1, #self do if handler(self[i], i, self) then return true end end
     return false
 end
-
-addon.List = List

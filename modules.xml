@@ -1,5 +1,0 @@
-<Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
-    <Script file="Modules\List.lua"/>
-    <Script file="Modules\SecureMessaging.lua"/>
-    <Script file="Modules\SecureMessaging.spec.lua"/>
-</Ui>
