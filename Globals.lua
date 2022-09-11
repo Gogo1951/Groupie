@@ -1,5 +1,6 @@
 local addonName, addon = ...
 
+addon.groupieSystemColor = "ffd900"
 
 addon.groupieLocaleTable = {
     ["zhCN"] = "Chinese",

@@ -1116,14 +1116,14 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " | About",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " | About",
                         order = 0,
                         fontSize = "large"
                     },
                     spacerdesc1 = { type = "description", name = " ", width = "full", order = 1 },
                     header2 = {
                         type = "description",
-                        name = "|cffffd900Groupie on CurseForge",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " on CurseForge",
                         order = 2,
                         fontSize = "medium"
                     },
@@ -1138,7 +1138,7 @@ function addon.SetupConfig()
                     spacerdesc2 = { type = "description", name = " ", width = "full", order = 4 },
                     header3 = {
                         type = "description",
-                        name = "|cffffd900Groupie on Discord",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " on Discord",
                         order = 5,
                         fontSize = "medium"
                     },
@@ -1153,7 +1153,7 @@ function addon.SetupConfig()
                     spacerdesc3 = { type = "description", name = " ", width = "full", order = 7 },
                     header4 = {
                         type = "description",
-                        name = "|cffffd900Groupie on GitHub",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " on GitHub",
                         order = 8,
                         fontSize = "medium"
                     },
@@ -1185,7 +1185,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " | Instance Filters - Wrath",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " | Instance Filters - Wrath",
                         order = 0,
                         fontSize = "large"
                     },
@@ -1202,7 +1202,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " | Instance Filters - TBC",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " | Instance Filters - TBC",
                         order = 0,
                         fontSize = "large"
                     },
@@ -1219,7 +1219,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " | Instance Filters - Classic",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " | Instance Filters - Classic",
                         order = 0,
                         fontSize = "large"
                     },
@@ -1236,14 +1236,14 @@ function addon.SetupConfig()
                 args = {
                     header0 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " | Group Filters",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " | Group Filters",
                         order = 0,
                         fontSize = "large"
                     },
                     spacerdesc1 = { type = "description", name = " ", width = "full", order = 1 },
                     header1 = {
                         type = "description",
-                        name = "|cffffd900General Filters",
+                        name = "|cff" .. addon.groupieSystemColor .. "General Filters",
                         order = 2,
                         fontSize = "medium"
                     },
@@ -1274,7 +1274,7 @@ function addon.SetupConfig()
                     spacerdesc3 = { type = "description", name = " ", width = "full", order = 15 },
                     header3 = {
                         type = "description",
-                        name = "|cffffd900Filter By Keyword",
+                        name = "|cff" .. addon.groupieSystemColor .. "Filter By Keyword",
                         order = 16,
                         fontSize = "medium"
                     },
@@ -1309,14 +1309,15 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " | " .. UnitName("player") .. " Options",
+                        name = "|cff" ..
+                            addon.groupieSystemColor .. addonName .. " | " .. UnitName("player") .. " Options",
                         order = 0,
                         fontSize = "large"
                     },
                     spacerdesc1 = { type = "description", name = " ", width = "full", order = 1 },
                     header2 = {
                         type = "description",
-                        name = "|cffffd900Spec 1 Role - " .. addon.GetSpecByGroupNum(1),
+                        name = "|cff" .. addon.groupieSystemColor .. "Spec 1 Role - " .. addon.GetSpecByGroupNum(1),
                         order = 2,
                         fontSize = "medium"
                     },
@@ -1333,7 +1334,7 @@ function addon.SetupConfig()
                     spacerdesc2 = { type = "description", name = " ", width = "full", order = 4 },
                     header3 = {
                         type = "description",
-                        name = "|cffffd900Spec 2 Role - " .. addon.GetSpecByGroupNum(2),
+                        name = "|cff" .. addon.groupieSystemColor .. "Spec 2 Role - " .. addon.GetSpecByGroupNum(2),
                         order = 5,
                         fontSize = "medium"
                     },
@@ -1350,7 +1351,7 @@ function addon.SetupConfig()
                     spacerdesc3 = { type = "description", name = " ", width = "full", order = 7 },
                     header4 = {
                         type = "description",
-                        name = "|cffffd900Recommended Dungeon Level Range",
+                        name = "|cff" .. addon.groupieSystemColor .. "Recommended Dungeon Level Range",
                         order = 8,
                         fontSize = "medium"
                     },
@@ -1372,7 +1373,7 @@ function addon.SetupConfig()
                     spacerdesc4 = { type = "description", name = " ", width = "full", order = 10 },
                     header5 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " Auto-Response",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " Auto-Response",
                         order = 11,
                         fontSize = "medium"
                     },
@@ -1395,7 +1396,7 @@ function addon.SetupConfig()
                     spacerdesc5 = { type = "description", name = " ", width = "full", order = 14 },
                     header6 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " After-Party Tool",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " After-Party Tool",
                         order = 15,
                         fontSize = "medium"
                     },
@@ -1410,7 +1411,7 @@ function addon.SetupConfig()
                     spacerdesc6 = { type = "description", name = " ", width = "full", order = 17 },
                     header7 = {
                         type = "description",
-                        name = "|cffffd900Pull Groups From These Channels",
+                        name = "|cff" .. addon.groupieSystemColor .. "Pull Groups From These Channels",
                         order = 18,
                         fontSize = "medium"
                     },
@@ -1474,7 +1475,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " | Global Options",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " | Global Options",
                         order = 0,
                         fontSize = "large"
                     },
@@ -1497,7 +1498,7 @@ function addon.SetupConfig()
                     spacerdesc3 = { type = "description", name = " ", width = "full", order = 5 },
                     header2 = {
                         type = "description",
-                        name = "|cffffd900Preserve Looking for Group Data Duration",
+                        name = "|cff" .. addon.groupieSystemColor .. "Preserve Looking for Group Data Duration",
                         order = 6,
                         fontSize = "medium"
                     },
@@ -1514,7 +1515,7 @@ function addon.SetupConfig()
                     spacerdesc4 = { type = "description", name = " ", width = "full", order = 8 },
                     header3 = {
                         type = "description",
-                        name = "|cffffd900Font",
+                        name = "|cff" .. addon.groupieSystemColor .. "Font",
                         order = 9,
                         fontSize = "medium",
                         hidden = true,
@@ -1535,7 +1536,7 @@ function addon.SetupConfig()
                     spacerdesc5 = { type = "description", name = " ", width = "full", order = 11 },
                     header4 = {
                         type = "description",
-                        name = "|cffffd900Base Font Size",
+                        name = "|cff" .. addon.groupieSystemColor .. "Base Font Size",
                         order = 12,
                         fontSize = "medium",
                         hidden = true,
@@ -1619,8 +1620,10 @@ function addon.UpdateSpecOptions()
     local spec1, maxtalents1 = addon.GetSpecByGroupNum(1)
     local spec2, maxtalents2 = addon.GetSpecByGroupNum(2)
     --Set labels
-    addon.options.args.charoptions.args.header2.name = "|cffffd900Role for Spec 1 - " .. spec1
-    addon.options.args.charoptions.args.header3.name = "|cffffd900Role for Spec 2 - " .. spec2
+    addon.options.args.charoptions.args.header2.name = "|cff" ..
+        addon.groupieSystemColor .. "Role for Spec 1 - " .. spec1
+    addon.options.args.charoptions.args.header3.name = "|cff" ..
+        addon.groupieSystemColor .. "Role for Spec 2 - " .. spec2
     --Set dropdowns
     addon.options.args.charoptions.args.spec1Dropdown.values = addon.groupieClassRoleTable[UnitClass("player")][spec1]
     addon.options.args.charoptions.args.spec2Dropdown.values = addon.groupieClassRoleTable[UnitClass("player")][spec2]

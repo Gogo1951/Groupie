@@ -114,7 +114,7 @@ function addon.GenerateInstanceToggles(order, instanceType, showMaxLevel, config
     initorder = initorder + 1
     addon.options.args[configGroup].args[tostring(initorder) .. "header"] = {
         type = "description",
-        name = "|cffffd900" .. instanceType,
+        name = "|cff" .. addon.groupieSystemColor .. instanceType,
         width = "full",
         fontSize = "medium",
         order = initorder

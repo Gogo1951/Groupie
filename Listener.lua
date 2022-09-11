@@ -349,7 +349,7 @@ local function GroupieEventHandlers(...)
     local event, msg, author, _, channel, _, _, _, _, _, _, _, guid = ...
     local classColor = addon.classColors[GetPlayerInfoByGUID(guid)]
     if classColor == nil then
-        classColor = "ffd900"
+        classColor = addon.groupieSystemColor
     end
     local validChannel = false
     if addon.db.char.useChannels["Guild"] and strmatch(channel, "Guild") then
