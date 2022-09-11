@@ -189,7 +189,7 @@ local function GetGroupType(messageWords)
 end
 
 --Given a message passed by event handler, extract information about the party
-local function ParseMessage(event, msg, author, _, channel)
+local function ParseMessage(event, msg, author, _, channel, classColor)
     local preprocessedStr = addon.Preprocess(msg)
     local messageWords = addon.GroupieSplit(preprocessedStr)
     local isLFG = false
@@ -336,6 +336,7 @@ local function ParseMessage(event, msg, author, _, channel)
     addon.db.global.listingTable[author].order = instanceOrder or -1
     addon.db.global.listingTable[author].instanceID = instanceID
     addon.db.global.listingTable[author].icon = icon
+    addon.db.global.listingTable[author].classColor = classColor
     --Collect data to debug with
     --if addon.debugMenus then
     --tinsert(addon.db.global.debugData, { msg, preprocessedStr, addon.db.global.listingTable[author] })
@@ -345,7 +346,11 @@ end
 
 --Handle chat events
 local function GroupieEventHandlers(...)
-    local event, msg, author, _, channel = ...
+    local event, msg, author, _, channel, _, _, _, _, _, _, _, guid = ...
+    local classColor = addon.classColors[GetPlayerInfoByGUID(guid)]
+    if classColor == nil then
+        classColor = "ffd900"
+    end
     local validChannel = false
     if addon.db.char.useChannels["Guild"] and strmatch(channel, "Guild") then
         validChannel = true
@@ -361,7 +366,7 @@ local function GroupieEventHandlers(...)
         validChannel = true
     end
     if validChannel then
-        ParseMessage(event, msg, author, _, channel)
+        ParseMessage(event, msg, author, _, channel, classColor)
     end
     return true
 end

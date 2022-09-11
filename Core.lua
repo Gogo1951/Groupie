@@ -299,7 +299,7 @@ local function DrawListings(self)
             button.listing = listing
             button.created:SetText(addon.GetTimeSinceString(listing.createdat, 2))
             button.time:SetText(addon.GetTimeSinceString(listing.timestamp, 2))
-            button.leader:SetText(gsub(listing.author, "-.+", ""))
+            button.leader:SetText("|cFF" .. listing.classColor .. gsub(listing.author, "-.+", ""))
             button.instance:SetText(" " .. listing.instanceName)
             button.loot:SetText("|cFF" .. lootColor .. listing.lootType)
             button.msg:SetText(formattedMsg)
