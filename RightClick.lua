@@ -105,7 +105,9 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 	if name == nil then
 		name = UnitName(unit)
 	end
-
+	for key, val in pairs(addon.groupieAchievementPriorities) do
+		print(key, #val)
+	end
 	--Return if the unit is not a player
 	if unit ~= nil and not UnitIsPlayer(unit) then
 		return
