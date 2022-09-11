@@ -4,7 +4,7 @@ A better LFG tool for Classic WoW.
 
 <br>
 
-:gem:  **Key Features**
+### :gem:  **KEY FEATURES**
 
 :one:  Quickly find the groups you actually want to be in. You can filter groups by group-size, loot rules type, language, and more. Groupie is smart enough to hide dungeons out of your level range, and heroics or raids that you're already saved to.
 
@@ -28,7 +28,7 @@ Some other stuff worth mentioning...
 
 <br>
 
-:link:  **Links**
+### :link:  **LINKS**
 
 Download from CurseForge : https://www.curseforge.com/wow/addons/groupie
 
@@ -40,7 +40,7 @@ Reddit Announcement Post : TODO
 
 <br>
 
-:hand:  **Current Needs**
+### :hand:  **CURRENT NEEDS**
 
 As a new add-on, we can use a hand raising awarenss. If you're a streamer, please feel free to plug or review Groupie on your channel.
 
