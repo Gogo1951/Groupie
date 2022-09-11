@@ -2,7 +2,7 @@ local addonName, addon = ...
 -------------------------------
 -- Right Click Functionality --
 -------------------------------
-function addon.SendPlayerInfo(targetName, dropdownMenu, which, instanceName)
+function addon.SendPlayerInfo(targetName, dropdownMenu, which, instanceName, fullName)
 	addon.UpdateSpecOptions()
 	--Calculate average itemlevel
 	local iLevelSum = 0
@@ -59,7 +59,26 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, instanceName)
 		lfgStr = "for " .. instanceName
 	end
 
-	local groupieMsg = format("{rt3} %s : %s %s! %s %s %s in %s-level gear.%s %s-speaking Player."
+	local achieveLinkStr = ""
+	--include relevant achievement link if available
+	if fullName then
+		local priorities = addon.groupieAchievementPriorities[fullName]
+		if priorities ~= nil then
+			for i = 1, #priorities do
+				if achieveLinkStr == "" then
+					local _, _, _, completed = GetAchievementInfo(priorities[i])
+					if completed then
+						local achieveLink = GetAchievementLink(priorities[i])
+						if achieveLink then
+							achieveLinkStr = achieveLink
+						end
+					end
+				end
+			end
+		end
+	end
+
+	local groupieMsg = format("{rt3} %s : %s %s! %s %s %s in %s-level gear.%s %s-speaking Player. %s"
 		,
 		addonName,
 		activeRole,
@@ -69,7 +88,8 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, instanceName)
 		myclass,
 		tostring(averageiLevel),
 		otherspecmsg,
-		addon.groupieLocaleTable[mylocale]
+		addon.groupieLocaleTable[mylocale],
+		achieveLinkStr
 	)
 	--Sending Current Spec Info
 	if which == "BN_FRIEND" then
@@ -105,9 +125,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 	if name == nil then
 		name = UnitName(unit)
 	end
-	for key, val in pairs(addon.groupieAchievementPriorities) do
-		print(key, #val)
-	end
+
 	--Return if the unit is not a player
 	if unit ~= nil and not UnitIsPlayer(unit) then
 		return
