@@ -951,7 +951,7 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         tooltip:AddLine("Click |cffffffffor|r /groupie |cffffffff: Open " .. addonName .. "|r ")
         tooltip:AddLine(" ")
         tooltip:AddLine("Right Click |cffffffff: Open " .. addonName .. " Settings|r ")
-        --TODO: Version check, sort by instance order and then player name alphabetically
+        --TODO: Version check
         for _, order in ipairs(addon.instanceOrders) do
             local val = addon.db.global.savedInstanceInfo[order]
             if val then
