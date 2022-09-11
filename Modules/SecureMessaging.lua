@@ -2,14 +2,14 @@ local addonName, Groupie = ...
 
 local List = LibStub("List-1.0")
 
-local COLOR = {RED = "FFF44336", GREEN = "FF4CAF50"}
+local COLOR = { RED = "FFF44336", GREEN = "FF4CAF50" }
 
 local prototype = {
     print = print,
     verified = List:new(),
     COLOR = COLOR,
     ADDON_PREFIX = "Groupie.SM",
-    PROTECTED_TOKENS = List:new{
+    PROTECTED_TOKENS = List:new {
         [1] = "{rt3}%s*groupie%s*:",
         [2] = "groupie%s*{rt3}%s*:"
     },
@@ -19,7 +19,7 @@ local prototype = {
 }
 
 local SecureMessaging = Groupie:NewModule("SecureMessaging", prototype,
-                                          "AceEvent-3.0")
+    "AceEvent-3.0")
 
 Groupie.SM = SecureMessaging
 
@@ -39,7 +39,7 @@ end
 
 function SecureMessaging:SendSecureMessage(message, chatType, target)
     C_ChatInfo.SendAddonMessage(SecureMessaging.ADDON_PREFIX, message, chatType,
-                                target)
+        target)
 end
 
 -- Use this for sending secure messages. It will send the message as per regular SendChatMessage, but will also send a prior addon message to verify the message.

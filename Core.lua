@@ -1038,7 +1038,8 @@ function addon:OnInitialize()
 
     --Setup team member tooltips
     GameTooltip:HookScript("OnTooltipSetUnit", function(...)
-        local curMouseOver = UnitGUID("MouseOver")
+        local unitname, unittype = GameTooltip:GetUnit()
+        local curMouseOver = UnitGUID(unittype)
         if addon.GroupieDevs[curMouseOver] then
             GameTooltip:AddLine(format("|TInterface\\AddOns\\" .. addonName .. "\\Images\\icon64:16:16:0:0|t %s : %s",
                 addonName, addon.GroupieDevs[curMouseOver]))
@@ -1638,3 +1639,6 @@ end
 --addon:RegisterEvent("PLAYER_TALENT_UPDATE", addon.UpdateSpecOptions)
 addon:RegisterEvent("CHARACTER_POINTS_CHANGED", addon.UpdateSpecOptions)
 addon:RegisterEvent("BOSS_KILL", addon.UpdateSavedInstances)
+
+
+addon:RegisterEvent("PLAYER_LEAVE_COMBAT", function() print('test test test') end)

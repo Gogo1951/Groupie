@@ -242,13 +242,17 @@ end
 --Stored in a double nested table with form:
 --savedInstanceInfo[instanceOrder][playerName]
 function addon.UpdateSavedInstances()
-    local isHeroic, shouldBeHeroic = false, false
     local playerName = UnitName("player")
     for i = 1, GetNumSavedInstances() do
         local name, _, reset, _, locked, _, _, _, maxPlayers, difficultyName, _, _ = GetSavedInstanceInfo(i)
+        --Preprocess name returned by GetSavedInstanceInfo
+        local savedname = strlower(gsub(gsub(name, "%W", ""), "%s+", " "))
         if locked and (reset > 0) then --check that the lockout is active
             for key, val in pairs(addon.groupieInstanceData) do
-                if strfind(key, name) then --Check that the name matches
+                local isHeroic, shouldBeHeroic = false, false
+                --Preprocess our name from groupieInstanceData
+                local ourname = strlower(gsub(gsub(gsub(gsub(key, " %- .+", ""), "Heroic ", ""), "%W", ""), "%s+", " "))
+                if strfind(savedname, ourname) then --Check that the name matches
                     if strfind(difficultyName, "Heroic") then
                         isHeroic = true
                     end
