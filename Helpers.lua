@@ -244,7 +244,7 @@ end
 function addon.UpdateSavedInstances()
     local playerName = UnitName("player")
     for i = 1, GetNumSavedInstances() do
-        local name, _, reset, _, locked, _, _, _, maxPlayers, difficultyName, _, _ = GetSavedInstanceInfo(i)
+        local name, _, reset, _, locked, _, _, _, maxPlayers, difficultyName = GetSavedInstanceInfo(i)
         --Preprocess name returned by GetSavedInstanceInfo
         local savedname = strlower(gsub(gsub(name, "%W", ""), "%s+", " "))
         if locked and (reset > 0) then --check that the lockout is active
