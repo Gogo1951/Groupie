@@ -954,17 +954,28 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         --TODO: Version check, sort by instance order and then player name alphabetically
         for _, order in ipairs(addon.instanceOrders) do
             local val = addon.db.global.savedInstanceInfo[order]
-            local titleFlag = false
-            if val ~= nil then
+            if val then
+                local titleFlag = false
+                local numindex = {}
+                local idx = 1
                 for player, lockout in pairs(val) do
-                    if lockout.resetTime > now then
-                        if not titleFlag then
-                            titleFlag = true
-                            tooltip:AddLine(" ")
-                            tooltip:AddLine(lockout.instance, 255, 255, 255, false)
-                            tooltip:AddLine("|cff9E9E9E  Reset : " .. addon.GetTimeSinceString(lockout.resetTime, 4))
+                    numindex[idx] = player
+                    idx = idx + 1
+                end
+                sort(numindex, function(a, b) return a < b end)
+
+                if val ~= nil then
+                    for i, player in pairs(numindex) do
+                        local lockout = val[player]
+                        if lockout.resetTime > now then
+                            if not titleFlag then
+                                titleFlag = true
+                                tooltip:AddLine(" ")
+                                tooltip:AddLine(lockout.instance, 255, 255, 255, false)
+                                tooltip:AddLine("|cff9E9E9E  Reset : " .. addon.GetTimeSinceString(lockout.resetTime, 4))
+                            end
+                            tooltip:AddLine("    |cff" .. lockout.classColor .. player .. "|r")
                         end
-                        tooltip:AddLine("    |cff" .. lockout.classColor .. player .. "|r")
                     end
                 end
             end
