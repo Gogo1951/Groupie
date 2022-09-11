@@ -7,6 +7,7 @@ local GroupieRoleDropdown   = nil
 local GroupieLootDropdown   = nil
 local GroupieLangDropdown   = nil
 local GroupieLevelDropdown  = nil
+local ShowingFontStr        = nil
 local columnCount           = 0
 local LFGScrollFrame        = nil
 local WINDOW_WIDTH          = 960
@@ -23,7 +24,7 @@ local COL_LEADER            = 100
 local COL_INSTANCE          = 175
 local COL_LOOT              = 76
 local DROPDOWN_WIDTH        = 100
-local DROPDOWN_HEIGHT       = 25
+local DROPDOWN_LEFTOFFSET   = 115
 local DROPDOWN_PAD          = 32
 
 local COL_MSG = WINDOW_WIDTH - COL_CREATED - COL_TIME - COL_LEADER - COL_INSTANCE - COL_LOOT - ICON_WIDTH - 44
@@ -530,29 +531,33 @@ function addon.TabSwap(isHeroic, size, tabType, tabNum)
     --Only show level dropdown on normal dungeon tab
     --Show no filters on pvp tab
     if tabNum == 1 then --Normal dungeons
-        GroupieLangDropdown:SetPoint("TOPLEFT", 75 + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
+        GroupieLangDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
         GroupieLevelDropdown:Show()
         GroupieRoleDropdown:Show()
         GroupieLootDropdown:Show()
         GroupieLangDropdown:Show()
+        ShowingFontStr:Show()
     elseif tabNum == 8 then --Other
-        GroupieLangDropdown:SetPoint("TOPLEFT", 75 + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 1, 55)
+        GroupieLangDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 1, 55)
         GroupieLevelDropdown:Hide()
         GroupieRoleDropdown:Show()
         GroupieLootDropdown:Hide()
         GroupieLangDropdown:Show()
+        ShowingFontStr:Show()
     elseif tabNum == 7 then --PVP
-        GroupieLangDropdown:SetPoint("TOPLEFT", 75 + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
+        GroupieLangDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
         GroupieLevelDropdown:Hide()
         GroupieRoleDropdown:Hide()
         GroupieLootDropdown:Hide()
         GroupieLangDropdown:Hide()
+        ShowingFontStr:Hide()
     else --All other tabs
-        GroupieLangDropdown:SetPoint("TOPLEFT", 75 + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
+        GroupieLangDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
         GroupieLevelDropdown:Hide()
         GroupieRoleDropdown:Show()
         GroupieLootDropdown:Show()
         GroupieLangDropdown:Show()
+        ShowingFontStr:Show()
     end
 
     DrawListings(LFGScrollFrame)
@@ -729,7 +734,7 @@ local function BuildGroupieWindow()
     ---------------------------------
     --Group Listing Board Dropdowns--
     ---------------------------------
-    local ShowingFontStr = MainTabFrame:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
+    ShowingFontStr = MainTabFrame:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
     ShowingFontStr:SetPoint("TOPLEFT", 65, 48)
     ShowingFontStr:SetWidth(54)
     ShowingFontStr:SetText("Showing: ")
@@ -738,7 +743,7 @@ local function BuildGroupieWindow()
     --Role Dropdown
     GroupieRoleDropdown = CreateFrame("Frame", "GroupieRoleDropdown", MainTabFrame, "UIDropDownMenuTemplate")
     UIDropDownMenu_SetWidth(GroupieRoleDropdown, DROPDOWN_WIDTH, DROPDOWN_PAD)
-    GroupieRoleDropdown:SetPoint("TOPLEFT", 115, 55)
+    GroupieRoleDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET, 55)
     local function RoleDropdownOnClick(self, arg1)
         if arg1 == 0 then
             UIDropDownMenu_SetText(GroupieRoleDropdown, "LF Any Role")
@@ -777,7 +782,7 @@ local function BuildGroupieWindow()
     --Loot Type Dropdown
     GroupieLootDropdown = CreateFrame("Frame", "GroupieLootDropdown", MainTabFrame, "UIDropDownMenuTemplate")
     UIDropDownMenu_SetWidth(GroupieLootDropdown, DROPDOWN_WIDTH, DROPDOWN_PAD)
-    GroupieLootDropdown:SetPoint("TOPLEFT", 115 + DROPDOWN_WIDTH + DROPDOWN_PAD, 55)
+    GroupieLootDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + DROPDOWN_WIDTH + DROPDOWN_PAD, 55)
     local function LootDropdownOnClick(self, arg1)
         if arg1 == 0 then
             UIDropDownMenu_SetText(GroupieLootDropdown, "All Loot Styles")
@@ -821,7 +826,7 @@ local function BuildGroupieWindow()
     --Language Dropdown
     GroupieLangDropdown = CreateFrame("Frame", "GroupieLangDropdown", MainTabFrame, "UIDropDownMenuTemplate")
     UIDropDownMenu_SetWidth(GroupieLangDropdown, DROPDOWN_WIDTH, DROPDOWN_PAD)
-    GroupieLangDropdown:SetPoint("TOPLEFT", 115 + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
+    GroupieLangDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
     local function LangDropdownOnClick(self, arg1)
         if arg1 == 0 then
             UIDropDownMenu_SetText(GroupieLangDropdown, "All Languages")
@@ -853,7 +858,7 @@ local function BuildGroupieWindow()
     --Dungeon Level Dropdown
     GroupieLevelDropdown = CreateFrame("Frame", "GroupieLevelDropdown", MainTabFrame, "UIDropDownMenuTemplate")
     UIDropDownMenu_SetWidth(GroupieLevelDropdown, DROPDOWN_WIDTH * 2, DROPDOWN_PAD)
-    GroupieLevelDropdown:SetPoint("TOPLEFT", 115 + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 3, 55)
+    GroupieLevelDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 3, 55)
     local function LevelDropdownOnClick(self, arg1)
         if arg1 == 0 then
             UIDropDownMenu_SetText(GroupieLevelDropdown, "Recommended Level Dungeons")
