@@ -1127,6 +1127,14 @@ function addon.SetupConfig()
                         get = function(info) return "https://github.com/Gogo1951/Groupie" end,
                         set = function(info, val) return end,
                     },
+                    spacerdesc4 = { type = "description", name = " ", width = "full", order = 10 },
+                    paragraph1 = {
+                        type = "description",
+                        name = "put_text_here",
+                        width = "full",
+                        order = 11,
+                        fontSize = "small", --can be small, medium, large
+                    },
                 }
             },
             instancefilters25H = {

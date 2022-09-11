@@ -779,6 +779,8 @@ addon.groupieInstancePatterns = addon.TableFlip(addon.groupieUnflippedDungeonPat
 addon.groupieLootPatterns = addon.TableFlip(addon.groupieUnflippedLootPatterns)
 addon.groupieLanguagePatterns = addon.TableFlip(addon.groupieUnflippedLanguagePatterns)
 
+--Script to generate GUID for a player
+--/run local name = UnitName("player"); local guid = UnitGUID("player"); ChatFrame1:AddMessage(name.." has the GUID: "..guid);
 addon.GroupieDevs = {
     ["Player-4408-044DE7F9"] = "Team Member", -- Gogodeekay-Faerlina
     ["Player-4408-03D2C535"] = "Team Member", -- Gogodruid-Faerlina
