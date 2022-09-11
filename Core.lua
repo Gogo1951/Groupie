@@ -327,6 +327,7 @@ local function ListingOnClick(self, button, down)
     addon.groupieBoardButtons[addon.selectedListing]:LockHighlight()
     local fullName = addon.groupieBoardButtons[addon.selectedListing].listing.author
     local instance = addon.groupieBoardButtons[addon.selectedListing].listing.instanceName
+    local fullInstance = addon.groupieBoardButtons[addon.selectedListing].listing.fullName
     local displayName = gsub(fullName, "-.+", "")
     DrawListings(LFGScrollFrame)
 
@@ -366,7 +367,7 @@ local function ListingOnClick(self, button, down)
             { text = "Current Spec : " .. maxTalentSpec, notCheckable = true, leftPadding = 8,
                 func = function()
                     if instance ~= "Miscellaneous" and instance ~= "PVP" then
-                        addon.SendPlayerInfo(fullName, nil, nil, instance)
+                        addon.SendPlayerInfo(fullName, nil, nil, instance, fullInstance)
                     else
                         addon.SendPlayerInfo(fullName)
                     end
