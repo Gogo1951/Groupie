@@ -1656,6 +1656,3 @@ end
 --addon:RegisterEvent("PLAYER_TALENT_UPDATE", addon.UpdateSpecOptions)
 addon:RegisterEvent("CHARACTER_POINTS_CHANGED", addon.UpdateSpecOptions)
 addon:RegisterEvent("BOSS_KILL", addon.UpdateSavedInstances)
-
-
-addon:RegisterEvent("PLAYER_LEAVE_COMBAT", function() print('test test test') end)
