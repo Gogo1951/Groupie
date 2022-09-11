@@ -103,7 +103,7 @@ function addon.EndsWith(str, pattern)
 end
 
 --Generate toggles for all instances of a specified type
-function addon.GenerateInstanceToggles(order, instanceType, showMaxLevel, configGroup, instanceSize, isHeroic)
+function addon.GenerateInstanceToggles(order, instanceType, showMaxLevel, configGroup)
     local initorder = order
     addon.options.args[configGroup].args[tostring(initorder) .. "headerspacer"] = {
         type = "description",
@@ -123,32 +123,27 @@ function addon.GenerateInstanceToggles(order, instanceType, showMaxLevel, config
 
     for _, key in ipairs(addon.instanceOrders) do
         if addon.instanceConfigData[key].InstanceType == instanceType then
-            if instanceSize ~= nil and isHeroic ~= nil and
-                (instanceSize ~= addon.instanceConfigData[key].GroupSize or
-                    isHeroic ~= addon.instanceConfigData[key].IsHeroic) then
-                --if getting a specific size/difficulty, skip if they are not matching our arguments
+
+            local nameStr = ""
+            if showMaxLevel then
+                nameStr = format("%s | %d-%d", addon.instanceConfigData[key].Name,
+                    addon.instanceConfigData[key].MinLevel, addon.instanceConfigData[key].MaxLevel,
+                    addon.instanceConfigData[key].GroupSize)
             else
-                local nameStr = ""
-                if showMaxLevel then
-                    nameStr = format("%s | %d-%d", addon.instanceConfigData[key].Name,
-                        addon.instanceConfigData[key].MinLevel, addon.instanceConfigData[key].MaxLevel,
-                        addon.instanceConfigData[key].GroupSize)
-                else
-                    nameStr = format("%s | %d", addon.instanceConfigData[key].Name,
-                        addon.instanceConfigData[key].MinLevel, addon.instanceConfigData[key].GroupSize)
-                end
-                addon.options.args[configGroup].args[addon.instanceConfigData[key].Name] = {
-                    type = "toggle",
-                    name = nameStr,
-                    order = initorder,
-                    width = "full",
-                    get = function(info) return not addon.db.char.hideInstances[key] end,
-                    set = function(info, val)
-                        addon.db.char.hideInstances[key] = not val
-                    end,
-                }
-                initorder = initorder + 1
+                nameStr = format("%s | %d", addon.instanceConfigData[key].Name,
+                    addon.instanceConfigData[key].MinLevel, addon.instanceConfigData[key].GroupSize)
             end
+            addon.options.args[configGroup].args[addon.instanceConfigData[key].Name] = {
+                type = "toggle",
+                name = nameStr,
+                order = initorder,
+                width = "full",
+                get = function(info) return not addon.db.char.hideInstances[key] end,
+                set = function(info, val)
+                    addon.db.char.hideInstances[key] = not val
+                end,
+            }
+            initorder = initorder + 1
         end
     end
 end

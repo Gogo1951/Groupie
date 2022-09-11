@@ -1,29 +1,30 @@
-local addonName, Groupie   = ...
+local addonName, Groupie    = ...
 --Main UI variables
-local GroupieFrame         = nil
-local MainTabFrame         = nil
-local GroupieRoleDropdown  = nil
-local GroupieLootDropdown  = nil
-local GroupieLangDropdown  = nil
-local GroupieLevelDropdown = nil
-local columnCount          = 0
-local LFGScrollFrame       = nil
-local WINDOW_WIDTH         = 960
-local WINDOW_HEIGHT        = 640
-local WINDOW_YOFFSET       = -84
-local ICON_WIDTH           = 32
-local WINDOW_OFFSET        = 133
-local BUTTON_HEIGHT        = 40
-local BUTTON_TOTAL         = math.floor((WINDOW_HEIGHT - WINDOW_OFFSET) / BUTTON_HEIGHT) + 1
-local BUTTON_WIDTH         = WINDOW_WIDTH - 44
-local COL_CREATED          = 75
-local COL_TIME             = 75
-local COL_LEADER           = 100
-local COL_INSTANCE         = 175
-local COL_LOOT             = 76
-local DROPDOWN_WIDTH       = 100
-local DROPDOWN_HEIGHT      = 25
-local DROPDOWN_PAD         = 32
+local GroupieFrame          = nil
+local MainTabFrame          = nil
+local GroupieSettingsButton = nil
+local GroupieRoleDropdown   = nil
+local GroupieLootDropdown   = nil
+local GroupieLangDropdown   = nil
+local GroupieLevelDropdown  = nil
+local columnCount           = 0
+local LFGScrollFrame        = nil
+local WINDOW_WIDTH          = 960
+local WINDOW_HEIGHT         = 640
+local WINDOW_YOFFSET        = -84
+local ICON_WIDTH            = 32
+local WINDOW_OFFSET         = 133
+local BUTTON_HEIGHT         = 40
+local BUTTON_TOTAL          = math.floor((WINDOW_HEIGHT - WINDOW_OFFSET) / BUTTON_HEIGHT) + 1
+local BUTTON_WIDTH          = WINDOW_WIDTH - 44
+local COL_CREATED           = 75
+local COL_TIME              = 75
+local COL_LEADER            = 100
+local COL_INSTANCE          = 175
+local COL_LOOT              = 76
+local DROPDOWN_WIDTH        = 100
+local DROPDOWN_HEIGHT       = 25
+local DROPDOWN_PAD          = 32
 
 local COL_MSG = WINDOW_WIDTH - COL_CREATED - COL_TIME - COL_LEADER - COL_INSTANCE - COL_LOOT - ICON_WIDTH - 44
 
@@ -728,10 +729,16 @@ local function BuildGroupieWindow()
     ---------------------------------
     --Group Listing Board Dropdowns--
     ---------------------------------
+    local ShowingFontStr = MainTabFrame:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
+    ShowingFontStr:SetPoint("TOPLEFT", 65, 48)
+    ShowingFontStr:SetWidth(54)
+    ShowingFontStr:SetText("Showing: ")
+    ShowingFontStr:SetJustifyH("LEFT")
+    ShowingFontStr:SetJustifyV("MIDDLE")
     --Role Dropdown
     GroupieRoleDropdown = CreateFrame("Frame", "GroupieRoleDropdown", MainTabFrame, "UIDropDownMenuTemplate")
     UIDropDownMenu_SetWidth(GroupieRoleDropdown, DROPDOWN_WIDTH, DROPDOWN_PAD)
-    GroupieRoleDropdown:SetPoint("TOPLEFT", 75, 55)
+    GroupieRoleDropdown:SetPoint("TOPLEFT", 115, 55)
     local function RoleDropdownOnClick(self, arg1)
         if arg1 == 0 then
             UIDropDownMenu_SetText(GroupieRoleDropdown, "LF Any Role")
@@ -770,7 +777,7 @@ local function BuildGroupieWindow()
     --Loot Type Dropdown
     GroupieLootDropdown = CreateFrame("Frame", "GroupieLootDropdown", MainTabFrame, "UIDropDownMenuTemplate")
     UIDropDownMenu_SetWidth(GroupieLootDropdown, DROPDOWN_WIDTH, DROPDOWN_PAD)
-    GroupieLootDropdown:SetPoint("TOPLEFT", 75 + DROPDOWN_WIDTH + DROPDOWN_PAD, 55)
+    GroupieLootDropdown:SetPoint("TOPLEFT", 115 + DROPDOWN_WIDTH + DROPDOWN_PAD, 55)
     local function LootDropdownOnClick(self, arg1)
         if arg1 == 0 then
             UIDropDownMenu_SetText(GroupieLootDropdown, "All Loot Styles")
@@ -814,7 +821,7 @@ local function BuildGroupieWindow()
     --Language Dropdown
     GroupieLangDropdown = CreateFrame("Frame", "GroupieLangDropdown", MainTabFrame, "UIDropDownMenuTemplate")
     UIDropDownMenu_SetWidth(GroupieLangDropdown, DROPDOWN_WIDTH, DROPDOWN_PAD)
-    GroupieLangDropdown:SetPoint("TOPLEFT", 75 + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
+    GroupieLangDropdown:SetPoint("TOPLEFT", 115 + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
     local function LangDropdownOnClick(self, arg1)
         if arg1 == 0 then
             UIDropDownMenu_SetText(GroupieLangDropdown, "All Languages")
@@ -846,7 +853,7 @@ local function BuildGroupieWindow()
     --Dungeon Level Dropdown
     GroupieLevelDropdown = CreateFrame("Frame", "GroupieLevelDropdown", MainTabFrame, "UIDropDownMenuTemplate")
     UIDropDownMenu_SetWidth(GroupieLevelDropdown, DROPDOWN_WIDTH * 2, DROPDOWN_PAD)
-    GroupieLevelDropdown:SetPoint("TOPLEFT", 75 + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 3, 55)
+    GroupieLevelDropdown:SetPoint("TOPLEFT", 115 + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 3, 55)
     local function LevelDropdownOnClick(self, arg1)
         if arg1 == 0 then
             UIDropDownMenu_SetText(GroupieLevelDropdown, "Recommended Level Dungeons")
@@ -871,6 +878,16 @@ local function BuildGroupieWindow()
     UIDropDownMenu_Initialize(GroupieLevelDropdown, LevelDropdownInit)
     UIDropDownMenu_SetText(GroupieLevelDropdown, "Recommended Level Dungeons")
     MainTabFrame.levelFilter = true
+
+    --Settings Button
+    GroupieSettingsButton = CreateFrame("Button", "GroupieTopFrame", MainTabFrame, "UIPanelButtonTemplate")
+    GroupieSettingsButton:SetSize(100, 22)
+    GroupieSettingsButton:SetText("Settings")
+    GroupieSettingsButton:SetPoint("TOPRIGHT", 0, 55)
+    GroupieSettingsButton:SetScript("OnClick", function()
+        GroupieFrame:Hide()
+        addon:OpenConfig()
+    end)
 
     ------------------
     --Scroller Frame--
@@ -934,18 +951,21 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         tooltip:AddLine("Click |cffffffffor|r /groupie |cffffffff: Open " .. addonName .. "|r ")
         tooltip:AddLine(" ")
         tooltip:AddLine("Right Click |cffffffff: Open " .. addonName .. " Settings|r ")
-        tooltip:AddLine(" ")
         --TODO: Version check, sort by instance order and then player name alphabetically
-        for order, val in pairs(addon.db.global.savedInstanceInfo) do
+        for _, order in ipairs(addon.instanceOrders) do
+            local val = addon.db.global.savedInstanceInfo[order]
             local titleFlag = false
-            for player, lockout in pairs(val) do
-                if lockout.resetTime > now then
-                    if not titleFlag then
-                        titleFlag = true
-                        tooltip:AddLine(lockout.instance, 255, 255, 255, false)
-                        tooltip:AddLine("|cff9E9E9E  Reset : " .. addon.GetTimeSinceString(lockout.resetTime, 4))
+            if val ~= nil then
+                for player, lockout in pairs(val) do
+                    if lockout.resetTime > now then
+                        if not titleFlag then
+                            titleFlag = true
+                            tooltip:AddLine(" ")
+                            tooltip:AddLine(lockout.instance, 255, 255, 255, false)
+                            tooltip:AddLine("|cff9E9E9E  Reset : " .. addon.GetTimeSinceString(lockout.resetTime, 4))
+                        end
+                        tooltip:AddLine("    |cff" .. lockout.classColor .. player .. "|r")
                     end
-                    tooltip:AddLine("    |cff" .. lockout.classColor .. player .. "|r")
                 end
             end
         end
@@ -1137,8 +1157,8 @@ function addon.SetupConfig()
                     },
                 }
             },
-            instancefilters25H = {
-                name = "Filters - Raid 25 (H)",
+            instancefiltersWrath = {
+                name = "Instance Filters - Wrath",
                 desc = "Filter Groups by Instance",
                 type = "group",
                 width = "double",
@@ -1147,15 +1167,15 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " | Filters - Raid 25 (H)",
+                        name = "|cffffd900" .. addonName .. " | Instance Filters - Wrath",
                         order = 0,
                         fontSize = "large"
                     },
 
                 }
             },
-            instancefilters10H = {
-                name = "Filters - Raid 10 (H)",
+            instancefiltersTBC = {
+                name = "Instance Filters - TBC",
                 desc = "Filter Groups by Instance",
                 type = "group",
                 width = "double",
@@ -1164,15 +1184,15 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " | Filters - Raid 10 (H)",
+                        name = "|cffffd900" .. addonName .. " | Instance Filters - TBC",
                         order = 0,
                         fontSize = "large"
                     },
 
                 }
             },
-            instancefilters25 = {
-                name = "Filters - Raid 25",
+            instancefiltersClassic = {
+                name = "Instance Filters - Classic",
                 desc = "Filter Groups by Instance",
                 type = "group",
                 width = "double",
@@ -1181,75 +1201,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " | Filters - Raid 25",
-                        order = 0,
-                        fontSize = "large"
-                    },
-
-                }
-            },
-            instancefilters10 = {
-                name = "Filters - Raid 10",
-                desc = "Filter Groups by Instance",
-                type = "group",
-                width = "double",
-                inline = false,
-                order = 7,
-                args = {
-                    header1 = {
-                        type = "description",
-                        name = "|cffffd900" .. addonName .. " | Filters - Raid 10",
-                        order = 0,
-                        fontSize = "large"
-                    },
-
-                }
-            },
-            instancefilters5H = {
-                name = "Filters - Dungeons (H)",
-                desc = "Filter Groups by Instance",
-                type = "group",
-                width = "double",
-                inline = false,
-                order = 8,
-                args = {
-                    header1 = {
-                        type = "description",
-                        name = "|cffffd900" .. addonName .. " | Filters - Dungeons (H)",
-                        order = 0,
-                        fontSize = "large"
-                    },
-
-                }
-            },
-            instancefilters5 = {
-                name = "Filters - Dungeons",
-                desc = "Filter Groups by Instance",
-                type = "group",
-                width = "double",
-                inline = false,
-                order = 9,
-                args = {
-                    header1 = {
-                        type = "description",
-                        name = "|cffffd900" .. addonName .. " | Filters - Dungeons",
-                        order = 0,
-                        fontSize = "large"
-                    },
-
-                }
-            },
-            instancefiltersother = {
-                name = "Filters - Classic Raids",
-                desc = "Filter Groups by Instance",
-                type = "group",
-                width = "double",
-                inline = false,
-                order = 10,
-                args = {
-                    header1 = {
-                        type = "description",
-                        name = "|cffffd900" .. addonName .. " | Filters - Classic Raids",
+                        name = "|cffffd900" .. addonName .. " | Instance Filters - Classic",
                         order = 0,
                         fontSize = "large"
                     },
@@ -1598,20 +1550,17 @@ function addon.SetupConfig()
     ---------------------------------------
     -- Generate Instance Filter Controls --
     ---------------------------------------
-    addon.GenerateInstanceToggles(1, "Wrath of the Lich King Heroic Raids - 25", false, "instancefilters25H")
-    addon.GenerateInstanceToggles(1, "Wrath of the Lich King Heroic Raids - 10", false, "instancefilters10H")
-    addon.GenerateInstanceToggles(1, "Wrath of the Lich King Raids - 25", false, "instancefilters25", 25, false)
-    addon.GenerateInstanceToggles(101, "The Burning Crusade Raids", false, "instancefilters25", 25, false)
-    addon.GenerateInstanceToggles(1, "Wrath of the Lich King Raids - 10", false, "instancefilters10", 10, false)
-    addon.GenerateInstanceToggles(101, "The Burning Crusade Raids", false, "instancefilters10", 10, false)
-    addon.GenerateInstanceToggles(201, "Classic Raids", false, "instancefilters10", 10, false)
-
-    addon.GenerateInstanceToggles(1, "Wrath of the Lich King Heroic Dungeons", false, "instancefilters5H", 5, true)
-    addon.GenerateInstanceToggles(101, "The Burning Crusade Heroic Dungeons", true, "instancefilters5H", 5, true)
-    addon.GenerateInstanceToggles(1, "Wrath of the Lich King Dungeons", true, "instancefilters5", 5, false)
-    addon.GenerateInstanceToggles(101, "The Burning Crusade Dungeons", true, "instancefilters5", 5, false)
-    addon.GenerateInstanceToggles(201, "Classic Dungeons", true, "instancefilters5", 5, false)
-    addon.GenerateInstanceToggles(1, "Classic Raids", false, "instancefiltersother")
+    addon.GenerateInstanceToggles(1, "Wrath of the Lich King Heroic Raids - 25", false, "instancefiltersWrath")
+    addon.GenerateInstanceToggles(101, "Wrath of the Lich King Heroic Raids - 10", false, "instancefiltersWrath")
+    addon.GenerateInstanceToggles(201, "Wrath of the Lich King Raids - 25", false, "instancefiltersWrath")
+    addon.GenerateInstanceToggles(301, "Wrath of the Lich King Raids - 10", false, "instancefiltersWrath")
+    addon.GenerateInstanceToggles(401, "Wrath of the Lich King Heroic Dungeons", false, "instancefiltersWrath")
+    addon.GenerateInstanceToggles(501, "Wrath of the Lich King Dungeons", true, "instancefiltersWrath")
+    addon.GenerateInstanceToggles(601, "The Burning Crusade Raids", false, "instancefiltersTBC")
+    addon.GenerateInstanceToggles(701, "The Burning Crusade Heroic Dungeons", true, "instancefiltersTBC")
+    addon.GenerateInstanceToggles(801, "The Burning Crusade Dungeons", true, "instancefiltersTBC")
+    addon.GenerateInstanceToggles(901, "Classic Raids", false, "instancefiltersClassic")
+    addon.GenerateInstanceToggles(1001, "Classic Dungeons", true, "instancefiltersClassic")
     ----------------------------------
     -- End Instance Filter Controls --
     ----------------------------------

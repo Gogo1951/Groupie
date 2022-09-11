@@ -796,6 +796,7 @@ addon.GroupieDevs = {
     ["Player-4408-039B90A8"] = "Team Member", -- Aevala-Faerlina
     ["Player-4408-03AA25B2"] = "Team Member", -- Kattz-Faerlina
     ["Player-4467-02AB80C7"] = "Team Member", -- Raegen-Firemaw
+    ["Player-4647-023571C6"] = "Team Member", -- Kynura-Grobbulus
 
     ["Player-4728-03F542F0"] = "Team Member", -- Cooltestguy-Benediction
 }
