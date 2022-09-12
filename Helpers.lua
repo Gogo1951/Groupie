@@ -238,6 +238,18 @@ function addon.RunSlashCmd(cmd)
     end
 end
 
+--Expire out of date lockouts
+function addon.ExpireSavedInstances()
+    local now = time()
+    for order, val in pairs(addon.db.global.savedInstanceInfo) do
+        for player, lockout in pairs(val) do
+            if lockout.resetTime < now then
+                addon.db.global.savedInstanceInfo[order][player] = nil
+            end
+        end
+    end
+end
+
 --Update a character's saved instances
 --Stored in a double nested table with form:
 --savedInstanceInfo[instanceOrder][playerName]
@@ -280,15 +292,8 @@ function addon.UpdateSavedInstances()
         end
     end
 
-    --Expire out of date lockouts
-    local now = time()
-    for order, val in pairs(addon.db.global.savedInstanceInfo) do
-        for player, lockout in pairs(val) do
-            if lockout.resetTime < now then
-                addon.db.global.savedInstanceInfo[order][player] = nil
-            end
-        end
-    end
+    addon.ExpireSavedInstances()
+
     --Inject test data for instance filtering/minimap based on saved instances
     --[[
     addon.db.global.savedInstanceInfo[2330] = {}

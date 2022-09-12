@@ -522,6 +522,7 @@ end
 function addon.TabSwap(isHeroic, size, tabType, tabNum)
     addon.ExpireListings()
     MainTabFrame:Show()
+
     --Reset environment values
     MainTabFrame.isHeroic = isHeroic
     MainTabFrame.size = size
@@ -724,7 +725,13 @@ local function BuildGroupieWindow()
     MainTabFrame:SetPoint("TOPLEFT", GroupieFrame, "TOPLEFT", 8, WINDOW_YOFFSET)
     MainTabFrame:SetScript("OnShow",
         function(self)
-            return
+            --Update saved instances before showing listing board if it hasn't yet been done
+            if not addon.updatedSavedOnLogin then
+                addon.UpdateSavedInstances()
+            else
+                addon.ExpireSavedInstances()
+            end
+            addon.updatedSavedOnLogin = true
         end)
     MainTabFrame.infotext = MainTabFrame:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
     MainTabFrame.infotext:SetJustifyH("CENTER")
@@ -953,6 +960,7 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         end
     end,
     OnTooltipShow = function(tooltip)
+        addon.ExpireSavedInstances()
         local now = time()
         tooltip:AddLine(addonName)
         tooltip:AddLine("A better LFG tool for Classic WoW.", 255, 255, 255, false)
@@ -1604,7 +1612,6 @@ function addon.SetupConfig()
 
     --Update some saved variables for the current character
     addon.UpdateSpecOptions()
-    addon.UpdateSavedInstances()
 
     --Don't preserve Data if switching servers
     local currentServer = GetRealmName()
@@ -1612,6 +1619,8 @@ function addon.SetupConfig()
         addon.db.global.listingTable = {}
     end
     addon.db.global.lastServer = currentServer
+
+
 end
 
 function addon:OpenConfig()
@@ -1667,4 +1676,5 @@ end
 --Only actual talent changes
 --addon:RegisterEvent("PLAYER_TALENT_UPDATE", addon.UpdateSpecOptions)
 addon:RegisterEvent("CHARACTER_POINTS_CHANGED", addon.UpdateSpecOptions)
+--Update player's saved instances on boss kill and login
 addon:RegisterEvent("BOSS_KILL", addon.UpdateSavedInstances)
