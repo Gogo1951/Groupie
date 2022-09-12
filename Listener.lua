@@ -394,11 +394,9 @@ local function testfunc(_, msg, ...)
         local idx = 0
         for key, val in pairs(addon.groupieUnflippedDungeonPatterns) do
             local temppattern = gsub(val, " .+", "")
-            ParseMessage(nil, "lfm " .. temppattern, tostring(idx), nil, nil)
+            ParseMessage(nil, "lfm " .. temppattern, tostring(idx), nil, nil, UnitGUID("player"))
             idx = idx + 1
         end
-        ParseMessage(nil, "lfm togc", tostring(idx + 1), nil, nil)
-        ParseMessage(nil, "lfm icc 25h", tostring(idx + 2), nil, nil)
     end
 end
 
