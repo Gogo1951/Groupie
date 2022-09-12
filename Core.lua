@@ -464,7 +464,7 @@ local function CreateListingButtons()
         currentListing.btn = CreateFrame("Button", "$parentApplyBtn", currentListing, "UIPanelButtonTemplate")
         currentListing.btn:SetPoint("LEFT", currentListing.msg, "RIGHT", 4, 0)
         currentListing.btn:SetWidth(APPLY_BTN_WIDTH)
-        currentListing.btn:SetText("Apply")
+        currentListing.btn:SetText("LFG")
         currentListing.btn:SetScript("OnClick", function()
             return
         end)
