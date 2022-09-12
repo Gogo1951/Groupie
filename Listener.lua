@@ -189,7 +189,7 @@ local function GetGroupType(messageWords)
 end
 
 --Given a message passed by event handler, extract information about the party
-local function ParseMessage(event, msg, author, _, channel, classColor)
+local function ParseMessage(event, msg, author, _, channel, guid)
     local preprocessedStr = addon.Preprocess(msg)
     local messageWords = addon.GroupieSplit(preprocessedStr)
     local isLFG = false
@@ -206,6 +206,7 @@ local function ParseMessage(event, msg, author, _, channel, classColor)
     local instanceOrder = nil
     local instanceID = -1
     local icon = "Other.tga"
+    local classColor = addon.groupieSystemColor
 
     for i = 1, #messageWords do
         --handle cases of 'LF3M', etc by removing numbers for this part
@@ -317,6 +318,14 @@ local function ParseMessage(event, msg, author, _, channel, classColor)
         addon.db.global.listingTable[author].createdat = time()
     end
 
+    --Moved from Event listener to minimize API calls to only successfully parsed listings
+    --and only new listings, not updated listings. Should significantly reduce the api calls here
+    if addon.db.global.listingTable[author].classColor == nil then
+        classColor = addon.classColors[GetPlayerInfoByGUID(guid)]
+    else
+        classColor = addon.db.global.listingTable[author].classColor
+    end
+
     --Create the listing entry
     addon.db.global.listingTable[author].isLFM = isLFM
     addon.db.global.listingTable[author].isLFG = isLFG
@@ -347,10 +356,6 @@ end
 --Handle chat events
 local function GroupieEventHandlers(...)
     local event, msg, author, _, channel, _, _, _, _, _, _, _, guid = ...
-    local classColor = addon.classColors[GetPlayerInfoByGUID(guid)]
-    if classColor == nil then
-        classColor = addon.groupieSystemColor
-    end
     local validChannel = false
     if addon.db.char.useChannels["Guild"] and strmatch(channel, "Guild") then
         validChannel = true
@@ -366,7 +371,7 @@ local function GroupieEventHandlers(...)
         validChannel = true
     end
     if validChannel then
-        ParseMessage(event, msg, author, _, channel, classColor)
+        ParseMessage(event, msg, author, _, channel, guid)
     end
     return true
 end
