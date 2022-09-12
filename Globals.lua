@@ -613,8 +613,8 @@ addon.groupieInstanceData = {
         InstanceID = 229, MinLevel = 54, MaxLevel = 63, GroupSize = 5, Order = 1220, Icon = "LBRS.tga" },
     ["Blackrock Depths"] = { Active = true, Expac = "World of Warcraft", InstanceType = "Classic Dungeons",
         InstanceID = 230, MinLevel = 52, MaxLevel = 59, GroupSize = 5, Order = 1210, Icon = "BRD.tga" },
-    ["Sunken Temple"] = { Active = true, Expac = "World of Warcraft", InstanceType = "Classic Dungeons",
-        InstanceID = 109, MinLevel = 48, MaxLevel = 53, GroupSize = 5, Order = 1200, Icon = "ST.tga" },
+    ["Sunken Temple"] = { Active = true, Expac = "World of Warcraft", InstanceType = "Classic Dungeons", InstanceID = 109,
+        MinLevel = 48, MaxLevel = 53, GroupSize = 5, Order = 1200, Icon = "ST.tga" },
     ["Maraudon - Full Clear"] = { Active = true, Expac = "World of Warcraft", InstanceType = "Classic Dungeons",
         InstanceID = 349, MinLevel = 42, MaxLevel = 51, GroupSize = 5, Order = 1190, Icon = "MARA.tga" },
     ["Maraudon - Princess"] = { Active = true, Expac = "World of Warcraft", InstanceType = "Classic Dungeons",
@@ -876,9 +876,9 @@ addon.groupieAchievementPriorities = {
     },
     ["Hellfire Ramparts"] = {
         [1] = 1287,
+        [2] = 667,
         [3] = 1284,
         [4] = 647,
-        [5] = 667,
     },
     ["Heroic Ahn'kahet: The Old Kingdom"] = {
         [1] = 2136,
@@ -896,9 +896,9 @@ addon.groupieAchievementPriorities = {
     },
     ["Heroic Auchenai Crypts"] = {
         [1] = 1287,
+        [2] = 672,
         [3] = 1284,
         [4] = 666,
-        [5] = 672,
     },
     ["Heroic Drak'Tharon Keep"] = {
         [1] = 2136,
@@ -1145,13 +1145,13 @@ addon.groupieAchievementPriorities = {
     },
     ["Sethekk Halls"] = {
         [1] = 1287,
-        [3] = 674,
+        [2] = 674,
         [3] = 1284,
         [4] = 653,
     },
     ["Shadow Labyrinth"] = {
         [1] = 1287,
-        [3] = 675,
+        [2] = 675,
         [3] = 1284,
         [4] = 654,
     },
@@ -1165,25 +1165,25 @@ addon.groupieAchievementPriorities = {
     },
     ["The Arcatraz"] = {
         [1] = 1287,
-        [3] = 681,
+        [2] = 681,
         [3] = 1284,
         [4] = 660,
     },
     ["The Black Morass"] = {
         [1] = 1287,
-        [3] = 676,
+        [2] = 676,
         [3] = 1284,
         [4] = 655,
     },
     ["The Blood Furnace"] = {
         [1] = 1287,
-        [3] = 668,
+        [2] = 668,
         [3] = 1284,
         [4] = 648,
     },
     ["The Botanica"] = {
         [1] = 1287,
-        [3] = 680,
+        [2] = 680,
         [3] = 1284,
         [4] = 659,
     },
@@ -1207,7 +1207,7 @@ addon.groupieAchievementPriorities = {
     },
     ["The Mechanar"] = {
         [1] = 1287,
-        [3] = 679,
+        [2] = 679,
         [3] = 1284,
         [4] = 658,
     },
