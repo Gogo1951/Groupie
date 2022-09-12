@@ -21,7 +21,7 @@ local BUTTON_WIDTH          = WINDOW_WIDTH - 44
 local COL_CREATED           = 75
 local COL_TIME              = 75
 local COL_LEADER            = 100
-local COL_INSTANCE          = 125
+local COL_INSTANCE          = 135
 local COL_LOOT              = 76
 local DROPDOWN_WIDTH        = 100
 local DROPDOWN_LEFTOFFSET   = 115
@@ -29,7 +29,7 @@ local DROPDOWN_PAD          = 32
 local APPLY_BTN_WIDTH       = 64
 
 local COL_MSG = WINDOW_WIDTH - COL_CREATED - COL_TIME - COL_LEADER - COL_INSTANCE - COL_LOOT - ICON_WIDTH -
-    APPLY_BTN_WIDTH - 50
+    APPLY_BTN_WIDTH - 58
 
 local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0", "AceConsole-3.0", "AceTimer-3.0")
 
@@ -418,7 +418,7 @@ local function CreateListingButtons()
         currentListing.created:SetWidth(COL_CREATED)
 
         --Time column
-        currentListing.time = currentListing:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
+        currentListing.time = currentListing:CreateFontString("FontString", "OVERLAY", "GameFontNormal")
         currentListing.time:SetPoint("LEFT", currentListing.created, "RIGHT", 0, 0)
         currentListing.time:SetWidth(COL_TIME)
         currentListing.time:SetJustifyH("LEFT")
@@ -426,7 +426,7 @@ local function CreateListingButtons()
 
         --Leader name column
         currentListing.leader = currentListing:CreateFontString("FontString", "OVERLAY", "GameFontNormal")
-        currentListing.leader:SetPoint("LEFT", currentListing.time, "RIGHT", 0, 0)
+        currentListing.leader:SetPoint("LEFT", currentListing.time, "RIGHT", -4, 0)
         currentListing.leader:SetWidth(COL_LEADER)
         currentListing.leader:SetJustifyH("LEFT")
         currentListing.leader:SetJustifyV("MIDDLE")
@@ -434,7 +434,7 @@ local function CreateListingButtons()
         --Instance expansion column
         currentListing.icon = currentListing:CreateTexture("$parentIcon", "OVERLAY", nil, -8)
         currentListing.icon:SetSize(ICON_WIDTH, ICON_WIDTH / 2)
-        currentListing.icon:SetPoint("LEFT", currentListing.leader, "RIGHT", -8, 0)
+        currentListing.icon:SetPoint("LEFT", currentListing.leader, "RIGHT", -4, 0)
         currentListing.icon:SetTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\InstanceIcons\\Other.tga")
 
         --Instance name column
@@ -462,7 +462,7 @@ local function CreateListingButtons()
 
         --Apply button
         currentListing.btn = CreateFrame("Button", "$parentApplyBtn", currentListing, "UIPanelButtonTemplate")
-        currentListing.btn:SetPoint("LEFT", currentListing.msg, "RIGHT", 0, 0)
+        currentListing.btn:SetPoint("LEFT", currentListing.msg, "RIGHT", 4, 0)
         currentListing.btn:SetWidth(APPLY_BTN_WIDTH)
         currentListing.btn:SetText("Apply")
         currentListing.btn:SetScript("OnClick", function()
@@ -909,8 +909,8 @@ local function BuildGroupieWindow()
 
     --Settings Button
     GroupieSettingsButton = CreateFrame("Button", "GroupieTopFrame", MainTabFrame, "UIPanelButtonTemplate")
-    GroupieSettingsButton:SetSize(100, 22)
-    GroupieSettingsButton:SetText("Settings")
+    GroupieSettingsButton:SetSize(150, 22)
+    GroupieSettingsButton:SetText("Settings & Filters")
     GroupieSettingsButton:SetPoint("TOPRIGHT", 0, 55)
     GroupieSettingsButton:SetScript("OnClick", function()
         GroupieFrame:Hide()
@@ -1048,7 +1048,9 @@ function addon:OnInitialize()
             ignoreLFM = false,
             ignoreLFG = false,
             keywordBlacklist = {},
-            savedInstanceInfo = {}
+            savedInstanceInfo = {},
+            needsUpdateFlag = false,
+            needsUpdateVersion = 0,
         }
     }
     --Generate defaults for each individual dungeon filter
@@ -1089,7 +1091,7 @@ function addon:OnInitialize()
         print("GROUPIE DEBUG MODE: " .. tostring(addon.debugMenus))
     end
 
-    local function TestRunner(...)
+    --[[local function TestRunner(...)
         local module = addon:GetArgs(..., 1)
         module = module and module:lower()
 
@@ -1104,12 +1106,12 @@ function addon:OnInitialize()
         else
             print("No testable module found for " .. module)
         end
-    end
+    end--]]
 
     addon:RegisterChatCommand("groupie", BuildGroupieWindow)
     addon:RegisterChatCommand("groupiecfg", addon.OpenConfig)
     addon:RegisterChatCommand("groupiedebug", ToggleDebugMode)
-    addon:RegisterChatCommand("groupietest", TestRunner)
+    --addon:RegisterChatCommand("groupietest", TestRunner)
 
     addon.isInitialized = true
 end
@@ -1418,7 +1420,9 @@ function addon.SetupConfig()
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. addonName .. " After-Party Tool",
                         order = 15,
-                        fontSize = "medium"
+                        fontSize = "medium",
+                        hidden = true,
+                        disabled = true,
                     },
                     afterPartyToggle = {
                         type = "toggle",
@@ -1427,8 +1431,12 @@ function addon.SetupConfig()
                         width = "full",
                         get = function(info) return addon.db.char.afterParty end,
                         set = function(info, val) addon.db.char.afterParty = val end,
+                        hidden = true,
+                        disabled = true,
                     },
-                    spacerdesc6 = { type = "description", name = " ", width = "full", order = 17 },
+                    spacerdesc6 = { type = "description", name = " ", width = "full", order = 17,
+                        hidden = true,
+                        disabled = true, },
                     header7 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. "Pull Groups From These Channels",

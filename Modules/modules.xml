@@ -2,5 +2,5 @@
     <Script file="Modules\List.lua" />
     <Script file="Modules\Spec.lua" />
     <Script file="Modules\SecureMessaging.lua" />
-    <Script file="Modules\SecureMessaging.spec.lua" />
+    <!--<Script file="Modules\SecureMessaging.spec.lua" />-->
 </Ui>
