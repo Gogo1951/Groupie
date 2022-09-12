@@ -367,7 +367,7 @@ local function ListingOnClick(self, button, down)
             { text = "Current Spec : " .. maxTalentSpec, notCheckable = true, leftPadding = 8,
                 func = function()
                     if instance ~= "Miscellaneous" and instance ~= "PVP" then
-                        addon.SendPlayerInfo(fullName, nil, nil, instance, fullInstance)
+                        addon.SendPlayerInfo(fullName, nil, nil, fullInstance)
                     else
                         addon.SendPlayerInfo(fullName)
                     end
