@@ -21,7 +21,7 @@ local BUTTON_WIDTH          = WINDOW_WIDTH - 44
 local COL_CREATED           = 75
 local COL_TIME              = 75
 local COL_LEADER            = 100
-local COL_INSTANCE          = 125
+local COL_INSTANCE          = 135
 local COL_LOOT              = 76
 local DROPDOWN_WIDTH        = 100
 local DROPDOWN_LEFTOFFSET   = 115
@@ -29,7 +29,7 @@ local DROPDOWN_PAD          = 32
 local APPLY_BTN_WIDTH       = 64
 
 local COL_MSG = WINDOW_WIDTH - COL_CREATED - COL_TIME - COL_LEADER - COL_INSTANCE - COL_LOOT - ICON_WIDTH -
-    APPLY_BTN_WIDTH - 50
+    APPLY_BTN_WIDTH - 54
 
 local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0", "AceConsole-3.0", "AceTimer-3.0")
 
@@ -418,7 +418,7 @@ local function CreateListingButtons()
         currentListing.created:SetWidth(COL_CREATED)
 
         --Time column
-        currentListing.time = currentListing:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
+        currentListing.time = currentListing:CreateFontString("FontString", "OVERLAY", "GameFontNormal")
         currentListing.time:SetPoint("LEFT", currentListing.created, "RIGHT", 0, 0)
         currentListing.time:SetWidth(COL_TIME)
         currentListing.time:SetJustifyH("LEFT")
@@ -426,7 +426,7 @@ local function CreateListingButtons()
 
         --Leader name column
         currentListing.leader = currentListing:CreateFontString("FontString", "OVERLAY", "GameFontNormal")
-        currentListing.leader:SetPoint("LEFT", currentListing.time, "RIGHT", 0, 0)
+        currentListing.leader:SetPoint("LEFT", currentListing.time, "RIGHT", -4, 0)
         currentListing.leader:SetWidth(COL_LEADER)
         currentListing.leader:SetJustifyH("LEFT")
         currentListing.leader:SetJustifyV("MIDDLE")
@@ -434,7 +434,7 @@ local function CreateListingButtons()
         --Instance expansion column
         currentListing.icon = currentListing:CreateTexture("$parentIcon", "OVERLAY", nil, -8)
         currentListing.icon:SetSize(ICON_WIDTH, ICON_WIDTH / 2)
-        currentListing.icon:SetPoint("LEFT", currentListing.leader, "RIGHT", -8, 0)
+        currentListing.icon:SetPoint("LEFT", currentListing.leader, "RIGHT", -4, 0)
         currentListing.icon:SetTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\InstanceIcons\\Other.tga")
 
         --Instance name column
@@ -909,8 +909,8 @@ local function BuildGroupieWindow()
 
     --Settings Button
     GroupieSettingsButton = CreateFrame("Button", "GroupieTopFrame", MainTabFrame, "UIPanelButtonTemplate")
-    GroupieSettingsButton:SetSize(100, 22)
-    GroupieSettingsButton:SetText("Settings")
+    GroupieSettingsButton:SetSize(150, 22)
+    GroupieSettingsButton:SetText("Settings & Filters")
     GroupieSettingsButton:SetPoint("TOPRIGHT", 0, 55)
     GroupieSettingsButton:SetScript("OnClick", function()
         GroupieFrame:Hide()
