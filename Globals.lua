@@ -783,6 +783,8 @@ addon.groupieLanguagePatterns = addon.TableFlip(addon.groupieUnflippedLanguagePa
 --Script to generate GUID for a player
 --/run local name = UnitName("player"); local guid = UnitGUID("player"); ChatFrame1:AddMessage(name.." has the GUID: "..guid);
 addon.GroupieDevs = {
+    -- Groupie Team
+    ["Player-4408-039B90A8"] = "Team Member", -- Aevala-Faerlina
     ["Player-4408-044DE7F9"] = "Team Member", -- Gogodeekay-Faerlina
     ["Player-4408-03D2C535"] = "Team Member", -- Gogodruid-Faerlina
     ["Player-4408-03D2C53D"] = "Team Member", -- Gogohunter-Faerlina
@@ -793,12 +795,14 @@ addon.GroupieDevs = {
     ["Player-4408-03D2C5E2"] = "Team Member", -- Gogoshaman-Faerlina
     ["Player-4408-03D2C21E"] = "Team Member", -- Gogowarlock-Faerlina
     ["Player-4408-03D2C4C4"] = "Team Member", -- Gogowarrior-Faerlina
-
-    ["Player-4408-039B90A8"] = "Team Member", -- Aevala-Faerlina
     ["Player-4408-03AA25B2"] = "Team Member", -- Kattz-Faerlina
-    ["Player-4467-02AB80C7"] = "Team Member", -- Raegen-Firemaw
     ["Player-4647-023571C6"] = "Team Member", -- Kynura-Grobbulus
+    ["Player-4467-02AB80C7"] = "Team Member", -- Raegen-Firemaw
 
+    -- Special Thanks
+    -- TODO
+
+    -- Test Accounts
     ["Player-4728-03F542F0"] = "Team Member", -- Cooltestguy-Benediction
 }
 
