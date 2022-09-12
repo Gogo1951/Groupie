@@ -1056,10 +1056,16 @@ function addon:OnInitialize()
     --Setup team member tooltips
     GameTooltip:HookScript("OnTooltipSetUnit", function(...)
         local unitname, unittype = GameTooltip:GetUnit()
-        local curMouseOver = UnitGUID(unittype)
-        if addon.GroupieDevs[curMouseOver] then
-            GameTooltip:AddLine(format("|TInterface\\AddOns\\" .. addonName .. "\\Images\\icon64:16:16:0:0|t %s : %s",
-                addonName, addon.GroupieDevs[curMouseOver]))
+        if unittype then
+            local curMouseOver = UnitGUID(unittype)
+            if curMouseOver then
+                if addon.GroupieDevs[curMouseOver] then
+                    GameTooltip:AddLine(format("|TInterface\\AddOns\\" ..
+                        addonName .. "\\Images\\icon64:16:16:0:0|t %s : %s"
+                        ,
+                        addonName, addon.GroupieDevs[curMouseOver]))
+                end
+            end
         end
     end)
 
