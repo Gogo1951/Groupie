@@ -1089,7 +1089,7 @@ function addon:OnInitialize()
         print("GROUPIE DEBUG MODE: " .. tostring(addon.debugMenus))
     end
 
-    local function TestRunner(...)
+    --[[local function TestRunner(...)
         local module = addon:GetArgs(..., 1)
         module = module and module:lower()
 
@@ -1104,12 +1104,12 @@ function addon:OnInitialize()
         else
             print("No testable module found for " .. module)
         end
-    end
+    end--]]
 
     addon:RegisterChatCommand("groupie", BuildGroupieWindow)
     addon:RegisterChatCommand("groupiecfg", addon.OpenConfig)
     addon:RegisterChatCommand("groupiedebug", ToggleDebugMode)
-    addon:RegisterChatCommand("groupietest", TestRunner)
+    --addon:RegisterChatCommand("groupietest", TestRunner)
 
     addon.isInitialized = true
 end
@@ -1418,7 +1418,9 @@ function addon.SetupConfig()
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. addonName .. " After-Party Tool",
                         order = 15,
-                        fontSize = "medium"
+                        fontSize = "medium",
+                        hidden = true,
+                        disabled = true,
                     },
                     afterPartyToggle = {
                         type = "toggle",
@@ -1427,8 +1429,12 @@ function addon.SetupConfig()
                         width = "full",
                         get = function(info) return addon.db.char.afterParty end,
                         set = function(info, val) addon.db.char.afterParty = val end,
+                        hidden = true,
+                        disabled = true,
                     },
-                    spacerdesc6 = { type = "description", name = " ", width = "full", order = 17 },
+                    spacerdesc6 = { type = "description", name = " ", width = "full", order = 17,
+                        hidden = true,
+                        disabled = true, },
                     header7 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. "Pull Groups From These Channels",
