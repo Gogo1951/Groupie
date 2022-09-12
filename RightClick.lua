@@ -1,4 +1,6 @@
 local addonName, addon = ...
+local SecureMessaging = addon.SM
+print(SecureMessaging)
 -------------------------------
 -- Right Click Functionality --
 -------------------------------
@@ -95,7 +97,7 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName)
 	if which == "BN_FRIEND" then
 		BNSendWhisper(dropdownMenu.accountInfo.bnetAccountID, groupieMsg)
 	else
-		SendChatMessage(groupieMsg, "WHISPER", "COMMON", targetName)
+		SecureMessaging:SendChatMessage(groupieMsg, "WHISPER", targetName)
 	end
 	return true
 end
@@ -108,7 +110,7 @@ function addon.SendWCLInfo(targetName, dropdownMenu, which)
 	if which == "BN_FRIEND" then
 		BNSendWhisper(dropdownMenu.accountInfo.bnetAccountID, groupieMsg)
 	else
-		SendChatMessage(groupieMsg, "WHISPER", "COMMON", targetName)
+		SecureMessaging:SendChatMessage(groupieMsg, "WHISPER", targetName)
 	end
 end
 

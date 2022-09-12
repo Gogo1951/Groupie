@@ -1048,7 +1048,9 @@ function addon:OnInitialize()
             ignoreLFM = false,
             ignoreLFG = false,
             keywordBlacklist = {},
-            savedInstanceInfo = {}
+            savedInstanceInfo = {},
+            needsUpdateFlag = false,
+            needsUpdateVersion = 0,
         }
     }
     --Generate defaults for each individual dungeon filter

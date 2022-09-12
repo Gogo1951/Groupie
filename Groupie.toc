@@ -12,6 +12,7 @@ UI/listingtemplate.xml
 Helpers.lua
 Globals.lua
 Core.lua
+Modules/modules.xml
 RightClick.lua
 Listener.lua
-Modules/modules.xml
+
