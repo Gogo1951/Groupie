@@ -969,6 +969,9 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         tooltip:AddLine(" ")
         tooltip:AddLine("Right Click |cffffffff: Open " .. addonName .. " Settings|r ")
         --TODO: Version check
+        ---tooltip:AddLine(" ");
+        ---tooltip:AddLine("|cff8000FFPLEASE UPDATE YOUR ADD-ONS ASAP!|r")
+        ---tooltip:AddLine("|cff8000FFGROUPIE LFG IS OUT OF DATE!|r")
         for _, order in ipairs(addon.instanceOrders) do
             local val = addon.db.global.savedInstanceInfo[order]
             if val then
