@@ -29,7 +29,7 @@ local DROPDOWN_PAD          = 32
 local APPLY_BTN_WIDTH       = 64
 
 local COL_MSG = WINDOW_WIDTH - COL_CREATED - COL_TIME - COL_LEADER - COL_INSTANCE - COL_LOOT - ICON_WIDTH -
-    APPLY_BTN_WIDTH - 54
+    APPLY_BTN_WIDTH - 58
 
 local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0", "AceConsole-3.0", "AceTimer-3.0")
 
@@ -462,7 +462,7 @@ local function CreateListingButtons()
 
         --Apply button
         currentListing.btn = CreateFrame("Button", "$parentApplyBtn", currentListing, "UIPanelButtonTemplate")
-        currentListing.btn:SetPoint("LEFT", currentListing.msg, "RIGHT", 0, 0)
+        currentListing.btn:SetPoint("LEFT", currentListing.msg, "RIGHT", 4, 0)
         currentListing.btn:SetWidth(APPLY_BTN_WIDTH)
         currentListing.btn:SetText("Apply")
         currentListing.btn:SetScript("OnClick", function()
