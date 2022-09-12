@@ -21,13 +21,15 @@ local BUTTON_WIDTH          = WINDOW_WIDTH - 44
 local COL_CREATED           = 75
 local COL_TIME              = 75
 local COL_LEADER            = 100
-local COL_INSTANCE          = 175
+local COL_INSTANCE          = 125
 local COL_LOOT              = 76
 local DROPDOWN_WIDTH        = 100
 local DROPDOWN_LEFTOFFSET   = 115
 local DROPDOWN_PAD          = 32
+local APPLY_BTN_WIDTH       = 64
 
-local COL_MSG = WINDOW_WIDTH - COL_CREATED - COL_TIME - COL_LEADER - COL_INSTANCE - COL_LOOT - ICON_WIDTH - 44
+local COL_MSG = WINDOW_WIDTH - COL_CREATED - COL_TIME - COL_LEADER - COL_INSTANCE - COL_LOOT - ICON_WIDTH -
+    APPLY_BTN_WIDTH - 50
 
 local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0", "AceConsole-3.0", "AceTimer-3.0")
 
@@ -300,10 +302,13 @@ local function DrawListings(self)
             button.created:SetText(addon.GetTimeSinceString(listing.createdat, 2))
             button.time:SetText(addon.GetTimeSinceString(listing.timestamp, 2))
             button.leader:SetText("|cFF" .. listing.classColor .. gsub(listing.author, "-.+", ""))
-            button.instance:SetText("  " .. listing.instanceName)
+            button.instance:SetText(listing.instanceName)
             button.loot:SetText("|cFF" .. lootColor .. listing.lootType)
             button.msg:SetText(formattedMsg)
             button.icon:SetTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\InstanceIcons\\" .. listing.icon)
+            button.btn:SetScript("OnClick", function()
+                addon.SendPlayerInfo(listing.author, nil, nil, listing.fullName)
+            end)
             button:SetScript("OnEnter", function()
                 GameTooltip:SetOwner(button, "ANCHOR_CURSOR")
                 GameTooltip:SetText(formattedMsg, 1, 1, 1, 1, true)
@@ -429,12 +434,12 @@ local function CreateListingButtons()
         --Instance expansion column
         currentListing.icon = currentListing:CreateTexture("$parentIcon", "OVERLAY", nil, -8)
         currentListing.icon:SetSize(ICON_WIDTH, ICON_WIDTH / 2)
-        currentListing.icon:SetPoint("LEFT", currentListing.leader, "RIGHT", 2, 0)
+        currentListing.icon:SetPoint("LEFT", currentListing.leader, "RIGHT", -8, 0)
         currentListing.icon:SetTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\InstanceIcons\\Other.tga")
 
         --Instance name column
         currentListing.instance = currentListing:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
-        currentListing.instance:SetPoint("LEFT", currentListing.icon, "RIGHT", 0, 0)
+        currentListing.instance:SetPoint("LEFT", currentListing.icon, "RIGHT", 8, 0)
         currentListing.instance:SetWidth(COL_INSTANCE)
         currentListing.instance:SetJustifyH("LEFT")
         currentListing.instance:SetJustifyV("MIDDLE")
@@ -454,6 +459,16 @@ local function CreateListingButtons()
         currentListing.msg:SetJustifyH("LEFT")
         currentListing.msg:SetJustifyV("MIDDLE")
         currentListing.msg:SetWordWrap(false)
+
+        --Apply button
+        currentListing.btn = CreateFrame("Button", "$parentApplyBtn", currentListing, "UIPanelButtonTemplate")
+        currentListing.btn:SetPoint("LEFT", currentListing.msg, "RIGHT", 0, 0)
+        currentListing.btn:SetWidth(APPLY_BTN_WIDTH)
+        currentListing.btn:SetText("Apply")
+        currentListing.btn:SetScript("OnClick", function()
+            return
+        end)
+
 
         currentListing.id = listcount
         listcount = listcount + 1
@@ -918,18 +933,6 @@ local function BuildGroupieWindow()
 
     CreateListingButtons()
 
-    --------------------
-    --Send Info Button--
-    --------------------
-    local SendInfoButton = CreateFrame("Button", "SendInfoBtn", MainTabFrame, "UIPanelButtonTemplate")
-    SendInfoButton:SetSize(155, 22)
-    SendInfoButton:SetText("Send Current Spec Info")
-    SendInfoButton:SetPoint("BOTTOMRIGHT", -1, -24)
-    SendInfoButton:SetScript("OnClick", function(self)
-        if addon.selectedListing then
-            addon.SendPlayerInfo(addon.groupieBoardButtons[addon.selectedListing].listing.author)
-        end
-    end)
 
     PanelTemplates_SetNumTabs(GroupieFrame, 9)
     PanelTemplates_SetTab(GroupieFrame, 1)
