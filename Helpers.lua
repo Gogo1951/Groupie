@@ -267,7 +267,7 @@ function addon.UpdateSavedInstances()
                         addon.db.global.savedInstanceInfo[val.Order][playerName] = {
                             characterName = playerName,
                             classColor = addon.classColors[UnitClass("player")],
-                            instance = name,
+                            instance = key,
                             isHeroic = isHeroic,
                             groupSize = maxPlayers,
                             resetTime = reset + time()
