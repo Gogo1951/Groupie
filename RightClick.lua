@@ -2,7 +2,7 @@ local addonName, addon = ...
 -------------------------------
 -- Right Click Functionality --
 -------------------------------
-function addon.SendPlayerInfo(targetName, dropdownMenu, which, instanceName, fullName)
+function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName)
 	addon.UpdateSpecOptions()
 	--Calculate average itemlevel
 	local iLevelSum = 0
@@ -55,8 +55,8 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, instanceName, ful
 
 	local lfgStr = "LFG"
 	--Include instance name if whispering from a listing
-	if instanceName then
-		lfgStr = "for " .. instanceName
+	if fullName then
+		lfgStr = "for " .. fullName
 	end
 
 	local achieveLinkStr = ""

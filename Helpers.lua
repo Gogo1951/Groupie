@@ -114,7 +114,7 @@ function addon.GenerateInstanceToggles(order, instanceType, showMaxLevel, config
     initorder = initorder + 1
     addon.options.args[configGroup].args[tostring(initorder) .. "header"] = {
         type = "description",
-        name = "|cffffd900" .. instanceType,
+        name = "|cff" .. addon.groupieSystemColor .. instanceType,
         width = "full",
         fontSize = "medium",
         order = initorder
@@ -238,13 +238,25 @@ function addon.RunSlashCmd(cmd)
     end
 end
 
+--Expire out of date lockouts
+function addon.ExpireSavedInstances()
+    local now = time()
+    for order, val in pairs(addon.db.global.savedInstanceInfo) do
+        for player, lockout in pairs(val) do
+            if lockout.resetTime < now then
+                addon.db.global.savedInstanceInfo[order][player] = nil
+            end
+        end
+    end
+end
+
 --Update a character's saved instances
 --Stored in a double nested table with form:
 --savedInstanceInfo[instanceOrder][playerName]
 function addon.UpdateSavedInstances()
     local playerName = UnitName("player")
     for i = 1, GetNumSavedInstances() do
-        local name, _, reset, _, locked, _, _, _, maxPlayers, difficultyName, _, _ = GetSavedInstanceInfo(i)
+        local name, _, reset, _, locked, _, _, _, maxPlayers, difficultyName = GetSavedInstanceInfo(i)
         --Preprocess name returned by GetSavedInstanceInfo
         local savedname = strlower(gsub(gsub(name, "%W", ""), "%s+", " "))
         if locked and (reset > 0) then --check that the lockout is active
@@ -252,6 +264,8 @@ function addon.UpdateSavedInstances()
                 local isHeroic, shouldBeHeroic = false, false
                 --Preprocess our name from groupieInstanceData
                 local ourname = strlower(gsub(gsub(gsub(gsub(key, " %- .+", ""), "Heroic ", ""), "%W", ""), "%s+", " "))
+                ourname = gsub(ourname, "hellfire", "") --Saved instance name is "Hellfire Citadel: Ramparts"
+                --Will probably end up with more funky edge cases here
                 if strfind(savedname, ourname) then --Check that the name matches
                     if strfind(difficultyName, "Heroic") then
                         isHeroic = true
@@ -267,7 +281,7 @@ function addon.UpdateSavedInstances()
                         addon.db.global.savedInstanceInfo[val.Order][playerName] = {
                             characterName = playerName,
                             classColor = addon.classColors[UnitClass("player")],
-                            instance = name,
+                            instance = key,
                             isHeroic = isHeroic,
                             groupSize = maxPlayers,
                             resetTime = reset + time()
@@ -278,15 +292,8 @@ function addon.UpdateSavedInstances()
         end
     end
 
-    --Expire out of date lockouts
-    local now = time()
-    for order, val in pairs(addon.db.global.savedInstanceInfo) do
-        for player, lockout in pairs(val) do
-            if lockout.resetTime < now then
-                addon.db.global.savedInstanceInfo[order][player] = nil
-            end
-        end
-    end
+    addon.ExpireSavedInstances()
+
     --Inject test data for instance filtering/minimap based on saved instances
     --[[
     addon.db.global.savedInstanceInfo[2330] = {}

@@ -1,5 +1,6 @@
 local addonName, addon = ...
 
+addon.groupieSystemColor = "ffd900"
 
 addon.groupieLocaleTable = {
     ["zhCN"] = "Chinese",
@@ -237,7 +238,7 @@ addon.instanceVersions = {
     ["Maraudon - Princess"]            = { { 5, false } },
     ["Maraudon - Purple"]              = { { 5, false } },
     ["Maraudon - Orange"]              = { { 5, false } },
-    ["The Temple of Atal'Hakkar"]      = { { 5, false } },
+    ["Sunken Temple"]                  = { { 5, false } },
     ["Blackrock Depths"]               = { { 5, false } },
     ["Dire Maul - Full Clear"]         = { { 5, false } },
     ["Dire Maul - East Wing"]          = { { 5, false } },
@@ -279,7 +280,7 @@ addon.instanceVersions = {
     ["Magtheridon's Lair"]   = { { 25, false } },
     ["Serpentshrine Cavern"] = { { 25, false } },
     ["Tempest Keep"]         = { { 25, false } },
-    ["Hyjal Summit"]         = { { 25, false } },
+    ["Mount Hyjal"]          = { { 25, false } },
     ["Black Temple"]         = { { 25, false } },
     ["Sunwell Plateau"]      = { { 25, false } },
 
@@ -483,7 +484,7 @@ addon.groupieInstanceData = {
         InstanceID = 580, MinLevel = 70, MaxLevel = 70, GroupSize = 25, Order = 2400, Icon = "SWP.tga" },
     ["Black Temple"] = { Active = true, Expac = "The Burning Crusade", InstanceType = "The Burning Crusade Raids",
         InstanceID = 564, MinLevel = 70, MaxLevel = 70, GroupSize = 25, Order = 2390, Icon = "BT.tga" },
-    ["Hyjal Summit"] = { Active = true, Expac = "The Burning Crusade", InstanceType = "The Burning Crusade Raids",
+    ["Mount Hyjal"] = { Active = true, Expac = "The Burning Crusade", InstanceType = "The Burning Crusade Raids",
         InstanceID = 534, MinLevel = 70, MaxLevel = 70, GroupSize = 25, Order = 2380, Icon = "MH.tga" },
     ["Tempest Keep"] = { Active = true, Expac = "The Burning Crusade", InstanceType = "The Burning Crusade Raids",
         InstanceID = 550, MinLevel = 70, MaxLevel = 70, GroupSize = 25, Order = 2370, Icon = "TK.tga" },
@@ -612,8 +613,8 @@ addon.groupieInstanceData = {
         InstanceID = 229, MinLevel = 54, MaxLevel = 63, GroupSize = 5, Order = 1220, Icon = "LBRS.tga" },
     ["Blackrock Depths"] = { Active = true, Expac = "World of Warcraft", InstanceType = "Classic Dungeons",
         InstanceID = 230, MinLevel = 52, MaxLevel = 59, GroupSize = 5, Order = 1210, Icon = "BRD.tga" },
-    ["The Temple of Atal'Hakkar"] = { Active = true, Expac = "World of Warcraft", InstanceType = "Classic Dungeons",
-        InstanceID = 109, MinLevel = 48, MaxLevel = 53, GroupSize = 5, Order = 1200, Icon = "ST.tga" },
+    ["Sunken Temple"] = { Active = true, Expac = "World of Warcraft", InstanceType = "Classic Dungeons", InstanceID = 109,
+        MinLevel = 48, MaxLevel = 53, GroupSize = 5, Order = 1200, Icon = "ST.tga" },
     ["Maraudon - Full Clear"] = { Active = true, Expac = "World of Warcraft", InstanceType = "Classic Dungeons",
         InstanceID = 349, MinLevel = 42, MaxLevel = 51, GroupSize = 5, Order = 1190, Icon = "MARA.tga" },
     ["Maraudon - Princess"] = { Active = true, Expac = "World of Warcraft", InstanceType = "Classic Dungeons",
@@ -696,7 +697,7 @@ addon.groupieUnflippedDungeonPatterns = {
     ["Maraudon - Princess"]            = "princessrun princess",
     ["Maraudon - Purple"]              = "purple",
     ["Maraudon - Orange"]              = "orange",
-    ["The Temple of Atal'Hakkar"]      = "st sunken atal temple",
+    ["Sunken Temple"]                  = "st sunken atal temple",
     ["Blackrock Depths"]               = "brd emperor arena emp",
     ["Dire Maul - Full Clear"]         = "dm dire maul diremaul",
     ["Dire Maul - East Wing"]          = "dme dmeast east puzilin jumprun",
@@ -738,7 +739,7 @@ addon.groupieUnflippedDungeonPatterns = {
     ["Magtheridon's Lair"]   = "mag magtheridon magth",
     ["Serpentshrine Cavern"] = "ssc serpentshrine",
     ["Tempest Keep"]         = "tk tempest tempestkeep",
-    ["Hyjal Summit"]         = "hyjal hs hyj mh",
+    ["Mount Hyjal"]          = "hyjal hs hyj mh",
     ["Black Temple"]         = "bt blacktemple glaive",
     ["Sunwell Plateau"]      = "swp sunwell plateau plataeu sunwel",
 
@@ -875,9 +876,9 @@ addon.groupieAchievementPriorities = {
     },
     ["Hellfire Ramparts"] = {
         [1] = 1287,
+        [2] = 667,
         [3] = 1284,
         [4] = 647,
-        [5] = 667,
     },
     ["Heroic Ahn'kahet: The Old Kingdom"] = {
         [1] = 2136,
@@ -895,9 +896,9 @@ addon.groupieAchievementPriorities = {
     },
     ["Heroic Auchenai Crypts"] = {
         [1] = 1287,
+        [2] = 672,
         [3] = 1284,
         [4] = 666,
-        [5] = 672,
     },
     ["Heroic Drak'Tharon Keep"] = {
         [1] = 2136,
@@ -1144,13 +1145,13 @@ addon.groupieAchievementPriorities = {
     },
     ["Sethekk Halls"] = {
         [1] = 1287,
-        [3] = 674,
+        [2] = 674,
         [3] = 1284,
         [4] = 653,
     },
     ["Shadow Labyrinth"] = {
         [1] = 1287,
-        [3] = 675,
+        [2] = 675,
         [3] = 1284,
         [4] = 654,
     },
@@ -1164,25 +1165,25 @@ addon.groupieAchievementPriorities = {
     },
     ["The Arcatraz"] = {
         [1] = 1287,
-        [3] = 681,
+        [2] = 681,
         [3] = 1284,
         [4] = 660,
     },
     ["The Black Morass"] = {
         [1] = 1287,
-        [3] = 676,
+        [2] = 676,
         [3] = 1284,
         [4] = 655,
     },
     ["The Blood Furnace"] = {
         [1] = 1287,
-        [3] = 668,
+        [2] = 668,
         [3] = 1284,
         [4] = 648,
     },
     ["The Botanica"] = {
         [1] = 1287,
-        [3] = 680,
+        [2] = 680,
         [3] = 1284,
         [4] = 659,
     },
@@ -1206,7 +1207,7 @@ addon.groupieAchievementPriorities = {
     },
     ["The Mechanar"] = {
         [1] = 1287,
-        [3] = 679,
+        [2] = 679,
         [3] = 1284,
         [4] = 658,
     },
@@ -1246,7 +1247,7 @@ addon.groupieAchievementPriorities = {
         [1] = 1283,
         [2] = 633,
     },
-    ["The Temple of Atal'Hakkar"] = {
+    ["Sunken Temple"] = {
         [1] = 1283,
         [2] = 641,
     },

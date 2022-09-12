@@ -21,13 +21,15 @@ local BUTTON_WIDTH          = WINDOW_WIDTH - 44
 local COL_CREATED           = 75
 local COL_TIME              = 75
 local COL_LEADER            = 100
-local COL_INSTANCE          = 175
+local COL_INSTANCE          = 125
 local COL_LOOT              = 76
 local DROPDOWN_WIDTH        = 100
 local DROPDOWN_LEFTOFFSET   = 115
 local DROPDOWN_PAD          = 32
+local APPLY_BTN_WIDTH       = 64
 
-local COL_MSG = WINDOW_WIDTH - COL_CREATED - COL_TIME - COL_LEADER - COL_INSTANCE - COL_LOOT - ICON_WIDTH - 44
+local COL_MSG = WINDOW_WIDTH - COL_CREATED - COL_TIME - COL_LEADER - COL_INSTANCE - COL_LOOT - ICON_WIDTH -
+    APPLY_BTN_WIDTH - 50
 
 local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0", "AceConsole-3.0", "AceTimer-3.0")
 
@@ -299,11 +301,14 @@ local function DrawListings(self)
             button.listing = listing
             button.created:SetText(addon.GetTimeSinceString(listing.createdat, 2))
             button.time:SetText(addon.GetTimeSinceString(listing.timestamp, 2))
-            button.leader:SetText(gsub(listing.author, "-.+", ""))
-            button.instance:SetText(" " .. listing.instanceName)
+            button.leader:SetText("|cFF" .. listing.classColor .. gsub(listing.author, "-.+", ""))
+            button.instance:SetText(listing.instanceName)
             button.loot:SetText("|cFF" .. lootColor .. listing.lootType)
             button.msg:SetText(formattedMsg)
             button.icon:SetTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\InstanceIcons\\" .. listing.icon)
+            button.btn:SetScript("OnClick", function()
+                addon.SendPlayerInfo(listing.author, nil, nil, listing.fullName)
+            end)
             button:SetScript("OnEnter", function()
                 GameTooltip:SetOwner(button, "ANCHOR_CURSOR")
                 GameTooltip:SetText(formattedMsg, 1, 1, 1, 1, true)
@@ -367,7 +372,7 @@ local function ListingOnClick(self, button, down)
             { text = "Current Spec : " .. maxTalentSpec, notCheckable = true, leftPadding = 8,
                 func = function()
                     if instance ~= "Miscellaneous" and instance ~= "PVP" then
-                        addon.SendPlayerInfo(fullName, nil, nil, instance, fullInstance)
+                        addon.SendPlayerInfo(fullName, nil, nil, fullInstance)
                     else
                         addon.SendPlayerInfo(fullName)
                     end
@@ -429,12 +434,12 @@ local function CreateListingButtons()
         --Instance expansion column
         currentListing.icon = currentListing:CreateTexture("$parentIcon", "OVERLAY", nil, -8)
         currentListing.icon:SetSize(ICON_WIDTH, ICON_WIDTH / 2)
-        currentListing.icon:SetPoint("LEFT", currentListing.leader, "RIGHT", 2, 0)
+        currentListing.icon:SetPoint("LEFT", currentListing.leader, "RIGHT", -8, 0)
         currentListing.icon:SetTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\InstanceIcons\\Other.tga")
 
         --Instance name column
         currentListing.instance = currentListing:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
-        currentListing.instance:SetPoint("LEFT", currentListing.icon, "RIGHT", 0, 0)
+        currentListing.instance:SetPoint("LEFT", currentListing.icon, "RIGHT", 8, 0)
         currentListing.instance:SetWidth(COL_INSTANCE)
         currentListing.instance:SetJustifyH("LEFT")
         currentListing.instance:SetJustifyV("MIDDLE")
@@ -454,6 +459,16 @@ local function CreateListingButtons()
         currentListing.msg:SetJustifyH("LEFT")
         currentListing.msg:SetJustifyV("MIDDLE")
         currentListing.msg:SetWordWrap(false)
+
+        --Apply button
+        currentListing.btn = CreateFrame("Button", "$parentApplyBtn", currentListing, "UIPanelButtonTemplate")
+        currentListing.btn:SetPoint("LEFT", currentListing.msg, "RIGHT", 0, 0)
+        currentListing.btn:SetWidth(APPLY_BTN_WIDTH)
+        currentListing.btn:SetText("Apply")
+        currentListing.btn:SetScript("OnClick", function()
+            return
+        end)
+
 
         currentListing.id = listcount
         listcount = listcount + 1
@@ -507,6 +522,7 @@ end
 function addon.TabSwap(isHeroic, size, tabType, tabNum)
     addon.ExpireListings()
     MainTabFrame:Show()
+
     --Reset environment values
     MainTabFrame.isHeroic = isHeroic
     MainTabFrame.size = size
@@ -709,7 +725,13 @@ local function BuildGroupieWindow()
     MainTabFrame:SetPoint("TOPLEFT", GroupieFrame, "TOPLEFT", 8, WINDOW_YOFFSET)
     MainTabFrame:SetScript("OnShow",
         function(self)
-            return
+            --Update saved instances before showing listing board if it hasn't yet been done
+            if not addon.updatedSavedOnLogin then
+                addon.UpdateSavedInstances()
+            else
+                addon.ExpireSavedInstances()
+            end
+            addon.updatedSavedOnLogin = true
         end)
     MainTabFrame.infotext = MainTabFrame:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
     MainTabFrame.infotext:SetJustifyH("CENTER")
@@ -918,18 +940,6 @@ local function BuildGroupieWindow()
 
     CreateListingButtons()
 
-    --------------------
-    --Send Info Button--
-    --------------------
-    local SendInfoButton = CreateFrame("Button", "SendInfoBtn", MainTabFrame, "UIPanelButtonTemplate")
-    SendInfoButton:SetSize(155, 22)
-    SendInfoButton:SetText("Send Current Spec Info")
-    SendInfoButton:SetPoint("BOTTOMRIGHT", -1, -24)
-    SendInfoButton:SetScript("OnClick", function(self)
-        if addon.selectedListing then
-            addon.SendPlayerInfo(addon.groupieBoardButtons[addon.selectedListing].listing.author)
-        end
-    end)
 
     PanelTemplates_SetNumTabs(GroupieFrame, 9)
     PanelTemplates_SetTab(GroupieFrame, 1)
@@ -950,6 +960,7 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         end
     end,
     OnTooltipShow = function(tooltip)
+        addon.ExpireSavedInstances()
         local now = time()
         tooltip:AddLine(addonName)
         tooltip:AddLine("A better LFG tool for Classic WoW.", 255, 255, 255, false)
@@ -958,6 +969,9 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         tooltip:AddLine(" ")
         tooltip:AddLine("Right Click |cffffffff: Open " .. addonName .. " Settings|r ")
         --TODO: Version check
+        ---tooltip:AddLine(" ");
+        ---tooltip:AddLine("|cff8000FFPLEASE UPDATE YOUR ADD-ONS ASAP!|r")
+        ---tooltip:AddLine("|cff8000FFGROUPIE LFG IS OUT OF DATE!|r")
         for _, order in ipairs(addon.instanceOrders) do
             local val = addon.db.global.savedInstanceInfo[order]
             if val then
@@ -1056,10 +1070,16 @@ function addon:OnInitialize()
     --Setup team member tooltips
     GameTooltip:HookScript("OnTooltipSetUnit", function(...)
         local unitname, unittype = GameTooltip:GetUnit()
-        local curMouseOver = UnitGUID(unittype)
-        if addon.GroupieDevs[curMouseOver] then
-            GameTooltip:AddLine(format("|TInterface\\AddOns\\" .. addonName .. "\\Images\\icon64:16:16:0:0|t %s : %s",
-                addonName, addon.GroupieDevs[curMouseOver]))
+        if unittype then
+            local curMouseOver = UnitGUID(unittype)
+            if curMouseOver then
+                if addon.GroupieDevs[curMouseOver] then
+                    GameTooltip:AddLine(format("|TInterface\\AddOns\\" ..
+                        addonName .. "\\Images\\icon64:16:16:0:0|t %s : %s"
+                        ,
+                        addonName, addon.GroupieDevs[curMouseOver]))
+                end
+            end
         end
     end)
 
@@ -1116,14 +1136,14 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " | About",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " | About",
                         order = 0,
                         fontSize = "large"
                     },
                     spacerdesc1 = { type = "description", name = " ", width = "full", order = 1 },
                     header2 = {
                         type = "description",
-                        name = "|cffffd900Groupie on CurseForge",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " on CurseForge",
                         order = 2,
                         fontSize = "medium"
                     },
@@ -1138,7 +1158,7 @@ function addon.SetupConfig()
                     spacerdesc2 = { type = "description", name = " ", width = "full", order = 4 },
                     header3 = {
                         type = "description",
-                        name = "|cffffd900Groupie on Discord",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " on Discord",
                         order = 5,
                         fontSize = "medium"
                     },
@@ -1153,7 +1173,7 @@ function addon.SetupConfig()
                     spacerdesc3 = { type = "description", name = " ", width = "full", order = 7 },
                     header4 = {
                         type = "description",
-                        name = "|cffffd900Groupie on GitHub",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " on GitHub",
                         order = 8,
                         fontSize = "medium"
                     },
@@ -1185,7 +1205,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " | Instance Filters - Wrath",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " | Instance Filters - Wrath",
                         order = 0,
                         fontSize = "large"
                     },
@@ -1202,7 +1222,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " | Instance Filters - TBC",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " | Instance Filters - TBC",
                         order = 0,
                         fontSize = "large"
                     },
@@ -1219,7 +1239,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " | Instance Filters - Classic",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " | Instance Filters - Classic",
                         order = 0,
                         fontSize = "large"
                     },
@@ -1236,14 +1256,14 @@ function addon.SetupConfig()
                 args = {
                     header0 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " | Group Filters",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " | Group Filters",
                         order = 0,
                         fontSize = "large"
                     },
                     spacerdesc1 = { type = "description", name = " ", width = "full", order = 1 },
                     header1 = {
                         type = "description",
-                        name = "|cffffd900General Filters",
+                        name = "|cff" .. addon.groupieSystemColor .. "General Filters",
                         order = 2,
                         fontSize = "medium"
                     },
@@ -1274,7 +1294,7 @@ function addon.SetupConfig()
                     spacerdesc3 = { type = "description", name = " ", width = "full", order = 15 },
                     header3 = {
                         type = "description",
-                        name = "|cffffd900Filter By Keyword",
+                        name = "|cff" .. addon.groupieSystemColor .. "Filter By Keyword",
                         order = 16,
                         fontSize = "medium"
                     },
@@ -1309,14 +1329,15 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " | " .. UnitName("player") .. " Options",
+                        name = "|cff" ..
+                            addon.groupieSystemColor .. addonName .. " | " .. UnitName("player") .. " Options",
                         order = 0,
                         fontSize = "large"
                     },
                     spacerdesc1 = { type = "description", name = " ", width = "full", order = 1 },
                     header2 = {
                         type = "description",
-                        name = "|cffffd900Spec 1 Role - " .. addon.GetSpecByGroupNum(1),
+                        name = "|cff" .. addon.groupieSystemColor .. "Spec 1 Role - " .. addon.GetSpecByGroupNum(1),
                         order = 2,
                         fontSize = "medium"
                     },
@@ -1333,7 +1354,7 @@ function addon.SetupConfig()
                     spacerdesc2 = { type = "description", name = " ", width = "full", order = 4 },
                     header3 = {
                         type = "description",
-                        name = "|cffffd900Spec 2 Role - " .. addon.GetSpecByGroupNum(2),
+                        name = "|cff" .. addon.groupieSystemColor .. "Spec 2 Role - " .. addon.GetSpecByGroupNum(2),
                         order = 5,
                         fontSize = "medium"
                     },
@@ -1350,7 +1371,7 @@ function addon.SetupConfig()
                     spacerdesc3 = { type = "description", name = " ", width = "full", order = 7 },
                     header4 = {
                         type = "description",
-                        name = "|cffffd900Recommended Dungeon Level Range",
+                        name = "|cff" .. addon.groupieSystemColor .. "Recommended Dungeon Level Range",
                         order = 8,
                         fontSize = "medium"
                     },
@@ -1372,7 +1393,7 @@ function addon.SetupConfig()
                     spacerdesc4 = { type = "description", name = " ", width = "full", order = 10 },
                     header5 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " Auto-Response",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " Auto-Response",
                         order = 11,
                         fontSize = "medium"
                     },
@@ -1395,7 +1416,7 @@ function addon.SetupConfig()
                     spacerdesc5 = { type = "description", name = " ", width = "full", order = 14 },
                     header6 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " After-Party Tool",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " After-Party Tool",
                         order = 15,
                         fontSize = "medium"
                     },
@@ -1410,7 +1431,7 @@ function addon.SetupConfig()
                     spacerdesc6 = { type = "description", name = " ", width = "full", order = 17 },
                     header7 = {
                         type = "description",
-                        name = "|cffffd900Pull Groups From These Channels",
+                        name = "|cff" .. addon.groupieSystemColor .. "Pull Groups From These Channels",
                         order = 18,
                         fontSize = "medium"
                     },
@@ -1474,7 +1495,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cffffd900" .. addonName .. " | Global Options",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " | Global Options",
                         order = 0,
                         fontSize = "large"
                     },
@@ -1497,7 +1518,7 @@ function addon.SetupConfig()
                     spacerdesc3 = { type = "description", name = " ", width = "full", order = 5 },
                     header2 = {
                         type = "description",
-                        name = "|cffffd900Preserve Looking for Group Data Duration",
+                        name = "|cff" .. addon.groupieSystemColor .. "Preserve Looking for Group Data Duration",
                         order = 6,
                         fontSize = "medium"
                     },
@@ -1514,7 +1535,7 @@ function addon.SetupConfig()
                     spacerdesc4 = { type = "description", name = " ", width = "full", order = 8 },
                     header3 = {
                         type = "description",
-                        name = "|cffffd900Font",
+                        name = "|cff" .. addon.groupieSystemColor .. "Font",
                         order = 9,
                         fontSize = "medium",
                         hidden = true,
@@ -1535,7 +1556,7 @@ function addon.SetupConfig()
                     spacerdesc5 = { type = "description", name = " ", width = "full", order = 11 },
                     header4 = {
                         type = "description",
-                        name = "|cffffd900Base Font Size",
+                        name = "|cff" .. addon.groupieSystemColor .. "Base Font Size",
                         order = 12,
                         fontSize = "medium",
                         hidden = true,
@@ -1594,7 +1615,6 @@ function addon.SetupConfig()
 
     --Update some saved variables for the current character
     addon.UpdateSpecOptions()
-    addon.UpdateSavedInstances()
 
     --Don't preserve Data if switching servers
     local currentServer = GetRealmName()
@@ -1602,6 +1622,8 @@ function addon.SetupConfig()
         addon.db.global.listingTable = {}
     end
     addon.db.global.lastServer = currentServer
+
+
 end
 
 function addon:OpenConfig()
@@ -1619,8 +1641,10 @@ function addon.UpdateSpecOptions()
     local spec1, maxtalents1 = addon.GetSpecByGroupNum(1)
     local spec2, maxtalents2 = addon.GetSpecByGroupNum(2)
     --Set labels
-    addon.options.args.charoptions.args.header2.name = "|cffffd900Role for Spec 1 - " .. spec1
-    addon.options.args.charoptions.args.header3.name = "|cffffd900Role for Spec 2 - " .. spec2
+    addon.options.args.charoptions.args.header2.name = "|cff" ..
+        addon.groupieSystemColor .. "Role for Spec 1 - " .. spec1
+    addon.options.args.charoptions.args.header3.name = "|cff" ..
+        addon.groupieSystemColor .. "Role for Spec 2 - " .. spec2
     --Set dropdowns
     addon.options.args.charoptions.args.spec1Dropdown.values = addon.groupieClassRoleTable[UnitClass("player")][spec1]
     addon.options.args.charoptions.args.spec2Dropdown.values = addon.groupieClassRoleTable[UnitClass("player")][spec2]
@@ -1655,4 +1679,5 @@ end
 --Only actual talent changes
 --addon:RegisterEvent("PLAYER_TALENT_UPDATE", addon.UpdateSpecOptions)
 addon:RegisterEvent("CHARACTER_POINTS_CHANGED", addon.UpdateSpecOptions)
+--Update player's saved instances on boss kill and login
 addon:RegisterEvent("BOSS_KILL", addon.UpdateSavedInstances)
