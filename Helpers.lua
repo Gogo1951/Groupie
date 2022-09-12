@@ -252,6 +252,8 @@ function addon.UpdateSavedInstances()
                 local isHeroic, shouldBeHeroic = false, false
                 --Preprocess our name from groupieInstanceData
                 local ourname = strlower(gsub(gsub(gsub(gsub(key, " %- .+", ""), "Heroic ", ""), "%W", ""), "%s+", " "))
+                ourname = gsub(ourname, "hellfire", "") --Saved instance name is "Hellfire Citadel: Ramparts"
+                --Will probably end up with more funky edge cases here
                 if strfind(savedname, ourname) then --Check that the name matches
                     if strfind(difficultyName, "Heroic") then
                         isHeroic = true
