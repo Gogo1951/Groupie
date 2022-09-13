@@ -28,8 +28,6 @@ Some other stuff worth mentioning...
 
 * Coming Soon! Groupie's "After Party" Tool. This will be an optional prompt window so you can quickly add people you enjoyed running with to your Groupie Global Friends & Ignores List.
 
-Screenshots : TODO
-
 <br>
 
 ### :link:  **LINKS**
@@ -46,9 +44,11 @@ Reddit Announcement Post : TODO
 
 ### :hand:  **CURRENT NEEDS**
 
-As a new add-on, we can use a hand raising awarenss. If you're a streamer, please feel free to plug or review Groupie on your channel.
+As a new add-on, we can use a hand raising awarenss. Telling your friends will really help us get some traction. (=
 
-We can use help translating the add-on. Reach out on Discord if you want to help!
+If you're a streamer, please feel free to plug or review Groupie on your channel.
+
+We can also use help translating the add-on. Reach out on Discord if you want to help!
 
 > Chinese - Need Translator
 > 
