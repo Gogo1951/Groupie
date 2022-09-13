@@ -960,7 +960,6 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         tooltip:AddLine("A better LFG tool for Classic WoW.", 255, 255, 255, false)
         tooltip:AddLine(" ")
         tooltip:AddLine("Click |cffffffffor|r /groupie |cffffffff: Open " .. addonName .. "|r ")
-        tooltip:AddLine(" ")
         tooltip:AddLine("Right Click |cffffffff: Open " .. addonName .. " Settings|r ")
         --TODO: Version check
         ---tooltip:AddLine(" ");
@@ -1115,7 +1114,7 @@ end
 ---------------------
 function addon.SetupConfig()
     addon.options = {
-        name = "|TInterface\\AddOns\\" .. addonName .. "\\Images\\icon64:32:32:0:12|t" .. addonName,
+        name = "|TInterface\\AddOns\\" .. addonName .. "\\Images\\icon64:16:16:0:12|t" .. addonName,
         desc = "Optional description? for the group of options",
         descStyle = "inline",
         handler = addon,
@@ -1123,7 +1122,7 @@ function addon.SetupConfig()
         args = {
             spacerdesc0 = { type = "description", name = " ", width = "full", order = 0 },
             about = {
-                name = "About",
+                name = "Groupie",
                 desc = "About Groupie",
                 type = "group",
                 width = "double",
@@ -1132,7 +1131,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " | About",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName,
                         order = 0,
                         fontSize = "large"
                     },
@@ -1184,10 +1183,10 @@ function addon.SetupConfig()
                     spacerdesc4 = { type = "description", name = " ", width = "full", order = 10 },
                     paragraph1 = {
                         type = "description",
-                        name = "put_text_here",
+                        name = "A better LFG tool for Classic WoW.\nGroupie was created by Gogo, LemonDrake, Kynura, and Raegen -- with help from Katz, Aevala, and Fathom.",
                         width = "full",
                         order = 11,
-                        fontSize = "small", --can be small, medium, large
+                        fontSize = "medium", --can be small, medium, large
                     },
                 }
             },
@@ -1201,7 +1200,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " | Instance Filters - Wrath",
+                        name = "|cff" .. addon.groupieSystemColor .. "Instance Filters - Wrath",
                         order = 0,
                         fontSize = "large"
                     },
@@ -1218,7 +1217,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " | Instance Filters - TBC",
+                        name = "|cff" .. addon.groupieSystemColor .. "Instance Filters - TBC",
                         order = 0,
                         fontSize = "large"
                     },
@@ -1235,7 +1234,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " | Instance Filters - Classic",
+                        name = "|cff" .. addon.groupieSystemColor .. "Instance Filters - Classic",
                         order = 0,
                         fontSize = "large"
                     },
@@ -1252,7 +1251,7 @@ function addon.SetupConfig()
                 args = {
                     header0 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " | Group Filters",
+                        name = "|cff" .. addon.groupieSystemColor .. "Group Filters",
                         order = 0,
                         fontSize = "large"
                     },
@@ -1325,8 +1324,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cff" ..
-                            addon.groupieSystemColor .. addonName .. " | " .. UnitName("player") .. " Options",
+                        name = "|cff" .. addon.groupieSystemColor .. UnitName("player") .. " Options",
                         order = 0,
                         fontSize = "large"
                     },
@@ -1391,7 +1389,9 @@ function addon.SetupConfig()
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. addonName .. " Auto-Response",
                         order = 11,
-                        fontSize = "medium"
+                        fontSize = "medium",
+                        hidden = true,
+                        disabled = true,
                     },
                     autoFriendsToggle = {
                         type = "toggle",
@@ -1400,6 +1400,8 @@ function addon.SetupConfig()
                         width = "full",
                         get = function(info) return addon.db.char.autoRespondFriends end,
                         set = function(info, val) addon.db.char.autoRespondFriends = val end,
+                        hidden = true,
+                        disabled = true,
                     },
                     autoGuildToggle = {
                         type = "toggle",
@@ -1408,8 +1410,12 @@ function addon.SetupConfig()
                         width = "full",
                         get = function(info) return addon.db.char.autoRespondGuild end,
                         set = function(info, val) addon.db.char.autoRespondGuild = val end,
+                        hidden = true,
+                        disabled = true,
                     },
-                    spacerdesc5 = { type = "description", name = " ", width = "full", order = 14 },
+                    spacerdesc5 = { type = "description", name = " ", width = "full", order = 14,
+                        hidden = true,
+                        disabled = true, },
                     header6 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. addonName .. " After-Party Tool",
@@ -1497,7 +1503,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " | Global Options",
+                        name = "|cff" .. addon.groupieSystemColor .. "Global Options",
                         order = 0,
                         fontSize = "large"
                     },
