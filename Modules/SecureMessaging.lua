@@ -1,21 +1,21 @@
 local addonName, Groupie = ...
 
 local List = LibStub("List-1.0")
+local After = LibStub("After-1.0")
+local prefixRegistered = false
 
 local COLOR = { RED = "FFF44336", GREEN = "FF4CAF50" }
 
 local prototype = {
     print = print,
-    verified = List:new(),
+    verified = {},
     COLOR = COLOR,
     ADDON_PREFIX = "Groupie.SM",
     PROTECTED_TOKENS = List:new {
         [1] = "{rt3}%s*groupie%s*:",
         [2] = "groupie%s*{rt3}%s*:"
     },
-    WARNING_MESSAGE = WrapTextInColorCode(
-        "Groupie {rt3} : the following message was not sent by Groupie",
-        COLOR.RED)
+    WARNING_MESSAGE = "{rt3} Groupie : Fake News! That is not a real Groupie Message. Quit being shady."
 }
 
 local SecureMessaging = Groupie:NewModule("SecureMessaging", prototype,
@@ -49,24 +49,28 @@ function SecureMessaging:SendChatMessage(message, chatType, target)
 end
 
 function SecureMessaging:Verify(message)
-    return #self.verified:splice(self.verified:indexOf(message), 1) > 0
+    local tempBool = self.verified[message]
+    self.verified[message] = nil
+    return message == SecureMessaging.WARNING_MESSAGE or tempBool
 end
 
 function SecureMessaging.PLAYER_ENTERING_WORLD(...)
-    C_ChatInfo.RegisterAddonMessagePrefix(SecureMessaging.ADDON_PREFIX)
+    if not prefixRegistered then
+        prefixRegistered = true
+        C_ChatInfo.RegisterAddonMessagePrefix(SecureMessaging.ADDON_PREFIX)
+    end
 end
 
 function SecureMessaging.CHAT_MSG_ADDON(...)
-    SecureMessaging.verified:push(select(3, ...))
+    local message = select(3, ...)
+    SecureMessaging.verified[message] = true
 end
 
 function SecureMessaging.CHAT_MSG_WHISPER(...)
-    local _, msg, author = ...
-    C_Timer.After(0.5, function()
-        if not SecureMessaging:Verify(msg) then
-            --SecureMessaging.print(SecureMessaging.WARNING_MESSAGE)
-            SecureMessaging:SendChatMessage("{rt3} Groupie : Fake News! That is not a real Groupie Message. Quit being shady."
-                , "WHISPER", author)
+    local message, author = select(2, ...)
+    After(0.5).Do(function()
+        if not SecureMessaging:Verify(message) then
+            SendChatMessage(SecureMessaging.WARNING_MESSAGE, "WHISPER", nil, author)
         end
     end)
 end
@@ -82,11 +86,19 @@ local ForLoginReload = WithEventFilter(function(_, isLogin, isReload)
 end)
 
 SecureMessaging:RegisterEvent("CHAT_MSG_WHISPER", function(...)
+    if not prefixRegistered then
+        prefixRegistered = true
+        C_ChatInfo.RegisterAddonMessagePrefix(SecureMessaging.ADDON_PREFIX)
+    end
     ForVerified(SecureMessaging.CHAT_MSG_WHISPER)(...)
 end)
 SecureMessaging:RegisterEvent("PLAYER_ENTERING_WORLD", function(...)
     ForLoginReload(SecureMessaging.PLAYER_ENTERING_WORLD)(...)
 end)
 SecureMessaging:RegisterEvent("CHAT_MSG_ADDON", function(...)
+    if not prefixRegistered then
+        prefixRegistered = true
+        C_ChatInfo.RegisterAddonMessagePrefix(SecureMessaging.ADDON_PREFIX)
+    end
     ForPrefix(SecureMessaging.CHAT_MSG_ADDON)(...)
 end)
