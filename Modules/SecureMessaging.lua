@@ -2,6 +2,7 @@ local addonName, Groupie = ...
 
 local List = LibStub("List-1.0")
 local After = LibStub("After-1.0")
+local prefixRegistered = false
 
 local COLOR = { RED = "FFF44336", GREEN = "FF4CAF50" }
 
@@ -48,11 +49,16 @@ function SecureMessaging:SendChatMessage(message, chatType, target)
 end
 
 function SecureMessaging:Verify(message)
-    return message == SecureMessaging.WARNING_MESSAGE or self.verified[message]
+    local tempBool = self.verified[message]
+    self.verified[message] = nil
+    return message == SecureMessaging.WARNING_MESSAGE or tempBool
 end
 
 function SecureMessaging.PLAYER_ENTERING_WORLD(...)
-    C_ChatInfo.RegisterAddonMessagePrefix(SecureMessaging.ADDON_PREFIX)
+    if not prefixRegistered then
+        prefixRegistered = true
+        C_ChatInfo.RegisterAddonMessagePrefix(SecureMessaging.ADDON_PREFIX)
+    end
 end
 
 function SecureMessaging.CHAT_MSG_ADDON(...)
@@ -80,11 +86,19 @@ local ForLoginReload = WithEventFilter(function(_, isLogin, isReload)
 end)
 
 SecureMessaging:RegisterEvent("CHAT_MSG_WHISPER", function(...)
+    if not prefixRegistered then
+        prefixRegistered = true
+        C_ChatInfo.RegisterAddonMessagePrefix(SecureMessaging.ADDON_PREFIX)
+    end
     ForVerified(SecureMessaging.CHAT_MSG_WHISPER)(...)
 end)
 SecureMessaging:RegisterEvent("PLAYER_ENTERING_WORLD", function(...)
     ForLoginReload(SecureMessaging.PLAYER_ENTERING_WORLD)(...)
 end)
 SecureMessaging:RegisterEvent("CHAT_MSG_ADDON", function(...)
+    if not prefixRegistered then
+        prefixRegistered = true
+        C_ChatInfo.RegisterAddonMessagePrefix(SecureMessaging.ADDON_PREFIX)
+    end
     ForPrefix(SecureMessaging.CHAT_MSG_ADDON)(...)
 end)
