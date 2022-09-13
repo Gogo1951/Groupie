@@ -1114,7 +1114,7 @@ end
 ---------------------
 function addon.SetupConfig()
     addon.options = {
-        name = "|TInterface\\AddOns\\" .. addonName .. "\\Images\\icon64:16:16:0:12|t" .. addonName,
+        name = "|TInterface\\AddOns\\" .. addonName .. "\\Images\\icon64:16:16:0:4|t  " .. addonName,
         desc = "Optional description? for the group of options",
         descStyle = "inline",
         handler = addon,
@@ -1136,57 +1136,57 @@ function addon.SetupConfig()
                         fontSize = "large"
                     },
                     spacerdesc1 = { type = "description", name = " ", width = "full", order = 1 },
+                    paragraph1 = {
+                        type = "description",
+                        name = "A better LFG tool for Classic WoW.\n\n\nGroupie was created by Gogo, LemonDrake, Kynura, and Raegen...\n\n...with help from Katz, Aevala, and Fathom.",
+                        width = "full",
+                        order = 2,
+                        fontSize = "medium", --can be small, medium, large
+                    },
+                    spacerdesc2 = { type = "description", name = " ", width = "full", order = 3 },
                     header2 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. addonName .. " on CurseForge",
-                        order = 2,
+                        order = 4,
                         fontSize = "medium"
                     },
                     editbox1 = {
                         type = "input",
                         name = "",
-                        order = 3,
+                        order = 5,
                         width = 2,
                         get = function(info) return "https://www.curseforge.com/wow/addons/groupie" end,
                         set = function(info, val) return end,
                     },
-                    spacerdesc2 = { type = "description", name = " ", width = "full", order = 4 },
+                    spacerdesc3 = { type = "description", name = " ", width = "full", order = 6 },
                     header3 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. addonName .. " on Discord",
-                        order = 5,
+                        order = 7,
                         fontSize = "medium"
                     },
                     editbox2 = {
                         type = "input",
                         name = "",
-                        order = 6,
+                        order = 8,
                         width = 2,
                         get = function(info) return "https://discord.gg/6xccnxcRbt" end,
                         set = function(info, val) return end,
                     },
-                    spacerdesc3 = { type = "description", name = " ", width = "full", order = 7 },
+                    spacerdesc4 = { type = "description", name = " ", width = "full", order = 9 },
                     header4 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. addonName .. " on GitHub",
-                        order = 8,
+                        order = 10,
                         fontSize = "medium"
                     },
                     editbox3 = {
                         type = "input",
                         name = "",
-                        order = 9,
+                        order = 11,
                         width = 2,
                         get = function(info) return "https://github.com/Gogo1951/Groupie" end,
                         set = function(info, val) return end,
-                    },
-                    spacerdesc4 = { type = "description", name = " ", width = "full", order = 10 },
-                    paragraph1 = {
-                        type = "description",
-                        name = "A better LFG tool for Classic WoW.\nGroupie was created by Gogo, LemonDrake, Kynura, and Raegen -- with help from Katz, Aevala, and Fathom.",
-                        width = "full",
-                        order = 11,
-                        fontSize = "medium", --can be small, medium, large
                     },
                 }
             },
