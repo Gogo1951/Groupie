@@ -167,7 +167,7 @@ function addon.GetTimeSinceString(timestamp, displayLen)
         local days = floor(timediff / 86400)
         local hours = floor(mod(timediff, 86400) / 3600)
         local mins = floor(mod(timediff, 3600) / 60)
-        return format("%02dd %02dh %02dm %02ds", days, hours, mins)
+        return format("%02dd %02dh %02dm", days, hours, mins)
     elseif displayLen == 3 then
         local hours = floor(timediff / 3600)
         local mins = floor(mod(timediff, 3600) / 60)

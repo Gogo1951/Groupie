@@ -959,8 +959,8 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         tooltip:AddLine(addonName)
         tooltip:AddLine("A better LFG tool for Classic WoW.", 255, 255, 255, false)
         tooltip:AddLine(" ")
-        tooltip:AddLine("Click |cffffffffor|r /groupie |cffffffff: Open " .. addonName .. "|r ")
-        tooltip:AddLine("Right Click |cffffffff: Open " .. addonName .. " Settings|r ")
+        tooltip:AddLine("Click |cffffffffor|r /groupie |cffffffff: " .. addonName .. " Bulletin Board|r ")
+        tooltip:AddLine("Right Click |cffffffff: " .. addonName .. " Settings|r ")
         --TODO: Version check
         ---tooltip:AddLine(" ");
         ---tooltip:AddLine("|cff8000FFPLEASE UPDATE YOUR ADD-ONS ASAP!|r")
@@ -1536,7 +1536,8 @@ function addon.SetupConfig()
                         name = "",
                         order = 7,
                         width = 1.4,
-                        values = { [2] = "2 Minutes", [5] = "5 Minutes", [10] = "10 Minutes", [20] = "20 Minutes" },
+                        values = { [1] = "1 Minute", [2] = "2 Minutes", [5] = "5 Minutes", [10] = "10 Minutes",
+                            [20] = "20 Minutes" },
                         set = function(info, val) addon.db.global.minsToPreserve = val end,
                         get = function(info) return addon.db.global.minsToPreserve end,
                     },
