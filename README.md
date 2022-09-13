@@ -10,7 +10,9 @@ A better LFG tool for Classic WoW.
 
 :two:  One-click ability to share your character's role, key stats, and relevant achievement link with the group's leader. For group leaders, this means no more context-less "wants to join" pop-ups from the Blizzard LFG Tool, or random "inv" responses to your posts.
 
-:three:  Coming Soon! Optional ability to auto-respond to Friends and Guildies when they post groups that you are interested in. So let's say you're sitting around scanning the AH, and a friend posts "LFM Heroic Nexus," you can have Groupie set to auto-respond, or simply play a sound notifying you there's a group created by someone in your network.
+:three:  Coming Soon! Ability to Send Your Character Sheet in a Message. You'll be able to virtually inspect Groupie users from anywhere in the world before you invite them to your PUG.
+
+:four:  Coming Soon! Global Friends & Ignore List, & optional ability to Auto-Respond to Friends and Guildies when they post groups that you are interested in.
 
 Screenshots : TODO
 
@@ -22,9 +24,11 @@ Some other stuff worth mentioning...
 
 * Groupie has built-in spoof protection. If someone sends you an Achievement Link in a Groupie Message, you can trust it's not a fake -- as long as you also have Groupie installed.
 
-* Coming Soon! Groupie Global Friends & Ignores List. This allows you to find guildies or friends from your other characters, and avoid the shady folks. 
+* If you're someone who just wants to play the game, Groupie does a pretty good job of filtering all of the "boost" spam to the "Other" Tab on the Bulletin Board.
 
 * Coming Soon! Groupie's "After Party" Tool. This will be an optional prompt window so you can quickly add people you enjoyed running with to your Groupie Global Friends & Ignores List.
+
+Screenshots : TODO
 
 <br>
 
