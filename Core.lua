@@ -725,13 +725,7 @@ local function BuildGroupieWindow()
     MainTabFrame:SetPoint("TOPLEFT", GroupieFrame, "TOPLEFT", 8, WINDOW_YOFFSET)
     MainTabFrame:SetScript("OnShow",
         function(self)
-            --Update saved instances before showing listing board if it hasn't yet been done
-            if not addon.updatedSavedOnLogin then
-                addon.UpdateSavedInstances()
-            else
-                addon.ExpireSavedInstances()
-            end
-            addon.updatedSavedOnLogin = true
+            return
         end)
     MainTabFrame.infotext = MainTabFrame:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
     MainTabFrame.infotext:SetJustifyH("CENTER")
@@ -1689,3 +1683,13 @@ end
 addon:RegisterEvent("CHARACTER_POINTS_CHANGED", addon.UpdateSpecOptions)
 --Update player's saved instances on boss kill and login
 addon:RegisterEvent("BOSS_KILL", addon.UpdateSavedInstances)
+addon:RegisterEvent("PLAYER_STARTED_MOVING", function()
+    --Update saved instances before showing listing board if it hasn't yet been done
+    if not addon.updatedSavedOnLogin then
+        addon.UpdateSavedInstances()
+    else
+        addon.ExpireSavedInstances()
+    end
+    addon.updatedSavedOnLogin = true
+end
+)
