@@ -7,7 +7,7 @@ local COLOR = { RED = "FFF44336", GREEN = "FF4CAF50" }
 
 local prototype = {
     print = print,
-    verified = List:new(),
+    verified = {},
     COLOR = COLOR,
     ADDON_PREFIX = "Groupie.SM",
     PROTECTED_TOKENS = List:new {
@@ -48,8 +48,7 @@ function SecureMessaging:SendChatMessage(message, chatType, target)
 end
 
 function SecureMessaging:Verify(message)
-    return message == SecureMessaging.WARNING_MESSAGE or
-        #self.verified:splice(self.verified:indexOf(message), 1) > 0
+    return message == SecureMessaging.WARNING_MESSAGE or self.verified[message]
 end
 
 function SecureMessaging.PLAYER_ENTERING_WORLD(...)
@@ -58,13 +57,11 @@ end
 
 function SecureMessaging.CHAT_MSG_ADDON(...)
     local message = select(3, ...)
-    SecureMessaging.verified:push(message)
+    SecureMessaging.verified[message] = true
 end
 
 function SecureMessaging.CHAT_MSG_WHISPER(...)
     local message, author = select(2, ...)
-    print(message, author)
-    print('____')
     After(0.5).Do(function()
         if not SecureMessaging:Verify(message) then
             SendChatMessage(SecureMessaging.WARNING_MESSAGE, "WHISPER", nil, author)
