@@ -62,12 +62,13 @@ end
 
 function SecureMessaging.CHAT_MSG_WHISPER(...)
     if not SecureMessaging:Verify(select(2, ...)) then
-        local author = select(3, ...)
+        local _, _, author = ...
         --SecureMessaging.print(SecureMessaging.WARNING_MESSAGE)
         --Wait 1 second, to ensure the verified table has time to populate, before sending a fake response.
-        C_Timer.After(0.5,
+        C_Timer.After(0.5, function()
             SecureMessaging:SendChatMessage("{rt3} Groupie : Fake News! That is not a real Groupie Message. Quit being shady."
-                , "WHISPER", author))
+                , "WHISPER", author)
+        end)
     end
 end
 
