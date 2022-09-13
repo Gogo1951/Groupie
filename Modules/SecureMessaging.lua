@@ -57,11 +57,14 @@ function SecureMessaging.PLAYER_ENTERING_WORLD(...)
 end
 
 function SecureMessaging.CHAT_MSG_ADDON(...)
-    SecureMessaging.verified:push(select(3, ...))
+    local message = select(3, ...)
+    SecureMessaging.verified:push(message)
 end
 
 function SecureMessaging.CHAT_MSG_WHISPER(...)
     local message, author = select(2, ...)
+    print(message, author)
+    print('____')
     After(0.5).Do(function()
         if not SecureMessaging:Verify(message) then
             SendChatMessage(SecureMessaging.WARNING_MESSAGE, "WHISPER", nil, author)
