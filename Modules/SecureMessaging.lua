@@ -1,6 +1,7 @@
 local addonName, Groupie = ...
 
 local List = LibStub("List-1.0")
+local After = LibStub("After-1.0")
 
 local COLOR = { RED = "FFF44336", GREEN = "FF4CAF50" }
 
@@ -13,9 +14,7 @@ local prototype = {
         [1] = "{rt3}%s*groupie%s*:",
         [2] = "groupie%s*{rt3}%s*:"
     },
-    WARNING_MESSAGE = WrapTextInColorCode(
-        "Groupie {rt3} : the following message was not sent by Groupie",
-        COLOR.RED)
+    WARNING_MESSAGE = "{rt3} Groupie : Fake News! That is not a real Groupie Message. Quit being shady."
 }
 
 local SecureMessaging = Groupie:NewModule("SecureMessaging", prototype,
@@ -45,11 +44,12 @@ end
 -- Use this for sending secure messages. It will send the message as per regular SendChatMessage, but will also send a prior addon message to verify the message.
 function SecureMessaging:SendChatMessage(message, chatType, target)
     self:SendSecureMessage(message, chatType, target)
-    SendChatMessage(message, chatType, nil, target)
+    After(1).Do(function() SendChatMessage(message, chatType, nil, target) end)
 end
 
 function SecureMessaging:Verify(message)
-    return #self.verified:splice(self.verified:indexOf(message), 1) > 0
+    return message == SecureMessaging.WARNING_MESSAGE or
+        #self.verified:splice(self.verified:indexOf(message), 1) > 0
 end
 
 function SecureMessaging.PLAYER_ENTERING_WORLD(...)
@@ -61,11 +61,9 @@ function SecureMessaging.CHAT_MSG_ADDON(...)
 end
 
 function SecureMessaging.CHAT_MSG_WHISPER(...)
-    if not SecureMessaging:Verify(select(2, ...)) then
-        local author = select(3, ...)
-        --SecureMessaging.print(SecureMessaging.WARNING_MESSAGE)
-        SecureMessaging:SendChatMessage("{rt3} Groupie : Fake News! That is not a real Groupie Message. Quit being shady."
-            , "WHISPER", author)
+    local message, author = select(2, ...)
+    if not SecureMessaging:Verify(message) then
+        SendChatMessage(SecureMessaging.WARNING_MESSAGE, "WHISPER", nil, author)
     end
 end
 
