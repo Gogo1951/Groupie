@@ -63,3 +63,17 @@ We can also use help translating the add-on. Reach out on Discord if you want to
 > Russian - Need Translator
 > 
 > Spanish - Need Translator
+
+<br>
+
+### 🆒  **OTHER STUFF**
+
+Groupie paris really nicely with WIM!
+
+> **WoW Instant Messenger**
+> https://www.curseforge.com/wow/addons/wim-3
+
+Help your team put their best foot forward.
+
+> **RankSentinel** by @SabreValkyrn
+> https://www.curseforge.com/wow/addons/ranksentinel
