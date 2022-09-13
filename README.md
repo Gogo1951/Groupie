@@ -68,7 +68,7 @@ We can also use help translating the add-on. Reach out on Discord if you want to
 
 ### 🆒  **OTHER STUFF**
 
-Groupie paris really nicely with WIM!
+Groupie pairs really nicely with WIM!
 
 > **WoW Instant Messenger**
 > https://www.curseforge.com/wow/addons/wim-3
