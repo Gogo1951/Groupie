@@ -6,15 +6,15 @@ A better LFG tool for Classic WoW.
 
 ### :gem:  **KEY FEATURES**
 
-:one:  Quickly find the groups you actually want to be in. You can filter groups by group-size, loot rules type, language, and more. Groupie is smart enough to hide dungeons out of your level range, and heroics or raids that you're already saved to.
+* Quickly find the groups you actually want to be in. You can filter groups by group-size, loot rules type, language, and more. Groupie is smart enough to hide dungeons out of your level range, and heroics or raids that you're already saved to.
 
-:two:  One-click ability to share your character's role, key stats, and relevant achievement link with the group's leader. For group leaders, this means no more context-less "wants to join" pop-ups from the Blizzard LFG Tool, or random "inv" responses to your posts.
+* One-click ability to share your character's role, key stats, and relevant achievement link with the group's leader. For group leaders, this means no more context-less "wants to join" pop-ups from the Blizzard LFG Tool, or random "inv" responses to your posts.
 
-:three:  Coming Soon! Ability to Send Your Character Sheet in a Message. You'll be able to virtually inspect Groupie users from anywhere in the world before you invite them to your PUG.
+* Coming Soon! Ability to Send Your Character Sheet in a Message. You'll be able to virtually inspect Groupie users from anywhere in the world before you invite them to your PUG.
 
-:four:  Coming Soon! Global Friends & Ignore List, & optional ability to Auto-Respond to Friends and Guildies when they post groups that you are interested in.
+* Coming Soon! Global Friends & Ignore List, & optional ability to Auto-Respond to Friends and Guildies when they post groups that you are interested in.
 
-Screenshots : TODO
+* Screenshots : TODO
 
 <br>
 
