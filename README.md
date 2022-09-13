@@ -14,7 +14,7 @@ A better LFG tool for Classic WoW.
 
 * Coming Soon! Global Friends & Ignore List, & optional ability to Auto-Respond to Friends and Guildies when they post groups that you are interested in.
 
-* Screenshots : https://imgur.com/a/EKP3vXs
+* Screenshots : https://imgur.com/a/uHMQwfx
 
 <br>
 
