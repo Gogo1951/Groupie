@@ -44,9 +44,9 @@ Reddit Announcement Post : TODO
 
 ### :hand:  **CURRENT NEEDS**
 
-As a new add-on, we can use a hand raising awarenss. Telling your friends will really help us get some traction. (=
+As a new add-on, we can use a hand raising awarenss. Telling your friends about Groupie will really help us get traction. (=
 
-If you're a streamer, please feel free to plug or review Groupie on your channel.
+If you're a Streamer, please feel free to plug or review Groupie on your channel.
 
 We can also use help translating the add-on. Reach out on Discord if you want to help!
 
