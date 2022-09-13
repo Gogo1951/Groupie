@@ -959,8 +959,8 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         tooltip:AddLine(addonName)
         tooltip:AddLine("A better LFG tool for Classic WoW.", 255, 255, 255, false)
         tooltip:AddLine(" ")
-        tooltip:AddLine("Click |cffffffffor|r /groupie |cffffffff: Open " .. addonName .. "|r ")
-        tooltip:AddLine("Right Click |cffffffff: Open " .. addonName .. " Settings|r ")
+        tooltip:AddLine("Click |cffffffffor|r /groupie |cffffffff: " .. addonName .. " Bulletin Board|r ")
+        tooltip:AddLine("Right Click |cffffffff: " .. addonName .. " Settings|r ")
         --TODO: Version check
         ---tooltip:AddLine(" ");
         ---tooltip:AddLine("|cff8000FFPLEASE UPDATE YOUR ADD-ONS ASAP!|r")
