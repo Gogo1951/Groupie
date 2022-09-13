@@ -1689,6 +1689,7 @@ end
 addon:RegisterEvent("CHARACTER_POINTS_CHANGED", addon.UpdateSpecOptions)
 --Update player's saved instances on boss kill and login
 addon:RegisterEvent("BOSS_KILL", addon.UpdateSavedInstances)
+--For some reason the api is very slow to populate saved instance data, so player entering world etc wont work
 addon:RegisterEvent("PLAYER_STARTED_MOVING", function()
     --Update saved instances before showing listing board if it hasn't yet been done
     if not addon.updatedSavedOnLogin then

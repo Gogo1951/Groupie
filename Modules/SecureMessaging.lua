@@ -62,7 +62,10 @@ end
 
 function SecureMessaging.CHAT_MSG_WHISPER(...)
     if not SecureMessaging:Verify(select(2, ...)) then
-        SecureMessaging.print(SecureMessaging.WARNING_MESSAGE)
+        local author = select(3, ...)
+        --SecureMessaging.print(SecureMessaging.WARNING_MESSAGE)
+        SecureMessaging:SendChatMessage("{rt3} Groupie : Fake News! That is not a real Groupie Message. Quit being shady."
+            , "WHISPER", author)
     end
 end
 
