@@ -44,7 +44,7 @@ end
 -- Use this for sending secure messages. It will send the message as per regular SendChatMessage, but will also send a prior addon message to verify the message.
 function SecureMessaging:SendChatMessage(message, chatType, target)
     self:SendSecureMessage(message, chatType, target)
-    After(1).Do(function() SendChatMessage(message, chatType, nil, target) end)
+    SendChatMessage(message, chatType, nil, target)
 end
 
 function SecureMessaging:Verify(message)
@@ -62,9 +62,11 @@ end
 
 function SecureMessaging.CHAT_MSG_WHISPER(...)
     local message, author = select(2, ...)
-    if not SecureMessaging:Verify(message) then
-        SendChatMessage(SecureMessaging.WARNING_MESSAGE, "WHISPER", nil, author)
-    end
+    After(0.5).Do(function()
+        if not SecureMessaging:Verify(message) then
+            SendChatMessage(SecureMessaging.WARNING_MESSAGE, "WHISPER", nil, author)
+        end
+    end)
 end
 
 local ForPrefix = WithEventFilter(function(prefix)
