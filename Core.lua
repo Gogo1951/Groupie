@@ -349,9 +349,17 @@ local function ListingOnClick(self, button, down)
         end
         --Open Right click Menu
     elseif button == "RightButton" then
-        local maxTalentSpec, maxTalentsSpent = addon.GetSpecByGroupNum(addon.GetActiveSpecGroup())
+        local activeSpecGroup = addon.GetActiveSpecGroup()
+        local maxTalentSpec, maxTalentsSpent = addon.GetSpecByGroupNum(activeSpecGroup)
         local isIgnored = C_FriendList.IsIgnored(displayName)
         local ignoreText = "Ignore"
+        local activeRole = ""
+
+        if activeSpecGroup == 1 then
+            activeRole = addon.groupieRoleTable[addon.db.char.groupieSpec1Role]
+        else
+            activeRole = addon.groupieRoleTable[addon.db.char.groupieSpec2Role]
+        end
 
         if isIgnored then
             ignoreText = "Stop Ignoring"
@@ -369,7 +377,7 @@ local function ListingOnClick(self, button, down)
             { text = "", disabled = true, notCheckable = true },
             { text = addonName, isTitle = true, notCheckable = true },
             { text = "Send My Info...", notClickable = true, notCheckable = true },
-            { text = "Current Spec : " .. maxTalentSpec, notCheckable = true, leftPadding = 8,
+            { text = format("Current : %s (%s)", maxTalentSpec, activeRole), notCheckable = true, leftPadding = 8,
                 func = function()
                     if instance ~= "Miscellaneous" and instance ~= "PVP" then
                         addon.SendPlayerInfo(fullName, nil, nil, fullInstance)
@@ -753,7 +761,7 @@ local function BuildGroupieWindow()
     ---------------------------------
     ShowingFontStr = MainTabFrame:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
     ShowingFontStr:SetPoint("TOPLEFT", 65, 48)
-    ShowingFontStr:SetWidth(57)
+    ShowingFontStr:SetWidth(59)
     ShowingFontStr:SetText("Showing : ")
     ShowingFontStr:SetJustifyH("LEFT")
     ShowingFontStr:SetJustifyV("MIDDLE")
@@ -907,7 +915,6 @@ local function BuildGroupieWindow()
     GroupieSettingsButton:SetText("Settings & Filters")
     GroupieSettingsButton:SetPoint("TOPRIGHT", 0, 55)
     GroupieSettingsButton:SetScript("OnClick", function()
-        GroupieFrame:Hide()
         addon:OpenConfig()
     end)
 
@@ -948,7 +955,11 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
     icon = "Interface\\AddOns\\" .. addonName .. "\\Images\\icon64.tga",
     OnClick = function(self, button, down)
         if button == "LeftButton" then
-            BuildGroupieWindow()
+            if GroupieFrame:IsShown() then
+                GroupieFrame:Hide()
+            else
+                BuildGroupieWindow()
+            end
         else
             addon:OpenConfig()
         end
@@ -1636,6 +1647,7 @@ function addon.SetupConfig()
 end
 
 function addon:OpenConfig()
+    GroupieFrame:Hide()
     addon.UpdateSpecOptions()
     InterfaceOptionsFrame_OpenToCategory(addonName)
     -- need to call it a second time as there is a bug where the first time it won't switch !BlizzBugsSuck has a fix

@@ -163,8 +163,16 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		info.func = function()
 			addon.SendPlayerInfo(name, dropdownMenu, which)
 		end
-		local maxTalentSpec, maxTalentsSpent = addon.GetSpecByGroupNum(addon.GetActiveSpecGroup())
-		info.text = "Current Spec : " .. maxTalentSpec
+
+		local activeSpecGroup = addon.GetActiveSpecGroup()
+		local maxTalentSpec, maxTalentsSpent = addon.GetSpecByGroupNum(activeSpecGroup)
+		local activeRole = ""
+		if activeSpecGroup == 1 then
+			activeRole = addon.groupieRoleTable[addon.db.char.groupieSpec1Role]
+		else
+			activeRole = addon.groupieRoleTable[addon.db.char.groupieSpec2Role]
+		end
+		info.text = format("Current : %s (%s)", maxTalentSpec, activeRole)
 		info.leftPadding = 8
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 
