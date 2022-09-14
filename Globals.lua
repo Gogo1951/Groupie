@@ -126,6 +126,8 @@ addon.groupieVersionPatterns = {
     ["h"] = 0,
     ["hc"] = 0,
     ["heroic"] = 0,
+    ["heroics"] = 0,
+    ["hero"] = 0,
     ["10"] = 1,
     ["n10"] = 1,
     ["10n"] = 1,
@@ -186,7 +188,7 @@ addon.groupieUnflippedLootPatterns = {
     ["GDKP"] = "gdkp bid buyer",
     ["SoftRes"] = "2sr 1sr sr softres softreserve soft",
     ["MS > OS"] = "msos",
-    ["Other"] = "afk boost boosting boosts exp mob mobs recruit recruiting recruits roster selling wts xp"
+    ["Other"] = "afk boost boosting boosts exp mob mobs recruit recruiting recruits roster selling wts xp layer"
 }
 
 addon.lootTypeColors = {
@@ -214,7 +216,7 @@ addon.classColors = {
 
 addon.multiWingInstances = { "Dire Maul - Full Clear", "Maraudon - Full Clear", "Scarlet Monastery - Full Clear" }
 
-addon.edgeCasePatterns = { "mt", "os", "up", "dk", "eye" }
+addon.edgeCasePatterns = { "mt", "os", "up", "dk", "eye", "st" }
 
 --instanceVersions[instance] = {{size, isHeroic}, ...}
 addon.instanceVersions = {
@@ -694,14 +696,14 @@ addon.groupieUnflippedDungeonPatterns = {
     ["Maraudon - Princess"]            = "princessrun princess",
     ["Maraudon - Purple"]              = "purple",
     ["Maraudon - Orange"]              = "orange",
-    ["Sunken Temple"]                  = "st sunken atal temple",
+    ["Sunken Temple"]                  = "st sunken atal",
     ["Blackrock Depths"]               = "brd emperor arena emp",
     ["Dire Maul - Full Clear"]         = "dm dire maul diremaul",
     ["Dire Maul - East Wing"]          = "dme dmeast east puzilin jumprun",
     ["Dire Maul - North Wing"]         = "dmn dmnorth north tribute",
     ["Dire Maul - West Wing"]          = "dmw dmwest west",
     ["Lower Blackrock Spire"]          = "lower lbrs lrbs",
-    ["Stratholme"]                     = "stratlive live living stratUD undead ud baron stratholme stath stratholm strah strath strat starth",
+    ["Stratholme"]                     = "stratlive live living stratud undead ud baron stratholme stath stratholm strah strath strat starth",
     ["Scholomance"]                    = "scholomance scholo sholo sholomance",
 
     ["Upper Blackrock Spire"] = "upper ubrs urbs rend",
@@ -720,7 +722,7 @@ addon.groupieUnflippedDungeonPatterns = {
     ["Mana-Tombs"]              = "manatombs manatomb mana mt tomb tombs",
     ["Auchenai Crypts"]         = "crypts crypt auchenai ac acrypts acrypt",
     ["Sethekk Halls"]           = "sethekk seth anzu sethek",
-    ["Old Hillsbrad Foothills"] = "ohb durnholde",
+    ["Old Hillsbrad Foothills"] = "ohb durnholde ohf",
     ["Shadow Labyrinth"]        = "sl slab labs labyrinth slabs",
     ["Mechanar"]                = "mech mechanar",
     ["Shattered Halls"]         = "sh shh shattered",
