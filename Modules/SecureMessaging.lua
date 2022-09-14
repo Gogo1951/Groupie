@@ -12,8 +12,10 @@ local prototype = {
     COLOR = COLOR,
     ADDON_PREFIX = "Groupie.SM",
     PROTECTED_TOKENS = List:new {
-        [1] = "{rt3}%s*groupie%s*:",
-        [2] = "groupie%s*{rt3}%s*:"
+        [1] = "%s*{rt3}%s*groupie%s*:",
+        [2] = "%s*groupie%s*{rt3}%s*:",
+        [3] = "%s*{diamond}%s*groupie%s*:",
+        [4] = "%s*groupie%s*{diamond}%s*:",
     },
     WARNING_MESSAGE = "{rt3} Groupie : Fake News! That is not a real Groupie Message. Quit being shady."
 }
