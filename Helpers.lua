@@ -57,7 +57,7 @@ function addon.GroupieSplit(inputstr, delimiter)
     local t = {}
     for str in gmatch(inputstr, "([^" .. delimiter .. "]+)") do
         if tContains(t, str) == false then
-            table.insert(t, str)
+            table.insert(t, 1, str)
         end
     end
     return t
