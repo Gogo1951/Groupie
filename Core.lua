@@ -972,7 +972,7 @@ local function BuildGroupieWindow()
         GameTooltip:Show()
     end)
     status.LookingForGroup:SetScript("OnLeave",function(self)
-        if GameTooltip:IsShown(self) then
+        if GameTooltip:IsOwned(self) then
             GameTooltip:Hide()
         end
     end)
