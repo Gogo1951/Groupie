@@ -1,4 +1,5 @@
 local addonName, Groupie    = ...
+local locale                = GetLocale()
 --Main UI variables
 local GroupieFrame          = nil
 local MainTabFrame          = nil
@@ -521,7 +522,7 @@ local function createColumn(text, width, parent, sortType)
 end
 
 --Listing update timer
-function addon.TimerListingUpdate()
+local function TimerListingUpdate()
     if not addon.lastUpdate then
         addon.lastUpdate = time()
     end
@@ -532,7 +533,7 @@ function addon.TimerListingUpdate()
 end
 
 --Set environment variables when switching group tabs
-function addon.TabSwap(isHeroic, size, tabType, tabNum)
+local function TabSwap(isHeroic, size, tabType, tabNum)
     addon.ExpireListings()
     MainTabFrame:Show()
 
@@ -663,7 +664,7 @@ local function BuildGroupieWindow()
     DungeonTabButton:SetID("1")
     DungeonTabButton:SetScript("OnClick",
         function(self)
-            addon.TabSwap(false, 5, 0, 1)
+            TabSwap(false, 5, 0, 1)
         end)
 
     local DungeonHTabButton = CreateFrame("Button", "GroupieTab2", GroupieFrame, "CharacterFrameTabButtonTemplate")
@@ -672,7 +673,7 @@ local function BuildGroupieWindow()
     DungeonHTabButton:SetID("2")
     DungeonHTabButton:SetScript("OnClick",
         function(self)
-            addon.TabSwap(true, 5, 0, 2)
+            TabSwap(true, 5, 0, 2)
         end)
 
     local Raid10TabButton = CreateFrame("Button", "GroupieTab3", GroupieFrame, "CharacterFrameTabButtonTemplate")
@@ -681,7 +682,7 @@ local function BuildGroupieWindow()
     Raid10TabButton:SetID("3")
     Raid10TabButton:SetScript("OnClick",
         function(self)
-            addon.TabSwap(false, 10, 0, 3)
+            TabSwap(false, 10, 0, 3)
         end)
 
     local Raid25TabButton = CreateFrame("Button", "GroupieTab4", GroupieFrame, "CharacterFrameTabButtonTemplate")
@@ -690,7 +691,7 @@ local function BuildGroupieWindow()
     Raid25TabButton:SetID("4")
     Raid25TabButton:SetScript("OnClick",
         function(self)
-            addon.TabSwap(false, 25, 0, 4)
+            TabSwap(false, 25, 0, 4)
         end)
 
     local RaidH10TabButton = CreateFrame("Button", "GroupieTab5", GroupieFrame, "CharacterFrameTabButtonTemplate")
@@ -699,7 +700,7 @@ local function BuildGroupieWindow()
     RaidH10TabButton:SetID("5")
     RaidH10TabButton:SetScript("OnClick",
         function(self)
-            addon.TabSwap(true, 10, 0, 5)
+            TabSwap(true, 10, 0, 5)
         end)
 
     local RaidH25TabButton = CreateFrame("Button", "GroupieTab6", GroupieFrame, "CharacterFrameTabButtonTemplate")
@@ -708,7 +709,7 @@ local function BuildGroupieWindow()
     RaidH25TabButton:SetID("6")
     RaidH25TabButton:SetScript("OnClick",
         function(self)
-            addon.TabSwap(true, 25, 0, 6)
+            TabSwap(true, 25, 0, 6)
         end)
 
     local PVPTabButton = CreateFrame("Button", "GroupieTab7", GroupieFrame, "CharacterFrameTabButtonTemplate")
@@ -717,7 +718,7 @@ local function BuildGroupieWindow()
     PVPTabButton:SetID("7")
     PVPTabButton:SetScript("OnClick",
         function(self)
-            addon.TabSwap(nil, nil, 3, 7)
+            TabSwap(nil, nil, 3, 7)
         end)
 
     local OtherTabButton = CreateFrame("Button", "GroupieTab8", GroupieFrame, "CharacterFrameTabButtonTemplate")
@@ -726,7 +727,7 @@ local function BuildGroupieWindow()
     OtherTabButton:SetID("8")
     OtherTabButton:SetScript("OnClick",
         function(self)
-            addon.TabSwap(nil, nil, 1, 8)
+            TabSwap(nil, nil, 1, 8)
         end)
 
     local AllTabButton = CreateFrame("Button", "GroupieTab9", GroupieFrame, "CharacterFrameTabButtonTemplate")
@@ -735,7 +736,7 @@ local function BuildGroupieWindow()
     AllTabButton:SetID("9")
     AllTabButton:SetScript("OnClick",
         function(self)
-            addon.TabSwap(nil, nil, 2, 9)
+            TabSwap(nil, nil, 2, 9)
         end)
 
 
@@ -756,7 +757,7 @@ local function BuildGroupieWindow()
     MainTabFrame.infotext:SetPoint("TOP", 0, 150)
     --This frame is the main container for all listing categories, so do the update here
     MainTabFrame:HookScript("OnUpdate", function()
-        addon.TimerListingUpdate()
+        TimerListingUpdate()
     end)
     MainTabFrame.infotext:Hide()
 
@@ -1775,4 +1776,12 @@ addon:RegisterEvent("PLAYER_ENTERING_WORLD", function()
 end)
 addon:RegisterEvent("BOSS_KILL", function()
     C_Timer.After(5, addon.UpdateSavedInstances)
+end)
+
+addon:RegisterEvent("CHAT_MSG_SYSTEM", function(...)
+    local event, msg = ...
+    if strmatch(msg, "is now being ignored.") then
+        local author = gsub(msg, " .*", "")
+        print(author)
+    end
 end)
