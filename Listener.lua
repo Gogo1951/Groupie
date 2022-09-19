@@ -33,16 +33,17 @@ local function GetDungeons(messageWords)
     local instance = nil
     local isHeroic = false
     local forceSize = nil
+    local lastUsedToken = ""
     for i = 1, #messageWords do
         local word = messageWords[i]
         --Look for dungeon patterns
         local lookupAttempt = addon.groupieInstancePatterns[word]
         if lookupAttempt ~= nil then
             --Handle edge cases of instance acronyms that overlap with other words people use
-            --Currently MT, OS, UP
-            --Only use these as valid instance patterns if the instance is nil so far
-            if instance == nil or not addon.tableContains(addon.edgeCasePatterns, word) then
+            --Only overwrite with instance tokens occurring later in the message if they are an edge case token
+            if instance == nil or addon.tableContains(addon.edgeCasePatterns, lastUsedToken) then
                 instance = lookupAttempt
+                lastUsedToken = word
             end
 
             --Set to heroic for special case "TOGC"
@@ -357,7 +358,7 @@ end
 local function GroupieEventHandlers(...)
     local event, msg, author, _, channel, _, _, _, _, _, _, _, guid = ...
     local validChannel = false
-    if addon.db.char.useChannels["Guild"] and event=="CHAT_MSG_GUILD" then
+    if addon.db.char.useChannels["Guild"] and strmatch(channel, "Guild") then
         validChannel = true
     elseif addon.db.char.useChannels["General"] and strmatch(channel, "General") then
         validChannel = true

@@ -57,7 +57,7 @@ function addon.GroupieSplit(inputstr, delimiter)
     local t = {}
     for str in gmatch(inputstr, "([^" .. delimiter .. "]+)") do
         if tContains(t, str) == false then
-            table.insert(t, 1, str)
+            table.insert(t, str)
         end
     end
     return t
@@ -74,7 +74,7 @@ end
 --Replace all non alphanumeric characters with a space, trim excess spaces, and convert to all lower case
 function addon.Preprocess(msg)
     local gsub = gsub
-    return gsub(strlower(gsub(gsub(msg, "%W", " "), "%s+", " ")), "ms os", "msos")
+    return gsub(gsub(strlower(gsub(gsub(msg, "%W", " "), "%s+", " ")), "ms os", "msos"), "black temple", "blacktemple")
 end
 
 --Reverse a table by creating a new one
