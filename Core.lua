@@ -399,7 +399,7 @@ local function DrawListings(self)
             button.btn:SetScript("OnClick", function()
                 addon.SendPlayerInfo(listing.author, nil, nil, listing.fullName)
             end)
-            if myName == button.listing.author then
+            if myName == button.listing.author and not addon.debugMenus then
                 button.btn:Hide()
             else
                 button.btn:Show()
@@ -1104,6 +1104,7 @@ local function BuildGroupieWindow()
         end
     end)
 
+    GroupieFrame:SetScale(addon.db.global.UIScale)
     GroupieFrame:Show()
 end
 
@@ -1205,8 +1206,6 @@ function addon:OnInitialize()
         global = {
             lastServer = nil,
             minsToPreserve = 5,
-            font = "Arial Narrow",
-            fontSize = 8,
             debugData = {},
             listingTable = {},
             showMinimap = true,
@@ -1217,6 +1216,7 @@ function addon:OnInitialize()
             savedInstanceInfo = {},
             needsUpdateFlag = false,
             needsUpdateVersion = 0,
+            UIScale = 1.0,
         }
     }
     --Generate defaults for each individual dungeon filter
@@ -1717,53 +1717,22 @@ function addon.SetupConfig()
                     spacerdesc4 = { type = "description", name = " ", width = "full", order = 8 },
                     header3 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. "Font",
+                        name = "|cff" .. addon.groupieSystemColor .. "UI Scale",
                         order = 9,
-                        fontSize = "medium",
-                        hidden = true,
-                        disabled = true,
+                        fontSize = "medium"
                     },
-                    fontDropdown = {
-                        type = "select",
-                        style = "dropdown",
+                    scaleSlider = {
+                        type = "range",
                         name = "",
-                        order = 10,
-                        width = 1.4,
-                        values = addon.TableFlip(SharedMedia:HashTable("font")),
-                        hidden = true,
-                        disabled = true,
-                        set = function(info, val) addon.db.global.font = val end,
-                        get = function(info) return addon.db.global.font end,
-                    },
-                    spacerdesc5 = { type = "description", name = " ", width = "full", order = 11 },
-                    header4 = {
-                        type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. "Base Font Size",
-                        order = 12,
-                        fontSize = "medium",
-                        hidden = true,
-                        disabled = true,
-                    },
-                    fontSizeDropdown = {
-                        type = "select",
-                        style = "dropdown",
-                        name = "",
-                        order = 13,
-                        width = 1.4,
-                        values = {
-                            [8] = "8 pt",
-                            [10] = "10 pt",
-                            [12] = "12 pt",
-                            [14] = "14 pt",
-                            [16] = "16 pt",
-                            [18] = "18 pt",
-                            [20] = "20 pt",
-                        },
-                        hidden = true,
-                        disabled = true,
-                        set = function(info, val) addon.db.global.fontSize = val end,
-                        get = function(info) return addon.db.global.fontSize end,
-                    },
+                        min = 0.5,
+                        max = 2.0,
+                        step = 0.1,
+                        set = function(info, val)
+                            addon.db.global.UIScale = val
+                            GroupieFrame:SetScale(val)
+                        end,
+                        get = function(info) return addon.db.global.UIScale end,
+                    }
                 },
             },
         },
