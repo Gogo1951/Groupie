@@ -126,6 +126,11 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		return
 	end
 
+	--Attempt to prevent taint by not hooking dropdown while in combat
+	if InCombatLockdown() then
+		return
+	end
+
 	--Some context menus dont natively give us a name parameter
 	if name == nil then
 		name = UnitName(unit)
@@ -140,7 +145,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 	if unit == "player" and not addon.debugMenus then
 		return
 	end
-	if UnitName("player") == name then
+	if UnitName("player") == name and not addon.debugMenus then
 		return
 	end
 
