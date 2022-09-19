@@ -1718,9 +1718,6 @@ function addon:OpenConfig()
     InterfaceOptionsFrame_OpenToCategory(addonName)
 end
 
---This must be done after player entering world event so that we can pull spec
-addon:RegisterEvent("PLAYER_ENTERING_WORLD", addon.SetupConfig)
-
 --Update our options menu dropdowns when the player's specialization changes
 function addon.UpdateSpecOptions()
     local spec1, maxtalents1 = addon.GetSpecByGroupNum(1)
@@ -1768,6 +1765,7 @@ addon:RegisterEvent("CHARACTER_POINTS_CHANGED", addon.UpdateSpecOptions)
 --Update player's saved instances on boss kill and login
 --The api is very slow to populate saved instance data, so we need a delay on these events
 addon:RegisterEvent("PLAYER_ENTERING_WORLD", function()
+    addon.SetupConfig()
     C_Timer.After(5, addon.UpdateSavedInstances)
 end)
 addon:RegisterEvent("BOSS_KILL", function()
