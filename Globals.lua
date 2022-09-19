@@ -191,7 +191,7 @@ addon.groupieUnflippedLootPatterns = {
     ["GDKP"] = "gdkp bid buyer",
     ["SoftRes"] = "2sr 1sr sr softres softreserve soft",
     ["MS > OS"] = "msos",
-    ["Other"] = "afk boost boosting boosts exp mob mobs recruit recruiting recruits roster selling wts xp layer"
+    ["Other"] = "afk boost boosting boosts exp mob mobs recruit recruiting recruits roster selling wts xp layer hire"
 }
 
 addon.lootTypeColors = {

@@ -12,6 +12,7 @@ if not addon.tableContains(addon.validLocales, locale) then
         local LOCALE_WINDOW_WIDTH = 400
         local LOCALE_WINDOW_HEIGHT = 200
         GroupieFrame = CreateFrame("Frame", "Groupie", UIParent, "PortraitFrameTemplate")
+        GroupieFrame:Hide()
         GroupieFrame:SetFrameStrata("DIALOG")
         GroupieFrame:SetWidth(LOCALE_WINDOW_WIDTH)
         GroupieFrame:SetHeight(LOCALE_WINDOW_HEIGHT)
@@ -678,17 +679,6 @@ local function TabSwap(isHeroic, size, tabType, tabNum)
         GroupieLootDropdown:Show()
         GroupieLangDropdown:Show()
         ShowingFontStr:Show()
-    end
-
-    --Change button text for other tab
-    if tabNum == 8 then --Other
-        for i = 1, #addon.groupieBoardButtons do
-            addon.groupieBoardButtons[i].btn:SetText("Hire")
-        end
-    else
-        for i = 1, #addon.groupieBoardButtons do
-            addon.groupieBoardButtons[i].btn:SetText("LFG")
-        end
     end
 
     DrawListings(LFGScrollFrame)
