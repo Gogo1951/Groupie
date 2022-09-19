@@ -284,8 +284,8 @@ local function DrawListings(self)
     end
 
     local offset = FauxScrollFrame_GetOffset(self)
-
     local idx = 0
+    local myName = UnitName("player") .. "-" .. gsub(GetRealmName(), " ", "")
     for btnNum = 1, BUTTON_TOTAL do
         idx = btnNum + offset
         local button = addon.groupieBoardButtons[btnNum]
@@ -309,6 +309,11 @@ local function DrawListings(self)
             button.btn:SetScript("OnClick", function()
                 addon.SendPlayerInfo(listing.author, nil, nil, listing.fullName)
             end)
+            if myName == button.listing.author then
+                button.btn:Hide()
+            else
+                button.btn:Show()
+            end
             button:SetScript("OnEnter", function()
                 GameTooltip:SetOwner(button, "ANCHOR_CURSOR")
                 GameTooltip:SetText(formattedMsg, 1, 1, 1, 1, true)
