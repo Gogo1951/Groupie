@@ -945,6 +945,59 @@ local function BuildGroupieWindow()
     PanelTemplates_SetNumTabs(GroupieFrame, 9)
     PanelTemplates_SetTab(GroupieFrame, 1)
 
+    -------------
+    --Statusbar--
+    -------------
+    local status = CreateFrame("Frame", nil, GroupieFrame)
+    status:SetPoint("TOPLEFT", GroupieFrame.Bg, "BOTTOMLEFT", 5, 30)
+    status:SetPoint("BOTTOMRIGHT", -10, 5)
+    status.LookingForGroup=CreateFrame("Frame",nil, status)
+    status.LookingForGroup:SetPoint("BOTTOMRIGHT", status, "BOTTOMRIGHT", -5, 0)
+    status.LookingForGroup:SetPoint("TOPLEFT", status, "BOTTOMRIGHT", -150-5, 25)
+    status.LookingForGroup.label = status.LookingForGroup:CreateFontString("FontString", "OVERLAY", "GameFontNormal")
+    status.LookingForGroup.label:SetShadowColor(0,0,0,1)
+    status.LookingForGroup.label:SetShadowOffset(2,-2)
+    status.LookingForGroup.label:SetAllPoints(status.LookingForGroup)
+    status.LookingForGroup.label:SetText("LookingForGroup")
+    status.LookingForGroup.highlight = status.LookingForGroup:CreateTexture(nil, "HIGHLIGHT")
+    status.LookingForGroup.highlight:SetTexture(nil)
+    status.LookingForGroup.highlight:SetAllPoints()
+    status.LookingForGroup.highlight:SetBlendMode("ADD")
+    status.LookingForGroup.key = "LookingForGroup"
+    status.LookingForGroup.hint = "Left Click: Join LookingForGroup channel\nRight Click: Join Group Finder"
+    status.LookingForGroup:SetScript("OnEnter",function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_TOP")
+        GameTooltip:SetText(self.key)
+        GameTooltip:AddLine(self.hint or " ")
+        GameTooltip:Show()
+    end)
+    status.LookingForGroup:SetScript("OnLeave",function(self)
+        if GameTooltip:IsOwned(self) then
+            GameTooltip:Hide()
+        end
+    end)
+    status.LookingForGroup:SetScript("OnMouseDown",function(self,button)
+        if button == "LeftButton" then
+            local joined = GetChannelName((GetChannelName("LookingForGroup")))
+            if joined == 0 then
+                JoinPermanentChannel("LookingForGroup",nil,DEFAULT_CHAT_FRAME:GetID())
+            end
+        elseif button == "RightButton" then
+            if not C_LFGList.HasActiveEntryInfo() then
+                local lfg_loaded = UIParentLoadAddOn("Blizzard_LookingForGroupUI")
+                if lfg_loaded then
+                    local success = C_LFGList.CreateListing({1064},true) -- Custom
+                    if success then
+                        local joined = GetChannelName((GetChannelName("LookingForGroup")))
+                        if joined == 0 then
+                            JoinPermanentChannel("LookingForGroup",nil,DEFAULT_CHAT_FRAME:GetID())
+                        end
+                    end
+                end
+            end
+        end
+    end)
+
     GroupieFrame:Show()
 end
 
