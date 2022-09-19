@@ -1,6 +1,5 @@
 local MAJOR, MINOR = "After-1.0", 1
 local After = LibStub:NewLibrary(MAJOR, MINOR)
-
 if not After then return end -- No upgrade needed
 
 setmetatable(After, {

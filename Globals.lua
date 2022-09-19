@@ -1,5 +1,8 @@
 local addonName, addon = ...
 
+--Supported localizations, we only load the addon for these
+addon.validLocales = { "enGB", "enUS" }
+
 addon.groupieSystemColor = "ffd900"
 
 addon.groupieLocaleTable = {
@@ -216,7 +219,7 @@ addon.classColors = {
 
 addon.multiWingInstances = { "Dire Maul - Full Clear", "Maraudon - Full Clear", "Scarlet Monastery - Full Clear" }
 
-addon.edgeCasePatterns = { "mt", "os", "up", "dk", "eye", "st" }
+addon.edgeCasePatterns = { "mt", "os", "up", "dk", "eye", "st", "mh" }
 
 --instanceVersions[instance] = {{size, isHeroic}, ...}
 addon.instanceVersions = {

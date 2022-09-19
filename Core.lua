@@ -1,5 +1,96 @@
-local addonName, Groupie    = ...
-local locale                = GetLocale()
+local addonName, Groupie = ...
+local locale             = GetLocale()
+local addon              = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0", "AceConsole-3.0",
+    "AceTimer-3.0")
+
+-------------------------
+--Unsupported Locale UI--
+-------------------------
+if not addon.tableContains(addon.validLocales, locale) then
+    local GroupieFrame = nil
+    local function BuildGroupieWindow()
+        local LOCALE_WINDOW_WIDTH = 400
+        local LOCALE_WINDOW_HEIGHT = 200
+        GroupieFrame = CreateFrame("Frame", "Groupie", UIParent, "PortraitFrameTemplate")
+        GroupieFrame:SetFrameStrata("DIALOG")
+        GroupieFrame:SetWidth(LOCALE_WINDOW_WIDTH)
+        GroupieFrame:SetHeight(LOCALE_WINDOW_HEIGHT)
+        GroupieFrame:SetPoint("CENTER", UIParent)
+        GroupieFrame:SetMovable(true)
+        GroupieFrame:EnableMouse(true)
+        GroupieFrame:RegisterForDrag("LeftButton", "RightButton")
+        GroupieFrame:SetClampedToScreen(true)
+        GroupieFrame.text = _G["GroupieTitleText"]
+        GroupieFrame.text:SetText("Groupie")
+        GroupieFrame:SetScript("OnMouseDown",
+            function(self)
+                self:StartMoving()
+                self.isMoving = true
+            end)
+        GroupieFrame:SetScript("OnMouseUp",
+            function(self)
+                if self.isMoving then
+                    self:StopMovingOrSizing()
+                    self.isMoving = false
+                end
+            end)
+        GroupieFrame:SetScript("OnShow", function() return end)
+        --Icon
+        local icon = GroupieFrame:CreateTexture("$parentIcon", "OVERLAY", nil, -8)
+        icon:SetSize(60, 60)
+        icon:SetPoint("TOPLEFT", -5, 7)
+        icon:SetTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\icon128.tga")
+        --Info Text
+        local msg = GroupieFrame:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
+        msg:SetPoint("TOPLEFT", GroupieFrame, "TOPLEFT", 16, -64)
+        msg:SetWidth(LOCALE_WINDOW_WIDTH - 32)
+        msg:SetText("Localization is Coming Soon!\n\nUnfortunately, until then Groupie is Disabled for your locale.\nIf you'd like to help with Development or Translation, you can join our Discord.")
+        --Edit Box for Discord Link
+        local editBox = CreateFrame("EditBox", "GroupieEditBox", GroupieFrame, "InputBoxTemplate")
+        editBox:SetPoint("TOPLEFT", GroupieFrame, "TOPLEFT", 64, -128)
+        editBox:SetSize(LOCALE_WINDOW_WIDTH - 128, 50)
+        editBox:SetAutoFocus(false)
+        editBox:SetText("https://discord.gg/6xccnxcRbt")
+        editBox:SetScript("OnTextChanged", function()
+            editBox:SetText("https://discord.gg/6xccnxcRbt")
+        end)
+        GroupieFrame:Show()
+    end
+
+    BuildGroupieWindow()
+
+    addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
+        type = "data source",
+        text = addonName,
+        icon = "Interface\\AddOns\\" .. addonName .. "\\Images\\icon64.tga",
+        OnClick = function(self, button, down)
+            if button == "LeftButton" then
+                if GroupieFrame:IsShown() then
+                    GroupieFrame:Hide()
+                else
+                    BuildGroupieWindow()
+                end
+            end
+        end,
+        OnTooltipShow = function(tooltip)
+            tooltip:AddLine(addonName)
+            tooltip:AddLine("A better LFG tool for Classic WoW.", 255, 255, 255, false)
+            tooltip:AddLine(" ")
+            tooltip:AddLine("Localization Coming Soon!")
+        end
+    })
+
+    local defaults = {
+        global = {
+        }
+    }
+    addon.db = LibStub("AceDB-3.0"):New("GroupieDB", defaults)
+    addon.icon = LibStub("LibDBIcon-1.0")
+    addon.icon:Register("GroupieLDB", addon.groupieLDB, addon.db.global or defaults.global)
+    addon.icon:Hide("GroupieLDB")
+    return
+end
+
 --Main UI variables
 local GroupieFrame          = nil
 local MainTabFrame          = nil
@@ -31,8 +122,6 @@ local APPLY_BTN_WIDTH       = 64
 
 local COL_MSG = WINDOW_WIDTH - COL_CREATED - COL_TIME - COL_LEADER - COL_INSTANCE - COL_LOOT - ICON_WIDTH -
     APPLY_BTN_WIDTH - 58
-
-local addon = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0", "AceConsole-3.0", "AceTimer-3.0")
 
 local SharedMedia = LibStub("LibSharedMedia-3.0")
 local gsub        = gsub
@@ -1066,7 +1155,8 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
                                 titleFlag = true
                                 tooltip:AddLine(" ")
                                 tooltip:AddLine(lockout.instance, 255, 255, 255, false)
-                                tooltip:AddLine("|cff9E9E9E  Reset : " .. addon.GetTimeSinceString(lockout.resetTime, 4))
+                                tooltip:AddLine("|cff9E9E9E  Reset : " ..
+                                    addon.GetTimeSinceString(lockout.resetTime, 4))
                             end
                             tooltip:AddLine("    |cff" .. lockout.classColor .. player .. "|r")
                         end
@@ -1076,6 +1166,8 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         end
     end
 })
+
+
 
 --------------------------
 -- Addon Initialization --
@@ -1763,11 +1855,13 @@ function addon.UpdateSpecOptions()
     end
 end
 
+-------------------
+--Event Registers--
+-------------------
 --Leave this commented for now, may trigger when swapping dual specs, which we dont want to reset settings
 --Only actual talent changes
 --addon:RegisterEvent("PLAYER_TALENT_UPDATE", addon.UpdateSpecOptions)
 addon:RegisterEvent("CHARACTER_POINTS_CHANGED", addon.UpdateSpecOptions)
-
 --Update player's saved instances on boss kill and login
 --The api is very slow to populate saved instance data, so we need a delay on these events
 addon:RegisterEvent("PLAYER_ENTERING_WORLD", function()
@@ -1777,11 +1871,10 @@ end)
 addon:RegisterEvent("BOSS_KILL", function()
     C_Timer.After(5, addon.UpdateSavedInstances)
 end)
-
 addon:RegisterEvent("CHAT_MSG_SYSTEM", function(...)
     local event, msg = ...
     if strmatch(msg, "is now being ignored.") then
         local author = gsub(msg, " .*", "")
-        print(author)
+        --print(author)
     end
 end)

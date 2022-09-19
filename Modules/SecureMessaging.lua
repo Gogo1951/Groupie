@@ -1,5 +1,8 @@
 local addonName, Groupie = ...
-
+local locale = GetLocale()
+if not Groupie.tableContains(Groupie.validLocales, locale) then
+    return
+end
 local List = LibStub("List-1.0")
 local After = LibStub("After-1.0")
 local prefixRegistered = false

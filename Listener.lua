@@ -1,4 +1,8 @@
 local addonName, addon = ...
+local locale = GetLocale()
+if not addon.tableContains(addon.validLocales, locale) then
+    return
+end
 local AceEvent = LibStub("AceEvent-3.0")
 AceEvent:Embed(addon)
 
@@ -377,13 +381,9 @@ local function GroupieEventHandlers(...)
     return true
 end
 
-addon:RegisterEvent("CHAT_MSG_CHANNEL", GroupieEventHandlers)
-addon:RegisterEvent("CHAT_MSG_GUILD", GroupieEventHandlers)
-
 -------------------------------
 --DEBUG FUNCTIONS FOR TESTING--
 -------------------------------
-
 local function testfunc(_, msg, ...)
     if not addon.debugMenus then
         return
@@ -401,4 +401,9 @@ local function testfunc(_, msg, ...)
     end
 end
 
+-------------------
+--Event Registers--
+-------------------
+addon:RegisterEvent("CHAT_MSG_CHANNEL", GroupieEventHandlers)
+addon:RegisterEvent("CHAT_MSG_GUILD", GroupieEventHandlers)
 addon:RegisterEvent("CHAT_MSG_WHISPER", testfunc)

@@ -1,6 +1,9 @@
 local addonName, addon = ...
+local locale = GetLocale()
+if not addon.tableContains(addon.validLocales, locale) then
+	return
+end
 local SecureMessaging = addon.SM
-print(SecureMessaging)
 -------------------------------
 -- Right Click Functionality --
 -------------------------------
