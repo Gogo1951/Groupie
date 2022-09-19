@@ -292,7 +292,6 @@ function addon.UpdateSavedInstances()
     end
 
     addon.ExpireSavedInstances()
-
     --Inject test data for instance filtering/minimap based on saved instances
     --[[
     addon.db.global.savedInstanceInfo[2330] = {}

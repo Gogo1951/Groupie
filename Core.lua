@@ -1764,16 +1764,12 @@ end
 --Only actual talent changes
 --addon:RegisterEvent("PLAYER_TALENT_UPDATE", addon.UpdateSpecOptions)
 addon:RegisterEvent("CHARACTER_POINTS_CHANGED", addon.UpdateSpecOptions)
+
 --Update player's saved instances on boss kill and login
-addon:RegisterEvent("BOSS_KILL", addon.UpdateSavedInstances)
---For some reason the api is very slow to populate saved instance data, so player entering world etc wont work
-addon:RegisterEvent("PLAYER_STARTED_MOVING", function()
-    --Update saved instances before showing listing board if it hasn't yet been done
-    if not addon.updatedSavedOnLogin then
-        addon.UpdateSavedInstances()
-    else
-        addon.ExpireSavedInstances()
-    end
-    addon.updatedSavedOnLogin = true
-end
-)
+--The api is very slow to populate saved instance data, so we need a delay on these events
+addon:RegisterEvent("PLAYER_ENTERING_WORLD", function()
+    C_Timer.After(5, addon.UpdateSavedInstances)
+end)
+addon:RegisterEvent("BOSS_KILL", function()
+    C_Timer.After(5, addon.UpdateSavedInstances)
+end)
