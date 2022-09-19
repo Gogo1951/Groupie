@@ -358,7 +358,7 @@ end
 local function GroupieEventHandlers(...)
     local event, msg, author, _, channel, _, _, _, _, _, _, _, guid = ...
     local validChannel = false
-    if addon.db.char.useChannels["Guild"] and strmatch(channel, "Guild") then
+    if addon.db.char.useChannels["Guild"] and event == "CHAT_MSG_GUILD" then
         validChannel = true
     elseif addon.db.char.useChannels["General"] and strmatch(channel, "General") then
         validChannel = true
