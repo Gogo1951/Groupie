@@ -1044,6 +1044,7 @@ local function BuildGroupieWindow()
     -------------
     --Statusbar--
     -------------
+    --[[ May be useful in building the group builder tool later 
     local status = CreateFrame("Frame", nil, GroupieFrame)
     status:SetPoint("TOPLEFT", GroupieFrame.Bg, "BOTTOMLEFT", 5, 30)
     status:SetPoint("BOTTOMRIGHT", -10, 5)
@@ -1093,6 +1094,7 @@ local function BuildGroupieWindow()
             end
         end
     end)
+    --]]
 
     GroupieFrame:SetScale(addon.db.global.UIScale)
     GroupieFrame:Show()
