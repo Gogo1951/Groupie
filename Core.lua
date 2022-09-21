@@ -131,6 +131,7 @@ local time        = time
 addon.groupieBoardButtons = {}
 addon.filteredListings    = {}
 addon.selectedListing     = nil
+addon.ADDON_PREFIX        = "Groupie.Core"
 
 IgnoreListButtonMixin = {}
 function IgnoreListButtonMixin:OnClick()
@@ -1124,10 +1125,12 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         tooltip:AddLine(" ")
         tooltip:AddLine("Click |cffffffffor|r /groupie |cffffffff: " .. addonName .. " Bulletin Board|r ")
         tooltip:AddLine("Right Click |cffffffff: " .. addonName .. " Settings|r ")
-        --TODO: Version check
-        ---tooltip:AddLine(" ");
-        ---tooltip:AddLine("|cff8000FFPLEASE UPDATE YOUR ADD-ONS ASAP!|r")
-        ---tooltip:AddLine("|cff8000FFGROUPIE LFG IS OUT OF DATE!|r")
+        --Version check
+        if addon.version < addon.db.global.highestSeenVersion then
+            tooltip:AddLine(" ");
+            tooltip:AddLine("|cff8000FFPLEASE UPDATE YOUR ADD-ONS ASAP!|r")
+            tooltip:AddLine("|cff8000FFGROUPIE LFG IS OUT OF DATE!|r")
+        end
         for _, order in ipairs(addon.instanceOrders) do
             local val = addon.db.global.savedInstanceInfo[order]
             if val then
@@ -1207,7 +1210,7 @@ function addon:OnInitialize()
             keywordBlacklist = {},
             savedInstanceInfo = {},
             needsUpdateFlag = false,
-            needsUpdateVersion = 0,
+            highestSeenVersion = 0,
             UIScale = 1.0,
         }
     }
@@ -1828,6 +1831,10 @@ addon:RegisterEvent("CHARACTER_POINTS_CHANGED", addon.UpdateSpecOptions)
 addon:RegisterEvent("PLAYER_ENTERING_WORLD", function()
     addon.SetupConfig()
     C_Timer.After(5, addon.UpdateSavedInstances)
+    C_Timer.After(5, function()
+        C_ChatInfo.RegisterAddonMessagePrefix(addon.ADDON_PREFIX)
+        C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "YELL")
+    end)
 end)
 addon:RegisterEvent("BOSS_KILL", function()
     C_Timer.After(5, addon.UpdateSavedInstances)
@@ -1837,5 +1844,15 @@ addon:RegisterEvent("CHAT_MSG_SYSTEM", function(...)
     if strmatch(msg, "is now being ignored.") then
         local author = gsub(msg, " .*", "")
         --print(author)
+    end
+end)
+addon:RegisterEvent("CHAT_MSG_ADDON", function(...)
+    local _, prefix, msg = ...
+    if prefix == addon.ADDON_PREFIX then
+        local strversion = gsub(msg, "v", "")
+        local version = tonumber(strversion)
+        if version > addon.db.global.highestSeenVersion then
+            addon.db.global.highestSeenVersion = version
+        end
     end
 end)

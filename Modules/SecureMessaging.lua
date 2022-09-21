@@ -62,7 +62,9 @@ end
 function SecureMessaging.PLAYER_ENTERING_WORLD(...)
     if not prefixRegistered then
         prefixRegistered = true
-        C_ChatInfo.RegisterAddonMessagePrefix(SecureMessaging.ADDON_PREFIX)
+        C_Timer.After(5, function()
+            C_ChatInfo.RegisterAddonMessagePrefix(SecureMessaging.ADDON_PREFIX)
+        end)
     end
 end
 

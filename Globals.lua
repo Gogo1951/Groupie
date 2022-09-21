@@ -1,5 +1,8 @@
 local addonName, addon = ...
 
+--Update this with each push to curse, this will be used for version checks
+addon.version = 1.22
+
 --Supported localizations, we only load the addon for these
 addon.validLocales = { "enGB", "enUS" }
 
@@ -738,7 +741,7 @@ addon.groupieUnflippedDungeonPatterns = {
     ["Karazhan"]             = "kara karazhan karazan",
     ["Zul'Aman"]             = "za zulaman aman hsh", --hexshrunken head
     ["Gruul's Lair"]         = "gl gruul gruuls",
-    ["Magtheridon's Lair"]   = "mag magtheridon magth",
+    ["Magtheridon's Lair"]   = "mag magtheridon magth mags",
     ["Serpentshrine Cavern"] = "ssc serpentshrine",
     ["Tempest Keep"]         = "tk tempest tempestkeep",
     ["Mount Hyjal"]          = "hyjal hs hyj mh",
