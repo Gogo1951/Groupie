@@ -6,6 +6,8 @@ A better LFG tool for Classic WoW.
 
 ### :gem:  **KEY FEATURES**
 
+<br>
+
 * Quickly find the groups you actually want to be in. You can filter groups by group-size, loot rules type, language, and more. Groupie is smart enough to hide dungeons out of your level range, and heroics or raids that you're already saved to.
 
 * One-click ability to share your character's role, key stats, and relevant achievement link with the group's leader. For group leaders, this means no more context-less "wants to join" pop-ups from the Blizzard LFG Tool, or random "inv" responses to your posts.
@@ -32,6 +34,8 @@ Some other stuff worth mentioning...
 
 ### :link:  **LINKS**
 
+<br>
+
 Download from CurseForge : https://www.curseforge.com/wow/addons/groupie
 
 Discord : https://discord.gg/p68QgZ8uqF
@@ -43,6 +47,8 @@ Reddit Announcement Post : TODO
 <br>
 
 ### :hand:  **CURRENT NEEDS**
+
+<br>
 
 As a new add-on, we can use a hand raising awarenss. Telling your friends about Groupie will really help us get traction. (=
 
@@ -68,12 +74,30 @@ We can also use help translating the add-on. Reach out on Discord if you want to
 
 ### 🆒  **OTHER STUFF**
 
-Groupie pairs really nicely with WIM!
+<br>
 
 > **WoW Instant Messenger**
-> https://www.curseforge.com/wow/addons/wim-3
+> 
+> Groupie pairs really nicely with WIM!
+> 
+> Download from CurseForge : https://www.curseforge.com/wow/addons/wim-3
 
-Help your team put their best foot forward.
+<br>
 
-> **RankSentinel** by @SabreValkyrn
-> https://www.curseforge.com/wow/addons/ranksentinel
+#### Other Projects from the GDKPd Team
+
+<br>
+
+**GDKPd** by Gogo, & LemonDrake
+> 
+> Automate Your GDKP Auctions, Bids, & Payouts in Classic WoW.
+> 
+> Download from CurseForge : https://www.curseforge.com/wow/addons/gdkpdclassic
+
+<br>
+
+**RankSentinel** by Kynura, & Gogo
+> 
+> Help your team put their best foot forward.
+> 
+> Download from CurseForge : https://www.curseforge.com/wow/addons/ranksentinel
