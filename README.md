@@ -84,7 +84,7 @@ We can also use help translating the add-on. Reach out on Discord if you want to
 
 <br>
 
-#### Other Projects from the GDKPd Team
+#### Other Projects from the Groupie Team
 
 <br>
 
