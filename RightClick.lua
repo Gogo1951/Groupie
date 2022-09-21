@@ -60,7 +60,7 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName)
 
 	local lfgStr = "LFG"
 	--Include instance name if whispering from a listing
-	if fullName then
+	if fullName and fullName ~= "Miscellaneous" then
 		lfgStr = "for " .. fullName
 	end
 
