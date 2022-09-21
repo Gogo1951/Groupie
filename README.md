@@ -76,7 +76,7 @@ We can also use help translating the add-on. Reach out on Discord if you want to
 
 <br>
 
-> **WoW Instant Messenger**
+**WoW Instant Messenger**
 > 
 > Groupie pairs really nicely with WIM!
 > 
@@ -88,7 +88,7 @@ We can also use help translating the add-on. Reach out on Discord if you want to
 
 <br>
 
-**GDKPd** by Gogo, & LemonDrake
+**GDKPd** by Gogo & LemonDrake
 > 
 > Automate Your GDKP Auctions, Bids, & Payouts in Classic WoW.
 > 
@@ -96,7 +96,7 @@ We can also use help translating the add-on. Reach out on Discord if you want to
 
 <br>
 
-**RankSentinel** by Kynura, & Gogo
+**RankSentinel** by Kynura & Gogo
 > 
 > Help your team put their best foot forward.
 > 
