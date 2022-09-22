@@ -108,6 +108,7 @@ end
 function addon.SendWCLInfo(targetName, dropdownMenu, which)
 	local myname = UnitName("player")
 	local myserver = GetRealmName()
+	-- @TODO : All char are not US base, we need to retrieve the continent of the player (or assume it based on language ? Or an option)
 	local link = format("https://classic.warcraftlogs.com/character/us/%s/%s", gsub(myserver, " ", ""), myname)
 	local groupieMsg = "{rt3} " .. addonName .. " : Check My Parses on Warcraft Logs " .. link
 	if which == "BN_FRIEND" then

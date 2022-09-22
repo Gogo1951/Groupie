@@ -6,6 +6,11 @@
 ## SavedVariables: GroupieDB
 ## X-Curse-Project-ID: 661450
 
+# Locale Translations
+Localization\l10n.lua
+Localization\frFR.lua
+
+# Embeds
 embeds.xml
 UI/minimap.xml
 UI/listingtemplate.xml

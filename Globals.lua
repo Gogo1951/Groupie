@@ -1,7 +1,7 @@
 local addonName, addon = ...
 
 --Supported localizations, we only load the addon for these
-addon.validLocales = { "enGB", "enUS" }
+addon.validLocales = { "enGB", "enUS", "frFR" }
 
 addon.groupieSystemColor = "ffd900"
 
