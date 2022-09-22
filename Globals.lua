@@ -1,4 +1,5 @@
 local addonName, addon = ...
+local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 
 --Supported localizations, we only load the addon for these
 addon.validLocales = { "enGB", "enUS", "frFR" }
@@ -55,55 +56,55 @@ addon.groupieRoleTable = {
 }
 
 addon.groupieClassRoleTable = {
-    ["Death Knight"] = {
-        ["Blood"] = { [1] = "Tank" },
-        ["Frost"] = { [1] = "Tank", [4] = "Melee DPS" },
-        ["Unholy"] = { [4] = "Melee DPS" }
+    ["DEATHKNIGHT"] = {
+        [L["BloodDK"]] = { [1] = "Tank" },
+        [L["FrostDK"]] = { [1] = "Tank", [4] = "Melee DPS" },
+        [L["UnholyDK"]] = { [4] = "Melee DPS" }
     },
-    ["Druid"] = {
-        ["Balance"] = { [3] = "Ranged DPS" },
-        ["Feral Combat"] = { [1] = "Tank", [4] = "Melee DPS" },
-        ["Restoration"] = { [2] = "Healer" }
+    ["DRUID"] = {
+        [L["BalanceDruid"]] = { [3] = "Ranged DPS" },
+        [L["FeralDruid"]] = { [1] = "Tank", [4] = "Melee DPS" },
+        [L["RestorationDruid"]] = { [2] = "Healer" }
     },
-    ["Hunter"] = {
-        ["Beast Mastery"] = { [3] = "Ranged DPS" },
-        ["Marksmanship"] = { [3] = "Ranged DPS" },
-        ["Survival"] = { [3] = "Ranged DPS" }
+    ["HUNTER"] = {
+        [L["BMHunter"]] = { [3] = "Ranged DPS" },
+        [L["MMHunter"]] = { [3] = "Ranged DPS" },
+        [L["SurvivalHunter"]] = { [3] = "Ranged DPS" }
     },
-    ["Mage"] = {
-        ["Arcane"] = { [3] = "Ranged DPS" },
-        ["Fire"] = { [3] = "Ranged DPS" },
-        ["Frost"] = { [3] = "Ranged DPS" }
+    ["MAGE"] = {
+        [L["ArcaneMage"]] = { [3] = "Ranged DPS" },
+        [L["FireMage"]] = { [3] = "Ranged DPS" },
+        [L["FrostMage"]] = { [3] = "Ranged DPS" }
     },
-    ["Paladin"] = {
-        ["Holy"] = { [2] = "Healer" },
-        ["Protection"] = { [1] = "Tank" },
-        ["Retribution"] = { [4] = "Melee DPS" }
+    ["PALADIN"] = {
+        [L["HolyPaladin"]] = { [2] = "Healer" },
+        [L["ProtectionPaladin"]] = { [1] = "Tank" },
+        [L["RetributionPaladin"]] = { [4] = "Melee DPS" }
     },
-    ["Priest"] = {
-        ["Discipline"] = { [2] = "Healer" },
-        ["Holy"] = { [2] = "Healer" },
-        ["Shadow"] = { [3] = "Ranged DPS" }
+    ["PRIEST"] = {
+        [L["DisciplinePriest"]] = { [2] = "Healer" },
+        [L["HolyPriest"]] = { [2] = "Healer" },
+        [L["ShadowPriest"]] = { [3] = "Ranged DPS" }
     },
-    ["Rogue"] = {
-        ["Assassination"] = { [4] = "Melee DPS" },
-        ["Combat"] = { [4] = "Melee DPS" },
-        ["Subtlety"] = { [4] = "Melee DPS" }
+    ["ROGUE"] = {
+        [L["AssassinationRogue"]] = { [4] = "Melee DPS" },
+        [L["CombatRogue"]] = { [4] = "Melee DPS" },
+        [L["SubtletyRogue"]] = { [4] = "Melee DPS" }
     },
-    ["Shaman"] = {
-        ["Elemental"] = { [3] = "Ranged DPS" },
-        ["Enhancement"] = { [4] = "Melee DPS" },
-        ["Restoration"] = { [2] = "Healer" }
+    ["SHAMAN"] = {
+        [L["ElementalShaman"]] = { [3] = "Ranged DPS" },
+        [L["EnhancementShaman"]] = { [4] = "Melee DPS" },
+        [L["RestorationShaman"]] = { [2] = "Healer" }
     },
-    ["Warlock"] = {
-        ["Affliction"] = { [3] = "Ranged DPS" },
-        ["Demonology"] = { [3] = "Ranged DPS" },
-        ["Destruction"] = { [3] = "Ranged DPS" }
+    ["WARLOCK"] = {
+        [L["AfflictionWarlock"]] = { [3] = "Ranged DPS" },
+        [L["DemonologyWarlock"]] = { [3] = "Ranged DPS" },
+        [L["DestructionWarlock"]] = { [3] = "Ranged DPS" }
     },
-    ["Warrior"] = {
-        ["Arms"] = { [4] = "Melee DPS" },
-        ["Fury"] = { [4] = "Melee DPS" },
-        ["Protection"] = { [1] = "Tank" }
+    ["WARRIOR"] = {
+        [L["ArmsWarrior"]] = { [4] = "Melee DPS" },
+        [L["FuryWarrior"]] = { [4] = "Melee DPS" },
+        [L["ProtectionWarrior"]] = { [1] = "Tank" }
     }
 }
 
@@ -204,17 +205,17 @@ addon.lootTypeColors = {
 }
 
 addon.classColors = {
-    ["Death Knight"] = "C41F3B",
-    ["Druid"] = "FF7D0A",
-    ["Hunter"] = "ABD473",
-    ["Mage"] = "69CCF0",
-    ["Monk"] = "00FF96",
-    ["Paladin"] = "F58CBA",
-    ["Priest"] = "FFFFFF",
-    ["Rogue"] = "FFF569",
-    ["Shaman"] = "0070DE",
-    ["Warlock"] = "9482C9",
-    ["Warrior"] = "C79C6E",
+    ["DEATHKNIGHT"] = "C41F3B",
+    ["DRUID"] = "FF7D0A",
+    ["HUNTER"] = "ABD473",
+    ["MAGE"] = "69CCF0",
+    ["MONK"] = "00FF96",
+    ["PALADIN"] = "F58CBA",
+    ["PRIEST"] = "FFFFFF",
+    ["ROGUE"] = "FFF569",
+    ["SHAMAN"] = "0070DE",
+    ["WARLOCK"] = "9482C9",
+    ["WARRIOR"] = "C79C6E",
 }
 
 addon.multiWingInstances = { "Dire Maul - Full Clear", "Maraudon - Full Clear", "Scarlet Monastery - Full Clear" }

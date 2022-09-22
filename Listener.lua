@@ -326,7 +326,8 @@ local function ParseMessage(event, msg, author, _, channel, guid)
     --Moved from Event listener to minimize API calls to only successfully parsed listings
     --and only new listings, not updated listings. Should significantly reduce the api calls here
     if addon.db.global.listingTable[author].classColor == nil then
-        classColor = addon.classColors[GetPlayerInfoByGUID(guid)]
+        local _, engClass = GetPlayerInfoByGUID(guid)
+        classColor = addon.classColors[engClass]
     else
         classColor = addon.db.global.listingTable[author].classColor
     end

@@ -1,5 +1,5 @@
 --[[
-	Bagnon Localization Information: English Language
+	Groupie Localization Information: English Language
 		This file must be present to have partial translations
 --]] 
 
@@ -59,5 +59,61 @@ if L then
     L["Reset"] = "Reset"
 
     -- Channels Name /!\ VERY IMPORTANT, THE ADDON PARSES DEPENDING ON THE CHANNEL NAME
+    L["GuildChannel"] = "Guild"
+    L["GeneralChannel"] = "General"
+    L["TradeChannel"] = "Trade"
+    L["LocalDefenseChannel"] = "LocalDefense"
+    L["LookingForGroupChannel"] = "LookingForGroup"
+    L["WorldChannel"] = "5"
 
+    -- Spec Names /!\ Must be implemented. This is the base requirement for the 
+    --- Death Knight
+    L["BloodDK"] = "Blood"
+    L["FrostDK"] = "Frost"
+    L["UnholyDK"] = "Unholy"
+
+    --- Druid
+    L["BalanceDruid"] = "Balance"
+    L["FeralDruid"] = "Feral Combat"
+    L["RestorationDruid"] = "Restoration"
+
+    --- Hunter
+    L["BMHunter"] = "Beast Mastery"
+    L["MMHunter"] = "Marksmanship"
+    L["SurvivalHunter"] = "Survival"
+
+    --- Mage
+    L["ArcaneMage"] = "Arcane"
+    L["FireMage"] = "Fire"
+    L["FrostMage"] = "Frost"
+
+    --- Paladin
+    L["HolyPaladin"] = "Holy"
+    L["ProtectionPaladin"] = "Protection"
+    L["RetributionPaladin"] = "Retribution"
+
+    --- Priest
+    L["DisciplinePriest"] = "Discipline"
+    L["HolyPriest"] = "Holy"
+    L["ShadowPriest"] = "Shadow"
+
+    -- Rogue
+    L["AssassinationRogue"] = "Assassination"
+    L["CombatRogue"] = "Combat"
+    L["SubtletyRogue"] = "Subtlety"
+
+    --- Shaman
+    L["ElementalShaman"] = "Elemental"
+    L["EnhancementShaman"] = "Enhancement"
+    L["RestorationShaman"] = "Restoration"
+
+    --- Warlock
+    L["AfflictionWarlock"] = "Affliction"
+    L["DemonologyWarlock"] = "Demonology"
+    L["DestructionWarlock"] = "Destruction"
+    
+    --- Warrior 
+    L["ArmsWarrior"] = "Arms"
+    L["FuryWarrior"] = "Fury"
+    L["ProtectionWarrior"] = "Protection"
 end

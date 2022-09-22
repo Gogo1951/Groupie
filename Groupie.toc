@@ -7,7 +7,7 @@
 ## X-Curse-Project-ID: 661450
 
 # Locale Translations
-Localization\l10n.lua
+Localization\enUS.lua
 Localization\frFR.lua
 
 # Embeds

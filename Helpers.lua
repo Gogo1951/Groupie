@@ -3,18 +3,22 @@ local GetTalentTabInfo = GetTalentTabInfo
 local time = time
 local gmatch = gmatch
 
+local localizedClass, englishClass = UnitClass("player")
+
 --Return the primary talent spec for either main or dual specialization
 function addon.GetSpecByGroupNum(groupnum)
     local maxTalentsSpent = -1
     local maxTalentSpec = nil
+    local mainSpecIndex = -1
     for specTab = 1, 3 do
         local specName, id, pointsSpent = GetTalentTabInfo(specTab, false, false, groupnum)
         if pointsSpent > maxTalentsSpent then
             maxTalentsSpent = pointsSpent
             maxTalentSpec = specName
+            mainSpecIndex = specTab
         end
     end
-    return maxTalentSpec, maxTalentsSpent
+    return maxTalentSpec, maxTalentsSpent, mainSpecIndex
 end
 
 --Find the currently active spec group by comparing its talents to tab 1 and 2
@@ -280,7 +284,7 @@ function addon.UpdateSavedInstances()
                         end
                         addon.db.global.savedInstanceInfo[val.Order][playerName] = {
                             characterName = playerName,
-                            classColor = addon.classColors[UnitClass("player")],
+                            classColor = addon.classColors[englishClass],
                             instance = key,
                             isHeroic = isHeroic,
                             groupSize = maxPlayers,

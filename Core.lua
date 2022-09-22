@@ -3,6 +3,7 @@ local locale             = GetLocale()
 local addon              = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0", "AceConsole-3.0",
     "AceTimer-3.0")
 local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
+local localizedClass, englishClass = UnitClass("player")
 
 -------------------------
 --Unsupported Locale UI--
@@ -1176,12 +1177,12 @@ function addon:OnInitialize()
             autoRespondGuild = true,
             afterParty = true,
             useChannels = {
-                ["Guild"] = true,
-                ["General"] = true,
-                ["Trade"] = true,
-                ["LocalDefense"] = true,
-                ["LookingForGroup"] = true,
-                ["5"] = true,
+                [L["GuildChannel"]] = true,
+                [L["GuildChannel"]] = true,
+                [L["TradeChannel"]] = true,
+                [L["LocalDefenseChannel"]] = true,
+                [L["LookingForGroupChannel"]] = true,
+                [L["WorldChannel"]] = true,
             },
             showWrathH25 = true,
             showWrathH10 = true,
@@ -1507,7 +1508,7 @@ function addon.SetupConfig()
                         name = "",
                         order = 3,
                         width = 1.4,
-                        values = addon.groupieClassRoleTable[UnitClass("player")][addon.GetSpecByGroupNum(1)],
+                        values = addon.groupieClassRoleTable[englishClass][addon.GetSpecByGroupNum(1)],
                         set = function(info, val) addon.db.char.groupieSpec1Role = val end,
                         get = function(info) return addon.db.char.groupieSpec1Role end,
                     },
@@ -1524,7 +1525,7 @@ function addon.SetupConfig()
                         name = "",
                         order = 6,
                         width = 1.4,
-                        values = addon.groupieClassRoleTable[UnitClass("player")][addon.GetSpecByGroupNum(2)],
+                        values = addon.groupieClassRoleTable[englishClass][addon.GetSpecByGroupNum(2)],
                         set = function(info, val) addon.db.char.groupieSpec2Role = val end,
                         get = function(info) return addon.db.char.groupieSpec2Role end,
                     },
@@ -1788,20 +1789,20 @@ function addon.UpdateSpecOptions()
     addon.options.args.charoptions.args.header3.name = "|cff" ..
         addon.groupieSystemColor .. "Role for Spec 2 - " .. spec2
     --Set dropdowns
-    addon.options.args.charoptions.args.spec1Dropdown.values = addon.groupieClassRoleTable[UnitClass("player")][spec1]
-    addon.options.args.charoptions.args.spec2Dropdown.values = addon.groupieClassRoleTable[UnitClass("player")][spec2]
+    addon.options.args.charoptions.args.spec1Dropdown.values = addon.groupieClassRoleTable[englishClass][spec1]
+    addon.options.args.charoptions.args.spec2Dropdown.values = addon.groupieClassRoleTable[englishClass][spec2]
     --Reset to default value for dropdowns if the currently selected role is now invalid after the change
-    if not addon.groupieClassRoleTable[UnitClass("player")][spec1][addon.db.char.groupieSpec1Role] then
+    if not addon.groupieClassRoleTable[englishClass][spec1][addon.db.char.groupieSpec1Role] then
         addon.db.char.groupieSpec1Role = nil
     end
-    if not addon.groupieClassRoleTable[UnitClass("player")][spec2][addon.db.char.groupieSpec2Role] then
+    if not addon.groupieClassRoleTable[englishClass][spec2][addon.db.char.groupieSpec2Role] then
         addon.db.char.groupieSpec2Role = nil
     end
     for i = 4, 1, -1 do
-        if addon.groupieClassRoleTable[UnitClass("player")][spec1][i] and addon.db.char.groupieSpec1Role == nil then
+        if addon.groupieClassRoleTable[englishClass][spec1][i] and addon.db.char.groupieSpec1Role == nil then
             addon.db.char.groupieSpec1Role = i
         end
-        if addon.groupieClassRoleTable[UnitClass("player")][spec2][i] and addon.db.char.groupieSpec2Role == nil then
+        if addon.groupieClassRoleTable[englishClass][spec2][i] and addon.db.char.groupieSpec2Role == nil then
             addon.db.char.groupieSpec2Role = i
         end
     end
