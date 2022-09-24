@@ -90,7 +90,7 @@ addon.groupieClassRoleTable = {
         [L["Priest"].Shadow] = { [3] = "Ranged DPS" }
     },
     ["ROGUE"] = {
-        [L["Rogue"].Assasination] = { [4] = "Melee DPS" },
+        [L["Rogue"].Assassination] = { [4] = "Melee DPS" },
         [L["Rogue"].Combat] = { [4] = "Melee DPS" },
         [L["Rogue"].Subtlety] = { [4] = "Melee DPS" }
     },
