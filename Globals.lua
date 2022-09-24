@@ -1,10 +1,8 @@
 local addonName, addon = ...
-
---Update this with each push to curse, this will be used for version checks
-addon.version = 1.22
+local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 
 --Supported localizations, we only load the addon for these
-addon.validLocales = { "enGB", "enUS" }
+addon.validLocales = { "enGB", "enUS", "frFR" }
 
 addon.groupieSystemColor = "ffd900"
 
@@ -58,55 +56,55 @@ addon.groupieRoleTable = {
 }
 
 addon.groupieClassRoleTable = {
-    ["Death Knight"] = {
-        ["Blood"] = { [1] = "Tank" },
-        ["Frost"] = { [1] = "Tank", [4] = "Melee DPS" },
-        ["Unholy"] = { [4] = "Melee DPS" }
+    ["DEATHKNIGHT"] = {
+        [L["DeathKnight"].Blood] = { [1] = "Tank" },
+        [L["DeathKnight"].Frost] = { [1] = "Tank", [4] = "Melee DPS" },
+        [L["DeathKnight"].Unholy] = { [4] = "Melee DPS" }
     },
-    ["Druid"] = {
-        ["Balance"] = { [3] = "Ranged DPS" },
-        ["Feral Combat"] = { [1] = "Tank", [4] = "Melee DPS" },
-        ["Restoration"] = { [2] = "Healer" }
+    ["DRUID"] = {
+        [L["Druid"].Balance] = { [3] = "Ranged DPS" },
+        [L["Druid"].Feral] = { [1] = "Tank", [4] = "Melee DPS" },
+        [L["Druid"].Restoration] = { [2] = "Healer" }
     },
-    ["Hunter"] = {
-        ["Beast Mastery"] = { [3] = "Ranged DPS" },
-        ["Marksmanship"] = { [3] = "Ranged DPS" },
-        ["Survival"] = { [3] = "Ranged DPS" }
+    ["HUNTER"] = {
+        [L["Hunter"].BM] = { [3] = "Ranged DPS" },
+        [L["Hunter"].MM] = { [3] = "Ranged DPS" },
+        [L["Hunter"].Survival] = { [3] = "Ranged DPS" }
     },
-    ["Mage"] = {
-        ["Arcane"] = { [3] = "Ranged DPS" },
-        ["Fire"] = { [3] = "Ranged DPS" },
-        ["Frost"] = { [3] = "Ranged DPS" }
+    ["MAGE"] = {
+        [L["Mage"].Arcane] = { [3] = "Ranged DPS" },
+        [L["Mage"].Fire] = { [3] = "Ranged DPS" },
+        [L["Mage"].Frost] = { [3] = "Ranged DPS" }
     },
-    ["Paladin"] = {
-        ["Holy"] = { [2] = "Healer" },
-        ["Protection"] = { [1] = "Tank" },
-        ["Retribution"] = { [4] = "Melee DPS" }
+    ["PALADIN"] = {
+        [L["Paladin"].Holy] = { [2] = "Healer" },
+        [L["Paladin"].Protection] = { [1] = "Tank" },
+        [L["Paladin"].Retribution] = { [4] = "Melee DPS" }
     },
-    ["Priest"] = {
-        ["Discipline"] = { [2] = "Healer" },
-        ["Holy"] = { [2] = "Healer" },
-        ["Shadow"] = { [3] = "Ranged DPS" }
+    ["PRIEST"] = {
+        [L["Priest"].Discipline] = { [2] = "Healer" },
+        [L["Priest"].Holy] = { [2] = "Healer" },
+        [L["Priest"].Shadow] = { [3] = "Ranged DPS" }
     },
-    ["Rogue"] = {
-        ["Assassination"] = { [4] = "Melee DPS" },
-        ["Combat"] = { [4] = "Melee DPS" },
-        ["Subtlety"] = { [4] = "Melee DPS" }
+    ["ROGUE"] = {
+        [L["Rogue"].Assasination] = { [4] = "Melee DPS" },
+        [L["Rogue"].Combat] = { [4] = "Melee DPS" },
+        [L["Rogue"].Subtlety] = { [4] = "Melee DPS" }
     },
-    ["Shaman"] = {
-        ["Elemental"] = { [3] = "Ranged DPS" },
-        ["Enhancement"] = { [4] = "Melee DPS" },
-        ["Restoration"] = { [2] = "Healer" }
+    ["SHAMAN"] = {
+        [L["Shaman"].Elemental] = { [3] = "Ranged DPS" },
+        [L["Shaman"].Enhancement] = { [4] = "Melee DPS" },
+        [L["Shaman"].Restoration] = { [2] = "Healer" }
     },
-    ["Warlock"] = {
-        ["Affliction"] = { [3] = "Ranged DPS" },
-        ["Demonology"] = { [3] = "Ranged DPS" },
-        ["Destruction"] = { [3] = "Ranged DPS" }
+    ["WARLOCK"] = {
+        [L["AfflictionWarlock"]] = { [3] = "Ranged DPS" },
+        [L["DemonologyWarlock"]] = { [3] = "Ranged DPS" },
+        [L["DestructionWarlock"]] = { [3] = "Ranged DPS" }
     },
-    ["Warrior"] = {
-        ["Arms"] = { [4] = "Melee DPS" },
-        ["Fury"] = { [4] = "Melee DPS" },
-        ["Protection"] = { [1] = "Tank" }
+    ["WARRIOR"] = {
+        [L["ArmsWarrior"]] = { [4] = "Melee DPS" },
+        [L["FuryWarrior"]] = { [4] = "Melee DPS" },
+        [L["ProtectionWarrior"]] = { [1] = "Tank" }
     }
 }
 
@@ -207,17 +205,17 @@ addon.lootTypeColors = {
 }
 
 addon.classColors = {
-    ["Death Knight"] = "C41F3B",
-    ["Druid"] = "FF7D0A",
-    ["Hunter"] = "ABD473",
-    ["Mage"] = "69CCF0",
-    ["Monk"] = "00FF96",
-    ["Paladin"] = "F58CBA",
-    ["Priest"] = "FFFFFF",
-    ["Rogue"] = "FFF569",
-    ["Shaman"] = "0070DE",
-    ["Warlock"] = "9482C9",
-    ["Warrior"] = "C79C6E",
+    ["DEATHKNIGHT"] = "C41F3B",
+    ["DRUID"] = "FF7D0A",
+    ["HUNTER"] = "ABD473",
+    ["MAGE"] = "69CCF0",
+    ["MONK"] = "00FF96",
+    ["PALADIN"] = "F58CBA",
+    ["PRIEST"] = "FFFFFF",
+    ["ROGUE"] = "FFF569",
+    ["SHAMAN"] = "0070DE",
+    ["WARLOCK"] = "9482C9",
+    ["WARRIOR"] = "C79C6E",
 }
 
 addon.multiWingInstances = { "Dire Maul - Full Clear", "Maraudon - Full Clear", "Scarlet Monastery - Full Clear" }
@@ -745,7 +743,7 @@ addon.groupieUnflippedDungeonPatterns = {
     ["Karazhan"]             = "kara karazhan karazan",
     ["Zul'Aman"]             = "za zulaman aman hsh", --hexshrunken head
     ["Gruul's Lair"]         = "gl gruul gruuls",
-    ["Magtheridon's Lair"]   = "mag magtheridon magth mags",
+    ["Magtheridon's Lair"]   = "mag magtheridon magth",
     ["Serpentshrine Cavern"] = "ssc serpentshrine",
     ["Tempest Keep"]         = "tk tempest tempestkeep",
     ["Mount Hyjal"]          = "hyjal hs hyj mh",

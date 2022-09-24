@@ -2,6 +2,8 @@ local addonName, Groupie = ...
 local locale             = GetLocale()
 local addon              = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0", "AceConsole-3.0",
     "AceTimer-3.0")
+local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
+local localizedClass, englishClass = UnitClass("player")
 
 -------------------------
 --Unsupported Locale UI--
@@ -131,7 +133,6 @@ local time        = time
 addon.groupieBoardButtons = {}
 addon.filteredListings    = {}
 addon.selectedListing     = nil
-addon.ADDON_PREFIX        = "Groupie.Core"
 
 IgnoreListButtonMixin = {}
 function IgnoreListButtonMixin:OnClick()
@@ -635,13 +636,13 @@ local function TabSwap(isHeroic, size, tabType, tabNum)
     MainTabFrame.sortType = -1
     MainTabFrame.sortDir = false
     --Reset dropdowns
-    UIDropDownMenu_SetText(GroupieRoleDropdown, "LF Any Role")
+    UIDropDownMenu_SetText(GroupieRoleDropdown, L["LookingForShortLabel"] .. " " .. L["AnyRoleLabel"])
     MainTabFrame.roleType = nil
-    UIDropDownMenu_SetText(GroupieLootDropdown, "All Loot Styles")
+    UIDropDownMenu_SetText(GroupieLootDropdown, L["AnyLootStyleLabel"])
     MainTabFrame.lootType = nil
-    UIDropDownMenu_SetText(GroupieLangDropdown, "All Languages")
+    UIDropDownMenu_SetText(GroupieLangDropdown, L["AnyLanguageLabel"])
     MainTabFrame.lang = nil
-    UIDropDownMenu_SetText(GroupieLevelDropdown, "Recommended Level Dungeons")
+    UIDropDownMenu_SetText(GroupieLevelDropdown, L["RecommendedDungeonLabel"])
     MainTabFrame.levelFilter = true
 
     --Clear selected listing
@@ -740,7 +741,7 @@ local function BuildGroupieWindow()
     ------------------------
     local DungeonTabButton = CreateFrame("Button", "GroupieTab1", GroupieFrame, "CharacterFrameTabButtonTemplate")
     DungeonTabButton:SetPoint("TOPLEFT", GroupieFrame, "BOTTOMLEFT", 20, 1)
-    DungeonTabButton:SetText("Dungeons")
+    DungeonTabButton:SetText(L["UI_tabs"].Dungeon)
     DungeonTabButton:SetID("1")
     DungeonTabButton:SetScript("OnClick",
         function(self)
@@ -749,7 +750,7 @@ local function BuildGroupieWindow()
 
     local DungeonHTabButton = CreateFrame("Button", "GroupieTab2", GroupieFrame, "CharacterFrameTabButtonTemplate")
     DungeonHTabButton:SetPoint("LEFT", "GroupieTab1", "RIGHT", -16, 0)
-    DungeonHTabButton:SetText("Dungeons (H)")
+    DungeonHTabButton:SetText(L["UI_tabs"].Dungeon .. ' (' .. L["UI_tabs"].ShortHeroic .. ')')
     DungeonHTabButton:SetID("2")
     DungeonHTabButton:SetScript("OnClick",
         function(self)
@@ -758,7 +759,7 @@ local function BuildGroupieWindow()
 
     local Raid10TabButton = CreateFrame("Button", "GroupieTab3", GroupieFrame, "CharacterFrameTabButtonTemplate")
     Raid10TabButton:SetPoint("LEFT", "GroupieTab2", "RIGHT", -16, 0)
-    Raid10TabButton:SetText("Raids (10)")
+    Raid10TabButton:SetText(L["UI_tabs"].Raid .. " (10)")
     Raid10TabButton:SetID("3")
     Raid10TabButton:SetScript("OnClick",
         function(self)
@@ -767,7 +768,7 @@ local function BuildGroupieWindow()
 
     local Raid25TabButton = CreateFrame("Button", "GroupieTab4", GroupieFrame, "CharacterFrameTabButtonTemplate")
     Raid25TabButton:SetPoint("LEFT", "GroupieTab3", "RIGHT", -16, 0)
-    Raid25TabButton:SetText("Raids (25)")
+    Raid25TabButton:SetText(L["UI_tabs"].Raid .. " (25)")
     Raid25TabButton:SetID("4")
     Raid25TabButton:SetScript("OnClick",
         function(self)
@@ -776,7 +777,7 @@ local function BuildGroupieWindow()
 
     local RaidH10TabButton = CreateFrame("Button", "GroupieTab5", GroupieFrame, "CharacterFrameTabButtonTemplate")
     RaidH10TabButton:SetPoint("LEFT", "GroupieTab4", "RIGHT", -16, 0)
-    RaidH10TabButton:SetText("Raids (10H)")
+    RaidH10TabButton:SetText(L["UI_tabs"].Raid .. ' (10' .. L["UI_tabs"].ShortHeroic .. ')')
     RaidH10TabButton:SetID("5")
     RaidH10TabButton:SetScript("OnClick",
         function(self)
@@ -785,7 +786,7 @@ local function BuildGroupieWindow()
 
     local RaidH25TabButton = CreateFrame("Button", "GroupieTab6", GroupieFrame, "CharacterFrameTabButtonTemplate")
     RaidH25TabButton:SetPoint("LEFT", "GroupieTab5", "RIGHT", -16, 0)
-    RaidH25TabButton:SetText("Raids (25H)")
+    RaidH25TabButton:SetText(L["UI_tabs"].Raid .. ' (25' .. L["UI_tabs"].ShortHeroic .. ')')
     RaidH25TabButton:SetID("6")
     RaidH25TabButton:SetScript("OnClick",
         function(self)
@@ -794,7 +795,7 @@ local function BuildGroupieWindow()
 
     local PVPTabButton = CreateFrame("Button", "GroupieTab7", GroupieFrame, "CharacterFrameTabButtonTemplate")
     PVPTabButton:SetPoint("LEFT", "GroupieTab6", "RIGHT", -16, 0)
-    PVPTabButton:SetText("PVP")
+    PVPTabButton:SetText(L["UI_tabs"].PVP)
     PVPTabButton:SetID("7")
     PVPTabButton:SetScript("OnClick",
         function(self)
@@ -803,7 +804,7 @@ local function BuildGroupieWindow()
 
     local OtherTabButton = CreateFrame("Button", "GroupieTab8", GroupieFrame, "CharacterFrameTabButtonTemplate")
     OtherTabButton:SetPoint("LEFT", "GroupieTab7", "RIGHT", -16, 0)
-    OtherTabButton:SetText("Other")
+    OtherTabButton:SetText(L["UI_tabs"].Other)
     OtherTabButton:SetID("8")
     OtherTabButton:SetScript("OnClick",
         function(self)
@@ -812,7 +813,7 @@ local function BuildGroupieWindow()
 
     local AllTabButton = CreateFrame("Button", "GroupieTab9", GroupieFrame, "CharacterFrameTabButtonTemplate")
     AllTabButton:SetPoint("LEFT", "GroupieTab8", "RIGHT", -16, 0)
-    AllTabButton:SetText("All")
+    AllTabButton:SetText(L["UI_tabs"].All)
     AllTabButton:SetID("9")
     AllTabButton:SetScript("OnClick",
         function(self)
@@ -845,12 +846,12 @@ local function BuildGroupieWindow()
     MainTabFrame.size = 5
     MainTabFrame.tabType = 0
 
-    createColumn("Created", COL_CREATED, MainTabFrame, -1)
-    createColumn("Updated", COL_TIME, MainTabFrame, 0)
-    createColumn("Leader", COL_LEADER, MainTabFrame, 1)
-    createColumn("Instance", COL_INSTANCE + ICON_WIDTH, MainTabFrame, 2)
-    createColumn("Loot Type", COL_LOOT, MainTabFrame, 3)
-    createColumn("Message", COL_MSG, MainTabFrame)
+    createColumn(L["UI_columns"].Created, COL_CREATED, MainTabFrame, -1)
+    createColumn(L["UI_columns"].Updated, COL_TIME, MainTabFrame, 0)
+    createColumn(L["UI_columns"].Leader, COL_LEADER, MainTabFrame, 1)
+    createColumn(L["UI_columns"].InstanceName, COL_INSTANCE + ICON_WIDTH, MainTabFrame, 2)
+    createColumn(L["UI_columns"].LootType, COL_LOOT, MainTabFrame, 3)
+    createColumn(L["UI_columns"].Message, COL_MSG, MainTabFrame)
 
 
     ---------------------------------
@@ -859,7 +860,7 @@ local function BuildGroupieWindow()
     ShowingFontStr = MainTabFrame:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
     ShowingFontStr:SetPoint("TOPLEFT", 65, 48)
     ShowingFontStr:SetWidth(59)
-    ShowingFontStr:SetText("Showing : ")
+    ShowingFontStr:SetText(L["ShowingLabel"] .. " : ")
     ShowingFontStr:SetJustifyH("LEFT")
     ShowingFontStr:SetJustifyV("MIDDLE")
     --Role Dropdown
@@ -868,16 +869,16 @@ local function BuildGroupieWindow()
     GroupieRoleDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET, 55)
     local function RoleDropdownOnClick(self, arg1)
         if arg1 == 0 then
-            UIDropDownMenu_SetText(GroupieRoleDropdown, "LF Any Role")
+            UIDropDownMenu_SetText(GroupieRoleDropdown, L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Any)
             MainTabFrame.roleType = nil
         elseif arg1 == 1 then
-            UIDropDownMenu_SetText(GroupieRoleDropdown, "LF Tank")
+            UIDropDownMenu_SetText(GroupieRoleDropdown, L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Tank)
             MainTabFrame.roleType = 1
         elseif arg1 == 2 then
-            UIDropDownMenu_SetText(GroupieRoleDropdown, "LF Healer")
+            UIDropDownMenu_SetText(GroupieRoleDropdown, L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Healer)
             MainTabFrame.roleType = 2
         elseif arg1 == 3 then
-            UIDropDownMenu_SetText(GroupieRoleDropdown, "LF DPS")
+            UIDropDownMenu_SetText(GroupieRoleDropdown, L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.DPS)
             MainTabFrame.roleType = 3
         end
     end
@@ -886,19 +887,19 @@ local function BuildGroupieWindow()
         --Create menu list
         local info = UIDropDownMenu_CreateInfo()
         info.func = RoleDropdownOnClick
-        info.text, info.arg1, info.notCheckable = "LF Any Role", 0, true
+        info.text, info.arg1, info.notCheckable = L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Any, 0, true
         UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = "LF Tank", 1, true
+        info.text, info.arg1, info.notCheckable = L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Tank, 1, true
         UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = "LF Healer", 2, true
+        info.text, info.arg1, info.notCheckable = L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Healer, 2, true
         UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = "LF DPS", 3, true
+        info.text, info.arg1, info.notCheckable = L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.DPS, 3, true
         UIDropDownMenu_AddButton(info)
     end
 
     --Initialize Shown Value
     UIDropDownMenu_Initialize(GroupieRoleDropdown, RoleDropdownInit)
-    UIDropDownMenu_SetText(GroupieRoleDropdown, "LF Any Role")
+    UIDropDownMenu_SetText(GroupieRoleDropdown, L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Any)
     MainTabFrame.roleType = nil
 
     --Loot Type Dropdown
@@ -907,19 +908,19 @@ local function BuildGroupieWindow()
     GroupieLootDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + DROPDOWN_WIDTH + DROPDOWN_PAD, 55)
     local function LootDropdownOnClick(self, arg1)
         if arg1 == 0 then
-            UIDropDownMenu_SetText(GroupieLootDropdown, "All Loot Styles")
+            UIDropDownMenu_SetText(GroupieLootDropdown, L["Filters"].Loot_Styles.AnyLoot)
             MainTabFrame.lootType = nil
         elseif arg1 == 1 then
-            UIDropDownMenu_SetText(GroupieLootDropdown, "MS > OS")
+            UIDropDownMenu_SetText(GroupieLootDropdown, L["Filters"].Loot_Styles.MSOS)
             MainTabFrame.lootType = "MS > OS"
         elseif arg1 == 2 then
-            UIDropDownMenu_SetText(GroupieLootDropdown, "SoftRes")
+            UIDropDownMenu_SetText(GroupieLootDropdown, L["Filters"].Loot_Styles.SoftRes)
             MainTabFrame.lootType = "SoftRes"
         elseif arg1 == 3 then
-            UIDropDownMenu_SetText(GroupieLootDropdown, "GDKP")
+            UIDropDownMenu_SetText(GroupieLootDropdown, L["Filters"].Loot_Styles.GDKP)
             MainTabFrame.lootType = "GDKP"
         elseif arg1 == 4 then
-            UIDropDownMenu_SetText(GroupieLootDropdown, "TICKET")
+            UIDropDownMenu_SetText(GroupieLootDropdown, L["Filters"].Loot_Styles.Ticket)
             MainTabFrame.lootType = "TICKET"
         end
     end
@@ -928,21 +929,21 @@ local function BuildGroupieWindow()
         --Create menu list
         local info = UIDropDownMenu_CreateInfo()
         info.func = LootDropdownOnClick
-        info.text, info.arg1, info.notCheckable = "All Loot Styles", 0, true
+        info.text, info.arg1, info.notCheckable = L["Filters"].Loot_Styles.AnyLoot, 0, true
         UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = "MS > OS", 1, true
+        info.text, info.arg1, info.notCheckable = L["Filters"].Loot_Styles.MSOS, 1, true
         UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = "SoftRes", 2, true
+        info.text, info.arg1, info.notCheckable = L["Filters"].Loot_Styles.SoftRes, 2, true
         UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = "GDKP", 3, true
+        info.text, info.arg1, info.notCheckable = L["Filters"].Loot_Styles.GDKP, 3, true
         UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = "TICKET", 4, true
+        info.text, info.arg1, info.notCheckable = L["Filters"].Loot_Styles.Ticket, 4, true
         UIDropDownMenu_AddButton(info)
     end
 
     --Initialize Shown Value
     UIDropDownMenu_Initialize(GroupieLootDropdown, LootDropdownInit)
-    UIDropDownMenu_SetText(GroupieLootDropdown, "All Loot Styles")
+    UIDropDownMenu_SetText(GroupieLootDropdown, L["Filters"].Loot_Styles.AnyLoot)
     MainTabFrame.lootType = nil
 
     --Language Dropdown
@@ -951,7 +952,7 @@ local function BuildGroupieWindow()
     GroupieLangDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
     local function LangDropdownOnClick(self, arg1)
         if arg1 == 0 then
-            UIDropDownMenu_SetText(GroupieLangDropdown, "All Languages")
+            UIDropDownMenu_SetText(GroupieLangDropdown, L["Filters"].AnyLanguage)
             MainTabFrame.lang = nil
         else
             UIDropDownMenu_SetText(GroupieLangDropdown, addon.groupieLangList[arg1])
@@ -963,7 +964,7 @@ local function BuildGroupieWindow()
         --Create menu list
         local info = UIDropDownMenu_CreateInfo()
         info.func = LangDropdownOnClick
-        info.text, info.arg1, info.notCheckable = "All Languages", 0, true
+        info.text, info.arg1, info.notCheckable = L["Filters"].AnyLanguage, 0, true
         UIDropDownMenu_AddButton(info)
 
         for i = 1, #addon.groupieLangList do
@@ -974,7 +975,7 @@ local function BuildGroupieWindow()
 
     --Initialize Shown Value
     UIDropDownMenu_Initialize(GroupieLangDropdown, LangDropdownInit)
-    UIDropDownMenu_SetText(GroupieLangDropdown, "All Languages")
+    UIDropDownMenu_SetText(GroupieLangDropdown, L["Filters"].AnyLanguage)
     MainTabFrame.lang = nil
 
     --Dungeon Level Dropdown
@@ -983,10 +984,10 @@ local function BuildGroupieWindow()
     GroupieLevelDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 3, 55)
     local function LevelDropdownOnClick(self, arg1)
         if arg1 == 0 then
-            UIDropDownMenu_SetText(GroupieLevelDropdown, "Recommended Level Dungeons")
+            UIDropDownMenu_SetText(GroupieLevelDropdown, L["Filters"].Dungeons.RecommendedDungeon)
             MainTabFrame.levelFilter = true
         else
-            UIDropDownMenu_SetText(GroupieLevelDropdown, "All Dungeons")
+            UIDropDownMenu_SetText(GroupieLevelDropdown, L["Filters"].Dungeons.AnyDungeon)
             MainTabFrame.levelFilter = false
         end
     end
@@ -995,21 +996,21 @@ local function BuildGroupieWindow()
         --Create menu list
         local info = UIDropDownMenu_CreateInfo()
         info.func = LevelDropdownOnClick
-        info.text, info.arg1, info.notCheckable = "Recommended Level Dungeons", 0, true
+        info.text, info.arg1, info.notCheckable = L["Filters"].Dungeons.RecommendedDungeon, 0, true
         UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = "All Dungeons", 1, true
+        info.text, info.arg1, info.notCheckable =  L["Filters"].Dungeons.AnyDungeon, 1, true
         UIDropDownMenu_AddButton(info)
     end
 
     --Initialize Shown Value
     UIDropDownMenu_Initialize(GroupieLevelDropdown, LevelDropdownInit)
-    UIDropDownMenu_SetText(GroupieLevelDropdown, "Recommended Level Dungeons")
+    UIDropDownMenu_SetText(GroupieLevelDropdown, L["Filters"].Dungeons.RecommendedDungeon)
     MainTabFrame.levelFilter = true
 
     --Settings Button
     GroupieSettingsButton = CreateFrame("Button", "GroupieTopFrame", MainTabFrame, "UIPanelButtonTemplate")
     GroupieSettingsButton:SetSize(150, 22)
-    GroupieSettingsButton:SetText("Settings & Filters")
+    GroupieSettingsButton:SetText(L["SettingsButton"])
     GroupieSettingsButton:SetPoint("TOPRIGHT", 0, 55)
     GroupieSettingsButton:SetScript("OnClick", function()
         addon:OpenConfig()
@@ -1121,16 +1122,14 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         addon.ExpireSavedInstances()
         local now = time()
         tooltip:AddLine(addonName)
-        tooltip:AddLine("A better LFG tool for Classic WoW.", 255, 255, 255, false)
+        tooltip:AddLine(L["slogan"], 255, 255, 255, false)
         tooltip:AddLine(" ")
-        tooltip:AddLine("Click |cffffffffor|r /groupie |cffffffff: " .. addonName .. " Bulletin Board|r ")
-        tooltip:AddLine("Right Click |cffffffff: " .. addonName .. " Settings|r ")
-        --Version check
-        if addon.version < addon.db.global.highestSeenVersion then
-            tooltip:AddLine(" ");
-            tooltip:AddLine("|cff8000FFPLEASE UPDATE YOUR ADD-ONS ASAP!|r")
-            tooltip:AddLine("|cff8000FFGROUPIE LFG IS OUT OF DATE!|r")
-        end
+        tooltip:AddLine(L["Click"] .. " |cffffffffor|r /groupie |cffffffff: " .. addonName .. " ".. L["BulletinBoard"] .. "|r ")
+        tooltip:AddLine(L["RightClick"] .. " |cffffffff: " .. addonName .. " " .. L["Settings"] .. "|r ")
+        --TODO: Version check
+        ---tooltip:AddLine(" ");
+        ---tooltip:AddLine("|cff8000FFPLEASE UPDATE YOUR ADD-ONS ASAP!|r")
+        ---tooltip:AddLine("|cff8000FFGROUPIE LFG IS OUT OF DATE!|r")
         for _, order in ipairs(addon.instanceOrders) do
             local val = addon.db.global.savedInstanceInfo[order]
             if val then
@@ -1151,7 +1150,7 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
                                 titleFlag = true
                                 tooltip:AddLine(" ")
                                 tooltip:AddLine(lockout.instance, 255, 255, 255, false)
-                                tooltip:AddLine("|cff9E9E9E  Reset : " ..
+                                tooltip:AddLine("|cff9E9E9E  ".. L["Reset"] .. " : " ..
                                     addon.GetTimeSinceString(lockout.resetTime, 4))
                             end
                             tooltip:AddLine("    |cff" .. lockout.classColor .. player .. "|r")
@@ -1178,12 +1177,12 @@ function addon:OnInitialize()
             autoRespondGuild = true,
             afterParty = true,
             useChannels = {
-                ["Guild"] = true,
-                ["General"] = true,
-                ["Trade"] = true,
-                ["LocalDefense"] = true,
-                ["LookingForGroup"] = true,
-                ["5"] = true,
+                [L["text_channels"].Guild] = true,
+                [L["text_channels"].General] = true,
+                [L["text_channels"].Trade] = true,
+                [L["text_channels"].LocalDefense] = true,
+                [L["text_channels"].LFG] = true,
+                [L["text_channels"].World] = true,
             },
             showWrathH25 = true,
             showWrathH10 = true,
@@ -1210,7 +1209,7 @@ function addon:OnInitialize()
             keywordBlacklist = {},
             savedInstanceInfo = {},
             needsUpdateFlag = false,
-            highestSeenVersion = 0,
+            needsUpdateVersion = 0,
             UIScale = 1.0,
         }
     }
@@ -1509,7 +1508,7 @@ function addon.SetupConfig()
                         name = "",
                         order = 3,
                         width = 1.4,
-                        values = addon.groupieClassRoleTable[UnitClass("player")][addon.GetSpecByGroupNum(1)],
+                        values = addon.groupieClassRoleTable[englishClass][addon.GetSpecByGroupNum(1)],
                         set = function(info, val) addon.db.char.groupieSpec1Role = val end,
                         get = function(info) return addon.db.char.groupieSpec1Role end,
                     },
@@ -1526,7 +1525,7 @@ function addon.SetupConfig()
                         name = "",
                         order = 6,
                         width = 1.4,
-                        values = addon.groupieClassRoleTable[UnitClass("player")][addon.GetSpecByGroupNum(2)],
+                        values = addon.groupieClassRoleTable[englishClass][addon.GetSpecByGroupNum(2)],
                         set = function(info, val) addon.db.char.groupieSpec2Role = val end,
                         get = function(info) return addon.db.char.groupieSpec2Role end,
                     },
@@ -1790,20 +1789,20 @@ function addon.UpdateSpecOptions()
     addon.options.args.charoptions.args.header3.name = "|cff" ..
         addon.groupieSystemColor .. "Role for Spec 2 - " .. spec2
     --Set dropdowns
-    addon.options.args.charoptions.args.spec1Dropdown.values = addon.groupieClassRoleTable[UnitClass("player")][spec1]
-    addon.options.args.charoptions.args.spec2Dropdown.values = addon.groupieClassRoleTable[UnitClass("player")][spec2]
+    addon.options.args.charoptions.args.spec1Dropdown.values = addon.groupieClassRoleTable[englishClass][spec1]
+    addon.options.args.charoptions.args.spec2Dropdown.values = addon.groupieClassRoleTable[englishClass][spec2]
     --Reset to default value for dropdowns if the currently selected role is now invalid after the change
-    if not addon.groupieClassRoleTable[UnitClass("player")][spec1][addon.db.char.groupieSpec1Role] then
+    if not addon.groupieClassRoleTable[englishClass][spec1][addon.db.char.groupieSpec1Role] then
         addon.db.char.groupieSpec1Role = nil
     end
-    if not addon.groupieClassRoleTable[UnitClass("player")][spec2][addon.db.char.groupieSpec2Role] then
+    if not addon.groupieClassRoleTable[englishClass][spec2][addon.db.char.groupieSpec2Role] then
         addon.db.char.groupieSpec2Role = nil
     end
     for i = 4, 1, -1 do
-        if addon.groupieClassRoleTable[UnitClass("player")][spec1][i] and addon.db.char.groupieSpec1Role == nil then
+        if addon.groupieClassRoleTable[englishClass][spec1][i] and addon.db.char.groupieSpec1Role == nil then
             addon.db.char.groupieSpec1Role = i
         end
-        if addon.groupieClassRoleTable[UnitClass("player")][spec2][i] and addon.db.char.groupieSpec2Role == nil then
+        if addon.groupieClassRoleTable[englishClass][spec2][i] and addon.db.char.groupieSpec2Role == nil then
             addon.db.char.groupieSpec2Role = i
         end
     end
@@ -1831,10 +1830,6 @@ addon:RegisterEvent("CHARACTER_POINTS_CHANGED", addon.UpdateSpecOptions)
 addon:RegisterEvent("PLAYER_ENTERING_WORLD", function()
     addon.SetupConfig()
     C_Timer.After(5, addon.UpdateSavedInstances)
-    C_Timer.After(5, function()
-        C_ChatInfo.RegisterAddonMessagePrefix(addon.ADDON_PREFIX)
-        C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "YELL")
-    end)
 end)
 addon:RegisterEvent("BOSS_KILL", function()
     C_Timer.After(5, addon.UpdateSavedInstances)
@@ -1844,15 +1839,5 @@ addon:RegisterEvent("CHAT_MSG_SYSTEM", function(...)
     if strmatch(msg, "is now being ignored.") then
         local author = gsub(msg, " .*", "")
         --print(author)
-    end
-end)
-addon:RegisterEvent("CHAT_MSG_ADDON", function(...)
-    local _, prefix, msg = ...
-    if prefix == addon.ADDON_PREFIX then
-        local strversion = gsub(msg, "v", "")
-        local version = tonumber(strversion)
-        if version > addon.db.global.highestSeenVersion then
-            addon.db.global.highestSeenVersion = version
-        end
     end
 end)
