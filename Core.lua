@@ -638,13 +638,13 @@ local function TabSwap(isHeroic, size, tabType, tabNum)
     MainTabFrame.sortType = -1
     MainTabFrame.sortDir = false
     --Reset dropdowns
-    UIDropDownMenu_SetText(GroupieRoleDropdown, L["LookingForShortLabel"] .. " " .. L["AnyRoleLabel"])
+    UIDropDownMenu_SetText(GroupieRoleDropdown, L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Any)
     MainTabFrame.roleType = nil
-    UIDropDownMenu_SetText(GroupieLootDropdown, L["AnyLootStyleLabel"])
+    UIDropDownMenu_SetText(GroupieLootDropdown, L["Filters"].Loot_Styles.AnyLoot)
     MainTabFrame.lootType = nil
-    UIDropDownMenu_SetText(GroupieLangDropdown, L["AnyLanguageLabel"])
+    UIDropDownMenu_SetText(GroupieLangDropdown, L["Filters"].AnyLanguage)
     MainTabFrame.lang = nil
-    UIDropDownMenu_SetText(GroupieLevelDropdown, L["RecommendedDungeonLabel"])
+    UIDropDownMenu_SetText(GroupieLevelDropdown, L["Filters"].Dungeons.RecommendedDungeon)
     MainTabFrame.levelFilter = true
 
     --Clear selected listing
