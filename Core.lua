@@ -1,8 +1,9 @@
-local addonName, Groupie = ...
-local locale             = GetLocale()
-local addon              = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0", "AceConsole-3.0",
+local addonName, Groupie           = ...
+local locale                       = GetLocale()
+local addon                        = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0",
+    "AceConsole-3.0",
     "AceTimer-3.0")
-local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
+local L                            = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 local localizedClass, englishClass = UnitClass("player")
 
 -------------------------
@@ -133,6 +134,7 @@ local time        = time
 addon.groupieBoardButtons = {}
 addon.filteredListings    = {}
 addon.selectedListing     = nil
+addon.ADDON_PREFIX        = "Groupie.Core"
 
 IgnoreListButtonMixin = {}
 function IgnoreListButtonMixin:OnClick()
@@ -889,9 +891,11 @@ local function BuildGroupieWindow()
         info.func = RoleDropdownOnClick
         info.text, info.arg1, info.notCheckable = L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Any, 0, true
         UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Tank, 1, true
+        info.text, info.arg1, info.notCheckable = L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Tank, 1,
+            true
         UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Healer, 2, true
+        info.text, info.arg1, info.notCheckable = L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Healer, 2,
+            true
         UIDropDownMenu_AddButton(info)
         info.text, info.arg1, info.notCheckable = L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.DPS, 3, true
         UIDropDownMenu_AddButton(info)
@@ -998,7 +1002,7 @@ local function BuildGroupieWindow()
         info.func = LevelDropdownOnClick
         info.text, info.arg1, info.notCheckable = L["Filters"].Dungeons.RecommendedDungeon, 0, true
         UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable =  L["Filters"].Dungeons.AnyDungeon, 1, true
+        info.text, info.arg1, info.notCheckable = L["Filters"].Dungeons.AnyDungeon, 1, true
         UIDropDownMenu_AddButton(info)
     end
 
@@ -1124,7 +1128,8 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         tooltip:AddLine(addonName)
         tooltip:AddLine(L["slogan"], 255, 255, 255, false)
         tooltip:AddLine(" ")
-        tooltip:AddLine(L["Click"] .. " |cffffffffor|r /groupie |cffffffff: " .. addonName .. " ".. L["BulletinBoard"] .. "|r ")
+        tooltip:AddLine(L["Click"] ..
+            " |cffffffffor|r /groupie |cffffffff: " .. addonName .. " " .. L["BulletinBoard"] .. "|r ")
         tooltip:AddLine(L["RightClick"] .. " |cffffffff: " .. addonName .. " " .. L["Settings"] .. "|r ")
         --TODO: Version check
         ---tooltip:AddLine(" ");
@@ -1150,7 +1155,7 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
                                 titleFlag = true
                                 tooltip:AddLine(" ")
                                 tooltip:AddLine(lockout.instance, 255, 255, 255, false)
-                                tooltip:AddLine("|cff9E9E9E  ".. L["Reset"] .. " : " ..
+                                tooltip:AddLine("|cff9E9E9E  " .. L["Reset"] .. " : " ..
                                     addon.GetTimeSinceString(lockout.resetTime, 4))
                             end
                             tooltip:AddLine("    |cff" .. lockout.classColor .. player .. "|r")
@@ -1209,7 +1214,7 @@ function addon:OnInitialize()
             keywordBlacklist = {},
             savedInstanceInfo = {},
             needsUpdateFlag = false,
-            needsUpdateVersion = 0,
+            highestSeenVersion = 0,
             UIScale = 1.0,
         }
     }
@@ -1830,6 +1835,10 @@ addon:RegisterEvent("CHARACTER_POINTS_CHANGED", addon.UpdateSpecOptions)
 addon:RegisterEvent("PLAYER_ENTERING_WORLD", function()
     addon.SetupConfig()
     C_Timer.After(5, addon.UpdateSavedInstances)
+    C_Timer.After(5, function()
+        C_ChatInfo.RegisterAddonMessagePrefix(addon.ADDON_PREFIX)
+        C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "YELL")
+    end)
 end)
 addon:RegisterEvent("BOSS_KILL", function()
     C_Timer.After(5, addon.UpdateSavedInstances)
@@ -1839,5 +1848,15 @@ addon:RegisterEvent("CHAT_MSG_SYSTEM", function(...)
     if strmatch(msg, "is now being ignored.") then
         local author = gsub(msg, " .*", "")
         --print(author)
+    end
+end)
+addon:RegisterEvent("CHAT_MSG_ADDON", function(...)
+    local _, prefix, msg = ...
+    if prefix == addon.ADDON_PREFIX then
+        local strversion = gsub(msg, "v", "")
+        local version = tonumber(strversion)
+        if version > addon.db.global.highestSeenVersion then
+            addon.db.global.highestSeenVersion = version
+        end
     end
 end)
