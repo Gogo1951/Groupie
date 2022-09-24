@@ -74,7 +74,25 @@ end
 --Replace all non alphanumeric characters with a space, trim excess spaces, and convert to all lower case
 function addon.Preprocess(msg)
     local gsub = gsub
-    return gsub(gsub(strlower(gsub(gsub(msg, "%W", " "), "%s+", " ")), "ms os", "msos"), "black temple", "blacktemple")
+    --Remove color escape sequences
+    --lua doesnt have regex quantifiers :)
+    msg = gsub(msg, "%|c[a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9]", "")
+    msg = gsub(msg, "%|r", "")
+    --Replace achievments with their text for data processing purposes
+    local achievelink = strmatch(msg, "%|Hachievement:.+%|h")
+    if achievelink then
+        local achieveID = gsub(gsub(achievelink, "%|Hachievement:", ""), ":.+", "")
+        local achieveID, name = GetAchievementInfo(tonumber(achieveID))
+        msg = gsub(msg, "%|Hachievement:.+%|h", name)
+    end
+    --General preprocessing
+    msg = strlower(gsub(gsub(msg, "%W", " "), "%s+", " "))
+    --Multiword patterns need to be simplified
+    msg = gsub(gsub(msg, "for the horde", "fth"), "for the alliance", "fta")
+    msg = gsub(msg, "black temple", "blacktemple")
+    msg = gsub(msg, "ms os", "msos")
+
+    return msg
 end
 
 --Reverse a table by creating a new one

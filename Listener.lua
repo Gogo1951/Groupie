@@ -208,7 +208,7 @@ local function ParseMessage(event, msg, author, _, channel, guid)
     local lootType = nil
     local minLevel = nil
     local maxLevel = nil
-    local instanceOrder = nil
+    local instanceOrder = -1
     local instanceID = -1
     local icon = "Other.tga"
     local classColor = addon.groupieSystemColor
@@ -279,21 +279,33 @@ local function ParseMessage(event, msg, author, _, channel, guid)
     --The full versioned instance name for use in data table
     local fullName = groupDungeon
     if groupDungeon ~= "Miscellaneous" and groupDungeon ~= "PVP" then
-        if isHeroic then
-            fullName = format("Heroic %s", fullName)
-        end
-        if #addon.instanceVersions[groupDungeon] > 1 then
-            if groupSize == 10 then
-                fullName = format("%s - 10", fullName)
-            elseif groupSize == 25 then
-                fullName = format("%s - 25", fullName)
+        --The event bosses don't have entries in the instance data table
+        if groupDungeon == "Coren Direbrew" then
+            minLevel = 70
+            maxLevel = 80
+        elseif groupDungeon == "Ahune" then
+            minLevel = 70
+            maxLevel = 80
+        elseif groupDungeon == "Headless Horseman" then
+            minLevel = 70
+            maxLevel = 80
+        else
+            if isHeroic then
+                fullName = format("Heroic %s", fullName)
             end
+            if #addon.instanceVersions[groupDungeon] > 1 then
+                if groupSize == 10 then
+                    fullName = format("%s - 10", fullName)
+                elseif groupSize == 25 then
+                    fullName = format("%s - 25", fullName)
+                end
+            end
+            minLevel = addon.groupieInstanceData[fullName].MinLevel
+            maxLevel = addon.groupieInstanceData[fullName].MaxLevel
+            instanceOrder = addon.groupieInstanceData[fullName].Order
+            icon = addon.groupieInstanceData[fullName].Icon
+            instanceID = addon.groupieInstanceData[fullName].InstanceID
         end
-        minLevel = addon.groupieInstanceData[fullName].MinLevel
-        maxLevel = addon.groupieInstanceData[fullName].MaxLevel
-        instanceOrder = addon.groupieInstanceData[fullName].Order
-        icon = addon.groupieInstanceData[fullName].Icon
-        instanceID = addon.groupieInstanceData[fullName].InstanceID
     end
 
     --For some reason sometimes realm name is not included

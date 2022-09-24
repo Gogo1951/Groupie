@@ -319,7 +319,11 @@ addon.instanceVersions = {
     ["Trial of the Crusader"]       = { { 10, false }, { 25, false }, { 10, true }, { 25, true } },
     ["Icecrown Citadel"]            = { { 10, false }, { 25, false }, { 10, true }, { 25, true } },
     ["Ruby Sanctum"]                = { { 10, false }, { 25, false }, { 10, true }, { 25, true } },
-    ["Trial of the Grand Crusader"] = { { 10, true }, { 25, true } }
+    ["Trial of the Grand Crusader"] = { { 10, true }, { 25, true } },
+
+    ["Coren Direbrew"]    = { { 5, false } },
+    ["Ahune"]             = { { 5, false }, { 5, true } },
+    ["Headless Horseman"] = { { 5, false } },
 }
 
 --Instance IDs from : https://wowpedia.fandom.com/wiki/InstanceID
@@ -776,6 +780,10 @@ addon.groupieUnflippedDungeonPatterns = {
     ["Icecrown Citadel"]            = "icc",
     ["Ruby Sanctum"]                = "rs rubysanctum rubysanc ruby",
     ["Trial of the Grand Crusader"] = "togc grand",
+
+    ["Coren Direbrew"]    = "coren direbrew brewfest",
+    ["Ahune"]             = "ahune",
+    ["Headless Horseman"] = "headless horseman hh",
 
     ["PVP"] = "2s 3s 5s ab alterac arena av basin challenger conquest cta duelist eots fta fth glad gladiator gulch gurubashi ioc premade PVP rival sota storm strand warsong wg wintergrasp wsg",
 }
