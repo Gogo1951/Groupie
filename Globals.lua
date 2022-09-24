@@ -100,14 +100,14 @@ addon.groupieClassRoleTable = {
         [L["Shaman"].Restoration] = { [2] = "Healer" }
     },
     ["WARLOCK"] = {
-        [L["AfflictionWarlock"]] = { [3] = "Ranged DPS" },
-        [L["DemonologyWarlock"]] = { [3] = "Ranged DPS" },
-        [L["DestructionWarlock"]] = { [3] = "Ranged DPS" }
+        [L["Warlock"].Affliction] = { [3] = "Ranged DPS" },
+        [L["Warlock"].Demonology] = { [3] = "Ranged DPS" },
+        [L["Warlock"].Destruction] = { [3] = "Ranged DPS" }
     },
     ["WARRIOR"] = {
-        [L["ArmsWarrior"]] = { [4] = "Melee DPS" },
-        [L["FuryWarrior"]] = { [4] = "Melee DPS" },
-        [L["ProtectionWarrior"]] = { [1] = "Tank" }
+        [L["Warrior"].Arms] = { [4] = "Melee DPS" },
+        [L["Warrior"].Fury] = { [4] = "Melee DPS" },
+        [L["Warrior"].Protection] = { [1] = "Tank" }
     }
 }
 

@@ -124,12 +124,14 @@ local L = LibStub('AceLocale-3.0'):NewLocale('Groupie', 'enUS', true)
         ["Restoration"] = "Restoration"
     }
     --- Warlock
-    L["AfflictionWarlock"] = "Affliction"
-    L["DemonologyWarlock"] = "Demonology"
-    L["DestructionWarlock"] = "Destruction"
-    
-    --- Warrior 
-    L["ArmsWarrior"] = "Arms"
-    L["FuryWarrior"] = "Fury"
-    L["ProtectionWarrior"] = "Protection"
-
+    L["Warlock"]={
+        ["Affliction"] = "Affliction",
+        ["Demonology"] = "Demonology",
+        ["Destruction"] = "Destruction"
+    }
+    --- Warrior
+    L["Warrior"]={
+        ["Arms"] = "Arms",
+        ["Fury"] = "Fury",
+        ["Protection"] = "Protection",
+    }
