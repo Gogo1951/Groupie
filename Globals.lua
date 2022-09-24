@@ -1,6 +1,9 @@
 local addonName, addon = ...
 local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 
+--Update this with each push to curse, this will be used for version checks
+addon.version = 1.23
+
 --Supported localizations, we only load the addon for these
 addon.validLocales = { "enGB", "enUS", "frFR" }
 

@@ -1131,10 +1131,12 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         tooltip:AddLine(L["Click"] ..
             " |cffffffffor|r /groupie |cffffffff: " .. addonName .. " " .. L["BulletinBoard"] .. "|r ")
         tooltip:AddLine(L["RightClick"] .. " |cffffffff: " .. addonName .. " " .. L["Settings"] .. "|r ")
-        --TODO: Version check
-        ---tooltip:AddLine(" ");
-        ---tooltip:AddLine("|cff8000FFPLEASE UPDATE YOUR ADD-ONS ASAP!|r")
-        ---tooltip:AddLine("|cff8000FFGROUPIE LFG IS OUT OF DATE!|r")
+        --Version Check
+        if addon.version < addon.db.global.highestSeenVersion then
+            tooltip:AddLine(" ");
+            tooltip:AddLine("|cff8000FFPLEASE UPDATE YOUR ADD-ONS ASAP!|r")
+            tooltip:AddLine("|cff8000FFGROUPIE LFG IS OUT OF DATE!|r")
+        end
         for _, order in ipairs(addon.instanceOrders) do
             local val = addon.db.global.savedInstanceInfo[order]
             if val then
