@@ -54,9 +54,9 @@ if not addon.tableContains(addon.validLocales, locale) then
         editBox:SetPoint("TOPLEFT", GroupieFrame, "TOPLEFT", 64, -128)
         editBox:SetSize(LOCALE_WINDOW_WIDTH - 128, 50)
         editBox:SetAutoFocus(false)
-        editBox:SetText("https://discord.gg/6xccnxcRbt")
+        editBox:SetText("https://discord.gg/p68QgZ8uqF")
         editBox:SetScript("OnTextChanged", function()
-            editBox:SetText("https://discord.gg/6xccnxcRbt")
+            editBox:SetText("https://discord.gg/p68QgZ8uqF")
         end)
         GroupieFrame:Show()
     end
@@ -1345,7 +1345,7 @@ function addon.SetupConfig()
                         name = "",
                         order = 8,
                         width = 2,
-                        get = function(info) return "https://discord.gg/6xccnxcRbt" end,
+                        get = function(info) return "https://discord.gg/p68QgZ8uqF" end,
                         set = function(info, val) return end,
                     },
                     spacerdesc4 = { type = "description", name = " ", width = "full", order = 9 },
