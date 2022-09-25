@@ -8,7 +8,7 @@ addon.version = 1.23
 addon.validLocales = { "enGB", "enUS", "frFR" }
 --Localizations for which we have all the saved instance data
 --shows minimap prompt asking users to submit to the discord if their locale is not here
-addon.completedLocales = { "enGB", }
+addon.completedLocales = { "enGB", "enUS" }
 
 addon.groupieSystemColor = "ffd900"
 
