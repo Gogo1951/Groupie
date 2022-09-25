@@ -1140,7 +1140,7 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         --Asking for saved instance data
         if not addon.tableContains(addon.completedLocales, locale) then
             tooltip:AddLine(" ");
-            tooltip:AddLine("|cff8000FFWe need your help to support saved\ninstances for your locale! If you'd like\nthis feature, please submit your saved\nvariables at https://discord.gg/p68QgZ8uqF|r")
+            tooltip:AddLine("|cff8000FFGroupie needs your help! Please go to\nGroupie Settings > Instance Log and\nupload the values to Groupie Discord.\nThis message will go away next time\nyou update Groupie. Thanks!|r")
         end
         for _, order in ipairs(addon.instanceOrders) do
             local val = addon.db.global.savedInstanceInfo[order]
@@ -1302,6 +1302,55 @@ function addon.SetupConfig()
         type = 'group',
         args = {
             spacerdesc0 = { type = "description", name = " ", width = "full", order = 0 },
+            instanceLog = {
+                name = "Instance Log",
+                desc = "Help Groupie!",
+                type = "group",
+                width = "double",
+                inline = false,
+                order = 12,
+                args = {
+                    header1 = {
+                        type = "description",
+                        name = "|cff" .. addon.groupieSystemColor .. "Discord",
+                        order = 0,
+                        fontSize = "large"
+                    },
+                    editbox1 = {
+                        type = "input",
+                        name = "",
+                        order = 1,
+                        width = 2,
+                        get = function(info) return "https://discord.gg/p68QgZ8uqF" end,
+                        set = function(info, val) return end,
+                    },
+                    spacerdesc1 = { type = "description", name = " ", width = "full", order = 2 },
+                    header2 = {
+                        type = "description",
+                        name = "|cff" .. addon.groupieSystemColor .. "Instance Log",
+                        order = 3,
+                        fontSize = "large"
+                    },
+                    editbox2 = {
+                        type = "input",
+                        name = "",
+                        order = 4,
+                        width = 2,
+                        multiline = true,
+                        get = function(info)
+                            local out = ""
+                            for key, val in pairs(addon.db.global.savedInstanceLogs) do
+                                out = out .. "[" .. key .. "]\n"
+                                for key2, val2 in pairs(val) do
+                                    out = out .. "    " .. key2 .. "\n"
+                                end
+                            end
+                            return out
+                        end,
+                        set = function(info, val) return end,
+                    },
+                }
+            },
             about = {
                 name = "Groupie",
                 desc = "About Groupie",

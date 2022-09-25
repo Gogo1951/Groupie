@@ -279,18 +279,6 @@ function addon.UpdateSavedInstances()
         addon.db.global.savedInstanceLogs[locale] = {}
     end
 
-    addon.db.global.savedInstanceLogs["test"] = {}
-    for key, val in pairs(addon.groupieInstanceData) do
-        local diffIndependent = gsub(gsub(key, " %- .+", ""), "Heroic ", "")
-        local shortname = L["ShortLocalizedInstances"][diffIndependent]
-        --print(key, "|" .. diffIndependent .. "|", "|" .. shortname .. "|")
-        if shortname ~= nil then
-
-            local ourname = strlower(gsub(gsub(shortname, "%W", ""), "%s+", " "))
-            print(key, "|" .. shortname .. "|", "|" .. ourname .. "|")
-            addon.db.global.savedInstanceLogs["test"][key] = shortname .. "|" .. ourname
-        end
-    end
     for i = 1, GetNumSavedInstances() do
         local name, _, reset, _, locked, _, _, _, maxPlayers, difficultyName = GetSavedInstanceInfo(i)
         --Log all saved instances - for localization

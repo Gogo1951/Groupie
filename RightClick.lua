@@ -82,7 +82,7 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName)
 					if completed then
 						local achieveLink = GetAchievementLink(priorities[i])
 						if achieveLink then
-							achieveLinkStr = achieveLink
+							achieveLinkStr = " " .. achieveLink
 						end
 					end
 				end
@@ -98,7 +98,7 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName)
 		lvlStr = "Level " .. tostring(mylevel)
 	end
 
-	local groupieMsg = format("{rt3} %s : %s%s %s! %s %s%s %s. (%s) %s",
+	local groupieMsg = format("{rt3} %s : %s%s %s! %s %s%s %s. (%s)%s",
 		addonName,
 		activeRole,
 		otherRoleMsg,
