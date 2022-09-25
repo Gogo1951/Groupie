@@ -1,7 +1,8 @@
 local addonName, addon = ...
 local GetTalentTabInfo = GetTalentTabInfo
-local time = time
-local gmatch = gmatch
+local time             = time
+local gmatch           = gmatch
+local L                = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 
 --Return the primary talent spec for either main or dual specialization
 function addon.GetSpecByGroupNum(groupnum)
@@ -278,6 +279,18 @@ function addon.UpdateSavedInstances()
         addon.db.global.savedInstanceLogs[locale] = {}
     end
 
+    addon.db.global.savedInstanceLogs["test"] = {}
+    for key, val in pairs(addon.groupieInstanceData) do
+        local diffIndependent = gsub(gsub(key, " %- .+", ""), "Heroic ", "")
+        local shortname = L["ShortLocalizedInstances"][diffIndependent]
+        --print(key, "|" .. diffIndependent .. "|", "|" .. shortname .. "|")
+        if shortname ~= nil then
+
+            local ourname = strlower(gsub(gsub(shortname, "%W", ""), "%s+", " "))
+            print(key, "|" .. shortname .. "|", "|" .. ourname .. "|")
+            addon.db.global.savedInstanceLogs["test"][key] = shortname .. "|" .. ourname
+        end
+    end
     for i = 1, GetNumSavedInstances() do
         local name, _, reset, _, locked, _, _, _, maxPlayers, difficultyName = GetSavedInstanceInfo(i)
         --Log all saved instances - for localization
@@ -288,30 +301,34 @@ function addon.UpdateSavedInstances()
             for key, val in pairs(addon.groupieInstanceData) do
                 local isHeroic, shouldBeHeroic = false, false
                 --Preprocess our name from groupieInstanceData
-                local ourname = strlower(gsub(gsub(gsub(gsub(key, " %- .+", ""), "Heroic ", ""), "%W", ""), "%s+", " "))
-                ourname = gsub(ourname, "hellfire", "") --Saved instance name is "Hellfire Citadel: Ramparts"
-                ourname = gsub(ourname, "plateau", "") --Saved instance name is "The Sunwell"
-                --Will probably end up with more funky edge cases here
-                if strfind(savedname, ourname) then --Check that the name matches
-                    if strfind(difficultyName, "Heroic") then
-                        isHeroic = true
-                    end
-                    if strfind(key, "Heroic") then
-                        shouldBeHeroic = true
-                    end
-                    --Check that we've found the correct difficulty and size, then use this order
-                    if isHeroic == shouldBeHeroic and maxPlayers == val.GroupSize then
-                        if not addon.db.global.savedInstanceInfo[val.Order] then
-                            addon.db.global.savedInstanceInfo[val.Order] = {}
+                local diffIndependent = gsub(gsub(key, " %- .+", ""), "Heroic ", "")
+                --Get a shortened localized name
+                local shortname = L["ShortLocalizedInstances"][diffIndependent]
+                --If this is an instance we have a localized name to compare the saved name to
+                if shortname ~= nil then
+                    local ourname = strlower(gsub(gsub(shortname, "%W", ""), "%s+", " "))
+                    --Will probably end up with more funky edge cases here
+                    if strfind(savedname, ourname) then --Check that the name matches
+                        if strfind(difficultyName, "Heroic") then
+                            isHeroic = true
                         end
-                        addon.db.global.savedInstanceInfo[val.Order][playerName] = {
-                            characterName = playerName,
-                            classColor = addon.classColors[engClass],
-                            instance = key,
-                            isHeroic = isHeroic,
-                            groupSize = maxPlayers,
-                            resetTime = reset + time()
-                        }
+                        if strfind(key, "Heroic") then
+                            shouldBeHeroic = true
+                        end
+                        --Check that we've found the correct difficulty and size, then use this order
+                        if isHeroic == shouldBeHeroic and maxPlayers == val.GroupSize then
+                            if not addon.db.global.savedInstanceInfo[val.Order] then
+                                addon.db.global.savedInstanceInfo[val.Order] = {}
+                            end
+                            addon.db.global.savedInstanceInfo[val.Order][playerName] = {
+                                characterName = playerName,
+                                classColor = addon.classColors[engClass],
+                                instance = key,
+                                isHeroic = isHeroic,
+                                groupSize = maxPlayers,
+                                resetTime = reset + time()
+                            }
+                        end
                     end
                 end
             end
