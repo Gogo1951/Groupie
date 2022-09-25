@@ -317,7 +317,7 @@ function addon.UpdateSavedInstances()
     addon.db.global.savedInstanceInfo[2330] = {}
     addon.db.global.savedInstanceInfo[2330][UnitName("player")] = {
         characterName = "Cooltestguy",
-        classColor = addon.classColors[UnitClass("player")],
+        classColor = addon.classColors[engClass],
         instance = "Zul'Aman",
         isHeroic = false,
         groupSize = 10,
@@ -326,7 +326,7 @@ function addon.UpdateSavedInstances()
     addon.db.global.savedInstanceInfo[2160] = {}
     addon.db.global.savedInstanceInfo[2160][UnitName("player")] = {
         characterName = "Cooltestguy",
-        classColor = addon.classColors[UnitClass("player")],
+        classColor = addon.classColors[engClass],
         instance = "Coilfang: The Underbog",
         isHeroic = true,
         groupSize = 5,
@@ -335,7 +335,7 @@ function addon.UpdateSavedInstances()
     addon.db.global.savedInstanceInfo[2370] = {}
     addon.db.global.savedInstanceInfo[2370][UnitName("player")] = {
         characterName = "Cooltestguy",
-        classColor = addon.classColors[UnitClass("player")],
+        classColor = addon.classColors[engClass],
         instance = "Tempest Keep",
         isHeroic = false,
         groupSize = 25,
@@ -343,7 +343,7 @@ function addon.UpdateSavedInstances()
     }
     addon.db.global.savedInstanceInfo[2330]["OtherGuy"] = {
         characterName = "OtherGuy",
-        classColor = addon.classColors["Death Knight"],
+        classColor = addon.classColors["DRUID"],
         instance = "Zul'Aman",
         isHeroic = false,
         groupSize = 10,
@@ -351,7 +351,7 @@ function addon.UpdateSavedInstances()
     }
     addon.db.global.savedInstanceInfo[2330]["FunnyGuy"] = {
         characterName = "FunnyGuy",
-        classColor = addon.classColors["Hunter"],
+        classColor = addon.classColors["HUNTER"],
         instance = "Zul'Aman",
         isHeroic = false,
         groupSize = 10,
@@ -360,7 +360,7 @@ function addon.UpdateSavedInstances()
     addon.db.global.savedInstanceInfo[2390] = {}
     addon.db.global.savedInstanceInfo[2390]["OtherGuy"] = {
         characterName = "OtherGuy",
-        classColor = addon.classColors["Death Knight"],
+        classColor = addon.classColors["DEATHKNIGHT"],
         instance = "Black Temple",
         isHeroic = false,
         groupSize = 25,
