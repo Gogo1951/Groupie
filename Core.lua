@@ -861,7 +861,7 @@ local function BuildGroupieWindow()
     ---------------------------------
     ShowingFontStr = MainTabFrame:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
     ShowingFontStr:SetPoint("TOPLEFT", 65, 48)
-    ShowingFontStr:SetWidth(59)
+    ShowingFontStr:SetWidth(70)
     ShowingFontStr:SetText(L["ShowingLabel"] .. " : ")
     ShowingFontStr:SetJustifyH("LEFT")
     ShowingFontStr:SetJustifyV("MIDDLE")

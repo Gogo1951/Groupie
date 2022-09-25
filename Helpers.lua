@@ -272,6 +272,7 @@ end
 --savedInstanceInfo[instanceOrder][playerName]
 function addon.UpdateSavedInstances()
     local playerName = UnitName("player")
+    local locClass, engClass = UnitClass("player")
     for i = 1, GetNumSavedInstances() do
         local name, _, reset, _, locked, _, _, _, maxPlayers, difficultyName = GetSavedInstanceInfo(i)
         --Preprocess name returned by GetSavedInstanceInfo
@@ -298,7 +299,7 @@ function addon.UpdateSavedInstances()
                         end
                         addon.db.global.savedInstanceInfo[val.Order][playerName] = {
                             characterName = playerName,
-                            classColor = addon.classColors[UnitClass("player")],
+                            classColor = addon.classColors[engClass],
                             instance = key,
                             isHeroic = isHeroic,
                             groupSize = maxPlayers,
