@@ -1137,6 +1137,11 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
             tooltip:AddLine("|cff8000FFPLEASE UPDATE YOUR ADD-ONS ASAP!|r")
             tooltip:AddLine("|cff8000FFGROUPIE LFG IS OUT OF DATE!|r")
         end
+        --Asking for saved instance data
+        if not addon.tableContains(addon.completedLocales, locale) then
+            tooltip:AddLine(" ");
+            tooltip:AddLine("|cff8000FFWe need your help to support saved\ninstances for your locale! If you'd like\nthis feature, please submit your saved\nvariables at https://discord.gg/p68QgZ8uqF|r")
+        end
         for _, order in ipairs(addon.instanceOrders) do
             local val = addon.db.global.savedInstanceInfo[order]
             if val then
@@ -1219,6 +1224,7 @@ function addon:OnInitialize()
             needsUpdateFlag = false,
             highestSeenVersion = 0,
             UIScale = 1.0,
+            savedInstanceLogs = {},
         }
     }
     --Generate defaults for each individual dungeon filter

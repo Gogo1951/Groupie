@@ -273,8 +273,15 @@ end
 function addon.UpdateSavedInstances()
     local playerName = UnitName("player")
     local locClass, engClass = UnitClass("player")
+    local locale = GetLocale()
+    if addon.db.global.savedInstanceLogs[locale] == nil then
+        addon.db.global.savedInstanceLogs[locale] = {}
+    end
+
     for i = 1, GetNumSavedInstances() do
         local name, _, reset, _, locked, _, _, _, maxPlayers, difficultyName = GetSavedInstanceInfo(i)
+        --Log all saved instances - for localization
+        addon.db.global.savedInstanceLogs[locale][name] = true
         --Preprocess name returned by GetSavedInstanceInfo
         local savedname = strlower(gsub(gsub(name, "%W", ""), "%s+", " "))
         if locked and (reset > 0) then --check that the lockout is active
