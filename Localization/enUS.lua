@@ -201,3 +201,20 @@ L["ShortLocalizedInstances"] = {
     ["Ruby Sanctum"]                = "Ruby",
     ["Trial of the Grand Crusader"] = "Trial of the Grand Crusader",
 }
+L["InstanceFilters"]={
+    ["Wrath"]={
+        ["Name"]="Instance Filters - Wrath",
+        ["Desc"]="Filter Groups by Instance"
+    },
+    ["TBC"]={
+        ["Name"]="Instance Filters - TBC",
+        ["Desc"]="Filter Groups by Instance"
+    },
+    ["Classic"]={
+        ["Name"]="Instance Filters - Classic",
+        ["Desc"]="Filter Groups by Instance"
+    }
+}
+L["GroupFilters"]={
+    
+}

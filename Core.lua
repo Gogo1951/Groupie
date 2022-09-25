@@ -1428,8 +1428,8 @@ function addon.SetupConfig()
                 }
             },
             instancefiltersWrath = {
-                name = "Instance Filters - Wrath",
-                desc = "Filter Groups by Instance",
+                name = L["InstanceFilters"].Wrath.Name,
+                desc = L["InstanceFilters"].Wrath.Desc,
                 type = "group",
                 width = "double",
                 inline = false,
@@ -1437,7 +1437,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. "Instance Filters - Wrath",
+                        name = "|cff" .. addon.groupieSystemColor .. L["InstanceFilters"].Wrath.Name,
                         order = 0,
                         fontSize = "large"
                     },
@@ -1445,8 +1445,8 @@ function addon.SetupConfig()
                 }
             },
             instancefiltersTBC = {
-                name = "Instance Filters - TBC",
-                desc = "Filter Groups by Instance",
+                name = L["InstanceFilters"].TBC.Name,
+                desc = L["InstanceFilters"].TBC.Desc,
                 type = "group",
                 width = "double",
                 inline = false,
@@ -1454,7 +1454,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. "Instance Filters - TBC",
+                        name = "|cff" .. addon.groupieSystemColor .. L["InstanceFilters"].TBC.Name,
                         order = 0,
                         fontSize = "large"
                     },
@@ -1462,8 +1462,8 @@ function addon.SetupConfig()
                 }
             },
             instancefiltersClassic = {
-                name = "Instance Filters - Classic",
-                desc = "Filter Groups by Instance",
+                name = L["InstanceFilters"].Classic.Name,
+                desc = L["InstanceFilters"].Classic.Desc,
                 type = "group",
                 width = "double",
                 inline = false,
@@ -1471,7 +1471,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. "Instance Filters - Classic",
+                        name = "|cff" .. addon.groupieSystemColor .. L["InstanceFilters"].Classic.Name,
                         order = 0,
                         fontSize = "large"
                     },
@@ -1694,48 +1694,48 @@ function addon.SetupConfig()
                         name = "Guild",
                         order = 21,
                         width = "full",
-                        get = function(info) return addon.db.char.useChannels["Guild"] end,
-                        set = function(info, val) addon.db.char.useChannels["Guild"] = val end,
+                        get = function(info) return addon.db.char.useChannels[L["text_channels"].Guild] end,
+                        set = function(info, val) addon.db.char.useChannels[L["text_channels"].Guild] = val end,
                     },
                     channelGeneralToggle = {
                         type = "toggle",
                         name = "General",
                         order = 22,
                         width = "full",
-                        get = function(info) return addon.db.char.useChannels["General"] end,
-                        set = function(info, val) addon.db.char.useChannels["General"] = val end,
+                        get = function(info) return addon.db.char.useChannels[L["text_channels"].General] end,
+                        set = function(info, val) addon.db.char.useChannels[L["text_channels"].General] = val end,
                     },
                     channelTradeToggle = {
                         type = "toggle",
                         name = "Trade",
                         order = 23,
                         width = "full",
-                        get = function(info) return addon.db.char.useChannels["Trade"] end,
-                        set = function(info, val) addon.db.char.useChannels["Trade"] = val end,
+                        get = function(info) return addon.db.char.useChannels[L["text_channels"].Trade] end,
+                        set = function(info, val) addon.db.char.useChannels[L["text_channels"].Trade] = val end,
                     },
                     channelLocalDefenseToggle = {
                         type = "toggle",
                         name = "LocalDefense",
                         order = 24,
                         width = "full",
-                        get = function(info) return addon.db.char.useChannels["LocalDefense"] end,
-                        set = function(info, val) addon.db.char.useChannels["LocalDefense"] = val end,
+                        get = function(info) return addon.db.char.useChannels[L["text_channels"].LocalDefense] end,
+                        set = function(info, val) addon.db.char.useChannels[L["text_channels"].LocalDefense] = val end,
                     },
                     channelLookingForGroupToggle = {
                         type = "toggle",
                         name = "LookingForGroup",
                         order = 25,
                         width = "full",
-                        get = function(info) return addon.db.char.useChannels["LookingForGroup"] end,
-                        set = function(info, val) addon.db.char.useChannels["LookingForGroup"] = val end,
+                        get = function(info) return addon.db.char.useChannels[L["text_channels"].LFG] end,
+                        set = function(info, val) addon.db.char.useChannels[L["text_channels"].LFG] = val end,
                     },
                     channel5Toggle = {
                         type = "toggle",
                         name = "5",
                         order = 26,
                         width = "full",
-                        get = function(info) return addon.db.char.useChannels["5"] end,
-                        set = function(info, val) addon.db.char.useChannels["5"] = val end,
+                        get = function(info) return addon.db.char.useChannels[L["text_channels"].World] end,
+                        set = function(info, val) addon.db.char.useChannels[L["text_channels"].World] = val end,
                     }
                 },
             },

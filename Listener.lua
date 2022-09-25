@@ -383,17 +383,17 @@ end
 local function GroupieEventHandlers(...)
     local event, msg, author, _, channel, _, _, _, _, _, _, _, guid = ...
     local validChannel = false
-    if addon.db.char.useChannels["Guild"] and event == "CHAT_MSG_GUILD" then
+    if addon.db.char.useChannels[L["text_channels"].Guild] and event == "CHAT_MSG_GUILD" then
         validChannel = true
-    elseif addon.db.char.useChannels["General"] and strmatch(channel, "General") then
+    elseif addon.db.char.useChannels[L["text_channels"].General] and strmatch(channel, L["text_channels"].General) then
         validChannel = true
-    elseif addon.db.char.useChannels["Trade"] and strmatch(channel, "Trade") then
+    elseif addon.db.char.useChannels[L["text_channels"].Trade] and strmatch(channel, L["text_channels"].Trade) then
         validChannel = true
-    elseif addon.db.char.useChannels["LocalDefense"] and strmatch(channel, "LocalDefense") then
+    elseif addon.db.char.useChannels[L["text_channels"].LocalDefense] and strmatch(channel, L["text_channels"].LocalDefense) then
         validChannel = true
-    elseif addon.db.char.useChannels["LookingForGroup"] and strmatch(channel, "LookingForGroup") then
+    elseif addon.db.char.useChannels[L["text_channels"].LFG] and strmatch(channel, L["text_channels"].LFG) then
         validChannel = true
-    elseif addon.db.char.useChannels["5"] and strmatch(channel, "5. ") then
+    elseif addon.db.char.useChannels[L["text_channels"].World] and strmatch(channel, L["text_channels"].World ..". ") then
         validChannel = true
     end
     if validChannel then
