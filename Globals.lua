@@ -24,6 +24,21 @@ addon.groupieLocaleTable = {
     ["esMX"] = "Spanish",
 }
 
+addon.localeCodes = {
+    ["zhCN"] = "ZH",
+    ["zhTW"] = "ZH",
+    ["enGB"] = "EN",
+    ["enUS"] = "EN",
+    ["frFR"] = "FR",
+    ["deDE"] = "DE",
+    ["itIT"] = "IT",
+    ["koKR"] = "KO",
+    ["ptBR"] = "PT",
+    ["ruRU"] = "RU",
+    ["esES"] = "ES",
+    ["esMX"] = "ES",
+}
+
 --For now, this only supports English, but implemented such that localization would be easy in the future
 --https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes Language Codes
 --https://en.wikipedia.org/wiki/ISO_3166-2 Country Codes

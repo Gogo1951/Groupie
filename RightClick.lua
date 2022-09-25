@@ -42,7 +42,6 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName)
 	--Find out which talent spec has the most points spent in it
 	local activeTalentSpec = addon.GetSpecByGroupNum(specGroup)
 	local inactiveTalentSpec, inactiveTalentsSpent = addon.GetSpecByGroupNum(inactiveSpecGroup)
-	local mylocale = GetLocale()
 	local activeRole = nil
 	local inactiveRole = nil
 	if specGroup == 1 then
@@ -53,10 +52,17 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName)
 		inactiveRole = addon.groupieRoleTable[addon.db.char.groupieSpec1Role]
 	end
 
-	local otherspecmsg = ""
+	local otherRoleMsg = ""
+	local otherSpecMsg = ""
 	--Send other spec role if dual spec is purchased and used
-	if inactiveTalentsSpent > 0 then
-		otherspecmsg = format(" (My Other Spec is %s %s.)", inactiveTalentSpec, inactiveRole)
+	--and it is enabled in options
+	if (inactiveTalentsSpent > 0 or addon.debugMenus) and addon.db.char.sendOtherRole then
+		if inactiveRole ~= activeRole or true then
+			otherRoleMsg = format(" / %s", inactiveRole)
+		end
+		if inactiveTalentSpec ~= activeTalentSpec or true then
+			otherSpecMsg = format(" / %s", inactiveTalentSpec)
+		end
 	end
 
 	local lfgStr = "LFG"
@@ -84,17 +90,24 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName)
 		end
 	end
 
-	local groupieMsg = format("{rt3} %s : %s %s! %s %s %s in %s-level gear.%s %s-speaking Player. %s"
-		,
+	local lvlStr = ""
+	--Show ilvl for level 70/80 players, otherwise show level
+	if mylevel == 70 or mylevel == 80 then
+		lvlStr = "Item-Level " .. tostring(averageiLevel)
+	else
+		lvlStr = "Level " .. tostring(mylevel)
+	end
+
+	local groupieMsg = format("{rt3} %s : %s%s %s! %s %s%s %s. (%s) %s",
 		addonName,
 		activeRole,
+		otherRoleMsg,
 		lfgStr,
-		mylevel,
+		lvlStr,
 		activeTalentSpec,
+		otherSpecMsg,
 		myclass,
-		tostring(averageiLevel),
-		otherspecmsg,
-		addon.groupieLocaleTable[mylocale],
+		addon.localeCodes[locale],
 		achieveLinkStr
 	)
 
