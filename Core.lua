@@ -1308,33 +1308,40 @@ function addon.SetupConfig()
                 type = "group",
                 width = "double",
                 inline = false,
-                order = 12,
+                order = 10,
                 args = {
+                    header0 = {
+                        type = "description",
+                        name = "|cff" .. addon.groupieSystemColor .. "Instance Log",
+                        order = 0,
+                        fontSize = "large"
+                    },
+                    spacerdesc0 = { type = "description", name = " ", width = "full", order = 1 },
                     header1 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. "Discord",
-                        order = 0,
-                        fontSize = "large"
+                        order = 2,
+                        fontSize = "medium"
                     },
                     editbox1 = {
                         type = "input",
                         name = "",
-                        order = 1,
+                        order = 3,
                         width = 2,
                         get = function(info) return "https://discord.gg/p68QgZ8uqF" end,
                         set = function(info, val) return end,
                     },
-                    spacerdesc1 = { type = "description", name = " ", width = "full", order = 2 },
+                    spacerdesc1 = { type = "description", name = " ", width = "full", order = 4 },
                     header2 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. "Instance Log",
-                        order = 3,
-                        fontSize = "large"
+                        order = 5,
+                        fontSize = "medium"
                     },
                     editbox2 = {
                         type = "input",
                         name = "",
-                        order = 4,
+                        order = 6,
                         width = 2,
                         multiline = true,
                         get = function(info)
