@@ -3,6 +3,7 @@ local locale = GetLocale()
 if not addon.tableContains(addon.validLocales, locale) then
     return
 end
+local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 local AceEvent = LibStub("AceEvent-3.0")
 AceEvent:Embed(addon)
 
