@@ -3,7 +3,7 @@ local locale = GetLocale()
 if not addon.tableContains(addon.validLocales, locale) then
 	return
 end
-local SecureMessaging = addon.SM
+
 -------------------------------
 -- Right Click Functionality --
 -------------------------------
@@ -33,6 +33,7 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName)
 
 	local myclass = UnitClass("player")
 	local mylevel = UnitLevel("player")
+	local myname = UnitName("player")
 
 	--Find out which spec group is active
 	local specGroup = addon.GetActiveSpecGroup()
@@ -96,11 +97,16 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName)
 		addon.groupieLocaleTable[mylocale],
 		achieveLinkStr
 	)
+
+	--Hash the message and attach the suffix of the hash
+	local msgHash = addon.StringHash(myname .. groupieMsg)
+	groupieMsg = format("%s [#%s]", groupieMsg, msgHash)
+
 	--Sending Current Spec Info
 	if which == "BN_FRIEND" then
 		BNSendWhisper(dropdownMenu.accountInfo.bnetAccountID, groupieMsg)
 	else
-		SecureMessaging:SendChatMessage(groupieMsg, "WHISPER", targetName)
+		SendChatMessage(groupieMsg, "WHISPER", "COMMON", targetName)
 	end
 	return true
 end
@@ -110,10 +116,15 @@ function addon.SendWCLInfo(targetName, dropdownMenu, which)
 	local myserver = GetRealmName()
 	local link = format("https://classic.warcraftlogs.com/character/us/%s/%s", gsub(myserver, " ", ""), myname)
 	local groupieMsg = "{rt3} " .. addonName .. " : Check My Parses on Warcraft Logs " .. link
+
+	--Hash the message and attach the suffix of the hash
+	local msgHash = addon.StringHash(myname .. groupieMsg)
+	groupieMsg = format("%s [#%s]", groupieMsg, msgHash)
+
 	if which == "BN_FRIEND" then
 		BNSendWhisper(dropdownMenu.accountInfo.bnetAccountID, groupieMsg)
 	else
-		SecureMessaging:SendChatMessage(groupieMsg, "WHISPER", targetName)
+		SendChatMessage(groupieMsg, "WHISPER", "COMMON", targetName)
 	end
 end
 

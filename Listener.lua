@@ -6,6 +6,14 @@ end
 local AceEvent = LibStub("AceEvent-3.0")
 AceEvent:Embed(addon)
 
+local PROTECTED_TOKENS = {
+    [1] = "%s*{rt3}%s*groupie%s*:",
+    [2] = "%s*groupie%s*{rt3}%s*:",
+    [3] = "%s*{diamond}%s*groupie%s*:",
+    [4] = "%s*groupie%s*{diamond}%s*:",
+}
+local WARNING_MESSAGE = "{rt3} Groupie : Fake News! That is not a real Groupie Message. Quit being shady."
+
 --Local Function References for performance reasons
 local gsub = gsub
 local pairs = pairs
@@ -338,7 +346,8 @@ local function ParseMessage(event, msg, author, _, channel, guid)
     --Moved from Event listener to minimize API calls to only successfully parsed listings
     --and only new listings, not updated listings. Should significantly reduce the api calls here
     if addon.db.global.listingTable[author].classColor == nil then
-        classColor = addon.classColors[GetPlayerInfoByGUID(guid)]
+        local locClass, engClass = GetPlayerInfoByGUID(guid)
+        classColor = addon.classColors[engClass]
     else
         classColor = addon.db.global.listingTable[author].classColor
     end
@@ -396,19 +405,37 @@ end
 -------------------------------
 --DEBUG FUNCTIONS FOR TESTING--
 -------------------------------
-local function testfunc(_, msg, ...)
-    if not addon.debugMenus then
-        return
-    end
-    if msg == "clear" then
+local function WhisperListener(_, msg, longAuthor, ...)
+
+    local author = gsub(longAuthor, "-.*", "")
+
+    --test phrases for debugging
+    if msg == "clear" and author == UnitName("player") and addon.debugMenus then
         addon.db.global.listingTable = {}
-    elseif msg == "all" then
+    elseif msg == "all" and author == UnitName("player") and addon.debugMenus then
         addon.db.global.listingTable = {}
         local idx = 0
         for key, val in pairs(addon.groupieUnflippedDungeonPatterns) do
             local temppattern = gsub(val, " .+", "")
             ParseMessage(nil, "lfm " .. temppattern, tostring(idx), nil, nil, UnitGUID("player"))
             idx = idx + 1
+        end
+    else
+        --Check the hash if it is a groupie branded message
+        --Unless it is the warning message itself
+        if msg ~= WARNING_MESSAGE then
+            for key, val in pairs(PROTECTED_TOKENS) do
+                if strmatch(strlower(msg), val) then
+                    --Remove the hash
+                    local hashRecieved = gsub(gsub(msg, ".+ %[%#", ""), "%]", "")
+                    local suffixRemoved = gsub(msg, " %[%#.+", "")
+                    local hashCalculated = addon.StringHash(author .. suffixRemoved)
+                    --Fake found
+                    if hashCalculated ~= hashRecieved then
+                        SendChatMessage(WARNING_MESSAGE, "WHISPER", "COMMON", longAuthor)
+                    end
+                end
+            end
         end
     end
 end
@@ -418,4 +445,4 @@ end
 -------------------
 addon:RegisterEvent("CHAT_MSG_CHANNEL", GroupieEventHandlers)
 addon:RegisterEvent("CHAT_MSG_GUILD", GroupieEventHandlers)
-addon:RegisterEvent("CHAT_MSG_WHISPER", testfunc)
+addon:RegisterEvent("CHAT_MSG_WHISPER", WhisperListener)

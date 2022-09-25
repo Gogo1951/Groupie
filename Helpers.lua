@@ -367,3 +367,18 @@ function addon.UpdateSavedInstances()
     }
     --]]
 end
+
+--Return the 4-character suffix of a hash for a given string input
+--From https://wowwiki-archive.fandom.com/wiki/USERAPI_StringHash
+function addon.StringHash(text)
+    local counter = 1
+    local len = string.len(text)
+    for i = 1, len, 3 do
+        counter = math.fmod(counter * 8161, 4294967279) + -- 2^32 - 17: Prime!
+            (string.byte(text, i) * 16776193) +
+            ((string.byte(text, i + 1) or (len - i + 256)) * 8372226) +
+            ((string.byte(text, i + 2) or (len - i + 256)) * 3932164)
+    end
+    local numhash = math.fmod(counter, 4294967291) -- 2^32 - 5: Prime (and different from the prime in the loop)
+    return strsub(format("%x", numhash), -4)
+end
