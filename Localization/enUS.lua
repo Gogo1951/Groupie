@@ -290,3 +290,8 @@ L["About"] = {
     ["Paragraph"] = "A better LFG tool for Classic WoW.\n\n\nGroupie was created by Gogo, LemonDrake, Kynura, and Raegen...\n\n...with help from Katz, Aevala, and Fathom.",
     ["lowerOn"] = "on",
 }
+
+L["VersionChecking"] = {
+    ["JoinRaid"] = "has joined the raid group",
+    ["JoinParty"] = "joins the party",
+}
