@@ -828,6 +828,7 @@ addon.GroupieDevs = {
     ["Player-4408-03D2C5E2"] = L["TeamMember"], -- Gogoshaman-Faerlina
     ["Player-4408-03D2C21E"] = L["TeamMember"], -- Gogowarlock-Faerlina
     ["Player-4408-03D2C4C4"] = L["TeamMember"], -- Gogowarrior-Faerlina
+    ["Player-4408-04867AC4"] = L["TeamMember"], -- Jarsjarsdk-Faerlina
     ["Player-4408-03AA25B2"] = L["TeamMember"], -- Kattz-Faerlina
     ["Player-4647-023571C6"] = L["TeamMember"], -- Kynura-Grobbulus
     ["Player-4467-02AB80C7"] = L["TeamMember"], -- Raegen-Firemaw
