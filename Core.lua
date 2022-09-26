@@ -1479,8 +1479,8 @@ function addon.SetupConfig()
                 }
             },
             groupfilters = {
-                name = "Group Filters",
-                desc = "Filter Groups by Other Properties",
+                name = L["GroupFilters"].Name,
+                desc = L["GroupFilters"].Desc,
                 type = "group",
                 width = "double",
                 inline = false,
@@ -1488,20 +1488,20 @@ function addon.SetupConfig()
                 args = {
                     header0 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. "Group Filters",
+                        name = "|cff" .. addon.groupieSystemColor .. L["GroupFilters"].Name,
                         order = 0,
                         fontSize = "large"
                     },
                     spacerdesc1 = { type = "description", name = " ", width = "full", order = 1 },
                     header1 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. "General Filters",
+                        name = "|cff" .. addon.groupieSystemColor .. L["GroupFilters"].General,
                         order = 2,
                         fontSize = "medium"
                     },
                     savedToggle = {
                         type = "toggle",
-                        name = "Ignore Instances You Are Already Saved To on Current Character",
+                        name = L["GroupFilters"].savedToggle,
                         order = 4,
                         width = "full",
                         get = function(info) return addon.db.global.ignoreSavedInstances end,
@@ -1509,7 +1509,7 @@ function addon.SetupConfig()
                     },
                     ignoreLFG = {
                         type = "toggle",
-                        name = "Ignore \"LFG\" Messages from People Looking for a Group",
+                        name = L["GroupFilters"].ignoreLFG,
                         order = 5,
                         width = "full",
                         get = function(info) return addon.db.global.ignoreLFG end,
@@ -1517,7 +1517,7 @@ function addon.SetupConfig()
                     },
                     ignoreLFM = {
                         type = "toggle",
-                        name = "Ignore \"LFM\" Messages from People Making a Group",
+                        name = L["GroupFilters"].ignoreLFM,
                         order = 6,
                         width = "full",
                         get = function(info) return addon.db.global.ignoreLFM end,
@@ -1526,7 +1526,7 @@ function addon.SetupConfig()
                     spacerdesc3 = { type = "description", name = " ", width = "full", order = 15 },
                     header3 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. "Filter By Keyword",
+                        name = "|cff" .. addon.groupieSystemColor .. L["GroupFilters"].keyword,
                         order = 16,
                         fontSize = "medium"
                     },
@@ -1545,15 +1545,15 @@ function addon.SetupConfig()
                     },
                     header4 = {
                         type = "description",
-                        name = "|cff999999Separate words or phrases using a comma; any post matching any keyword will be ignored.\nExample: \"swp trash, Selling, Boost\"",
+                        name = "|cff999999".. L["GroupFilters"].keyword_disc,
                         order = 18,
                         fontSize = "medium"
                     },
                 }
             },
             charoptions = {
-                name = "Character Options",
-                desc = "Change Character-Specific Settings",
+                name = L["CharOptions"].Name,
+                desc = L["CharOptions"].Desc,
                 type = "group",
                 width = "double",
                 inline = false,
@@ -1561,14 +1561,14 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. UnitName("player") .. " Options",
+                        name = "|cff" .. addon.groupieSystemColor .. UnitName("player") .. " "..L["Options"],
                         order = 0,
                         fontSize = "large"
                     },
                     spacerdesc1 = { type = "description", name = " ", width = "full", order = 1 },
                     header2 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. "Spec 1 Role - " .. addon.GetSpecByGroupNum(1),
+                        name = "|cff" .. addon.groupieSystemColor .. L["CharOptions"].Spec1 .." - " .. addon.GetSpecByGroupNum(1),
                         order = 2,
                         fontSize = "medium"
                     },
@@ -1585,7 +1585,7 @@ function addon.SetupConfig()
                     spacerdesc2 = { type = "description", name = " ", width = "full", order = 4 },
                     header3 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. "Spec 2 Role - " .. addon.GetSpecByGroupNum(2),
+                        name = "|cff" .. addon.groupieSystemColor .. L["CharOptions"].Spec2 .." - " .. addon.GetSpecByGroupNum(2),
                         order = 5,
                         fontSize = "medium"
                     },
@@ -1602,7 +1602,7 @@ function addon.SetupConfig()
                     spacerdesc3 = { type = "description", name = " ", width = "full", order = 7 },
                     otherRoleToggle = {
                         type = "toggle",
-                        name = "Include Non-Current Spec in LFG Messages.",
+                        name = L["CharOptions"].OtherRole,
                         order = 8,
                         width = "full",
                         get = function(info) return addon.db.char.sendOtherRole end,
@@ -1611,7 +1611,7 @@ function addon.SetupConfig()
                     spacerdesc4 = { type = "description", name = " ", width = "full", order = 9 },
                     header4 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. "Recommended Dungeon Level Range",
+                        name = "|cff" .. addon.groupieSystemColor .. L["CharOptions"].DungeonLevelRange,
                         order = 10,
                         fontSize = "medium"
                     },
@@ -1633,7 +1633,7 @@ function addon.SetupConfig()
                     spacerdesc5 = { type = "description", name = " ", width = "full", order = 12 },
                     header5 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " Auto-Response",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " "..L["CharOptions"].AutoResponse,
                         order = 13,
                         fontSize = "medium",
                         hidden = true,
@@ -1641,7 +1641,7 @@ function addon.SetupConfig()
                     },
                     autoFriendsToggle = {
                         type = "toggle",
-                        name = "Enable Auto-Respond to Friends",
+                        name = L["CharOptions"].AutoFriends,
                         order = 14,
                         width = "full",
                         get = function(info) return addon.db.char.autoRespondFriends end,
@@ -1651,7 +1651,7 @@ function addon.SetupConfig()
                     },
                     autoGuildToggle = {
                         type = "toggle",
-                        name = "Enable Auto-Respond to Guild Members",
+                        name = L["CharOptions"].AutoGuild,
                         order = 15,
                         width = "full",
                         get = function(info) return addon.db.char.autoRespondGuild end,
@@ -1664,7 +1664,7 @@ function addon.SetupConfig()
                         disabled = true, },
                     header6 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " After-Party Tool",
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .." "..L["CharOptions"].AfterParty,
                         order = 17,
                         fontSize = "medium",
                         hidden = true,
@@ -1672,7 +1672,7 @@ function addon.SetupConfig()
                     },
                     afterPartyToggle = {
                         type = "toggle",
-                        name = "Enable " .. addonName .. " After-Party Tool",
+                        name = "Enable " .. addonName .. " "..L["CharOptions"].AfterParty,
                         order = 18,
                         width = "full",
                         get = function(info) return addon.db.char.afterParty end,
@@ -1685,13 +1685,13 @@ function addon.SetupConfig()
                         disabled = true, },
                     header7 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. "Pull Groups From These Channels",
+                        name = "|cff" .. addon.groupieSystemColor .. L["CharOptions"].PullGroups,
                         order = 20,
                         fontSize = "medium"
                     },
                     channelGuildToggle = {
                         type = "toggle",
-                        name = "Guild",
+                        name = L["text_channels"].Guild,
                         order = 21,
                         width = "full",
                         get = function(info) return addon.db.char.useChannels[L["text_channels"].Guild] end,
@@ -1699,7 +1699,7 @@ function addon.SetupConfig()
                     },
                     channelGeneralToggle = {
                         type = "toggle",
-                        name = "General",
+                        name = L["text_channels"].General,
                         order = 22,
                         width = "full",
                         get = function(info) return addon.db.char.useChannels[L["text_channels"].General] end,
@@ -1707,7 +1707,7 @@ function addon.SetupConfig()
                     },
                     channelTradeToggle = {
                         type = "toggle",
-                        name = "Trade",
+                        name = L["text_channels"].Trade,
                         order = 23,
                         width = "full",
                         get = function(info) return addon.db.char.useChannels[L["text_channels"].Trade] end,
@@ -1715,7 +1715,7 @@ function addon.SetupConfig()
                     },
                     channelLocalDefenseToggle = {
                         type = "toggle",
-                        name = "LocalDefense",
+                        name = L["text_channels"].LocalDefense,
                         order = 24,
                         width = "full",
                         get = function(info) return addon.db.char.useChannels[L["text_channels"].LocalDefense] end,
@@ -1723,7 +1723,7 @@ function addon.SetupConfig()
                     },
                     channelLookingForGroupToggle = {
                         type = "toggle",
-                        name = "LookingForGroup",
+                        name = L["text_channels"].LFG,
                         order = 25,
                         width = "full",
                         get = function(info) return addon.db.char.useChannels[L["text_channels"].LFG] end,
@@ -1731,7 +1731,7 @@ function addon.SetupConfig()
                     },
                     channel5Toggle = {
                         type = "toggle",
-                        name = "5",
+                        name = L["text_channels"].World,
                         order = 26,
                         width = "full",
                         get = function(info) return addon.db.char.useChannels[L["text_channels"].World] end,
@@ -1740,8 +1740,8 @@ function addon.SetupConfig()
                 },
             },
             globaloptions = {
-                name = "Global Options",
-                desc = "Change Account-Wide Settings",
+                name = L["GlobalOptions"].Name,
+                desc = L["GlobalOptions"].Desc,
                 type = "group",
                 width = "double",
                 inline = false,
@@ -1749,14 +1749,14 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. "Global Options",
+                        name = "|cff" .. addon.groupieSystemColor .. L["GlobalOptions"].Name,
                         order = 0,
                         fontSize = "large"
                     },
                     spacerdesc1 = { type = "description", name = " ", width = "full", order = 1 },
                     minimapToggle = {
                         type = "toggle",
-                        name = "Enable Mini-Map Button",
+                        name = L["GlobalOptions"].MiniMapButton,
                         order = 2,
                         width = "full",
                         get = function(info) return addon.db.global.showMinimap end,
@@ -1772,7 +1772,7 @@ function addon.SetupConfig()
                     spacerdesc3 = { type = "description", name = " ", width = "full", order = 5 },
                     header2 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. "Preserve Looking for Group Data Duration",
+                        name = "|cff" .. addon.groupieSystemColor .. L["GlobalOptions"].LFGData,
                         order = 6,
                         fontSize = "medium"
                     },
@@ -1790,7 +1790,7 @@ function addon.SetupConfig()
                     spacerdesc4 = { type = "description", name = " ", width = "full", order = 8 },
                     header3 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. "UI Scale",
+                        name = "|cff" .. addon.groupieSystemColor .. L["GlobalOptions"].UIScale,
                         order = 9,
                         fontSize = "medium"
                     },
@@ -1864,9 +1864,9 @@ function addon.UpdateSpecOptions()
     local spec2, maxtalents2 = addon.GetSpecByGroupNum(2)
     --Set labels
     addon.options.args.charoptions.args.header2.name = "|cff" ..
-        addon.groupieSystemColor .. "Role for Spec 1 - " .. spec1
+        addon.groupieSystemColor .. L["UpdateSpec"].Spec1 .." - " .. spec1
     addon.options.args.charoptions.args.header3.name = "|cff" ..
-        addon.groupieSystemColor .. "Role for Spec 2 - " .. spec2
+        addon.groupieSystemColor .. L["UpdateSpec"].Spec2 .." - " .. spec2
     --Set dropdowns
     addon.options.args.charoptions.args.spec1Dropdown.values = addon.groupieClassRoleTable[englishClass][spec1]
     addon.options.args.charoptions.args.spec2Dropdown.values = addon.groupieClassRoleTable[englishClass][spec2]

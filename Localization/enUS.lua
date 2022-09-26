@@ -64,7 +64,7 @@ L["RightClick"] = "Right Click"
 L["Settings"] = "Settings"
 L["BulletinBoard"] = "Bulletin Board"
 L["Reset"] = "Reset"
-
+L["Options"]="Options"
 -- Channels Name /!\ VERY IMPORTANT, THE ADDON PARSES DEPENDING ON THE CHANNEL NAME
 L["text_channels"] = {
     ["Guild"] = "Guild",
@@ -216,5 +216,39 @@ L["InstanceFilters"]={
     }
 }
 L["GroupFilters"]={
-    
+    ["Name"]="Group Filters",
+    ["Desc"]="Filter Groups by Other Properties",
+    ["General"]="General Filters",
+    ["savedToggle"]="Ignore Instances You Are Already Saved To on Current Character",
+    ["ignoreLFG"]="Ignore \"LFG\" Messages from People Looking for a Group",
+    ["ignoreLFM"]="Ignore \"LFM\" Messages from People Making a Group",
+    ["keyword"]="Filter By Keyword",
+    ["keyword_disc"]="Separate words or phrases using a comma; any post matching any keyword will be ignored.\nExample: \"swp trash, Selling, Boost\""
+}
+L["CharOptions"]={
+    ["Name"]="Character Options",
+    ["Desc"]="Change Character-Specific Settings",
+    ["Spec1"]="Spec 1 Role",
+    ["Spec2"]="Spec 2 Role",
+    ["OtherRole"]="Include Non-Current Spec in LFG Messages.",
+    ["DungeonLevelRange"]="Recommended Dungeon Level Range",
+    --["recLevelDropdown"]={
+        --["0"]="Default Suggested Levels"
+    --}
+    ["AutoResponse"]="Auto-Response",
+    ["AutoFriends"]="Enable Auto-Respond to Friends",
+    ["AutoGuild"]="Enable Auto-Respond to Guild Members",
+    ["AfterParty"]="After-Party Tool",
+    ["PullGroups"]="Pull Groups From These Channels"
+}
+L["GlobalOptions"]={
+    ["Name"]="Global Options",
+    ["Desc"]="Change Account-Wide Settings",
+    ["MiniMapButton"]="Enable Mini-Map Button",
+    ["LFGData"]="Preserve Looking for Group Data Duration",
+    ["UIScale"]="UI Scale"
+}
+L["UpdateSpec"]={
+    ["Spec1"]="Role for Spec 1",
+    ["Spec2"]="Role for Spec 2"
 }
