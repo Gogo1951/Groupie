@@ -5,7 +5,7 @@ local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 addon.version = 1.23
 
 --Supported localizations, we only load the addon for these
-addon.validLocales = { "enGB", "enUS", "frFR" }
+addon.validLocales = { "enGB", "enUS" }
 --Localizations for which we have all the saved instance data
 --shows minimap prompt asking users to submit to the discord if their locale is not here
 addon.completedLocales = { "enGB", "enUS" }
@@ -142,6 +142,7 @@ addon.groupieInstanceTypes = {
     "Classic Raids",
     "Classic Dungeons",
 }
+
 --0 - Heroic
 --1 - 10 Normal
 --2 - 25 Normal
@@ -209,20 +210,20 @@ addon.groupieLFPatterns = {
 }
 
 addon.groupieUnflippedLootPatterns = {
-    ["Ticket"] = "ticket",
-    ["GDKP"] = "gdkp bid buyer",
-    ["SoftRes"] = "2sr 1sr sr softres softreserve soft",
-    ["MS > OS"] = "msos",
-    ["Other"] = "afk boost boosting boosts exp mob mobs recruit recruiting recruits roster selling wts xp layer hire"
+    [L["Filters"].Loot_Styles.Ticket] = "ticket",
+    [L["Filters"].Loot_Styles.GDKP] = "gdkp bid buyer",
+    [L["Filters"].Loot_Styles.SoftRes] = "2sr 1sr sr softres softreserve soft",
+    [L["Filters"].Loot_Styles.MSOS] = "msos",
+    [L["Filters"].Loot_Styles.Other] = "afk boost boosting boosts exp mob mobs recruit recruiting recruits roster selling wts xp layer hire"
 }
 
 addon.lootTypeColors = {
-    ["Ticket"] = "FFC107",
-    ["GDKP"] = "4CAF50",
-    ["SoftRes"] = "9C27B0",
-    ["MS > OS"] = "2196F3",
-    ["Other"] = "FFFFFF",
-    ["PVP"] = "F44336",
+    [L["Filters"].Loot_Styles.Ticket] = "FFC107",
+    [L["Filters"].Loot_Styles.GDKP] = "4CAF50",
+    [L["Filters"].Loot_Styles.SoftRes] = "9C27B0",
+    [L["Filters"].Loot_Styles.MSOS] = "2196F3",
+    [L["Filters"].Loot_Styles.Other] = "FFFFFF",
+    [L["Filters"].Loot_Styles.PVP] = "F44336",
 }
 
 addon.classColors = {
@@ -816,26 +817,26 @@ addon.groupieLanguagePatterns = addon.TableFlip(addon.groupieUnflippedLanguagePa
 --/run local name = UnitName("player"); local guid = UnitGUID("player"); ChatFrame1:AddMessage(name.." has the GUID: "..guid);
 addon.GroupieDevs = {
     -- Groupie Team
-    ["Player-4408-039B90A8"] = "Team Member", -- Aevala-Faerlina
-    ["Player-4408-044DE7F9"] = "Team Member", -- Gogodeekay-Faerlina
-    ["Player-4408-03D2C535"] = "Team Member", -- Gogodruid-Faerlina
-    ["Player-4408-03D2C53D"] = "Team Member", -- Gogohunter-Faerlina
-    ["Player-4408-03D2C27F"] = "Team Member", -- Gogomage-Faerlina
-    ["Player-4408-03D2C4A6"] = "Team Member", -- Gogopaladin-Faerlina
-    ["Player-4408-03D2C57D"] = "Team Member", -- Gogopriest-Faerlina
-    ["Player-4408-03D2C295"] = "Team Member", -- Gogorogue-Faerlina
-    ["Player-4408-03D2C5E2"] = "Team Member", -- Gogoshaman-Faerlina
-    ["Player-4408-03D2C21E"] = "Team Member", -- Gogowarlock-Faerlina
-    ["Player-4408-03D2C4C4"] = "Team Member", -- Gogowarrior-Faerlina
-    ["Player-4408-03AA25B2"] = "Team Member", -- Kattz-Faerlina
-    ["Player-4647-023571C6"] = "Team Member", -- Kynura-Grobbulus
-    ["Player-4467-02AB80C7"] = "Team Member", -- Raegen-Firemaw
+    ["Player-4408-039B90A8"] = L["TeamMember"], -- Aevala-Faerlina
+    ["Player-4408-044DE7F9"] = L["TeamMember"], -- Gogodeekay-Faerlina
+    ["Player-4408-03D2C535"] = L["TeamMember"], -- Gogodruid-Faerlina
+    ["Player-4408-03D2C53D"] = L["TeamMember"], -- Gogohunter-Faerlina
+    ["Player-4408-03D2C27F"] = L["TeamMember"], -- Gogomage-Faerlina
+    ["Player-4408-03D2C4A6"] = L["TeamMember"], -- Gogopaladin-Faerlina
+    ["Player-4408-03D2C57D"] = L["TeamMember"], -- Gogopriest-Faerlina
+    ["Player-4408-03D2C295"] = L["TeamMember"], -- Gogorogue-Faerlina
+    ["Player-4408-03D2C5E2"] = L["TeamMember"], -- Gogoshaman-Faerlina
+    ["Player-4408-03D2C21E"] = L["TeamMember"], -- Gogowarlock-Faerlina
+    ["Player-4408-03D2C4C4"] = L["TeamMember"], -- Gogowarrior-Faerlina
+    ["Player-4408-03AA25B2"] = L["TeamMember"], -- Kattz-Faerlina
+    ["Player-4647-023571C6"] = L["TeamMember"], -- Kynura-Grobbulus
+    ["Player-4467-02AB80C7"] = L["TeamMember"], -- Raegen-Firemaw
 
     -- Special Thanks
     -- TODO
 
     -- Test Accounts
-    ["Player-4728-03F542F0"] = "Team Member", -- Cooltestguy-Benediction
+    ["Player-4728-03F542F0"] = L["TeamMember"], -- Cooltestguy-Benediction
 }
 
 addon.groupieAchievementPriorities = {

@@ -3,6 +3,7 @@ local locale = GetLocale()
 if not addon.tableContains(addon.validLocales, locale) then
 	return
 end
+local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 
 -------------------------------
 -- Right Click Functionality --
@@ -57,10 +58,10 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName)
 	--Send other spec role if dual spec is purchased and used
 	--and it is enabled in options
 	if (inactiveTalentsSpent > 0 or addon.debugMenus) and addon.db.char.sendOtherRole then
-		if inactiveRole ~= activeRole or true then
+		if inactiveRole ~= activeRole then
 			otherRoleMsg = format(" / %s", inactiveRole)
 		end
-		if inactiveTalentSpec ~= activeTalentSpec or true then
+		if inactiveTalentSpec ~= activeTalentSpec then
 			otherSpecMsg = format(" / %s", inactiveTalentSpec)
 		end
 	end
@@ -186,7 +187,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		info = UIDropDownMenu_CreateInfo()
 		info.notClickable = true
 		info.notCheckable = true
-		info.text = "Send my info..."
+		info.text = L["RightClickMenu"].SendInfo
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 
 		info = UIDropDownMenu_CreateInfo()
@@ -204,7 +205,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		else
 			activeRole = addon.groupieRoleTable[addon.db.char.groupieSpec2Role]
 		end
-		info.text = format("Current : %s (%s)", maxTalentSpec, activeRole)
+		info.text = format(L["RightClickMenu"].Current .. " : %s (%s)", maxTalentSpec, activeRole)
 		info.leftPadding = 8
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 
@@ -216,7 +217,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 			info.func = function()
 				addon.SendWCLInfo(name, dropdownMenu, which)
 			end
-			info.text = "Warcraft Logs Link"
+			info.text = L["RightClickMenu"].WCL
 			info.leftPadding = 8
 			UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 		end

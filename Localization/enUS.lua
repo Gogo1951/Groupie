@@ -8,6 +8,7 @@ local L = LibStub('AceLocale-3.0'):NewLocale('Groupie', 'enUS', true)
 
 L["slogan"] = "A better LFG tool for Classic WoW."
 L["LocalizationStatus"] = 'Localization is on the work'
+L["TeamMember"] = "Team Member"
 
 -- tabs
 L["UI_tabs"] = {
@@ -44,7 +45,9 @@ L["Filters"] = {
         ["MSOS"] = "MS > OS",
         ["SoftRes"] = "SoftRes",
         ["GDKP"] = "GDKP",
-        ["Ticket"] = "TICKET"
+        ["Ticket"] = "Ticket",
+        ["Other"] = "Other",
+        ["PVP"] = "PVP",
     },
     --- Languages
     ["AnyLanguage"] = "All Languages",
@@ -64,7 +67,7 @@ L["RightClick"] = "Right Click"
 L["Settings"] = "Settings"
 L["BulletinBoard"] = "Bulletin Board"
 L["Reset"] = "Reset"
-L["Options"]="Options"
+L["Options"] = "Options"
 -- Channels Name /!\ VERY IMPORTANT, THE ADDON PARSES DEPENDING ON THE CHANNEL NAME
 L["text_channels"] = {
     ["Guild"] = "Guild",
@@ -201,54 +204,89 @@ L["ShortLocalizedInstances"] = {
     ["Ruby Sanctum"]                = "Ruby",
     ["Trial of the Grand Crusader"] = "Trial of the Grand Crusader",
 }
-L["InstanceFilters"]={
-    ["Wrath"]={
-        ["Name"]="Instance Filters - Wrath",
-        ["Desc"]="Filter Groups by Instance"
+L["InstanceFilters"] = {
+    ["Wrath"] = {
+        ["Name"] = "Instance Filters - Wrath",
+        ["Desc"] = "Filter Groups by Instance"
     },
-    ["TBC"]={
-        ["Name"]="Instance Filters - TBC",
-        ["Desc"]="Filter Groups by Instance"
+    ["TBC"] = {
+        ["Name"] = "Instance Filters - TBC",
+        ["Desc"] = "Filter Groups by Instance"
     },
-    ["Classic"]={
-        ["Name"]="Instance Filters - Classic",
-        ["Desc"]="Filter Groups by Instance"
+    ["Classic"] = {
+        ["Name"] = "Instance Filters - Classic",
+        ["Desc"] = "Filter Groups by Instance"
     }
 }
-L["GroupFilters"]={
-    ["Name"]="Group Filters",
-    ["Desc"]="Filter Groups by Other Properties",
-    ["General"]="General Filters",
-    ["savedToggle"]="Ignore Instances You Are Already Saved To on Current Character",
-    ["ignoreLFG"]="Ignore \"LFG\" Messages from People Looking for a Group",
-    ["ignoreLFM"]="Ignore \"LFM\" Messages from People Making a Group",
-    ["keyword"]="Filter By Keyword",
-    ["keyword_disc"]="Separate words or phrases using a comma; any post matching any keyword will be ignored.\nExample: \"swp trash, Selling, Boost\""
+L["GroupFilters"] = {
+    ["Name"] = "Group Filters",
+    ["Desc"] = "Filter Groups by Other Properties",
+    ["General"] = "General Filters",
+    ["savedToggle"] = "Ignore Instances You Are Already Saved To on Current Character",
+    ["ignoreLFG"] = "Ignore \"LFG\" Messages from People Looking for a Group",
+    ["ignoreLFM"] = "Ignore \"LFM\" Messages from People Making a Group",
+    ["keyword"] = "Filter By Keyword",
+    ["keyword_disc"] = "Separate words or phrases using a comma; any post matching any keyword will be ignored.\nExample: \"swp trash, Selling, Boost\""
 }
-L["CharOptions"]={
-    ["Name"]="Character Options",
-    ["Desc"]="Change Character-Specific Settings",
-    ["Spec1"]="Spec 1 Role",
-    ["Spec2"]="Spec 2 Role",
-    ["OtherRole"]="Include Non-Current Spec in LFG Messages.",
-    ["DungeonLevelRange"]="Recommended Dungeon Level Range",
-    --["recLevelDropdown"]={
-        --["0"]="Default Suggested Levels"
-    --}
-    ["AutoResponse"]="Auto-Response",
-    ["AutoFriends"]="Enable Auto-Respond to Friends",
-    ["AutoGuild"]="Enable Auto-Respond to Guild Members",
-    ["AfterParty"]="After-Party Tool",
-    ["PullGroups"]="Pull Groups From These Channels"
+L["CharOptions"] = {
+    ["Name"] = "Character Options",
+    ["Desc"] = "Change Character-Specific Settings",
+    ["Spec1"] = "Spec 1 Role",
+    ["Spec2"] = "Spec 2 Role",
+    ["OtherRole"] = "Include Non-Current Spec in LFG Messages.",
+    ["DungeonLevelRange"] = "Recommended Dungeon Level Range",
+    ["recLevelDropdown"] = {
+        ["0"] = "Default Suggested Levels",
+        ["1"] = "+1 - I've Done This Before",
+        ["2"] = "+2 - I've Got Enchanted Heirlooms",
+        ["3"] = "+3 - I'm Playing a Healer"
+    },
+    ["AutoResponse"] = "Auto-Response",
+    ["AutoFriends"] = "Enable Auto-Respond to Friends",
+    ["AutoGuild"] = "Enable Auto-Respond to Guild Members",
+    ["AfterParty"] = "After-Party Tool",
+    ["PullGroups"] = "Pull Groups From These Channels"
 }
-L["GlobalOptions"]={
-    ["Name"]="Global Options",
-    ["Desc"]="Change Account-Wide Settings",
-    ["MiniMapButton"]="Enable Mini-Map Button",
-    ["LFGData"]="Preserve Looking for Group Data Duration",
-    ["UIScale"]="UI Scale"
+L["GlobalOptions"] = {
+    ["Name"] = "Global Options",
+    ["Desc"] = "Change Account-Wide Settings",
+    ["MiniMapButton"] = "Enable Mini-Map Button",
+    ["LFGData"] = "Preserve Looking for Group Data Duration",
+    ["UIScale"] = "UI Scale",
+    ["DurationDropdown"] = {
+        ["1"] = "1 Minute",
+        ["2"] = "2 Minutes",
+        ["5"] = "5 Minutes",
+        ["10"] = "10 Minutes",
+        ["20"] = "20 Minutes",
+    },
 }
-L["UpdateSpec"]={
-    ["Spec1"]="Role for Spec 1",
-    ["Spec2"]="Role for Spec 2"
+L["UpdateSpec"] = {
+    ["Spec1"] = "Role for Spec 1",
+    ["Spec2"] = "Role for Spec 2"
+}
+L["RightClickMenu"] = {
+    ["SendInfo"] = "Send my info...",
+    ["Current"] = "Current",
+    ["WCL"] = "Warcraft Logs Link",
+    ["Ignore"] = "Ignore",
+    ["StopIgnore"] = "Stop Ignoring",
+    ["Invite"] = "Invite",
+    ["Whisper"] = "Whisper",
+}
+L["MiniMap"] = {
+    ["lowerOr"] = "or",
+    ["Update1"] = "PLEASE UPDATE YOUR ADD-ONS ASAP!",
+    ["Update2"] = "GROUPIE LFG IS OUT OF DATE!",
+    ["HelpUs"] = "Groupie needs your help! Please go to\nGroupie Settings > Instance Log and\nupload the values to Groupie Discord.\nThis message will go away next time\nyou update Groupie. Thanks!",
+
+}
+L["InstanceLog"] = {
+    ["Name"] = "Instance Log",
+    ["Desc"] = "Help Groupie!",
+}
+L["About"] = {
+    ["Desc"] = "About Groupie",
+    ["Paragraph"] = "A better LFG tool for Classic WoW.\n\n\nGroupie was created by Gogo, LemonDrake, Kynura, and Raegen...\n\n...with help from Katz, Aevala, and Fathom.",
+    ["lowerOn"] = "on",
 }
