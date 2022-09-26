@@ -277,7 +277,7 @@ L["RightClickMenu"] = {
 L["MiniMap"] = {
     ["lowerOr"] = "or",
     ["Update1"] = "PLEASE UPDATE YOUR ADD-ONS ASAP!",
-    ["Update2"] = "GROUPIE LFG IS OUT OF DATE!",
+    ["Update2"] = "GROUPIE IS OUT OF DATE!",
     ["HelpUs"] = "Groupie needs your help! Please go to\nGroupie Settings > Instance Log and\nupload the values to Groupie Discord.\nThis message will go away next time\nyou update Groupie. Thanks!",
 
 }
