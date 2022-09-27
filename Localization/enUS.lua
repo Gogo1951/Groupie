@@ -226,7 +226,7 @@ L["GroupFilters"] = {
     ["ignoreLFG"] = "Ignore \"LFG\" Messages from People Looking for a Group",
     ["ignoreLFM"] = "Ignore \"LFM\" Messages from People Making a Group",
     ["keyword"] = "Filter By Keyword",
-    ["keyword_disc"] = "Separate words or phrases using a comma; any post matching any keyword will be ignored.\nExample: \"swp trash, Selling, Boost\""
+    ["keyword_desc"] = "Separate words or phrases using a comma; any post matching any keyword will be ignored.\nExample: \"swp trash, Selling, Boost\""
 }
 L["CharOptions"] = {
     ["Name"] = "Character Options",

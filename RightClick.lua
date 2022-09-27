@@ -93,7 +93,7 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName)
 
 	local lvlStr = ""
 	--Show ilvl for level 70/80 players, otherwise show level
-	if mylevel == 70 or mylevel == 80 then
+	if mylevel == 80 then
 		lvlStr = "Item-Level " .. tostring(averageiLevel)
 	else
 		lvlStr = "Level " .. tostring(mylevel)

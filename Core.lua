@@ -1550,7 +1550,7 @@ function addon.SetupConfig()
                     },
                     header4 = {
                         type = "description",
-                        name = "|cff999999" .. L["GroupFilters"].keyword_disc,
+                        name = "|cff999999" .. L["GroupFilters"].keyword_desc,
                         order = 18,
                         fontSize = "medium"
                     },
