@@ -177,7 +177,7 @@ L["ShortLocalizedInstances"] = {
 
     ["Utgarde Keep"]          = "Utgarde Keep",
     ["Nexus"]                 = "Nexus",
-    ["Ajzol-Nerub"]           = "Ajzol",
+    ["Azjol-Nerub"]           = "Azjol",
     ["Old Kingdom"]           = "Old Kingdom",
     ["Drak'Tharon Keep"]      = "Drak'Tharon",
     ["Violet Hold"]           = "Violet Hold",

@@ -68,12 +68,12 @@ local function GetDungeons(messageWords)
             end
 
             --Handle instances with multiple wings by checking the word to the right
-            if strmatch(instance, "Full Clear") and i < #messageWords then
-                lookupAttempt = addon.groupieInstancePatterns[messageWords[i + 1]]
-                if lookupAttempt ~= nil then
-                    instance = lookupAttempt
-                end
-            end
+            --if strmatch(instance, "Full Clear") and i < #messageWords then
+            --    lookupAttempt = addon.groupieInstancePatterns[messageWords[i + 1]]
+            --    if lookupAttempt ~= nil then
+            --        instance = lookupAttempt
+            --    end
+            --end
         elseif instance == nil then -- We shouldn't try matching for instance+heroic+size patterns if we've already found one
             --If we couldn't recognize an instance, try removing heroic/size patterns from the start and end of the word
             for key, val in pairs(addon.groupieVersionPatterns) do
