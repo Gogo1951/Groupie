@@ -1,3 +1,4 @@
+local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 local addonName, addon = ...
 local locale = GetLocale()
 if not addon.tableContains(addon.validLocales, locale) then
@@ -363,17 +364,17 @@ end
 local function GroupieEventHandlers(...)
     local event, msg, author, _, channel, _, _, _, _, _, _, _, guid = ...
     local validChannel = false
-    if addon.db.char.useChannels["Guild"] and event == "CHAT_MSG_GUILD" then
+    if addon.db.char.useChannels[L["GuildChannel"]] and event == "CHAT_MSG_GUILD" then
         validChannel = true
-    elseif addon.db.char.useChannels["General"] and strmatch(channel, "General") then
+    elseif addon.db.char.useChannels[L["GeneralChannel"]] and strmatch(channel, L["GeneralChannel"]) then
         validChannel = true
-    elseif addon.db.char.useChannels["Trade"] and strmatch(channel, "Trade") then
+    elseif addon.db.char.useChannels[L["TradeChannel"]] and strmatch(channel, L["TradeChannel"]) then
         validChannel = true
-    elseif addon.db.char.useChannels["LocalDefense"] and strmatch(channel, "LocalDefense") then
+    elseif addon.db.char.useChannels[L["LocalDefenseChannel"]] and strmatch(channel, L["LocalDefenseChannel"]) then
         validChannel = true
-    elseif addon.db.char.useChannels["LookingForGroup"] and strmatch(channel, "LookingForGroup") then
+    elseif addon.db.char.useChannels[L["LookingForGroupChannel"]] and strmatch(channel, L["LookingForGroupChannel"]) then
         validChannel = true
-    elseif addon.db.char.useChannels["5"] and strmatch(channel, "5. ") then
+    elseif addon.db.char.useChannels[L["WorldChannel"]] and strmatch(channel, L["WorldChannel"] .. ". ") then
         validChannel = true
     end
     if validChannel then

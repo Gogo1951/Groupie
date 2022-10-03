@@ -1178,7 +1178,7 @@ function addon:OnInitialize()
             afterParty = true,
             useChannels = {
                 [L["GuildChannel"]] = true,
-                [L["GuildChannel"]] = true,
+                [L["GeneralChannel"]] = true,
                 [L["TradeChannel"]] = true,
                 [L["LocalDefenseChannel"]] = true,
                 [L["LookingForGroupChannel"]] = true,
@@ -1644,11 +1644,11 @@ function addon.SetupConfig()
                     },
                     channelLookingForGroupToggle = {
                         type = "toggle",
-                        name = "LookingForGroup",
+                        name = L["LookingForGroupChannel"],
                         order = 23,
                         width = "full",
-                        get = function(info) return addon.db.char.useChannels["LookingForGroup"] end,
-                        set = function(info, val) addon.db.char.useChannels["LookingForGroup"] = val end,
+                        get = function(info) return addon.db.char.useChannels[L["LookingForGroupChannel"]] end,
+                        set = function(info, val) addon.db.char.useChannels[L["LookingForGroupChannel"]] = val end,
                     },
                     channel5Toggle = {
                         type = "toggle",
