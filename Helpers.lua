@@ -1,7 +1,8 @@
 local addonName, addon = ...
 local GetTalentTabInfo = GetTalentTabInfo
-local time = time
-local gmatch = gmatch
+local time             = time
+local gmatch           = gmatch
+local L                = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 
 --Return the primary talent spec for either main or dual specialization
 function addon.GetSpecByGroupNum(groupnum)
@@ -74,7 +75,25 @@ end
 --Replace all non alphanumeric characters with a space, trim excess spaces, and convert to all lower case
 function addon.Preprocess(msg)
     local gsub = gsub
-    return gsub(gsub(strlower(gsub(gsub(msg, "%W", " "), "%s+", " ")), "ms os", "msos"), "black temple", "blacktemple")
+    --Remove color escape sequences
+    --lua doesnt have regex quantifiers :)
+    msg = gsub(msg, "%|c[a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9]", "")
+    msg = gsub(msg, "%|r", "")
+    --Replace achievments with their text for data processing purposes
+    local achievelink = strmatch(msg, "%|Hachievement:.+%|h")
+    if achievelink then
+        local achieveID = gsub(gsub(achievelink, "%|Hachievement:", ""), ":.+", "")
+        local achieveID, name = GetAchievementInfo(tonumber(achieveID))
+        msg = gsub(msg, "%|Hachievement:.+%|h", name)
+    end
+    --General preprocessing
+    msg = strlower(gsub(gsub(msg, "%W", " "), "%s+", " "))
+    --Multiword patterns need to be simplified
+    msg = gsub(gsub(msg, "for the horde", "fth"), "for the alliance", "fta")
+    msg = gsub(msg, "black temple", "blacktemple")
+    msg = gsub(msg, "ms os", "msos")
+
+    return msg
 end
 
 --Reverse a table by creating a new one
@@ -254,38 +273,50 @@ end
 --savedInstanceInfo[instanceOrder][playerName]
 function addon.UpdateSavedInstances()
     local playerName = UnitName("player")
+    local locClass, engClass = UnitClass("player")
+    local locale = GetLocale()
+    if addon.db.global.savedInstanceLogs[locale] == nil then
+        addon.db.global.savedInstanceLogs[locale] = {}
+    end
+
     for i = 1, GetNumSavedInstances() do
         local name, _, reset, _, locked, _, _, _, maxPlayers, difficultyName = GetSavedInstanceInfo(i)
+        --Log all saved instances - for localization
+        addon.db.global.savedInstanceLogs[locale][name] = true
         --Preprocess name returned by GetSavedInstanceInfo
         local savedname = strlower(gsub(gsub(name, "%W", ""), "%s+", " "))
         if locked and (reset > 0) then --check that the lockout is active
             for key, val in pairs(addon.groupieInstanceData) do
                 local isHeroic, shouldBeHeroic = false, false
                 --Preprocess our name from groupieInstanceData
-                local ourname = strlower(gsub(gsub(gsub(gsub(key, " %- .+", ""), "Heroic ", ""), "%W", ""), "%s+", " "))
-                ourname = gsub(ourname, "hellfire", "") --Saved instance name is "Hellfire Citadel: Ramparts"
-                ourname = gsub(ourname, "plateau", "") --Saved instance name is "The Sunwell"
-                --Will probably end up with more funky edge cases here
-                if strfind(savedname, ourname) then --Check that the name matches
-                    if strfind(difficultyName, "Heroic") then
-                        isHeroic = true
-                    end
-                    if strfind(key, "Heroic") then
-                        shouldBeHeroic = true
-                    end
-                    --Check that we've found the correct difficulty and size, then use this order
-                    if isHeroic == shouldBeHeroic and maxPlayers == val.GroupSize then
-                        if not addon.db.global.savedInstanceInfo[val.Order] then
-                            addon.db.global.savedInstanceInfo[val.Order] = {}
+                local diffIndependent = gsub(gsub(key, " %- .+", ""), "Heroic ", "")
+                --Get a shortened localized name
+                local shortname = L["ShortLocalizedInstances"][diffIndependent]
+                --If this is an instance we have a localized name to compare the saved name to
+                if shortname ~= nil then
+                    local ourname = strlower(gsub(gsub(shortname, "%W", ""), "%s+", " "))
+                    --Will probably end up with more funky edge cases here
+                    if strfind(savedname, ourname) then --Check that the name matches
+                        if strfind(difficultyName, "Heroic") then
+                            isHeroic = true
                         end
-                        addon.db.global.savedInstanceInfo[val.Order][playerName] = {
-                            characterName = playerName,
-                            classColor = addon.classColors[UnitClass("player")],
-                            instance = key,
-                            isHeroic = isHeroic,
-                            groupSize = maxPlayers,
-                            resetTime = reset + time()
-                        }
+                        if strfind(key, "Heroic") then
+                            shouldBeHeroic = true
+                        end
+                        --Check that we've found the correct difficulty and size, then use this order
+                        if isHeroic == shouldBeHeroic and maxPlayers == val.GroupSize then
+                            if not addon.db.global.savedInstanceInfo[val.Order] then
+                                addon.db.global.savedInstanceInfo[val.Order] = {}
+                            end
+                            addon.db.global.savedInstanceInfo[val.Order][playerName] = {
+                                characterName = playerName,
+                                classColor = addon.classColors[engClass],
+                                instance = key,
+                                isHeroic = isHeroic,
+                                groupSize = maxPlayers,
+                                resetTime = reset + time()
+                            }
+                        end
                     end
                 end
             end
@@ -298,7 +329,7 @@ function addon.UpdateSavedInstances()
     addon.db.global.savedInstanceInfo[2330] = {}
     addon.db.global.savedInstanceInfo[2330][UnitName("player")] = {
         characterName = "Cooltestguy",
-        classColor = addon.classColors[UnitClass("player")],
+        classColor = addon.classColors[engClass],
         instance = "Zul'Aman",
         isHeroic = false,
         groupSize = 10,
@@ -307,7 +338,7 @@ function addon.UpdateSavedInstances()
     addon.db.global.savedInstanceInfo[2160] = {}
     addon.db.global.savedInstanceInfo[2160][UnitName("player")] = {
         characterName = "Cooltestguy",
-        classColor = addon.classColors[UnitClass("player")],
+        classColor = addon.classColors[engClass],
         instance = "Coilfang: The Underbog",
         isHeroic = true,
         groupSize = 5,
@@ -316,7 +347,7 @@ function addon.UpdateSavedInstances()
     addon.db.global.savedInstanceInfo[2370] = {}
     addon.db.global.savedInstanceInfo[2370][UnitName("player")] = {
         characterName = "Cooltestguy",
-        classColor = addon.classColors[UnitClass("player")],
+        classColor = addon.classColors[engClass],
         instance = "Tempest Keep",
         isHeroic = false,
         groupSize = 25,
@@ -324,7 +355,7 @@ function addon.UpdateSavedInstances()
     }
     addon.db.global.savedInstanceInfo[2330]["OtherGuy"] = {
         characterName = "OtherGuy",
-        classColor = addon.classColors["Death Knight"],
+        classColor = addon.classColors["DRUID"],
         instance = "Zul'Aman",
         isHeroic = false,
         groupSize = 10,
@@ -332,7 +363,7 @@ function addon.UpdateSavedInstances()
     }
     addon.db.global.savedInstanceInfo[2330]["FunnyGuy"] = {
         characterName = "FunnyGuy",
-        classColor = addon.classColors["Hunter"],
+        classColor = addon.classColors["HUNTER"],
         instance = "Zul'Aman",
         isHeroic = false,
         groupSize = 10,
@@ -341,11 +372,26 @@ function addon.UpdateSavedInstances()
     addon.db.global.savedInstanceInfo[2390] = {}
     addon.db.global.savedInstanceInfo[2390]["OtherGuy"] = {
         characterName = "OtherGuy",
-        classColor = addon.classColors["Death Knight"],
+        classColor = addon.classColors["DEATHKNIGHT"],
         instance = "Black Temple",
         isHeroic = false,
         groupSize = 25,
         resetTime = 386957 + time()
     }
     --]]
+end
+
+--Return the 4-character suffix of a hash for a given string input
+--From https://wowwiki-archive.fandom.com/wiki/USERAPI_StringHash
+function addon.StringHash(text)
+    local counter = 1
+    local len = string.len(text)
+    for i = 1, len, 3 do
+        counter = math.fmod(counter * 8161, 4294967279) + -- 2^32 - 17: Prime!
+            (string.byte(text, i) * 16776193) +
+            ((string.byte(text, i + 1) or (len - i + 256)) * 8372226) +
+            ((string.byte(text, i + 2) or (len - i + 256)) * 3932164)
+    end
+    local numhash = math.fmod(counter, 4294967291) -- 2^32 - 5: Prime (and different from the prime in the loop)
+    return strsub(format("%x", numhash), -4)
 end

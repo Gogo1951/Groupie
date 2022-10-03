@@ -7,11 +7,12 @@
 ## X-Curse-Project-ID: 661450
 
 embeds.xml
+Localization\enUS.lua
+Localization\frFR.lua
 UI/minimap.xml
 UI/listingtemplate.xml
 Helpers.lua
 Globals.lua
 Core.lua
-Modules/modules.xml
 RightClick.lua
 Listener.lua

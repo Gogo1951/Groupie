@@ -3,8 +3,17 @@ local locale = GetLocale()
 if not addon.tableContains(addon.validLocales, locale) then
     return
 end
+local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 local AceEvent = LibStub("AceEvent-3.0")
 AceEvent:Embed(addon)
+
+local PROTECTED_TOKENS = {
+    [1] = "%s*{rt3}%s*groupie%s*:",
+    [2] = "%s*groupie%s*{rt3}%s*:",
+    [3] = "%s*{diamond}%s*groupie%s*:",
+    [4] = "%s*groupie%s*{diamond}%s*:",
+}
+local WARNING_MESSAGE = "{rt3} Groupie : Fake News! That is not a real Groupie Message. Quit being shady."
 
 --Local Function References for performance reasons
 local gsub = gsub
@@ -59,12 +68,12 @@ local function GetDungeons(messageWords)
             end
 
             --Handle instances with multiple wings by checking the word to the right
-            if strmatch(instance, "Full Clear") and i < #messageWords then
-                lookupAttempt = addon.groupieInstancePatterns[messageWords[i + 1]]
-                if lookupAttempt ~= nil then
-                    instance = lookupAttempt
-                end
-            end
+            --if strmatch(instance, "Full Clear") and i < #messageWords then
+            --    lookupAttempt = addon.groupieInstancePatterns[messageWords[i + 1]]
+            --    if lookupAttempt ~= nil then
+            --        instance = lookupAttempt
+            --    end
+            --end
         elseif instance == nil then -- We shouldn't try matching for instance+heroic+size patterns if we've already found one
             --If we couldn't recognize an instance, try removing heroic/size patterns from the start and end of the word
             for key, val in pairs(addon.groupieVersionPatterns) do
@@ -176,7 +185,7 @@ end
 
 --Extract the loot system being used by the party
 local function GetGroupType(messageWords)
-    local lootType = "MS > OS"
+    local lootType = L["Filters"].Loot_Styles.MSOS
     for i = 1, #messageWords do
         local word = messageWords[i]
 
@@ -184,7 +193,7 @@ local function GetGroupType(messageWords)
         local lookupAttempt = addon.groupieLootPatterns[word]
         if lookupAttempt ~= nil then
             --Because GDKP messages sometimes include the word carry, avoid overwriting in this case
-            if lookupAttempt ~= "Ticket" or lootType ~= "GDKP" then
+            if lookupAttempt ~= L["Filters"].Loot_Styles.Ticket or lootType ~= L["Filters"].Loot_Styles.GDKP then
                 lootType = lookupAttempt
             end
         end
@@ -208,7 +217,7 @@ local function ParseMessage(event, msg, author, _, channel, guid)
     local lootType = nil
     local minLevel = nil
     local maxLevel = nil
-    local instanceOrder = nil
+    local instanceOrder = -1
     local instanceID = -1
     local icon = "Other.tga"
     local classColor = addon.groupieSystemColor
@@ -233,7 +242,7 @@ local function ParseMessage(event, msg, author, _, channel, guid)
                 isLFG = true
             elseif patternType == 5 then --Other Groups
                 isLFM = true
-                lootType = "Other"
+                lootType = L["Filters"].Loot_Styles.Other
             end
             --If a role was mentioned but not LFG OR LFM, assume it is LFM
             if not isLFM and not isLFG and next(rolesNeeded) ~= nil then
@@ -249,12 +258,12 @@ local function ParseMessage(event, msg, author, _, channel, guid)
         groupDungeon, isHeroic, groupSize = GetDungeons(messageWords)
         if groupDungeon == nil or strmatch(msg, "|Henchant") or strmatch(msg, "|Htrade") then
             groupDungeon = "Miscellaneous" --No dungeon Found
-            lootType = "Other"
+            lootType = L["Filters"].Loot_Styles.Other
             isHeroic = false
             groupSize = 5
         end
         if groupDungeon == "PVP" then -- Support for PVP tab
-            lootType = "PVP"
+            lootType = L["Filters"].Loot_Styles.PVP
             isHeroic = false
             groupSize = 5
             icon = "PVP.tga"
@@ -279,21 +288,33 @@ local function ParseMessage(event, msg, author, _, channel, guid)
     --The full versioned instance name for use in data table
     local fullName = groupDungeon
     if groupDungeon ~= "Miscellaneous" and groupDungeon ~= "PVP" then
-        if isHeroic then
-            fullName = format("Heroic %s", fullName)
-        end
-        if #addon.instanceVersions[groupDungeon] > 1 then
-            if groupSize == 10 then
-                fullName = format("%s - 10", fullName)
-            elseif groupSize == 25 then
-                fullName = format("%s - 25", fullName)
+        --The event bosses don't have entries in the instance data table
+        if groupDungeon == "Coren Direbrew" then
+            minLevel = 70
+            maxLevel = 80
+        elseif groupDungeon == "Ahune" then
+            minLevel = 70
+            maxLevel = 80
+        elseif groupDungeon == "Headless Horseman" then
+            minLevel = 70
+            maxLevel = 80
+        else
+            if isHeroic then
+                fullName = format("Heroic %s", fullName)
             end
+            if #addon.instanceVersions[groupDungeon] > 1 then
+                if groupSize == 10 then
+                    fullName = format("%s - 10", fullName)
+                elseif groupSize == 25 then
+                    fullName = format("%s - 25", fullName)
+                end
+            end
+            minLevel = addon.groupieInstanceData[fullName].MinLevel
+            maxLevel = addon.groupieInstanceData[fullName].MaxLevel
+            instanceOrder = addon.groupieInstanceData[fullName].Order
+            icon = addon.groupieInstanceData[fullName].Icon
+            instanceID = addon.groupieInstanceData[fullName].InstanceID
         end
-        minLevel = addon.groupieInstanceData[fullName].MinLevel
-        maxLevel = addon.groupieInstanceData[fullName].MaxLevel
-        instanceOrder = addon.groupieInstanceData[fullName].Order
-        icon = addon.groupieInstanceData[fullName].Icon
-        instanceID = addon.groupieInstanceData[fullName].InstanceID
     end
 
     --For some reason sometimes realm name is not included
@@ -326,7 +347,8 @@ local function ParseMessage(event, msg, author, _, channel, guid)
     --Moved from Event listener to minimize API calls to only successfully parsed listings
     --and only new listings, not updated listings. Should significantly reduce the api calls here
     if addon.db.global.listingTable[author].classColor == nil then
-        classColor = addon.classColors[GetPlayerInfoByGUID(guid)]
+        local locClass, engClass = GetPlayerInfoByGUID(guid)
+        classColor = addon.classColors[engClass]
     else
         classColor = addon.db.global.listingTable[author].classColor
     end
@@ -362,17 +384,18 @@ end
 local function GroupieEventHandlers(...)
     local event, msg, author, _, channel, _, _, _, _, _, _, _, guid = ...
     local validChannel = false
-    if addon.db.char.useChannels["Guild"] and event == "CHAT_MSG_GUILD" then
+    if addon.db.char.useChannels[L["text_channels"].Guild] and event == "CHAT_MSG_GUILD" then
         validChannel = true
-    elseif addon.db.char.useChannels["General"] and strmatch(channel, "General") then
+    elseif addon.db.char.useChannels[L["text_channels"].General] and strmatch(channel, L["text_channels"].General) then
         validChannel = true
-    elseif addon.db.char.useChannels["Trade"] and strmatch(channel, "Trade") then
+    elseif addon.db.char.useChannels[L["text_channels"].Trade] and strmatch(channel, L["text_channels"].Trade) then
         validChannel = true
-    elseif addon.db.char.useChannels["LocalDefense"] and strmatch(channel, "LocalDefense") then
+    elseif addon.db.char.useChannels[L["text_channels"].LocalDefense] and
+        strmatch(channel, L["text_channels"].LocalDefense) then
         validChannel = true
-    elseif addon.db.char.useChannels["LookingForGroup"] and strmatch(channel, "LookingForGroup") then
+    elseif addon.db.char.useChannels[L["text_channels"].LFG] and strmatch(channel, L["text_channels"].LFG) then
         validChannel = true
-    elseif addon.db.char.useChannels["5"] and strmatch(channel, "5. ") then
+    elseif addon.db.char.useChannels[L["text_channels"].World] and strmatch(channel, L["text_channels"].World .. ". ") then
         validChannel = true
     end
     if validChannel then
@@ -384,19 +407,37 @@ end
 -------------------------------
 --DEBUG FUNCTIONS FOR TESTING--
 -------------------------------
-local function testfunc(_, msg, ...)
-    if not addon.debugMenus then
-        return
-    end
-    if msg == "clear" then
+local function WhisperListener(_, msg, longAuthor, ...)
+
+    local author = gsub(longAuthor, "-.*", "")
+
+    --test phrases for debugging
+    if msg == "clear" and author == UnitName("player") and addon.debugMenus then
         addon.db.global.listingTable = {}
-    elseif msg == "all" then
+    elseif msg == "all" and author == UnitName("player") and addon.debugMenus then
         addon.db.global.listingTable = {}
         local idx = 0
         for key, val in pairs(addon.groupieUnflippedDungeonPatterns) do
             local temppattern = gsub(val, " .+", "")
             ParseMessage(nil, "lfm " .. temppattern, tostring(idx), nil, nil, UnitGUID("player"))
             idx = idx + 1
+        end
+    else
+        --Check the hash if it is a groupie branded message
+        --Unless it is the warning message itself
+        if msg ~= WARNING_MESSAGE then
+            for key, val in pairs(PROTECTED_TOKENS) do
+                if strmatch(strlower(msg), val) then
+                    --Remove the hash
+                    local hashRecieved = gsub(gsub(msg, ".+ %[%#", ""), "%]", "")
+                    local suffixRemoved = gsub(msg, " %[%#.+", "")
+                    local hashCalculated = addon.StringHash(author .. suffixRemoved)
+                    --Fake found
+                    if hashCalculated ~= hashRecieved then
+                        SendChatMessage(WARNING_MESSAGE, "WHISPER", "COMMON", longAuthor)
+                    end
+                end
+            end
         end
     end
 end
@@ -406,4 +447,4 @@ end
 -------------------
 addon:RegisterEvent("CHAT_MSG_CHANNEL", GroupieEventHandlers)
 addon:RegisterEvent("CHAT_MSG_GUILD", GroupieEventHandlers)
-addon:RegisterEvent("CHAT_MSG_WHISPER", testfunc)
+addon:RegisterEvent("CHAT_MSG_WHISPER", WhisperListener)

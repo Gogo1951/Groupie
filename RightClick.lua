@@ -3,7 +3,8 @@ local locale = GetLocale()
 if not addon.tableContains(addon.validLocales, locale) then
 	return
 end
-local SecureMessaging = addon.SM
+local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
+
 -------------------------------
 -- Right Click Functionality --
 -------------------------------
@@ -33,6 +34,7 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName)
 
 	local myclass = UnitClass("player")
 	local mylevel = UnitLevel("player")
+	local myname = UnitName("player")
 
 	--Find out which spec group is active
 	local specGroup = addon.GetActiveSpecGroup()
@@ -41,7 +43,6 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName)
 	--Find out which talent spec has the most points spent in it
 	local activeTalentSpec = addon.GetSpecByGroupNum(specGroup)
 	local inactiveTalentSpec, inactiveTalentsSpent = addon.GetSpecByGroupNum(inactiveSpecGroup)
-	local mylocale = GetLocale()
 	local activeRole = nil
 	local inactiveRole = nil
 	if specGroup == 1 then
@@ -52,10 +53,17 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName)
 		inactiveRole = addon.groupieRoleTable[addon.db.char.groupieSpec1Role]
 	end
 
-	local otherspecmsg = ""
+	local otherRoleMsg = ""
+	local otherSpecMsg = ""
 	--Send other spec role if dual spec is purchased and used
-	if inactiveTalentsSpent > 0 then
-		otherspecmsg = format(" (My Other Spec is %s %s.)", inactiveTalentSpec, inactiveRole)
+	--and it is enabled in options
+	if (inactiveTalentsSpent > 0 or addon.debugMenus) and addon.db.char.sendOtherRole then
+		if inactiveRole ~= activeRole then
+			otherRoleMsg = format(" / %s", inactiveRole)
+		end
+		if inactiveTalentSpec ~= activeTalentSpec then
+			otherSpecMsg = format(" / %s", inactiveTalentSpec)
+		end
 	end
 
 	local lfgStr = "LFG"
@@ -75,7 +83,7 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName)
 					if completed then
 						local achieveLink = GetAchievementLink(priorities[i])
 						if achieveLink then
-							achieveLinkStr = achieveLink
+							achieveLinkStr = " " .. achieveLink
 						end
 					end
 				end
@@ -83,24 +91,36 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName)
 		end
 	end
 
-	local groupieMsg = format("{rt3} %s : %s %s! %s %s %s in %s-level gear.%s %s-speaking Player. %s"
-		,
+	local lvlStr = ""
+	--Show ilvl for level 70/80 players, otherwise show level
+	if mylevel == 80 then
+		lvlStr = "Item-Level " .. tostring(averageiLevel)
+	else
+		lvlStr = "Level " .. tostring(mylevel)
+	end
+
+	local groupieMsg = format("{rt3} %s : %s%s %s! %s %s%s %s. (%s)%s",
 		addonName,
 		activeRole,
+		otherRoleMsg,
 		lfgStr,
-		mylevel,
+		lvlStr,
 		activeTalentSpec,
+		otherSpecMsg,
 		myclass,
-		tostring(averageiLevel),
-		otherspecmsg,
-		addon.groupieLocaleTable[mylocale],
+		addon.localeCodes[locale],
 		achieveLinkStr
 	)
+
+	--Hash the message and attach the suffix of the hash
+	local msgHash = addon.StringHash(myname .. groupieMsg)
+	groupieMsg = format("%s [#%s]", groupieMsg, msgHash)
+
 	--Sending Current Spec Info
 	if which == "BN_FRIEND" then
 		BNSendWhisper(dropdownMenu.accountInfo.bnetAccountID, groupieMsg)
 	else
-		SecureMessaging:SendChatMessage(groupieMsg, "WHISPER", targetName)
+		SendChatMessage(groupieMsg, "WHISPER", "COMMON", targetName)
 	end
 	return true
 end
@@ -110,10 +130,15 @@ function addon.SendWCLInfo(targetName, dropdownMenu, which)
 	local myserver = GetRealmName()
 	local link = format("https://classic.warcraftlogs.com/character/us/%s/%s", gsub(myserver, " ", ""), myname)
 	local groupieMsg = "{rt3} " .. addonName .. " : Check My Parses on Warcraft Logs " .. link
+
+	--Hash the message and attach the suffix of the hash
+	local msgHash = addon.StringHash(myname .. groupieMsg)
+	groupieMsg = format("%s [#%s]", groupieMsg, msgHash)
+
 	if which == "BN_FRIEND" then
 		BNSendWhisper(dropdownMenu.accountInfo.bnetAccountID, groupieMsg)
 	else
-		SecureMessaging:SendChatMessage(groupieMsg, "WHISPER", targetName)
+		SendChatMessage(groupieMsg, "WHISPER", "COMMON", targetName)
 	end
 end
 
@@ -162,7 +187,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		info = UIDropDownMenu_CreateInfo()
 		info.notClickable = true
 		info.notCheckable = true
-		info.text = "Send my info..."
+		info.text = L["RightClickMenu"].SendInfo
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 
 		info = UIDropDownMenu_CreateInfo()
@@ -180,7 +205,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		else
 			activeRole = addon.groupieRoleTable[addon.db.char.groupieSpec2Role]
 		end
-		info.text = format("Current : %s (%s)", maxTalentSpec, activeRole)
+		info.text = format(L["RightClickMenu"].Current .. " : %s (%s)", maxTalentSpec, activeRole)
 		info.leftPadding = 8
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 
@@ -192,7 +217,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 			info.func = function()
 				addon.SendWCLInfo(name, dropdownMenu, which)
 			end
-			info.text = "Warcraft Logs Link"
+			info.text = L["RightClickMenu"].WCL
 			info.leftPadding = 8
 			UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 		end
