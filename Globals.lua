@@ -123,7 +123,7 @@ addon.groupieClassRoleTable = {
         [L["Warlock"].Destruction] = { [3] = "Ranged DPS" }
     },
     ["WARRIOR"] = {
-        [L["Warrior"].Arms] = { [4] = "Melee DPS" },
+        [L["Warrior"].Arms] = { [1] = "Tank", [4] = "Melee DPS" },
         [L["Warrior"].Fury] = { [4] = "Melee DPS" },
         [L["Warrior"].Protection] = { [1] = "Tank" }
     }
