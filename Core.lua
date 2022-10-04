@@ -1255,7 +1255,7 @@ function addon:OnInitialize()
             showMinimap = true,
             ignoreSavedInstances = true,
             ignoreLFM = false,
-            ignoreLFG = false,
+            ignoreLFG = true,
             keywordBlacklist = {},
             savedInstanceInfo = {},
             needsUpdateFlag = false,
