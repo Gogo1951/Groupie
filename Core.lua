@@ -1231,11 +1231,7 @@ function addon:OnInitialize()
         }
     }
 
-    --Reset instance filters due to data changes
-    if addon.db.char.configVer == nil then
-        addon.db.char.hideInstances = {}
-        addon.db.char.configVer = addon.version
-    end
+
     --Generate defaults for each individual dungeon filter
     for key, val in pairs(addon.groupieInstanceData) do
         defaults.char.hideInstances[key] = false
@@ -1243,6 +1239,11 @@ function addon:OnInitialize()
     addon.db = LibStub("AceDB-3.0"):New("GroupieDB", defaults)
     addon.icon = LibStub("LibDBIcon-1.0")
 
+    --Reset instance filters due to data changes
+    if addon.db.char.configVer == nil then
+        addon.db.char.hideInstances = {}
+        addon.db.char.configVer = addon.version
+    end
     addon.icon:Register("GroupieLDB", addon.groupieLDB, addon.db.global or defaults.global)
     addon.icon:Hide("GroupieLDB")
 
