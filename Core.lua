@@ -1211,6 +1211,7 @@ function addon:OnInitialize()
             showClassic5 = true,
             hideInstances = {},
             sendOtherRole = false,
+            configVer = nil,
         },
         global = {
             lastServer = nil,
@@ -1229,6 +1230,12 @@ function addon:OnInitialize()
             savedInstanceLogs = {},
         }
     }
+
+    --Reset instance filters due to data changes
+    if addon.db.char.configVer == nil then
+        addon.db.char.hideInstances = {}
+        addon.db.char.configVer = addon.version
+    end
     --Generate defaults for each individual dungeon filter
     for key, val in pairs(addon.groupieInstanceData) do
         defaults.char.hideInstances[key] = false
