@@ -400,7 +400,15 @@ local function DrawListings(self)
             button.instance:SetText(listing.instanceName)
             button.loot:SetText("|cFF" .. lootColor .. listing.lootType)
             button.msg:SetText(formattedMsg)
-            button.icon:SetTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\InstanceIcons\\" .. listing.icon)
+            local texture = listing.icon
+            if type(listing.icon)=="string" then
+                if listing.icon:find("Interface\\") then -- it's a full path
+                    texture = listing.icon
+                else
+                    texture = "Interface\\AddOns\\" .. addonName .. "\\Images\\InstanceIcons\\" .. listing.icon
+                end
+            end
+            button.icon:SetTexture(texture)
             button.btn:SetScript("OnClick", function()
                 addon.SendPlayerInfo(listing.author, nil, nil, listing.fullName)
             end)
