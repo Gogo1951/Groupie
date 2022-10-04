@@ -1965,6 +1965,16 @@ addon:RegisterEvent("PLAYER_ENTERING_WORLD", function()
         C_ChatInfo.RegisterAddonMessagePrefix(addon.ADDON_PREFIX)
         C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "YELL")
     end)
+    C_Timer.After(15, function()
+        local GroupieGroupBrowser = Groupie:GetModule("GroupieGroupBrowser")
+        if GroupieGroupBrowser then
+            --Queue updates from the LFG tool for dungeons and raids on login
+            local dungeons, dungeonactivities = GroupieGroupBrowser:GetActivitiesFor(2)
+            GroupieGroupBrowser:Queue(dungeons, dungeonactivities)
+            local raids, raidactivities = GroupieGroupBrowser:GetActivitiesFor(114)
+            GroupieGroupBrowser:Queue(raids, raidactivities)
+        end
+    end)
 end)
 --Update saved instances
 addon:RegisterEvent("BOSS_KILL", function()
