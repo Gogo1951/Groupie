@@ -333,7 +333,7 @@ local function ParseMessage(event, msg, author, _, channel, guid)
 
     --Create a new entry for the author if one doesnt exist
     --Used in listing board to prevent jumpy data by default
-    if addon.db.global.listingTable[author] == nil then
+    if addon.db.global.listingTable[author] == nil or addon.db.global.listingTable[author].resultID ~= nil then
         addon.db.global.listingTable[author] = {}
     end
     if addon.db.global.listingTable[author].createdat == nil then
