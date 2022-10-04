@@ -8,7 +8,7 @@ local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 -------------------------------
 -- Right Click Functionality --
 -------------------------------
-function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName)
+function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultID)
 	addon.UpdateSpecOptions()
 	--Calculate average itemlevel
 	local iLevelSum = 0
@@ -99,7 +99,12 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName)
 		lvlStr = "Level " .. tostring(mylevel)
 	end
 
-	local groupieMsg = format("{rt3} %s : %s%s %s! %s %s%s %s. (%s)%s",
+	local askLootRules = ""
+	if resultID then
+		askLootRules = "Please confirm Loot Rules before inviting me, thanks! "
+	end
+
+	local groupieMsg = format("{rt3} %s : %s%s %s! %s %s%s %s. %s(%s)%s",
 		addonName,
 		activeRole,
 		otherRoleMsg,
@@ -108,6 +113,7 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName)
 		activeTalentSpec,
 		otherSpecMsg,
 		myclass,
+		askLootRules,
 		addon.localeCodes[locale],
 		achieveLinkStr
 	)

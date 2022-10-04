@@ -373,6 +373,7 @@ local function ParseMessage(event, msg, author, _, channel, guid)
     addon.db.global.listingTable[author].instanceID = instanceID
     addon.db.global.listingTable[author].icon = icon
     addon.db.global.listingTable[author].classColor = classColor
+    addon.db.global.listingTable[author].resultID = nil -- Required to prevent /4 listings from being overwritten by LFG listings
     --Collect data to debug with
     --if addon.debugMenus then
     --tinsert(addon.db.global.debugData, { msg, preprocessedStr, addon.db.global.listingTable[author] })

@@ -2,7 +2,7 @@ local addonName, addon = ...
 local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 
 --Update this with each push to curse, this will be used for version checks
-addon.version = 1.30
+addon.version = 1.40
 
 --Supported localizations, we only load the addon for these
 addon.validLocales = { "enGB", "enUS" }
@@ -516,7 +516,8 @@ addon.groupieInstanceData = {
     ["Magtheridon's Lair"] = { Active = true, Expac = "The Burning Crusade", InstanceType = "The Burning Crusade Raids",
         InstanceID = 544, MinLevel = 70, MaxLevel = 70, GroupSize = 25, Order = 2350, ActivityID = 845, Icon = "MAG.tga" },
     ["Gruul's Lair"] = { Active = true, Expac = "The Burning Crusade", InstanceType = "The Burning Crusade Raids",
-        InstanceID = 565, MinLevel = 70, MaxLevel = 70, GroupSize = 25, Order = 2340, ActivityID = 846, Icon = "GRUUL.tga" },
+        InstanceID = 565, MinLevel = 70, MaxLevel = 70, GroupSize = 25, Order = 2340, ActivityID = 846,
+        Icon = "GRUUL.tga" },
     ["Zul'Aman"] = { Active = true, Expac = "The Burning Crusade", InstanceType = "The Burning Crusade Raids",
         InstanceID = 568, MinLevel = 70, MaxLevel = 70, GroupSize = 10, Order = 2330, ActivityID = 851, Icon = "ZA.tga" },
     ["Karazhan"] = { Active = true, Expac = "The Burning Crusade", InstanceType = "The Burning Crusade Raids",
@@ -587,7 +588,8 @@ addon.groupieInstanceData = {
     ["Mechanar"] = { Active = true, Expac = "The Burning Crusade", InstanceType = "The Burning Crusade Dungeons",
         InstanceID = 554, MinLevel = 68, MaxLevel = 72, GroupSize = 5, Order = 2080, ActivityID = 832, Icon = "MECH.tga" },
     ["Sethekk Halls"] = { Active = true, Expac = "The Burning Crusade", InstanceType = "The Burning Crusade Dungeons",
-        InstanceID = 556, MinLevel = 66, MaxLevel = 72, GroupSize = 5, Order = 2070, ActivityID = 825, Icon = "SETHEKK.tga" },
+        InstanceID = 556, MinLevel = 66, MaxLevel = 72, GroupSize = 5, Order = 2070, ActivityID = 825,
+        Icon = "SETHEKK.tga" },
     ["Old Hillsbrad Foothills"] = { Active = true, Expac = "The Burning Crusade",
         InstanceType = "The Burning Crusade Dungeons", InstanceID = 560, MinLevel = 66, MaxLevel = 72, GroupSize = 5,
         Order = 2060, ActivityID = 830, Icon = "OHB.tga" },

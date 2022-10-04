@@ -401,7 +401,7 @@ local function DrawListings(self)
             button.loot:SetText("|cFF" .. lootColor .. listing.lootType)
             button.msg:SetText(formattedMsg)
             local texture = listing.icon
-            if type(listing.icon)=="string" then
+            if type(listing.icon) == "string" then
                 if listing.icon:find("Interface\\") then -- it's a full path
                     texture = listing.icon
                 else
@@ -410,7 +410,7 @@ local function DrawListings(self)
             end
             button.icon:SetTexture(texture)
             button.btn:SetScript("OnClick", function()
-                addon.SendPlayerInfo(listing.author, nil, nil, listing.fullName)
+                addon.SendPlayerInfo(listing.author, nil, nil, listing.fullName, listing.resultID)
             end)
             if myName == button.listing.author and not addon.debugMenus then
                 button.btn:Hide()
@@ -442,14 +442,30 @@ local function ListingOnClick(self, button, down)
     local instance = addon.groupieBoardButtons[addon.selectedListing].listing.instanceName
     local fullInstance = addon.groupieBoardButtons[addon.selectedListing].listing.fullName
     local displayName = gsub(fullName, "-.+", "")
+    local resultID = addon.groupieBoardButtons[addon.selectedListing].listing.resultID
     DrawListings(LFGScrollFrame)
 
     --Select a listing, if shift is held, do a Who Request
     if button == "LeftButton" then
         if addon.debugMenus then
-            print(addon.selectedListing)
-            print(fullName)
+            print(addon.groupieBoardButtons[addon.selectedListing].listing.isLFM)
+            print(addon.groupieBoardButtons[addon.selectedListing].listing.isLFG)
+            print(addon.groupieBoardButtons[addon.selectedListing].listing.timestamp)
+            print(addon.groupieBoardButtons[addon.selectedListing].listing.instanceName)
+            print(addon.groupieBoardButtons[addon.selectedListing].listing.fullName)
+            print(addon.groupieBoardButtons[addon.selectedListing].listing.isHeroic)
+            print(addon.groupieBoardButtons[addon.selectedListing].listing.groupSize)
+            print(addon.groupieBoardButtons[addon.selectedListing].listing.lootType)
+            print(addon.groupieBoardButtons[addon.selectedListing].listing.rolesNeeded)
             print(addon.groupieBoardButtons[addon.selectedListing].listing.msg)
+            print(addon.groupieBoardButtons[addon.selectedListing].listing.author)
+            print(addon.groupieBoardButtons[addon.selectedListing].listing.words)
+            print(addon.groupieBoardButtons[addon.selectedListing].listing.minLevel)
+            print(addon.groupieBoardButtons[addon.selectedListing].listing.maxLevel)
+            print(addon.groupieBoardButtons[addon.selectedListing].listing.order)
+            print(addon.groupieBoardButtons[addon.selectedListing].listing.instanceID)
+            print(addon.groupieBoardButtons[addon.selectedListing].listing.resultID)
+            --print(addon.groupieBoardButtons[addon.selectedListing].listing.msg)
         end
         if IsShiftKeyDown() then
             DEFAULT_CHAT_FRAME.editBox:SetText("/who " .. fullName)
@@ -489,7 +505,7 @@ local function ListingOnClick(self, button, down)
                 leftPadding = 8,
                 func = function()
                     if instance ~= "Miscellaneous" and instance ~= L["Filters"].Loot_Styles.PVP then
-                        addon.SendPlayerInfo(fullName, nil, nil, fullInstance)
+                        addon.SendPlayerInfo(fullName, nil, nil, fullInstance, resultID)
                     else
                         addon.SendPlayerInfo(fullName)
                     end
@@ -702,6 +718,16 @@ end
 local function BuildGroupieWindow()
     if GroupieFrame ~= nil then
         addon.ExpireListings()
+        local GroupieGroupBrowser = Groupie:GetModule("GroupieGroupBrowser")
+        if GroupieGroupBrowser then
+            GroupieGroupBrowser:AttachLFGToolPreset(GroupieTab1, 2)
+            GroupieGroupBrowser:AttachLFGToolPreset(GroupieTab2, 2)
+            GroupieGroupBrowser:AttachLFGToolPreset(GroupieTab3, 114)
+            GroupieGroupBrowser:AttachLFGToolPreset(GroupieTab5, 114)
+            GroupieGroupBrowser:AttachLFGToolPreset(GroupieTab4, 114)
+            GroupieGroupBrowser:AttachLFGToolPreset(GroupieTab6, 114)
+            GroupieGroupBrowser:AttachLFGToolPreset(GroupieTab7, 118)
+        end
         GroupieFrame:Show()
         return
     end
