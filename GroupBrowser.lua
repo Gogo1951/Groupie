@@ -974,6 +974,9 @@ function GroupieGroupBrowser:MapResultToListing(resultID, resultData, leader, me
         end
       end
       lootType = L["Filters"].Loot_Styles.MSOS
+      if GroupieGroupBrowser._activityMap[activityID].cat == 118 then -- PVP related activity
+        lootType = L["Filters"].Loot_Styles.PVP
+      end
       if membercounts then
         local tankneed = membercounts.TANK_REMAINING > 0
         local healerneed = membercounts.HEALER_REMAINING > 0
