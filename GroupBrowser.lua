@@ -893,9 +893,14 @@ function GroupieGroupBrowser:CreateMsg(isLFM, isLFG, instanceName, isHeroic, gro
                                        maxlevel, tankSpots, healerSpots, damageSpots, leaderRole)
   local action = isLFM and "LFM" or "LFG"
   local forwhat = format("%s%s", (isHeroic and "Heroic " or ""), instanceName)
-  local groupStatus = groupSize > numMembers and format("(%s/%s)", numMembers, groupSize) or ""
-  local roleStatus = ""
 
+  local groupStatus = groupSize > numMembers and format("%s in Group", numMembers) or ""
+  if (groupSize == 10 or groupSize == 25) and addon.groupieInstanceData[instanceName] ~= nil then
+    forwhat = forwhat .. " " .. tonumber(groupSize)
+    groupStatus = groupSize > numMembers and format("%s/%s in Group", numMembers, groupSize) or ""
+  end
+
+  local roleStatus = ""
   if tankSpots > 0 then
     roleStatus = roleStatus .. "Tank "
   end
@@ -909,6 +914,7 @@ function GroupieGroupBrowser:CreateMsg(isLFM, isLFG, instanceName, isHeroic, gro
   roleStatus = roleStatus:gsub(" ", ", ")
   if tankSpots > 0 or healerSpots > 0 or damageSpots > 0 then
     roleStatus = "Need " .. roleStatus
+    roleStatus = roleStatus:gsub("DPS", " DPS")
   end
 
   local rolelfg = leaderRole == "NOROLE" and "" or (leaderRole == "DAMAGER" and "DPS" or _G[leaderRole])
