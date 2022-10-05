@@ -555,6 +555,7 @@ end
 
 function GroupieGroupBrowser:clearCombatQueue()
   for method in self._combatqueue do
+    print(method)
     GroupieGroupBrowser[method](GroupieGroupBrowser)
     GroupieGroupBrowser._combatqueue[method] = nil
   end
@@ -891,33 +892,36 @@ end
 function GroupieGroupBrowser:CreateMsg(isLFM, isLFG, instanceName, isHeroic, groupSize, numMembers, lootType, minlevel,
                                        maxlevel, tankSpots, healerSpots, damageSpots, leaderRole)
   local action = isLFM and "LFM" or "LFG"
-  local forwhat = format("%s%s", instanceName, (isHeroic and " H" or ""))
+  local forwhat = format("%s%s", (isHeroic and "Heroic " or ""), instanceName)
   local groupStatus = groupSize > numMembers and format("(%s/%s)", numMembers, groupSize) or ""
   local roleStatus = ""
-  if tankSpots > 0 or healerSpots > 0 or damageSpots > 0 then
-    roleStatus = "Need"
-  end
+
   if tankSpots > 0 then
-    roleStatus = roleStatus .. " Tanks"
+    roleStatus = roleStatus .. "Tank "
   end
   if healerSpots > 0 then
-    roleStatus = roleStatus .. " Heals"
+    roleStatus = roleStatus .. "Heals "
   end
   if damageSpots > 0 then
-    roleStatus = roleStatus .. " DPS"
+    roleStatus = roleStatus .. "DPS "
   end
+  roleStatus = roleStatus:trim()
+  roleStatus = roleStatus:gsub(" ", ", ")
+  if tankSpots > 0 or healerSpots > 0 or damageSpots > 0 then
+    roleStatus = "Need " .. roleStatus
+  end
+
   local rolelfg = leaderRole == "NOROLE" and "" or (leaderRole == "DAMAGER" and "DPS" or _G[leaderRole])
-  local levels = ""
-  if minlevel then
-    if maxlevel and maxlevel ~= minlevel then
-      levels = format("L%d-%d", minlevel, maxlevel)
-    else
-      levels = format("L%d+", minlevel)
-    end
-  end
+
   local msg
   if isLFM then
-    msg = action .. " " .. forwhat .. " | " .. roleStatus .. " " .. groupStatus
+    if groupSize == 5 then
+      msg = action .. " " .. forwhat .. " | " .. roleStatus
+    elseif groupSize == 10 or groupSize == 25 then
+      msg = action .. " " .. forwhat .. " | " .. groupStatus
+    else
+      msg = action .. " " .. forwhat .. " | " .. groupStatus
+    end
   else
     msg = rolelfg .. " " .. action .. " " .. forwhat
   end
