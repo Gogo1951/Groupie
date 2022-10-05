@@ -133,8 +133,14 @@ end
 
 function addon.SendWCLInfo(targetName, dropdownMenu, which)
 	local myname = UnitName("player")
-	local myserver = GetRealmName()
-	local link = format("https://classic.warcraftlogs.com/character/us/%s/%s", gsub(myserver, " ", ""), myname)
+	local myserver = (GetRealmName()):gsub("[ '`]", "-"):lower() or nil
+	local region = (GetCVar("portal")):lower() or nil
+	local link
+	if (myserver and region) then -- all good
+		link = format("https://classic.warcraftlogs.com/character/%s/%s/%s", region, myserver, myname)
+	else -- just send them a search with our name, will at least help if we're named Ărtĥäś
+		link = format("https://classic.warcraftlogs.com/search/?term=%s", myname)
+	end
 	local groupieMsg = "{rt3} " .. addonName .. " : Check My Parses on Warcraft Logs " .. link
 
 	--Hash the message and attach the suffix of the hash

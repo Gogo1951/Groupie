@@ -685,7 +685,7 @@ function GroupieGroupBrowser:FindInstanceData(activityid, instancename, instance
   end
   local fullName = groupieInstanceName
 
-  local possibleVersions = instanceVersions[groupieInstanceName:gsub("Heroic ", ""):gsub("( - %d+)", "")]
+  local possibleVersions = instanceVersions[groupieInstanceName]
   local validVersionFlag = false
   --Check that the found instance version is a valid version
   for version = 1, #possibleVersions do
@@ -893,10 +893,20 @@ function GroupieGroupBrowser:CreateMsg(isLFM, isLFG, instanceName, isHeroic, gro
   local action = isLFM and "LFM" or "LFG"
   local forwhat = format("%s%s", instanceName, (isHeroic and " H" or ""))
   local groupStatus = groupSize > numMembers and format("(%s/%s)", numMembers, groupSize) or ""
-  local roleStatus = tankSpots > 0 and format("Tanks:%d ", tankSpots) or ""
-  roleStatus = roleStatus .. (healerSpots > 0 and format("Heals:%d ", healerSpots) or "")
-  roleStatus = roleStatus .. (damageSpots > 0 and format("DPS:%d", damageSpots) or "")
-  local rolelfg = leaderRole == "NOROLE" and "" or (leaderRole == "DAMAGER" and "Dps" or _G[leaderRole])
+  local roleStatus = ""
+  if tankSpots > 0 or healerSpots > 0 or damageSpots > 0 then
+    roleStatus = "Need"
+  end
+  if tankSpots > 0 then
+    roleStatus = roleStatus .. " Tanks"
+  end
+  if healerSpots > 0 then
+    roleStatus = roleStatus .. " Heals"
+  end
+  if damageSpots > 0 then
+    roleStatus = roleStatus .. " DPS"
+  end
+  local rolelfg = leaderRole == "NOROLE" and "" or (leaderRole == "DAMAGER" and "DPS" or _G[leaderRole])
   local levels = ""
   if minlevel then
     if maxlevel and maxlevel ~= minlevel then
@@ -907,7 +917,7 @@ function GroupieGroupBrowser:CreateMsg(isLFM, isLFG, instanceName, isHeroic, gro
   end
   local msg
   if isLFM then
-    msg = action .. " " .. forwhat .. " " .. levels .. " " .. roleStatus .. " " .. groupStatus
+    msg = action .. " " .. forwhat .. " | " .. roleStatus .. " " .. groupStatus
   else
     msg = rolelfg .. " " .. action .. " " .. forwhat
   end
@@ -959,7 +969,8 @@ function GroupieGroupBrowser:MapResultToListing(resultID, resultData, leader, me
       maxLevel = GroupieGroupBrowser._activityMap[activityID].maxlevel > 0 and
           GroupieGroupBrowser._activityMap[activityID].maxlevel or
           GroupieGroupBrowser._activityMap[activityID].exp_or_honor
-      local fullName, instanceName, groupieDataEntry = GroupieGroupBrowser:FindInstanceData(activityID, instanceName,
+      local fullName, groupieInstanceName, groupieDataEntry = GroupieGroupBrowser:FindInstanceData(activityID,
+        instanceName,
         instanceID,
         groupSize, isHeroic)
       if groupieDataEntry then
@@ -997,14 +1008,15 @@ function GroupieGroupBrowser:MapResultToListing(resultID, resultData, leader, me
         rolesNeeded = { 1, 2, 3, 4 }
       end
       words = {}
-      msg = self:CreateMsg(isLFM, isLFG, instanceName, isHeroic, groupSize, numMembers, lootType, minLevel, maxLevel,
+      msg = self:CreateMsg(isLFM, isLFG, groupieInstanceName, isHeroic, groupSize, numMembers, lootType, minLevel,
+        maxLevel,
         membercounts.TANK_REMAINING, membercounts.HEALER_REMAINING, membercounts.DAMAGER_REMAINING, leader[2])
       listingTable[author] = listingTable[author] or {}
       listingTable[author].isLFM = isLFM
       listingTable[author].isLFG = isLFG
       listingTable[author].createdat = createdat
       listingTable[author].timestamp = timestamp
-      listingTable[author].instanceName = instanceName
+      listingTable[author].instanceName = groupieInstanceName
       listingTable[author].fullName = fullName
       listingTable[author].isHeroic = isHeroic
       listingTable[author].groupSize = groupSize

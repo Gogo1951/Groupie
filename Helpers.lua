@@ -172,8 +172,13 @@ function addon.ExpireListings()
     --Save 20 mins of data for everyone
     --Filter this based on their settings in filterListings in core.lua
     local expirytimediff = 1200
+    local maxLFGposttime = 1800
     for key, val in pairs(addon.db.global.listingTable) do
         if time() - val.timestamp > expirytimediff then
+            addon.db.global.listingTable[key] = nil
+        end
+        --Also expire LFG listings created >30 min ago
+        if GetServerTime() - val.createdat > maxLFGposttime and val.resultID ~= nil then
             addon.db.global.listingTable[key] = nil
         end
     end
