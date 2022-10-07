@@ -785,7 +785,7 @@ addon.groupieUnflippedDungeonPatterns = {
     ["Ahune"]             = "ahune",
     ["Headless Horseman"] = "headless horseman hh",
 
-    ["PVP"] = "2s 3s 5s ab alterac arena av basin challenger conquest cta duelist eots fta fth glad gladiator gulch gurubashi ioc premade PVP rival sota storm strand warsong wg wintergrasp wsg",
+    ["PVP"] = "2s 2v2 3s 3v3 5s 5v5 ab alterac arena av basin challenger conquest cta duelist eots fta fth glad gladiator gulch gurubashi ioc premade PVP rival sota storm strand warsong wg wintergrasp wsg",
 }
 
 
