@@ -8,7 +8,7 @@ local time = time
 
 addon.recentPlayers = {}
 local askForPlayerInfo = format("{rt3} %s : What are you?", addonName)
-local askForInstance = format("{rt3} %s : What are you inviting me to? Let me know what role you need, and if there are any loot rules or reserves. Thanks!"
+local askForInstance = format("{rt3} %s : What are you inviting me to? Let me know what Role you need, and if there are any reserves. Thanks!"
     , addonName)
 
 --Clear table entries more than 1 minute old
