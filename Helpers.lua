@@ -92,6 +92,10 @@ function addon.Preprocess(msg)
     msg = gsub(gsub(msg, "for the horde", "fth"), "for the alliance", "fta")
     msg = gsub(msg, "black temple", "blacktemple")
     msg = gsub(msg, "ms os", "msos")
+    --Prevent this quest from registering as Magister's Terrace run.
+    --Probably best to do it this way for now, since we don't want to just count all
+    --messages which link a quest as non dungeon runs
+    msg = gsub(msg, "Magister Keldonus", "")
 
     return msg
 end
