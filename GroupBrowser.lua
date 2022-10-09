@@ -554,8 +554,7 @@ function GroupieGroupBrowser:groupCombat(method)
 end
 
 function GroupieGroupBrowser:clearCombatQueue()
-  for method in self._combatqueue do
-    print(method)
+  for method in pairs(self._combatqueue) do
     GroupieGroupBrowser[method](GroupieGroupBrowser)
     GroupieGroupBrowser._combatqueue[method] = nil
   end
@@ -747,7 +746,7 @@ end
 function GroupieGroupBrowser:OnEnable()
   if C_LFGList.IsLookingForGroupEnabled and (UIParentLoadAddOn("Blizzard_LookingForGroupUI")) then
     self:populatePresets()
-    self:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE", "PlayerActivitiesMap")
+    --self:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE", "PlayerActivitiesMap")
     self:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED", "GetResults")
     self:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED", "GetResult")
     self:RegisterEvent("LFG_LIST_SEARCH_FAILED")
@@ -895,7 +894,8 @@ function GroupieGroupBrowser:CreateMsg(isLFM, isLFG, instanceName, isHeroic, gro
   local forwhat = format("%s%s", (isHeroic and "Heroic " or ""), instanceName)
 
   local groupStatus = format("%s in Group", numMembers)
-  if (groupSize == 10 or groupSize == 25) and Groupie.groupieInstanceData[instanceName] ~= nil then
+
+  if (groupSize == 10 or groupSize == 25) and Groupie.instanceVersions[instanceName] ~= nil then
     forwhat = forwhat .. " " .. tonumber(groupSize)
     groupStatus = groupSize > numMembers and format("%s/%s in Group", numMembers, groupSize) or ""
   end

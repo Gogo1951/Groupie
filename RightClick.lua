@@ -101,7 +101,7 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 
 	local askLootRules = ""
 	if resultID then
-		askLootRules = "Please confirm Loot Rules before inviting me, thanks! "
+		askLootRules = "MS > OS? Any Reserves?" .. " "
 	end
 
 	local groupieMsg = format("{rt3} %s : %s%s %s! %s %s%s %s. %s(%s)%s",

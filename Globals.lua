@@ -2,7 +2,8 @@ local addonName, addon = ...
 local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 
 --Update this with each push to curse, this will be used for version checks
-addon.version = 1.41
+addon.version = tonumber(GetAddOnMetadata(addonName, "Version"))
+
 
 --Supported localizations, we only load the addon for these
 addon.validLocales = { "enGB", "enUS" }
@@ -157,13 +158,17 @@ addon.groupieVersionPatterns = {
     ["10"] = 1,
     ["n10"] = 1,
     ["10n"] = 1,
+    ["10man"] = 1,
     ["25"] = 2,
     ["n25"] = 2,
     ["25n"] = 2,
+    ["25man"] = 2,
     ["h10"] = 3,
+    ["h10man"] = 3,
     ["10h"] = 3,
     ["h25"] = 4,
-    ["25h"] = 4
+    ["h25man"] = 4,
+    ["25h"] = 4,
 }
 
 --0 - Generic group
