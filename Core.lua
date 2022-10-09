@@ -25,7 +25,7 @@ if not addon.tableContains(addon.validLocales, locale) then
         GroupieFrame:RegisterForDrag("LeftButton", "RightButton")
         GroupieFrame:SetClampedToScreen(true)
         GroupieFrame.text = _G["GroupieTitleText"]
-        GroupieFrame.text:SetText("Groupie")
+        GroupieFrame.text:SetText(addonName)
         GroupieFrame:SetScript("OnMouseDown",
             function(self)
                 self:StartMoving()
@@ -754,7 +754,7 @@ local function BuildGroupieWindow()
     GroupieFrame:RegisterForDrag("LeftButton", "RightButton")
     GroupieFrame:SetClampedToScreen(true)
     GroupieFrame.title = _G["GroupieTitleText"]
-    GroupieFrame.title:SetText("Groupie")
+    GroupieFrame.title:SetText(addonName .. " - v" .. tostring(addon.version))
     GroupieFrame:SetScript("OnMouseDown",
         function(self)
             self:StartMoving()
@@ -1164,7 +1164,7 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
     OnTooltipShow = function(tooltip)
         addon.ExpireSavedInstances()
         local now = time()
-        tooltip:AddLine(addonName)
+        tooltip:AddLine(addonName .. " - v" .. tostring(addon.version))
         tooltip:AddLine(L["slogan"], 255, 255, 255, false)
         tooltip:AddLine(" ")
         tooltip:AddLine(L["Click"] ..
@@ -1270,6 +1270,8 @@ function addon:OnInitialize()
             savedInstanceLogs = {},
             friendsAndGuild = {},
             ignores = {},
+            groupieFriends = {},
+            groupieIgnores = {},
         }
     }
 
@@ -1347,7 +1349,8 @@ end
 ---------------------
 function addon.SetupConfig()
     addon.options = {
-        name = "|TInterface\\AddOns\\" .. addonName .. "\\Images\\icon64:16:16:0:4|t  " .. addonName,
+        name = "|TInterface\\AddOns\\" ..
+            addonName .. "\\Images\\icon64:16:16:0:4|t  " .. addonName .. " - v" .. tostring(addon.version),
         desc = "Optional description? for the group of options",
         descStyle = "inline",
         handler = addon,
