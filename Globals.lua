@@ -4,6 +4,9 @@ local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 --Update this with each push to curse, this will be used for version checks
 addon.version = tonumber(GetAddOnMetadata(addonName, "Version"))
 
+--Used for storing the merged friend and ignore lists of all characters
+addon.friendList = {}
+addon.ignoreList = {}
 
 --Supported localizations, we only load the addon for these
 addon.validLocales = { "enGB", "enUS" }
@@ -809,7 +812,7 @@ addon.GroupieDevs = {
     ["Player-4800-048C88C6"] = L["TeamMember"], -- Gogomage-Eranikus
     ["Player-4800-048C88F0"] = L["TeamMember"], -- Gogopaladin-Eranikus
     ["Player-4800-048C87F8"] = L["TeamMember"], -- Gogopriest-Eranikus
-    ["Player-4800-04942199"] = L["TeamMember"], -- Gogorogue-Eranikus 
+    ["Player-4800-04942199"] = L["TeamMember"], -- Gogorogue-Eranikus
     ["Player-4800-048C8800"] = L["TeamMember"], -- Gogoshaman-Eranikus
     ["Player-4800-048C88CD"] = L["TeamMember"], -- Gogowarlock-Eranikus
     ["Player-4800-048C87E4"] = L["TeamMember"], -- Gogowarrior-Eranikus

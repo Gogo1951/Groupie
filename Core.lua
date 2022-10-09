@@ -1268,6 +1268,8 @@ function addon:OnInitialize()
             highestSeenVersion = 0,
             UIScale = 1.0,
             savedInstanceLogs = {},
+            friendsAndGuild = {},
+            ignores = {},
         }
     }
 
@@ -1969,6 +1971,47 @@ function addon.UpdateSpecOptions()
     end
 end
 
+--Load the current character's friend, ignore, and guild lists, and merge them with all others
+function addon.UpdateFriends()
+    local myname = UnitName("player")
+    --Always clear and reload the current character
+    addon.db.global.friendsAndGuild[myname] = {}
+    addon.db.global.ignores[myname] = {}
+
+    --Update for the current character
+    for i = 1, C_FriendList.GetNumFriends() do
+        local name = C_FriendList.GetFriendInfoByIndex(i).name:gsub("%-.+", "")
+        addon.db.global.friendsAndGuild[myname][name] = true
+    end
+    for i = 1, C_FriendList.GetNumIgnores() do
+        local name = C_FriendList.GetIgnoreName(i):gsub("%-.+", "")
+        addon.db.global.ignores[myname][name] = true
+    end
+
+    --Then clear the global lists and merge all lists
+    --FRIENDLIST_UPDATE and IGNORELIST_UPDATE don't have context
+    --so we need to just re-merge every time
+    addon.friendList = {}
+    addon.ignoreList = {}
+
+    for char, friendlist in pairs(addon.db.global.friendsAndGuild) do
+        for name, _ in pairs(friendlist) do
+            addon.friendList[name] = true
+        end
+    end
+
+    for char, ignorelist in pairs(addon.db.global.ignores) do
+        for name, _ in pairs(ignorelist) do
+            addon.ignoreList[name] = true
+            --Remove listings from the table as well
+            if not strfind(name, "-") then
+                name = name .. "-" .. gsub(GetRealmName(), " ", "")
+            end
+            addon.db.global.listingTable[name] = nil
+        end
+    end
+end
+
 -------------------
 --Event Registers--
 -------------------
@@ -1980,8 +2023,9 @@ addon:RegisterEvent("CHARACTER_POINTS_CHANGED", addon.UpdateSpecOptions)
 --The api is very slow to populate saved instance data, so we need a delay on these events
 addon:RegisterEvent("PLAYER_ENTERING_WORLD", function()
     addon.SetupConfig()
-    C_Timer.After(5, addon.UpdateSavedInstances)
     C_Timer.After(5, function()
+        addon.UpdateFriends()
+        addon.UpdateSavedInstances()
         C_ChatInfo.RegisterAddonMessagePrefix(addon.ADDON_PREFIX)
         C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "YELL")
     end)
@@ -1995,6 +2039,13 @@ addon:RegisterEvent("PLAYER_ENTERING_WORLD", function()
             GroupieGroupBrowser:Queue(raids, raidactivities)
         end
     end)
+end)
+--Update friend and ignore lists
+addon:RegisterEvent("FRIENDLIST_UPDATE", function()
+    addon.UpdateFriends()
+end)
+addon:RegisterEvent("IGNORELIST_UPDATE", function()
+    addon.UpdateFriends()
 end)
 --Update saved instances
 addon:RegisterEvent("BOSS_KILL", function()

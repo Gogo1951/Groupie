@@ -25,6 +25,11 @@ local tinsert = tinsert
 local next = next
 local format = format
 
+--Play a sound and auto respond when a friend lists a group the player is interested in
+local function FriendAutoResponse()
+
+end
+
 --Extract a specified language from an LFG message, if it exists
 local function GetLanguage(messageWords)
     local language = nil
