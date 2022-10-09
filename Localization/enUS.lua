@@ -295,3 +295,6 @@ L["VersionChecking"] = {
     ["JoinRaid"] = "has joined the raid group",
     ["JoinParty"] = "joins the party",
 }
+
+L["AutoRequestResponse"] = "Enable Groupie Auto Response when People Request to Join Your Group"
+L["AutoInviteResponse"] = "Enable Groupie Auto Response when Being Invited to Groups"

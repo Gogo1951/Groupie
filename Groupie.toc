@@ -17,3 +17,4 @@ Core.lua
 GroupBrowser.lua
 RightClick.lua
 Listener.lua
+AutoResponse.lua
