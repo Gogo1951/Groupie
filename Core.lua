@@ -1201,9 +1201,9 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
                             if not titleFlag then
                                 titleFlag = true
                                 tooltip:AddLine(" ")
-                                tooltip:AddLine(lockout.instance, 255, 255, 255, false)
-                                tooltip:AddLine("|cff9E9E9E  " .. L["Reset"] .. " : " ..
-                                    addon.GetTimeSinceString(lockout.resetTime, 4))
+                                tooltip:AddDoubleLine(lockout.instance,
+                                    "        " .. addon.GetTimeSinceString(lockout.resetTime, 4),
+                                    255, 255, 255, 158, 158, 158)
                             end
                             tooltip:AddLine("    |cff" .. lockout.classColor .. player .. "|r")
                         end
