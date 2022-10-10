@@ -988,11 +988,7 @@ function GroupieGroupBrowser:MapResultToListing(resultID, resultData, leader, me
         icon = groupieDataEntry.Icon
       else
         order = -1
-        if GroupieGroupBrowser._activityMap[activityID].iconfile > 0 then
-          icon = GroupieGroupBrowser._activityMap[activityID].iconfile
-        else
-          icon = "Other.tga"
-        end
+        icon = "Other.tga"
       end
       lootType = L["Filters"].Loot_Styles.MSOS
       if GroupieGroupBrowser._activityMap[activityID].cat == 118 then -- PVP related activity
