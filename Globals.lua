@@ -345,6 +345,7 @@ addon.instanceVersions = {
     ["Coren Direbrew"]    = { { 5, false } },
     ["Ahune"]             = { { 5, false }, { 5, true } },
     ["Headless Horseman"] = { { 5, false } },
+    ["Apothecary Hummel"] = { { 5, false } },
 }
 
 --Instance IDs from : https://wowpedia.fandom.com/wiki/InstanceID
@@ -792,6 +793,7 @@ addon.groupieUnflippedDungeonPatterns = {
     ["Coren Direbrew"]    = "coren direbrew brewfest",
     ["Ahune"]             = "ahune",
     ["Headless Horseman"] = "headless horseman hh",
+    ["Apothecary Hummel"] = "apothecary hummel loverocket",
 
     ["PVP"] = "2s 2v2 3s 3v3 5s 5v5 ab alterac arena arenas av basin challenger conquest cta duelist eots fta fth glad gladiator gulch gurubashi ioc premade PVP rival sota storm strand warsong wg wintergrasp wsg",
 }

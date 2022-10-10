@@ -303,6 +303,9 @@ local function ParseMessage(event, msg, author, _, channel, guid)
         elseif groupDungeon == "Headless Horseman" then
             minLevel = 70
             maxLevel = 80
+        elseif groupDungeon == "Apothecary Hummel" then
+            minLevel = 70
+            maxLevel = 80
         else
             if isHeroic then
                 fullName = format("Heroic %s", fullName)
