@@ -42,7 +42,8 @@ local function RespondToRequest(_, msg, ...)
     if not addon.db.char.autoRespondRequests then
         return
     end
-    if not strmatch(msg, "has requested to join your group") then
+    if not strmatch(msg, "has requested to join your group")
+        and not strmatch(msg, "could not accept because you are already in a group") then
         return
     end
 
