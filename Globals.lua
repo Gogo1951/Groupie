@@ -793,7 +793,7 @@ addon.groupieUnflippedDungeonPatterns = {
     ["Coren Direbrew"]    = "coren direbrew brewfest",
     ["Ahune"]             = "ahune",
     ["Headless Horseman"] = "headless horseman hh",
-    ["Apothecary Hummel"] = "apothecary hummel loverocket",
+    ["Apothecary Hummel"] = "apothecary hummel loverocket chemical crownchemical chemicalco crownchemicalco",
 
     ["PVP"] = "2s 2v2 3s 3v3 5s 5v5 ab alterac arena arenas av basin challenger conquest cta duelist eots fta fth glad gladiator gulch gurubashi ioc premade PVP rival sota storm strand warsong wg wintergrasp wsg",
 }

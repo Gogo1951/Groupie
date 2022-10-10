@@ -521,6 +521,9 @@ GroupieGroupBrowser._activityMap = {
     maxlevel = 0, iconfile = 136369 },
 }
 
+GroupieGroupBrowser.pvpActivities = { 936, 937, 938, 1149, 932, 933, 1140, 1141, 926, 927, 928, 929, 930, 931, 1138, 1147,
+  934, 935, 1139, 1150, 1144, 1145, 1152, 1142, 1143, 1151, 920, 921, 922, 923, 924, 925, 1137, 1117, 1155 }
+
 -- this will hold activities accessible to the player. We might need to cross-reference with the static map above
 -- to know what info we can query if we cannot query "everything"
 GroupieGroupBrowser._playerMapLookup = {}
@@ -988,7 +991,11 @@ function GroupieGroupBrowser:MapResultToListing(resultID, resultData, leader, me
         icon = groupieDataEntry.Icon
       else
         order = -1
-        icon = "Other.tga"
+        if Groupie.tableContains(GroupieGroupBrowser.pvpActivities, activityID) then
+          icon = "PVP.tga"
+        else
+          icon = "Other.tga"
+        end
       end
       lootType = L["Filters"].Loot_Styles.MSOS
       if GroupieGroupBrowser._activityMap[activityID].cat == 118 then -- PVP related activity
