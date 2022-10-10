@@ -1308,6 +1308,9 @@ function addon:OnInitialize()
                         ,
                         addonName, addon.GroupieDevs[curMouseOver]))
                 end
+                if unittype == "player" then
+                    --GameTooltip:AddLine(addon.TalentSummary("mouseover"))
+                end
             end
         end
     end)

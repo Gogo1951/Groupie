@@ -40,6 +40,31 @@ function addon.GetActiveSpecGroup()
     end
 end
 
+--return a string talent summary of the unit's talent tabs
+function addon.TalentSummary(unit)
+    local result = ""
+    local maxTalentsSpent = -1
+    local maxTalentSpec = ""
+    local talentsum = 0
+    NotifyInspect(unit)
+    for i = 1, 3 do
+        local name, _, pointsSpent = GetTalentTabInfo(i, true)
+        talentsum = talentsum + pointsSpent
+
+        if pointsSpent > maxTalentsSpent then
+            maxTalentSpec = name
+            maxTalentsSpent = pointsSpent
+        end
+        result = result .. tostring(pointsSpent) .. "/"
+    end
+    result = maxTalentSpec .. " : " .. result
+    if talentsum < UnitLevel(unit) - 9 then
+        result = result .. "\nUNSPENT TALENT POINTS"
+    end
+    print(result)
+    return result
+end
+
 --Return boolean whether the table contains a value
 function addon.tableContains(table, val)
     for i = 1, #table do
@@ -95,7 +120,7 @@ function addon.Preprocess(msg)
     --Prevent this quest from registering as Magister's Terrace run.
     --Probably best to do it this way for now, since we don't want to just count all
     --messages which link a quest as non dungeon runs
-    msg = gsub(msg, "Magister Keldonus", "")
+    msg = gsub(msg, "magister keldonus", "keldonus")
 
     return msg
 end
