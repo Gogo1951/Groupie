@@ -1983,12 +1983,18 @@ function addon.UpdateFriends()
 
     --Update for the current character
     for i = 1, C_FriendList.GetNumFriends() do
-        local name = C_FriendList.GetFriendInfoByIndex(i).name:gsub("%-.+", "")
-        addon.db.global.friendsAndGuild[myname][name] = true
+        local name = C_FriendList.GetFriendInfoByIndex(i).name
+        if name then
+            name = name:gsub("%-.+", "")
+            addon.db.global.friendsAndGuild[myname][name] = true
+        end
     end
     for i = 1, C_FriendList.GetNumIgnores() do
-        local name = C_FriendList.GetIgnoreName(i):gsub("%-.+", "")
-        addon.db.global.ignores[myname][name] = true
+        local name = C_FriendList.GetIgnoreName(i)
+        if name then
+            name = name:gsub("%-.+", "")
+            addon.db.global.ignores[myname][name] = true
+        end
     end
 
     --Then clear the global lists and merge all lists
