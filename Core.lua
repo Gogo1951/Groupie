@@ -1202,7 +1202,7 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
                                 tooltip:AddLine(" ")
                                 tooltip:AddDoubleLine(lockout.instance,
                                     "        " .. addon.GetTimeSinceString(lockout.resetTime, 4),
-                                    255, 255, 255, 158, 158, 158)
+                                    1.00, 1.00, 1.00, 0.63, 0.62, 0.62)
                             end
                             tooltip:AddLine("    |cff" .. lockout.classColor .. player .. "|r")
                         end
