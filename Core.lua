@@ -1979,23 +1979,30 @@ end
 --Load the current character's friend, ignore, and guild lists, and merge them with all others
 function addon.UpdateFriends()
     local myname = UnitName("player")
+    local myserver = GetRealmName()
+    if addon.db.global.friendsAndGuild[myserver] == nil then
+        addon.db.global.friendsAndGuild[myserver] = {} 
+    end
+    if addon.db.global.ignores[myserver] == nil then
+        addon.db.global.ignores[myserver] = {} 
+    end
     --Always clear and reload the current character
-    addon.db.global.friendsAndGuild[myname] = {}
-    addon.db.global.ignores[myname] = {}
+    addon.db.global.friendsAndGuild[myserver][myname] = {}
+    addon.db.global.ignores[myserver][myname] = {}
 
     --Update for the current character
     for i = 1, C_FriendList.GetNumFriends() do
         local name = C_FriendList.GetFriendInfoByIndex(i).name
         if name then
             name = name:gsub("%-.+", "")
-            addon.db.global.friendsAndGuild[myname][name] = true
+            addon.db.global.friendsAndGuild[myserver][myname][name] = true
         end
     end
     for i = 1, C_FriendList.GetNumIgnores() do
         local name = C_FriendList.GetIgnoreName(i)
         if name then
             name = name:gsub("%-.+", "")
-            addon.db.global.ignores[myname][name] = true
+            addon.db.global.ignores[myserver][myname][name] = true
         end
     end
 
@@ -2005,13 +2012,13 @@ function addon.UpdateFriends()
     addon.friendList = {}
     addon.ignoreList = {}
 
-    for char, friendlist in pairs(addon.db.global.friendsAndGuild) do
+    for char, friendlist in pairs(addon.db.global.friendsAndGuild[myserver]) do
         for name, _ in pairs(friendlist) do
             addon.friendList[name] = true
         end
     end
 
-    for char, ignorelist in pairs(addon.db.global.ignores) do
+    for char, ignorelist in pairs(addon.db.global.ignores[myserver]) do
         for name, _ in pairs(ignorelist) do
             addon.ignoreList[name] = true
             --Remove listings from the table as well

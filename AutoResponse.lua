@@ -39,19 +39,31 @@ end
 --Respond to requests to join player's group
 local function RespondToRequest(_, msg, ...)
     expireRecentPlayers()
-    if not addon.db.char.autoRespondRequests then
-        return
-    end
-    if not strmatch(msg, "has requested to join your group")
-        and not strmatch(msg, "could not accept because you are already in a group") then
-        return
-    end
+    
+    if strmatch(msg, "has requested to join your group") then
+        if not addon.db.char.autoRespondRequests then
+            return
+        end
 
-    local author = msg:gsub("%|Hplayer:", ""):gsub("%|h.+", "")
-    --Not someone recently spoken to
-    if addon.recentPlayers[author] == nil then
-        SendChatMessage(askForPlayerInfo, "WHISPER", "COMMON", author)
-        addon.recentPlayers[author] = time()
+        local author = msg:gsub("%|Hplayer:", ""):gsub("%|h.+", "")
+
+        --Not someone recently spoken to
+        if addon.recentPlayers[author] == nil then
+            SendChatMessage(askForPlayerInfo, "WHISPER", "COMMON", author)
+            addon.recentPlayers[author] = time()
+        end
+    elseif strmatch(msg, "could not accept because you are already in a group") then
+        if not addon.db.char.autoRespondInvites then
+            return
+        end
+        
+        local author = msg:gsub("%|Hplayer:", ""):gsub("%|h.+", "")
+    
+        --Not someone recently spoken to
+        if addon.recentPlayers[author] == nil then
+            SendChatMessage(askForInstance, "WHISPER", "COMMON", author)
+            addon.recentPlayers[author] = time()
+        end
     end
 end
 
