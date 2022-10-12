@@ -30,7 +30,7 @@ local function RespondToInvite(_, author)
     end
 
     --Not someone recently spoken to
-    if addon.recentPlayers[author] == nil then
+    if addon.recentPlayers[author] == nil and C_LFGList.HasActiveEntryInfo() then
         SendChatMessage(askForInstance, "WHISPER", "COMMON", author)
         addon.recentPlayers[author] = time()
     end
@@ -48,7 +48,7 @@ local function RespondToRequest(_, msg, ...)
         local author = msg:gsub("%|Hplayer:", ""):gsub("%|h.+", "")
 
         --Not someone recently spoken to
-        if addon.recentPlayers[author] == nil then
+        if addon.recentPlayers[author] == nil and C_LFGList.HasActiveEntryInfo() then
             SendChatMessage(askForPlayerInfo, "WHISPER", "COMMON", author)
             addon.recentPlayers[author] = time()
         end
@@ -60,7 +60,7 @@ local function RespondToRequest(_, msg, ...)
         local author = msg:gsub("%|Hplayer:", ""):gsub("%|h.+", "")
     
         --Not someone recently spoken to
-        if addon.recentPlayers[author] == nil then
+        if addon.recentPlayers[author] == nil and C_LFGList.HasActiveEntryInfo() then
             SendChatMessage(askForInstance, "WHISPER", "COMMON", author)
             addon.recentPlayers[author] = time()
         end
