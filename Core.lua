@@ -1267,8 +1267,9 @@ function addon:OnInitialize()
             highestSeenVersion = 0,
             UIScale = 1.0,
             savedInstanceLogs = {},
-            friendsAndGuild = {},
+            friends = {},
             ignores = {},
+            guilds = {},
             groupieFriends = {},
             groupieIgnores = {},
         }
@@ -1353,19 +1354,19 @@ function addon.SetupConfig()
     addon.options = {
         name = "|TInterface\\AddOns\\" ..
             addonName .. "\\Images\\icon64:16:16:0:4|t  " .. addonName .. " - v" .. tostring(addon.version),
-        desc = "Optional description? for the group of options",
+        desc = "",
         descStyle = "inline",
         handler = addon,
         type = 'group',
         args = {
             spacerdesc0 = { type = "description", name = " ", width = "full", order = 0 },
             instanceLog = {
-                name = L["InstanceLog"].Name,
-                desc = L["InstanceLog"].Desc,
+                name = "    " .. L["InstanceLog"].Name,
+                desc = "",
                 type = "group",
                 width = "double",
                 inline = false,
-                order = 10,
+                order = 22,
                 args = {
                     header0 = {
                         type = "description",
@@ -1374,31 +1375,33 @@ function addon.SetupConfig()
                         fontSize = "large"
                     },
                     spacerdesc0 = { type = "description", name = " ", width = "full", order = 1 },
+                    infodesc = { type = "description", name = L["InstanceLogInfo"], width = "full", order = 2 },
+                    spacerdesc1 = { type = "description", name = " ", width = "full", order = 3 },
                     header1 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. "Discord",
-                        order = 2,
+                        order = 4,
                         fontSize = "medium"
                     },
                     editbox1 = {
                         type = "input",
                         name = "",
-                        order = 3,
+                        order = 5,
                         width = 2,
                         get = function(info) return "https://discord.gg/p68QgZ8uqF" end,
                         set = function(info, val) return end,
                     },
-                    spacerdesc1 = { type = "description", name = " ", width = "full", order = 4 },
+                    spacerdesc2 = { type = "description", name = " ", width = "full", order = 6 },
                     header2 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. L["InstanceLog"].Name,
-                        order = 5,
+                        order = 7,
                         fontSize = "medium"
                     },
                     editbox2 = {
                         type = "input",
                         name = "",
-                        order = 6,
+                        order = 8,
                         width = 2,
                         multiline = true,
                         get = function(info)
@@ -1417,11 +1420,11 @@ function addon.SetupConfig()
             },
             about = {
                 name = addonName,
-                desc = L["About"].Desc,
+                desc = "",
                 type = "group",
                 width = "double",
                 inline = false,
-                order = 11,
+                order = 21,
                 args = {
                     header1 = {
                         type = "description",
@@ -1488,12 +1491,12 @@ function addon.SetupConfig()
                 }
             },
             instancefiltersWrath = {
-                name = L["InstanceFilters"].Wrath.Name,
-                desc = L["InstanceFilters"].Wrath.Desc,
+                name = "    " .. L["InstanceFilters"].Wrath.Name,
+                desc = "",
                 type = "group",
                 width = "double",
                 inline = false,
-                order = 4,
+                order = 12,
                 args = {
                     header1 = {
                         type = "description",
@@ -1505,12 +1508,12 @@ function addon.SetupConfig()
                 }
             },
             instancefiltersTBC = {
-                name = L["InstanceFilters"].TBC.Name,
-                desc = L["InstanceFilters"].TBC.Desc,
+                name = "    " .. L["InstanceFilters"].TBC.Name,
+                desc = "",
                 type = "group",
                 width = "double",
                 inline = false,
-                order = 5,
+                order = 13,
                 args = {
                     header1 = {
                         type = "description",
@@ -1522,12 +1525,12 @@ function addon.SetupConfig()
                 }
             },
             instancefiltersClassic = {
-                name = L["InstanceFilters"].Classic.Name,
-                desc = L["InstanceFilters"].Classic.Desc,
+                name = "    " .. L["InstanceFilters"].Classic.Name,
+                desc = "",
                 type = "group",
                 width = "double",
                 inline = false,
-                order = 6,
+                order = 14,
                 args = {
                     header1 = {
                         type = "description",
@@ -1539,8 +1542,8 @@ function addon.SetupConfig()
                 }
             },
             groupfilters = {
-                name = L["GroupFilters"].Name,
-                desc = L["GroupFilters"].Desc,
+                name = "    " .. L["GroupFilters"].Name,
+                desc = "",
                 type = "group",
                 width = "double",
                 inline = false,
@@ -1583,6 +1586,22 @@ function addon.SetupConfig()
                         get = function(info) return addon.db.global.ignoreLFM end,
                         set = function(info, val) addon.db.global.ignoreLFM = val end,
                     },
+                }
+            },
+            keywordfilters = {
+                name = "    " .. L["KeywordFilters"],
+                desc = "",
+                type = "group",
+                width = "double",
+                inline = false,
+                order = 4,
+                args = {
+                    header0 = {
+                        type = "description",
+                        name = "|cff" .. addon.groupieSystemColor .. L["KeywordFilters"],
+                        order = 0,
+                        fontSize = "large"
+                    },
                     spacerdesc3 = { type = "description", name = " ", width = "full", order = 15 },
                     header3 = {
                         type = "description",
@@ -1611,13 +1630,24 @@ function addon.SetupConfig()
                     },
                 }
             },
-            charoptions = {
-                name = L["CharOptions"].Name,
-                desc = L["CharOptions"].Desc,
+            globalfriendslist = {
+                name = "    " .. L["GlobalFriendsLabel"],
+                desc = "",
                 type = "group",
                 width = "double",
                 inline = false,
-                order = 1,
+                order = 2,
+                args = {},
+                hidden = true,
+                disabled = true,
+            },
+            charoptions = {
+                name = L["CharOptions"].Name,
+                desc = "",
+                type = "group",
+                width = "double",
+                inline = false,
+                order = 11,
                 args = {
                     header1 = {
                         type = "description",
@@ -1817,11 +1847,11 @@ function addon.SetupConfig()
             },
             globaloptions = {
                 name = L["GlobalOptions"].Name,
-                desc = L["GlobalOptions"].Desc,
+                desc = "",
                 type = "group",
                 width = "double",
                 inline = false,
-                order = 2,
+                order = 1,
                 args = {
                     header1 = {
                         type = "description",
@@ -1980,22 +2010,32 @@ end
 function addon.UpdateFriends()
     local myname = UnitName("player")
     local myserver = GetRealmName()
-    if addon.db.global.friendsAndGuild[myserver] == nil then
-        addon.db.global.friendsAndGuild[myserver] = {} 
+    local myguild = GetGuildInfo("player")
+
+    --create tables for the current server if needed
+    if addon.db.global.friends[myserver] == nil then
+        addon.db.global.friends[myserver] = {}
     end
     if addon.db.global.ignores[myserver] == nil then
-        addon.db.global.ignores[myserver] = {} 
+        addon.db.global.ignores[myserver] = {}
     end
+    if addon.db.global.guilds[myserver] == nil then
+        addon.db.global.guilds[myserver] = {}
+    end
+
     --Always clear and reload the current character
-    addon.db.global.friendsAndGuild[myserver][myname] = {}
+    addon.db.global.friends[myserver][myname] = {}
     addon.db.global.ignores[myserver][myname] = {}
+    if myguild ~= nil then
+        addon.db.global.guilds[myserver][myguild] = {}
+    end
 
     --Update for the current character
     for i = 1, C_FriendList.GetNumFriends() do
         local name = C_FriendList.GetFriendInfoByIndex(i).name
         if name then
             name = name:gsub("%-.+", "")
-            addon.db.global.friendsAndGuild[myserver][myname][name] = true
+            addon.db.global.friends[myserver][myname][name] = true
         end
     end
     for i = 1, C_FriendList.GetNumIgnores() do
@@ -2012,7 +2052,7 @@ function addon.UpdateFriends()
     addon.friendList = {}
     addon.ignoreList = {}
 
-    for char, friendlist in pairs(addon.db.global.friendsAndGuild[myserver]) do
+    for char, friendlist in pairs(addon.db.global.friends[myserver]) do
         for name, _ in pairs(friendlist) do
             addon.friendList[name] = true
         end

@@ -226,7 +226,7 @@ L["GroupFilters"] = {
     ["ignoreLFG"] = "Ignore \"LFG\" Messages from People Looking for a Group",
     ["ignoreLFM"] = "Ignore \"LFM\" Messages from People Making a Group",
     ["keyword"] = "Filter By Keyword",
-    ["keyword_desc"] = "Separate words or phrases using a comma; any post matching any keyword will be ignored.\nExample: \"swp trash, Selling, Boost\""
+    ["keyword_desc"] = "Separate words or phrases using a comma; any post matching any keyword will be ignored.\n\nExample: \"swp trash, Selling, Boost\""
 }
 L["CharOptions"] = {
     ["Name"] = "Character Options",
@@ -282,9 +282,10 @@ L["MiniMap"] = {
 
 }
 L["InstanceLog"] = {
-    ["Name"] = "Instance Log",
+    ["Name"] = "Missing Data Log",
     ["Desc"] = "Help Groupie!",
 }
+L["InstanceLogInfo"] = "You can help improve Groupie by sharing the data here on our Discord, if promoted to. Thanks!"
 L["About"] = {
     ["Desc"] = "About Groupie",
     ["Paragraph"] = "A better LFG tool for Classic WoW.\n\n\nGroupie was created by Gogo, LemonDrake, Kynura, and Raegen...\n\n...with help from Katz, Aevala, and Fathom.",
@@ -298,3 +299,7 @@ L["VersionChecking"] = {
 
 L["AutoRequestResponse"] = "Enable Groupie Auto Response when People Request to Join Your Group"
 L["AutoInviteResponse"] = "Enable Groupie Auto Response when Being Invited to Groups"
+L["CommunityLabel"] = "Groupie Community"
+L["GlobalFriendsLabel"] = "Global Friends List"
+L["GeneralOptionslabel"] = "General Options"
+L["KeywordFilters"] = "Keyword FIlters"

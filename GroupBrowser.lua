@@ -752,7 +752,11 @@ function GroupieGroupBrowser:OnEnable()
     --self:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE", "PlayerActivitiesMap")
     self:RegisterEvent("LFG_LIST_SEARCH_RESULTS_RECEIVED", "GetResults")
     self:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED", "GetResult")
-    self:RegisterEvent("LFG_LIST_SEARCH_FAILED")
+    function GroupieGroupBrowser:LFG_LIST_SEARCH_FAILED(event, ...)
+      local errcode = ...
+      Groupie:Print(format(_G.LFG_LIST_SEARCH_FAILED .. "(|cffff0000%s|r)", tostring(errcode)))
+    end
+
     --C_LFGList.RequestAvailableActivities()
     self._hwKB = CreateFrame("Frame", "GroupieGroupBrowserKBJobber", UIParent)
     self._hwKB:SetPoint("TOPLEFT")
