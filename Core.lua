@@ -2045,6 +2045,13 @@ function addon.UpdateFriends()
             addon.db.global.ignores[myserver][myname][name] = true
         end
     end
+    for i = 1, GetNumGuildMembers() do
+        local name = GetGuildRosterInfo(i)
+        if name then
+            name = name:gsub("%-.+", "")
+            addon.db.global.guilds[myserver][myguild][name] = true
+        end
+    end
 
     --Then clear the global lists and merge all lists
     --FRIENDLIST_UPDATE and IGNORELIST_UPDATE don't have context
@@ -2066,6 +2073,12 @@ function addon.UpdateFriends()
                 name = name .. "-" .. gsub(GetRealmName(), " ", "")
             end
             addon.db.global.listingTable[name] = nil
+        end
+    end
+
+    for guild, roster in pairs(addon.db.global.guilds[myserver]) do
+        for name, _ in pairs(roster) do
+            addon.friendList[name] = true
         end
     end
 end
@@ -2103,6 +2116,9 @@ addon:RegisterEvent("FRIENDLIST_UPDATE", function()
     addon.UpdateFriends()
 end)
 addon:RegisterEvent("IGNORELIST_UPDATE", function()
+    addon.UpdateFriends()
+end)
+addon:RegisterEvent("GUILD_ROSTER_UPDATE", function()
     addon.UpdateFriends()
 end)
 --Update saved instances
