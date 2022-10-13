@@ -868,7 +868,7 @@ end
 -- ATT: You can run this directly for test with /run but otherwise use :Queue
 function GroupieGroupBrowser:Search(category, ...)
   -- let's not clobber ongoing searches from the tool either
-  if LFGBrowseFrame.searching then return end
+  if LFGBrowseFrame.searching or InCombatLockdown() then return end
   local now = GetTime()
   local onCD = true
   if not self._lastSearch then
@@ -887,7 +887,9 @@ function GroupieGroupBrowser:Search(category, ...)
   end
   local retOK, err = pcall(C_LFGList.Search, category, activities)
   if not retOK then
-    print(tostring(err))
+    Groupie:Print(format("|cffff0000%s|r", tostring(err)))
+  else
+    LFGBrowseFrame.searching = true -- let the tool know a search is ongoing from 3rd-party
   end
 end
 
