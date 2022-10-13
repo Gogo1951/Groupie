@@ -244,9 +244,9 @@ local function filterListings()
                 --Loot type filters therefore dont apply to this tab
             elseif now - listing.timestamp > addon.db.global.minsToPreserve * 60 then
                 --Expired based on user settings
-            elseif addon.db.global.ignoreLFM and listing.isLFM then
+            elseif addon.db.char.ignoreLFM and listing.isLFM then
                 --Ignoring LFM groups
-            elseif addon.db.global.ignoreLFG and listing.isLFG then
+            elseif addon.db.char.ignoreLFG and listing.isLFG then
                 --Ignoring LFG groups
             elseif MainTabFrame.roleType ~= nil and
                 not addon.tableContains(listing.rolesNeeded, MainTabFrame.roleType) then
@@ -255,7 +255,7 @@ local function filterListings()
                 --Doesnt match language in the dropdown
             elseif addon.db.char.hideInstances[listing.order] == true then
                 --Ignoring specifically hidden instances
-            elseif addon.db.global.ignoreSavedInstances and addon.db.global.savedInstanceInfo[listing.order] and
+            elseif addon.db.char.ignoreSavedInstances and addon.db.global.savedInstanceInfo[listing.order] and
                 addon.db.global.savedInstanceInfo[listing.order][playerName] and
                 (addon.db.global.savedInstanceInfo[listing.order][playerName].resetTime > now) then
                 --Ignore instances the player is saved to
@@ -311,9 +311,9 @@ local function filterListings()
                 --Only show these groups in 'Other' and 'PVP' tabs
             elseif now - listing.timestamp > addon.db.global.minsToPreserve * 60 then
                 --Expired based on user settings
-            elseif addon.db.global.ignoreLFM and listing.isLFM then
+            elseif addon.db.char.ignoreLFM and listing.isLFM then
                 --Ignoring LFM groups
-            elseif addon.db.global.ignoreLFG and listing.isLFG then
+            elseif addon.db.char.ignoreLFG and listing.isLFG then
                 --Ignoring LFG groups
             elseif MainTabFrame.roleType ~= nil and
                 not addon.tableContains(listing.rolesNeeded, MainTabFrame.roleType) then
@@ -332,7 +332,7 @@ local function filterListings()
                 --Instance is outside of level range (ONLY for normal dungeons)
             elseif addon.db.char.hideInstances[listing.order] == true then
                 --Ignoring specifically hidden instances
-            elseif addon.db.global.ignoreSavedInstances and addon.db.global.savedInstanceInfo[listing.order] and
+            elseif addon.db.char.ignoreSavedInstances and addon.db.global.savedInstanceInfo[listing.order] and
                 addon.db.global.savedInstanceInfo[listing.order][playerName] and
                 (addon.db.global.savedInstanceInfo[listing.order][playerName].resetTime > now) then
                 --Ignore instances the player is saved to
@@ -1251,6 +1251,9 @@ function addon:OnInitialize()
             hideInstances = {},
             sendOtherRole = false,
             configVer = nil,
+            ignoreSavedInstances = true,
+            ignoreLFM = false,
+            ignoreLFG = true,
         },
         global = {
             lastServer = nil,
@@ -1258,9 +1261,6 @@ function addon:OnInitialize()
             debugData = {},
             listingTable = {},
             showMinimap = true,
-            ignoreSavedInstances = true,
-            ignoreLFM = false,
-            ignoreLFG = true,
             keywordBlacklist = {},
             savedInstanceInfo = {},
             needsUpdateFlag = false,
@@ -1496,7 +1496,7 @@ function addon.SetupConfig()
                 type = "group",
                 width = "double",
                 inline = false,
-                order = 12,
+                order = 13,
                 args = {
                     header1 = {
                         type = "description",
@@ -1513,7 +1513,7 @@ function addon.SetupConfig()
                 type = "group",
                 width = "double",
                 inline = false,
-                order = 13,
+                order = 14,
                 args = {
                     header1 = {
                         type = "description",
@@ -1530,7 +1530,7 @@ function addon.SetupConfig()
                 type = "group",
                 width = "double",
                 inline = false,
-                order = 14,
+                order = 15,
                 args = {
                     header1 = {
                         type = "description",
@@ -1547,7 +1547,7 @@ function addon.SetupConfig()
                 type = "group",
                 width = "double",
                 inline = false,
-                order = 3,
+                order = 12,
                 args = {
                     header0 = {
                         type = "description",
@@ -1567,28 +1567,24 @@ function addon.SetupConfig()
                         name = L["GroupFilters"].savedToggle,
                         order = 4,
                         width = "full",
-                        get = function(info) return addon.db.global.ignoreSavedInstances end,
-                        set = function(info, val) addon.db.global.ignoreSavedInstances = val end,
+                        get = function(info) return addon.db.char.ignoreSavedInstances end,
+                        set = function(info, val) addon.db.char.ignoreSavedInstances = val end,
                     },
                     ignoreLFG = {
                         type = "toggle",
                         name = L["GroupFilters"].ignoreLFG,
                         order = 5,
                         width = "full",
-                        get = function(info) return not addon.db.global.ignoreLFG end,
-                        set = function(info, val) addon.db.global.ignoreLFG = not val
-                            print(addon.db.global.ignoreLFG)
-                        end,
+                        get = function(info) return not addon.db.char.ignoreLFG end,
+                        set = function(info, val) addon.db.char.ignoreLFG = not val end,
                     },
                     ignoreLFM = {
                         type = "toggle",
                         name = L["GroupFilters"].ignoreLFM,
                         order = 6,
                         width = "full",
-                        get = function(info) return not addon.db.global.ignoreLFM end,
-                        set = function(info, val) addon.db.global.ignoreLFM = not val
-                            print(addon.db.global.ignoreLFM)
-                        end,
+                        get = function(info) return not addon.db.char.ignoreLFM end,
+                        set = function(info, val) addon.db.char.ignoreLFM = not val end,
                     },
                 }
             },
