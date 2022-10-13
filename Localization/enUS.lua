@@ -223,8 +223,8 @@ L["GroupFilters"] = {
     ["Desc"] = "Filter Groups by Other Properties",
     ["General"] = "General Filters",
     ["savedToggle"] = "Ignore Instances You Are Already Saved To on Current Character",
-    ["ignoreLFG"] = "Ignore \"LFG\" Messages from People Looking for a Group",
-    ["ignoreLFM"] = "Ignore \"LFM\" Messages from People Making a Group",
+    ["ignoreLFG"] = "Include \"LFG\" Messages from People Looking for a Group",
+    ["ignoreLFM"] = "Include \"LFM\" Messages from People Making a Group",
     ["keyword"] = "Filter By Keyword",
     ["keyword_desc"] = "Separate words or phrases using a comma; any post matching any keyword will be ignored.\n\nExample: \"swp trash, Selling, Boost\""
 }

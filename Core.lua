@@ -1575,16 +1575,20 @@ function addon.SetupConfig()
                         name = L["GroupFilters"].ignoreLFG,
                         order = 5,
                         width = "full",
-                        get = function(info) return addon.db.global.ignoreLFG end,
-                        set = function(info, val) addon.db.global.ignoreLFG = val end,
+                        get = function(info) return not addon.db.global.ignoreLFG end,
+                        set = function(info, val) addon.db.global.ignoreLFG = not val
+                            print(addon.db.global.ignoreLFG)
+                        end,
                     },
                     ignoreLFM = {
                         type = "toggle",
                         name = L["GroupFilters"].ignoreLFM,
                         order = 6,
                         width = "full",
-                        get = function(info) return addon.db.global.ignoreLFM end,
-                        set = function(info, val) addon.db.global.ignoreLFM = val end,
+                        get = function(info) return not addon.db.global.ignoreLFM end,
+                        set = function(info, val) addon.db.global.ignoreLFM = not val
+                            print(addon.db.global.ignoreLFM)
+                        end,
                     },
                 }
             },
