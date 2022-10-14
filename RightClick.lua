@@ -199,7 +199,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		info = UIDropDownMenu_CreateInfo()
 		info.notClickable = true
 		info.notCheckable = true
-		info.text = L["RightClickMenu"].SendInfo
+		info.text = L["SendInfo"]
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 
 		info = UIDropDownMenu_CreateInfo()
@@ -217,7 +217,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 		else
 			activeRole = addon.groupieRoleTable[addon.db.char.groupieSpec2Role]
 		end
-		info.text = format(L["RightClickMenu"].Current .. " : %s (%s)", maxTalentSpec, activeRole)
+		info.text = format(L["Current"] .. " : %s (%s)", maxTalentSpec, activeRole)
 		info.leftPadding = 8
 		UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 
@@ -229,7 +229,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 			info.func = function()
 				addon.SendWCLInfo(name, dropdownMenu, which)
 			end
-			info.text = L["RightClickMenu"].WCL
+			info.text = L["WCL"]
 			info.leftPadding = 8
 			UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL)
 		end

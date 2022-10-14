@@ -9,10 +9,10 @@ addon.friendList = {}
 addon.ignoreList = {}
 
 --Supported localizations, we only load the addon for these
-addon.validLocales = { "enGB", "enUS" }
+addon.validLocales = { "enGB", "enUS", "frFR" }
 --Localizations for which we have all the saved instance data
 --shows minimap prompt asking users to submit to the discord if their locale is not here
-addon.completedLocales = { "enGB", "enUS" }
+addon.completedLocales = { "enGB", "enUS"}
 
 addon.groupieSystemColor = "ffd900"
 
@@ -222,20 +222,20 @@ addon.groupieLFPatterns = {
 }
 
 addon.groupieUnflippedLootPatterns = {
-    [L["Filters"].Loot_Styles.Ticket] = "ticket",
-    [L["Filters"].Loot_Styles.GDKP] = "gdkp bid buyer",
-    [L["Filters"].Loot_Styles.SoftRes] = "2sr 1sr sr softres softreserve soft",
-    [L["Filters"].Loot_Styles.MSOS] = "msos",
-    [L["Filters"].Loot_Styles.Other] = "afk boost boosting boosts exp mob mobs recruit recruiting recruits roster selling wts xp layer hire"
+    [L["Ticket"]] = "ticket",
+    [L["GDKP"]] = "gdkp bid buyer",
+    [L["SoftRes"]] = "2sr 1sr sr softres softreserve soft",
+    [L["MSOS"]] = "msos",
+    [L["Other"]] = "afk boost boosting boosts exp mob mobs recruit recruiting recruits roster selling wts xp layer hire"
 }
 
 addon.lootTypeColors = {
-    [L["Filters"].Loot_Styles.Ticket] = "FFC107",
-    [L["Filters"].Loot_Styles.GDKP] = "4CAF50",
-    [L["Filters"].Loot_Styles.SoftRes] = "9C27B0",
-    [L["Filters"].Loot_Styles.MSOS] = "2196F3",
-    [L["Filters"].Loot_Styles.Other] = "FFFFFF",
-    [L["Filters"].Loot_Styles.PVP] = "F44336",
+    [L["Ticket"]] = "FFC107",
+    [L["GDKP"]] = "4CAF50",
+    [L["SoftRes"]] = "9C27B0",
+    [L["MSOS"]] = "2196F3",
+    [L["Other"]] = "FFFFFF",
+    [L["PVP"]] = "F44336",
 }
 
 addon.classColors = {

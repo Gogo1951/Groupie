@@ -1003,9 +1003,9 @@ function GroupieGroupBrowser:MapResultToListing(resultID, resultData, leader, me
           icon = "Other.tga"
         end
       end
-      lootType = L["Filters"].Loot_Styles.MSOS
+      lootType = L["MSOS"]
       if GroupieGroupBrowser._activityMap[activityID].cat == 118 then -- PVP related activity
-        lootType = L["Filters"].Loot_Styles.PVP
+        lootType = L["PVP"]
       end
       if membercounts then
         local tankneed = membercounts.TANK_REMAINING > 0

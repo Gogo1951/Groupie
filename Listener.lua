@@ -190,7 +190,7 @@ end
 
 --Extract the loot system being used by the party
 local function GetGroupType(messageWords)
-    local lootType = L["Filters"].Loot_Styles.MSOS
+    local lootType = L["MSOS"]
     for i = 1, #messageWords do
         local word = messageWords[i]
 
@@ -198,7 +198,7 @@ local function GetGroupType(messageWords)
         local lookupAttempt = addon.groupieLootPatterns[word]
         if lookupAttempt ~= nil then
             --Because GDKP messages sometimes include the word carry, avoid overwriting in this case
-            if lookupAttempt ~= L["Filters"].Loot_Styles.Ticket or lootType ~= L["Filters"].Loot_Styles.GDKP then
+            if lookupAttempt ~= L["Ticket"] or lootType ~= L["GDKP"] then
                 lootType = lookupAttempt
             end
         end
@@ -247,7 +247,7 @@ local function ParseMessage(event, msg, author, _, channel, guid)
                 isLFG = true
             elseif patternType == 5 then --Other Groups
                 isLFM = true
-                lootType = L["Filters"].Loot_Styles.Other
+                lootType = L["Other"]
             end
             --If a role was mentioned but not LFG OR LFM, assume it is LFM
             if not isLFM and not isLFG and next(rolesNeeded) ~= nil then
@@ -263,12 +263,12 @@ local function ParseMessage(event, msg, author, _, channel, guid)
         groupDungeon, isHeroic, groupSize = GetDungeons(messageWords)
         if groupDungeon == nil or strmatch(msg, "|Henchant") or strmatch(msg, "|Htrade") then
             groupDungeon = "Miscellaneous" --No dungeon Found
-            lootType = L["Filters"].Loot_Styles.Other
+            lootType = L["Other"]
             isHeroic = false
             groupSize = 5
         end
         if groupDungeon == "PVP" then -- Support for PVP tab
-            lootType = L["Filters"].Loot_Styles.PVP
+            lootType = L["PVP"]
             isHeroic = false
             groupSize = 5
             icon = "PVP.tga"
@@ -393,18 +393,18 @@ end
 local function GroupieEventHandlers(...)
     local event, msg, author, _, channel, _, _, _, _, _, _, _, guid = ...
     local validChannel = false
-    if addon.db.char.useChannels[L["text_channels"].Guild] and event == "CHAT_MSG_GUILD" then
+    if addon.db.char.useChannels[L["Guild"]]and event == "CHAT_MSG_GUILD" then
         validChannel = true
-    elseif addon.db.char.useChannels[L["text_channels"].General] and strmatch(channel, L["text_channels"].General) then
+    elseif addon.db.char.useChannels[L["General"]] and strmatch(channel, L["General"]) then
         validChannel = true
-    elseif addon.db.char.useChannels[L["text_channels"].Trade] and strmatch(channel, L["text_channels"].Trade) then
+    elseif addon.db.char.useChannels[L["Trade"]] and strmatch(channel, L["Trade"]) then
         validChannel = true
-    elseif addon.db.char.useChannels[L["text_channels"].LocalDefense] and
-        strmatch(channel, L["text_channels"].LocalDefense) then
+    elseif addon.db.char.useChannels[L["LocalDefense"]] and
+        strmatch(channel, L["LocalDefense"]) then
         validChannel = true
-    elseif addon.db.char.useChannels[L["text_channels"].LFG] and strmatch(channel, L["text_channels"].LFG) then
+    elseif addon.db.char.useChannels[L["LFG"]] and strmatch(channel, L["LFG"]) then
         validChannel = true
-    elseif addon.db.char.useChannels[L["text_channels"].World] and strmatch(channel, L["text_channels"].World .. ". ") then
+    elseif addon.db.char.useChannels[L["World"]] and strmatch(channel, L["World"] .. ". ") then
         validChannel = true
     end
     if validChannel then

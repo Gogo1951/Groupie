@@ -216,7 +216,7 @@ local function filterListings()
 
     if MainTabFrame.tabType == 7 then --PVP
         for key, listing in pairs(sorted) do
-            if listing.lootType ~= L["Filters"].Loot_Styles.PVP then
+            if listing.lootType ~= L["PVP"] then
                 --Wrong tab
                 --Other tab shows groups with 'pvp' loot type
                 --most filters do not apply to this tab
@@ -238,7 +238,7 @@ local function filterListings()
         end
     elseif MainTabFrame.tabType == 8 then --Other
         for key, listing in pairs(sorted) do
-            if listing.lootType ~= L["Filters"].Loot_Styles.Other then
+            if listing.lootType ~= L["Other"] then
                 --Wrong tab
                 --Other tab shows groups with 'other' loot type, and 40 man raids
                 --Loot type filters therefore dont apply to this tab
@@ -307,7 +307,7 @@ local function filterListings()
                 --Wrong tab
             elseif listing.groupSize ~= MainTabFrame.size then
                 --Wrong tab
-            elseif listing.lootType == L["Filters"].Loot_Styles.Other or listing.lootType == L["Filters"].Loot_Styles.PVP then
+            elseif listing.lootType == L["Other"] or listing.lootType == L["PVP"] then
                 --Only show these groups in 'Other' and 'PVP' tabs
             elseif now - listing.timestamp > addon.db.global.minsToPreserve * 60 then
                 --Expired based on user settings
@@ -393,6 +393,7 @@ local function DrawListings(self)
             end
             local formattedMsg = gsub(gsub(listing.msg, "%{%w+%}", ""), "%s+", " ")
             local lootColor = addon.lootTypeColors[listing.lootType]
+            --print(lootColor)
             button.listing = listing
             button.created:SetText(addon.GetTimeSinceString(listing.createdat, 2))
             button.time:SetText(addon.GetTimeSinceString(listing.timestamp, 2))
@@ -479,7 +480,7 @@ local function ListingOnClick(self, button, down)
         local activeSpecGroup = addon.GetActiveSpecGroup()
         local maxTalentSpec, maxTalentsSpent = addon.GetSpecByGroupNum(activeSpecGroup)
         local isIgnored = C_FriendList.IsIgnored(displayName)
-        local ignoreText = L["RightClickMenu"].Ignore
+        local ignoreText = L["Ignore"]
         local activeRole = ""
 
         if activeSpecGroup == 1 then
@@ -489,13 +490,13 @@ local function ListingOnClick(self, button, down)
         end
 
         if isIgnored then
-            ignoreText = L["RightClickMenu"].StopIgnore
+            ignoreText = L["StopIgnore"]
         end
 
         local ListingRightClick = {
             { text = displayName, isTitle = true, notCheckable = true },
-            { text = L["RightClickMenu"].Invite, notCheckable = true, func = function() InviteUnit(displayName) end },
-            { text = L["RightClickMenu"].Whisper, notCheckable = true, func = function()
+            { text = L["Invite"], notCheckable = true, func = function() InviteUnit(displayName) end },
+            { text = L["Whisper"], notCheckable = true, func = function()
                 ChatFrame_OpenChat("/w " .. fullName .. " ")
             end },
             { text = ignoreText, notCheckable = true, func = function()
@@ -503,11 +504,11 @@ local function ListingOnClick(self, button, down)
             end },
             { text = "", disabled = true, notCheckable = true },
             { text = addonName, isTitle = true, notCheckable = true },
-            { text = L["RightClickMenu"].SendInfo, notClickable = true, notCheckable = true },
-            { text = format(L["RightClickMenu"].Current .. " : %s (%s)", maxTalentSpec, activeRole), notCheckable = true,
+            { text = L["SendInfo"], notClickable = true, notCheckable = true },
+            { text = format(L["Current"] .. " : %s (%s)", maxTalentSpec, activeRole), notCheckable = true,
                 leftPadding = 8,
                 func = function()
-                    if instance ~= "Miscellaneous" and instance ~= L["Filters"].Loot_Styles.PVP then
+                    if instance ~= "Miscellaneous" and instance ~= L["PVP"] then
                         addon.SendPlayerInfo(fullName, nil, nil, fullInstance, resultID)
                     else
                         addon.SendPlayerInfo(fullName)
@@ -515,7 +516,7 @@ local function ListingOnClick(self, button, down)
                 end },
         }
         if GetLocale() == "enUS" then
-            tinsert(ListingRightClick, { text = L["RightClickMenu"].WCL, notCheckable = true, leftPadding = 8,
+            tinsert(ListingRightClick, { text = L["WCL"], notCheckable = true, leftPadding = 8,
                 func = function()
                     addon.SendWCLInfo(fullName)
                 end })
@@ -623,7 +624,7 @@ local function createColumn(text, width, parent, sortType)
     Header:SetNormalFontObject("GameFontHighlight")
     Header:SetID(columnCount)
 
-    if text == L["UI_columns"].Message then
+    if text == L["Message"] then
         Header:Disable()
     end
 
@@ -666,13 +667,13 @@ local function TabSwap(isHeroic, size, tabType, tabNum)
     MainTabFrame.sortType = -1
     MainTabFrame.sortDir = false
     --Reset dropdowns
-    UIDropDownMenu_SetText(GroupieRoleDropdown, L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Any)
+    UIDropDownMenu_SetText(GroupieRoleDropdown, L["LookingFor"] .. " " .. L["Any"])
     MainTabFrame.roleType = nil
-    UIDropDownMenu_SetText(GroupieLootDropdown, L["Filters"].Loot_Styles.AnyLoot)
+    UIDropDownMenu_SetText(GroupieLootDropdown, L["AnyLoot"])
     MainTabFrame.lootType = nil
-    UIDropDownMenu_SetText(GroupieLangDropdown, L["Filters"].AnyLanguage)
+    UIDropDownMenu_SetText(GroupieLangDropdown, L["AnyLanguage"])
     MainTabFrame.lang = nil
-    UIDropDownMenu_SetText(GroupieLevelDropdown, L["Filters"].Dungeons.RecommendedDungeon)
+    UIDropDownMenu_SetText(GroupieLevelDropdown, L["RecommendedDungeon"])
     MainTabFrame.levelFilter = true
 
     --Clear selected listing
@@ -781,7 +782,7 @@ local function BuildGroupieWindow()
     ------------------------
     local DungeonTabButton = CreateFrame("Button", "GroupieTab1", GroupieFrame, "CharacterFrameTabButtonTemplate")
     DungeonTabButton:SetPoint("TOPLEFT", GroupieFrame, "BOTTOMLEFT", 20, 1)
-    DungeonTabButton:SetText(L["UI_tabs"].Dungeon)
+    DungeonTabButton:SetText(L["Dungeons"])
     DungeonTabButton:SetID("1")
     DungeonTabButton:SetScript("OnClick",
         function(self)
@@ -790,7 +791,7 @@ local function BuildGroupieWindow()
 
     local DungeonHTabButton = CreateFrame("Button", "GroupieTab2", GroupieFrame, "CharacterFrameTabButtonTemplate")
     DungeonHTabButton:SetPoint("LEFT", "GroupieTab1", "RIGHT", -16, 0)
-    DungeonHTabButton:SetText(L["UI_tabs"].Dungeon .. ' (' .. L["UI_tabs"].ShortHeroic .. ')')
+    DungeonHTabButton:SetText(L["Dungeons"] .. ' (' .. L["ShortHeroic"] .. ')')
     DungeonHTabButton:SetID("2")
     DungeonHTabButton:SetScript("OnClick",
         function(self)
@@ -799,7 +800,7 @@ local function BuildGroupieWindow()
 
     local Raid10TabButton = CreateFrame("Button", "GroupieTab3", GroupieFrame, "CharacterFrameTabButtonTemplate")
     Raid10TabButton:SetPoint("LEFT", "GroupieTab2", "RIGHT", -16, 0)
-    Raid10TabButton:SetText(L["UI_tabs"].Raid .. " (10)")
+    Raid10TabButton:SetText(L["Raid"] .. " (10)")
     Raid10TabButton:SetID("3")
     Raid10TabButton:SetScript("OnClick",
         function(self)
@@ -808,7 +809,7 @@ local function BuildGroupieWindow()
 
     local Raid25TabButton = CreateFrame("Button", "GroupieTab4", GroupieFrame, "CharacterFrameTabButtonTemplate")
     Raid25TabButton:SetPoint("LEFT", "GroupieTab3", "RIGHT", -16, 0)
-    Raid25TabButton:SetText(L["UI_tabs"].Raid .. " (25)")
+    Raid25TabButton:SetText(L["Raid"] .. " (25)")
     Raid25TabButton:SetID("4")
     Raid25TabButton:SetScript("OnClick",
         function(self)
@@ -817,7 +818,7 @@ local function BuildGroupieWindow()
 
     local RaidH10TabButton = CreateFrame("Button", "GroupieTab5", GroupieFrame, "CharacterFrameTabButtonTemplate")
     RaidH10TabButton:SetPoint("LEFT", "GroupieTab4", "RIGHT", -16, 0)
-    RaidH10TabButton:SetText(L["UI_tabs"].Raid .. ' (10' .. L["UI_tabs"].ShortHeroic .. ')')
+    RaidH10TabButton:SetText(L["Raid"] .. ' (10' .. L["ShortHeroic"] .. ')')
     RaidH10TabButton:SetID("5")
     RaidH10TabButton:SetScript("OnClick",
         function(self)
@@ -826,7 +827,7 @@ local function BuildGroupieWindow()
 
     local RaidH25TabButton = CreateFrame("Button", "GroupieTab6", GroupieFrame, "CharacterFrameTabButtonTemplate")
     RaidH25TabButton:SetPoint("LEFT", "GroupieTab5", "RIGHT", -16, 0)
-    RaidH25TabButton:SetText(L["UI_tabs"].Raid .. ' (25' .. L["UI_tabs"].ShortHeroic .. ')')
+    RaidH25TabButton:SetText(L["Raid"] .. ' (25' .. L["ShortHeroic"] .. ')')
     RaidH25TabButton:SetID("6")
     RaidH25TabButton:SetScript("OnClick",
         function(self)
@@ -835,7 +836,7 @@ local function BuildGroupieWindow()
 
     local PVPTabButton = CreateFrame("Button", "GroupieTab7", GroupieFrame, "CharacterFrameTabButtonTemplate")
     PVPTabButton:SetPoint("LEFT", "GroupieTab6", "RIGHT", -16, 0)
-    PVPTabButton:SetText(L["UI_tabs"].PVP)
+    PVPTabButton:SetText(L["PVP"])
     PVPTabButton:SetID("7")
     PVPTabButton:SetScript("OnClick",
         function(self)
@@ -844,7 +845,7 @@ local function BuildGroupieWindow()
 
     local OtherTabButton = CreateFrame("Button", "GroupieTab8", GroupieFrame, "CharacterFrameTabButtonTemplate")
     OtherTabButton:SetPoint("LEFT", "GroupieTab7", "RIGHT", -16, 0)
-    OtherTabButton:SetText(L["UI_tabs"].Other)
+    OtherTabButton:SetText(L["Other"])
     OtherTabButton:SetID("8")
     OtherTabButton:SetScript("OnClick",
         function(self)
@@ -853,7 +854,7 @@ local function BuildGroupieWindow()
 
     local AllTabButton = CreateFrame("Button", "GroupieTab9", GroupieFrame, "CharacterFrameTabButtonTemplate")
     AllTabButton:SetPoint("LEFT", "GroupieTab8", "RIGHT", -16, 0)
-    AllTabButton:SetText(L["UI_tabs"].All)
+    AllTabButton:SetText(L["All"])
     AllTabButton:SetID("9")
     AllTabButton:SetScript("OnClick",
         function(self)
@@ -886,12 +887,12 @@ local function BuildGroupieWindow()
     MainTabFrame.size = 5
     MainTabFrame.tabType = 0
 
-    createColumn(L["UI_columns"].Created, COL_CREATED, MainTabFrame, -1)
-    createColumn(L["UI_columns"].Updated, COL_TIME, MainTabFrame, 0)
-    createColumn(L["UI_columns"].Leader, COL_LEADER, MainTabFrame, 1)
-    createColumn(L["UI_columns"].InstanceName, COL_INSTANCE + ICON_WIDTH, MainTabFrame, 2)
-    createColumn(L["UI_columns"].LootType, COL_LOOT, MainTabFrame, 3)
-    createColumn(L["UI_columns"].Message, COL_MSG, MainTabFrame)
+    createColumn(L["Created"], COL_CREATED, MainTabFrame, -1)
+    createColumn(L["Updated"], COL_TIME, MainTabFrame, 0)
+    createColumn(L["Leader"], COL_LEADER, MainTabFrame, 1)
+    createColumn(L["InstanceName"], COL_INSTANCE + ICON_WIDTH, MainTabFrame, 2)
+    createColumn(L["LootType"], COL_LOOT, MainTabFrame, 3)
+    createColumn(L["Message"], COL_MSG, MainTabFrame)
 
 
     ---------------------------------
@@ -909,16 +910,16 @@ local function BuildGroupieWindow()
     GroupieRoleDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET, 55)
     local function RoleDropdownOnClick(self, arg1)
         if arg1 == 0 then
-            UIDropDownMenu_SetText(GroupieRoleDropdown, L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Any)
+            UIDropDownMenu_SetText(GroupieRoleDropdown, L["LookingFor"] .. " " .. L["Any"])
             MainTabFrame.roleType = nil
         elseif arg1 == 1 then
-            UIDropDownMenu_SetText(GroupieRoleDropdown, L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Tank)
+            UIDropDownMenu_SetText(GroupieRoleDropdown, L["LookingFor"] .. " " .. L["Tank"])
             MainTabFrame.roleType = 1
         elseif arg1 == 2 then
-            UIDropDownMenu_SetText(GroupieRoleDropdown, L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Healer)
+            UIDropDownMenu_SetText(GroupieRoleDropdown, L["LookingFor"] .. " " .. L["Healer"])
             MainTabFrame.roleType = 2
         elseif arg1 == 3 then
-            UIDropDownMenu_SetText(GroupieRoleDropdown, L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.DPS)
+            UIDropDownMenu_SetText(GroupieRoleDropdown, L["LookingFor"] .. " " .. L["DPS"])
             MainTabFrame.roleType = 3
         end
     end
@@ -927,21 +928,21 @@ local function BuildGroupieWindow()
         --Create menu list
         local info = UIDropDownMenu_CreateInfo()
         info.func = RoleDropdownOnClick
-        info.text, info.arg1, info.notCheckable = L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Any, 0, true
+        info.text, info.arg1, info.notCheckable = L["LookingFor"] .. " " .. L["Any"], 0, true
         UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Tank, 1,
+        info.text, info.arg1, info.notCheckable = L["LookingFor"] .. " " .. L["Tank"], 1,
             true
         UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Healer, 2,
+        info.text, info.arg1, info.notCheckable = L["LookingFor"] .. " " .. L["Healer"], 2,
             true
         UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.DPS, 3, true
+        info.text, info.arg1, info.notCheckable = L["LookingFor"] .. " " .. L["DPS"], 3, true
         UIDropDownMenu_AddButton(info)
     end
 
     --Initialize Shown Value
     UIDropDownMenu_Initialize(GroupieRoleDropdown, RoleDropdownInit)
-    UIDropDownMenu_SetText(GroupieRoleDropdown, L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Any)
+    UIDropDownMenu_SetText(GroupieRoleDropdown, L["LookingFor"] .. " " .. L["Any"])
     MainTabFrame.roleType = nil
 
     --Loot Type Dropdown
@@ -950,20 +951,20 @@ local function BuildGroupieWindow()
     GroupieLootDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + DROPDOWN_WIDTH + DROPDOWN_PAD, 55)
     local function LootDropdownOnClick(self, arg1)
         if arg1 == 0 then
-            UIDropDownMenu_SetText(GroupieLootDropdown, L["Filters"].Loot_Styles.AnyLoot)
+            UIDropDownMenu_SetText(GroupieLootDropdown, L["AnyLoot"])
             MainTabFrame.lootType = nil
         elseif arg1 == 1 then
-            UIDropDownMenu_SetText(GroupieLootDropdown, L["Filters"].Loot_Styles.MSOS)
-            MainTabFrame.lootType = L["Filters"].Loot_Styles.MSOS
+            UIDropDownMenu_SetText(GroupieLootDropdown, L["MSOS"])
+            MainTabFrame.lootType = L["MSOS"]
         elseif arg1 == 2 then
-            UIDropDownMenu_SetText(GroupieLootDropdown, L["Filters"].Loot_Styles.SoftRes)
-            MainTabFrame.lootType = L["Filters"].Loot_Styles.SoftRes
+            UIDropDownMenu_SetText(GroupieLootDropdown, L["SoftRes"])
+            MainTabFrame.lootType = L["SoftRes"]
         elseif arg1 == 3 then
-            UIDropDownMenu_SetText(GroupieLootDropdown, L["Filters"].Loot_Styles.GDKP)
-            MainTabFrame.lootType = L["Filters"].Loot_Styles.GDKP
+            UIDropDownMenu_SetText(GroupieLootDropdown, L["GDKP"])
+            MainTabFrame.lootType = L["GDKP"]
         elseif arg1 == 4 then
-            UIDropDownMenu_SetText(GroupieLootDropdown, L["Filters"].Loot_Styles.Ticket)
-            MainTabFrame.lootType = L["Filters"].Loot_Styles.Ticket
+            UIDropDownMenu_SetText(GroupieLootDropdown, L["Ticket"])
+            MainTabFrame.lootType = L["Ticket"]
         end
     end
 
@@ -971,21 +972,21 @@ local function BuildGroupieWindow()
         --Create menu list
         local info = UIDropDownMenu_CreateInfo()
         info.func = LootDropdownOnClick
-        info.text, info.arg1, info.notCheckable = L["Filters"].Loot_Styles.AnyLoot, 0, true
+        info.text, info.arg1, info.notCheckable = L["AnyLoot"], 0, true
         UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = L["Filters"].Loot_Styles.MSOS, 1, true
+        info.text, info.arg1, info.notCheckable = L["MSOS"], 1, true
         UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = L["Filters"].Loot_Styles.SoftRes, 2, true
+        info.text, info.arg1, info.notCheckable = L["SoftRes"], 2, true
         UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = L["Filters"].Loot_Styles.GDKP, 3, true
+        info.text, info.arg1, info.notCheckable = L["GDKP"], 3, true
         UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = L["Filters"].Loot_Styles.Ticket, 4, true
+        info.text, info.arg1, info.notCheckable = L["Ticket"], 4, true
         UIDropDownMenu_AddButton(info)
     end
 
     --Initialize Shown Value
     UIDropDownMenu_Initialize(GroupieLootDropdown, LootDropdownInit)
-    UIDropDownMenu_SetText(GroupieLootDropdown, L["Filters"].Loot_Styles.AnyLoot)
+    UIDropDownMenu_SetText(GroupieLootDropdown, L["AnyLoot"])
     MainTabFrame.lootType = nil
 
     --Language Dropdown
@@ -994,7 +995,7 @@ local function BuildGroupieWindow()
     GroupieLangDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
     local function LangDropdownOnClick(self, arg1)
         if arg1 == 0 then
-            UIDropDownMenu_SetText(GroupieLangDropdown, L["Filters"].AnyLanguage)
+            UIDropDownMenu_SetText(GroupieLangDropdown, L["AnyLanguage"])
             MainTabFrame.lang = nil
         else
             UIDropDownMenu_SetText(GroupieLangDropdown, addon.groupieLangList[arg1])
@@ -1006,7 +1007,7 @@ local function BuildGroupieWindow()
         --Create menu list
         local info = UIDropDownMenu_CreateInfo()
         info.func = LangDropdownOnClick
-        info.text, info.arg1, info.notCheckable = L["Filters"].AnyLanguage, 0, true
+        info.text, info.arg1, info.notCheckable = L["AnyLanguage"], 0, true
         UIDropDownMenu_AddButton(info)
 
         for i = 1, #addon.groupieLangList do
@@ -1017,7 +1018,7 @@ local function BuildGroupieWindow()
 
     --Initialize Shown Value
     UIDropDownMenu_Initialize(GroupieLangDropdown, LangDropdownInit)
-    UIDropDownMenu_SetText(GroupieLangDropdown, L["Filters"].AnyLanguage)
+    UIDropDownMenu_SetText(GroupieLangDropdown, L["AnyLanguage"])
     MainTabFrame.lang = nil
 
     --Dungeon Level Dropdown
@@ -1026,10 +1027,10 @@ local function BuildGroupieWindow()
     GroupieLevelDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 3, 55)
     local function LevelDropdownOnClick(self, arg1)
         if arg1 == 0 then
-            UIDropDownMenu_SetText(GroupieLevelDropdown, L["Filters"].Dungeons.RecommendedDungeon)
+            UIDropDownMenu_SetText(GroupieLevelDropdown, L["RecommendedDungeon"])
             MainTabFrame.levelFilter = true
         else
-            UIDropDownMenu_SetText(GroupieLevelDropdown, L["Filters"].Dungeons.AnyDungeon)
+            UIDropDownMenu_SetText(GroupieLevelDropdown, L["AnyDungeon"])
             MainTabFrame.levelFilter = false
         end
     end
@@ -1038,15 +1039,15 @@ local function BuildGroupieWindow()
         --Create menu list
         local info = UIDropDownMenu_CreateInfo()
         info.func = LevelDropdownOnClick
-        info.text, info.arg1, info.notCheckable = L["Filters"].Dungeons.RecommendedDungeon, 0, true
+        info.text, info.arg1, info.notCheckable = L["RecommendedDungeon"], 0, true
         UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = L["Filters"].Dungeons.AnyDungeon, 1, true
+        info.text, info.arg1, info.notCheckable = L["AnyDungeon"], 1, true
         UIDropDownMenu_AddButton(info)
     end
 
     --Initialize Shown Value
     UIDropDownMenu_Initialize(GroupieLevelDropdown, LevelDropdownInit)
-    UIDropDownMenu_SetText(GroupieLevelDropdown, L["Filters"].Dungeons.RecommendedDungeon)
+    UIDropDownMenu_SetText(GroupieLevelDropdown, L["RecommendedDungeon"])
     MainTabFrame.levelFilter = true
 
     --Settings Button
@@ -1168,18 +1169,18 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         tooltip:AddLine(" ")
         tooltip:AddLine(L["Click"] ..
             " |cffffffff" ..
-            L["MiniMap"].lowerOr .. "|r /groupie |cffffffff: " .. addonName .. " " .. L["BulletinBoard"] .. "|r ")
+            L["lowerOr"] .. "|r /groupie |cffffffff: " .. addonName .. " " .. L["BulletinBoard"] .. "|r ")
         tooltip:AddLine(L["RightClick"] .. " |cffffffff: " .. addonName .. " " .. L["Settings"] .. "|r ")
         --Version Check
         if addon.version < addon.db.global.highestSeenVersion then
             tooltip:AddLine(" ");
-            tooltip:AddLine("|cff8000FF" .. L["MiniMap"].Update1 .. "|r")
-            tooltip:AddLine("|cff8000FF" .. L["MiniMap"].Update2 .. "|r")
+            tooltip:AddLine("|cff8000FF" .. L["Update1"] .. "|r")
+            tooltip:AddLine("|cff8000FF" .. L["Update2"] .. "|r")
         end
         --Asking for saved instance data
         if not addon.tableContains(addon.completedLocales, locale) then
             tooltip:AddLine(" ");
-            tooltip:AddLine("|cff8000FF" .. L["MiniMap"].HelpUs .. "|r")
+            tooltip:AddLine("|cff8000FF" .. L["HelpUs"] .. "|r")
         end
         for _, order in ipairs(addon.instanceOrders) do
             local val = addon.db.global.savedInstanceInfo[order]
@@ -1230,12 +1231,12 @@ function addon:OnInitialize()
             autoRespondRequests = true,
             afterParty = true,
             useChannels = {
-                [L["text_channels"].Guild] = true,
-                [L["text_channels"].General] = true,
-                [L["text_channels"].Trade] = true,
-                [L["text_channels"].LocalDefense] = true,
-                [L["text_channels"].LFG] = true,
-                [L["text_channels"].World] = true,
+                [L["Guild"]] = true,
+                [L["General"]] = true,
+                [L["Trade"]] = true,
+                [L["LocalDefense"]] = true,
+                [L["LFG"]] = true,
+                [L["World"]] = true,
             },
             showWrathH25 = true,
             showWrathH10 = true,
@@ -1361,7 +1362,7 @@ function addon.SetupConfig()
         args = {
             spacerdesc0 = { type = "description", name = " ", width = "full", order = 0 },
             instanceLog = {
-                name = "    " .. L["InstanceLog"].Name,
+                name = "    " .. L["Instance Log"],
                 desc = "",
                 type = "group",
                 width = "double",
@@ -1370,7 +1371,7 @@ function addon.SetupConfig()
                 args = {
                     header0 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. L["InstanceLog"].Name,
+                        name = "|cff" .. addon.groupieSystemColor .. L["Instance Log"],
                         order = 0,
                         fontSize = "large"
                     },
@@ -1394,7 +1395,7 @@ function addon.SetupConfig()
                     spacerdesc2 = { type = "description", name = " ", width = "full", order = 6 },
                     header2 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. L["InstanceLog"].Name,
+                        name = "|cff" .. addon.groupieSystemColor .. L["Instance Log"],
                         order = 7,
                         fontSize = "medium"
                     },
@@ -1435,7 +1436,7 @@ function addon.SetupConfig()
                     spacerdesc1 = { type = "description", name = " ", width = "full", order = 1 },
                     paragraph1 = {
                         type = "description",
-                        name = L["About"].Paragraph,
+                        name = L["About Paragraph"],
                         width = "full",
                         order = 2,
                         fontSize = "medium", --can be small, medium, large
@@ -1444,7 +1445,7 @@ function addon.SetupConfig()
                     header2 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. addonName .. " " ..
-                            L["About"].lowerOn .. " CurseForge",
+                            L["lowerOn"] .. " CurseForge",
                         order = 4,
                         fontSize = "medium"
                     },
@@ -1460,7 +1461,7 @@ function addon.SetupConfig()
                     header3 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. addonName .. " " ..
-                            L["About"].lowerOn .. " Discord",
+                            L["lowerOn"] .. " Discord",
                         order = 7,
                         fontSize = "medium"
                     },
@@ -1476,7 +1477,7 @@ function addon.SetupConfig()
                     header4 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. addonName .. " " ..
-                            L["About"].lowerOn .. " GitHub",
+                            L["lowerOn"] .. " GitHub",
                         order = 10,
                         fontSize = "medium"
                     },
@@ -1491,7 +1492,7 @@ function addon.SetupConfig()
                 }
             },
             instancefiltersWrath = {
-                name = "    " .. L["InstanceFilters"].Wrath.Name,
+                name = "    " .. L["Instance Filters - Wrath"],
                 desc = "",
                 type = "group",
                 width = "double",
@@ -1500,7 +1501,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. L["InstanceFilters"].Wrath.Name,
+                        name = "|cff" .. addon.groupieSystemColor .. L["Instance Filters - Wrath"],
                         order = 0,
                         fontSize = "large"
                     },
@@ -1508,7 +1509,7 @@ function addon.SetupConfig()
                 }
             },
             instancefiltersTBC = {
-                name = "    " .. L["InstanceFilters"].TBC.Name,
+                name = "    " .. L["Instance Filters - TBC"],
                 desc = "",
                 type = "group",
                 width = "double",
@@ -1517,7 +1518,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. L["InstanceFilters"].TBC.Name,
+                        name = "|cff" .. addon.groupieSystemColor .. L["Instance Filters - TBC"],
                         order = 0,
                         fontSize = "large"
                     },
@@ -1525,7 +1526,7 @@ function addon.SetupConfig()
                 }
             },
             instancefiltersClassic = {
-                name = "    " .. L["InstanceFilters"].Classic.Name,
+                name = "    " .. L["Instance Filters - Classic"],
                 desc = "",
                 type = "group",
                 width = "double",
@@ -1534,7 +1535,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. L["InstanceFilters"].Classic.Name,
+                        name = "|cff" .. addon.groupieSystemColor .. L["Instance Filters - Classic"],
                         order = 0,
                         fontSize = "large"
                     },
@@ -1542,7 +1543,7 @@ function addon.SetupConfig()
                 }
             },
             groupfilters = {
-                name = "    " .. L["GroupFilters"].Name,
+                name = "    " .. L["Group Filters"],
                 desc = "",
                 type = "group",
                 width = "double",
@@ -1551,20 +1552,20 @@ function addon.SetupConfig()
                 args = {
                     header0 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. L["GroupFilters"].Name,
+                        name = "|cff" .. addon.groupieSystemColor .. L["Group Filters"],
                         order = 0,
                         fontSize = "large"
                     },
                     spacerdesc1 = { type = "description", name = " ", width = "full", order = 1 },
                     header1 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. L["GroupFilters"].General,
+                        name = "|cff" .. addon.groupieSystemColor .. L["General Filters"],
                         order = 2,
                         fontSize = "medium"
                     },
                     savedToggle = {
                         type = "toggle",
-                        name = L["GroupFilters"].savedToggle,
+                        name = L["savedToggle"],
                         order = 4,
                         width = "full",
                         get = function(info) return addon.db.char.ignoreSavedInstances end,
@@ -1572,7 +1573,7 @@ function addon.SetupConfig()
                     },
                     ignoreLFG = {
                         type = "toggle",
-                        name = L["GroupFilters"].ignoreLFG,
+                        name = L["ignoreLFG"],
                         order = 5,
                         width = "full",
                         get = function(info) return not addon.db.char.ignoreLFG end,
@@ -1580,7 +1581,7 @@ function addon.SetupConfig()
                     },
                     ignoreLFM = {
                         type = "toggle",
-                        name = L["GroupFilters"].ignoreLFM,
+                        name = L["ignoreLFM"],
                         order = 6,
                         width = "full",
                         get = function(info) return not addon.db.char.ignoreLFM end,
@@ -1605,7 +1606,7 @@ function addon.SetupConfig()
                     spacerdesc3 = { type = "description", name = " ", width = "full", order = 15 },
                     header3 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. L["GroupFilters"].keyword,
+                        name = "|cff" .. addon.groupieSystemColor .. L["keyword"],
                         order = 16,
                         fontSize = "medium"
                     },
@@ -1624,7 +1625,7 @@ function addon.SetupConfig()
                     },
                     header4 = {
                         type = "description",
-                        name = "|cff999999" .. L["GroupFilters"].keyword_desc,
+                        name = "|cff999999" .. L["keyword_desc"],
                         order = 18,
                         fontSize = "medium"
                     },
@@ -1642,7 +1643,7 @@ function addon.SetupConfig()
                 disabled = true,
             },
             charoptions = {
-                name = L["CharOptions"].Name,
+                name = L["Character Options"],
                 desc = "",
                 type = "group",
                 width = "double",
@@ -1659,7 +1660,7 @@ function addon.SetupConfig()
                     header2 = {
                         type = "description",
                         name = "|cff" ..
-                            addon.groupieSystemColor .. L["CharOptions"].Spec1 .. " - " .. addon.GetSpecByGroupNum(1),
+                            addon.groupieSystemColor .. L["Spec 1 Role"] .. " - " .. addon.GetSpecByGroupNum(1),
                         order = 2,
                         fontSize = "medium"
                     },
@@ -1677,7 +1678,7 @@ function addon.SetupConfig()
                     header3 = {
                         type = "description",
                         name = "|cff" ..
-                            addon.groupieSystemColor .. L["CharOptions"].Spec2 .. " - " .. addon.GetSpecByGroupNum(2),
+                            addon.groupieSystemColor .. L["Spec 2 Role"] .. " - " .. addon.GetSpecByGroupNum(2),
                         order = 5,
                         fontSize = "medium"
                     },
@@ -1694,7 +1695,7 @@ function addon.SetupConfig()
                     spacerdesc3 = { type = "description", name = " ", width = "full", order = 7 },
                     otherRoleToggle = {
                         type = "toggle",
-                        name = L["CharOptions"].OtherRole,
+                        name = L["OtherRole"],
                         order = 8,
                         width = "full",
                         get = function(info) return addon.db.char.sendOtherRole end,
@@ -1703,7 +1704,7 @@ function addon.SetupConfig()
                     spacerdesc4 = { type = "description", name = " ", width = "full", order = 9 },
                     header4 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. L["CharOptions"].DungeonLevelRange,
+                        name = "|cff" .. addon.groupieSystemColor .. L["DungeonLevelRange"],
                         order = 10,
                         fontSize = "medium"
                     },
@@ -1714,10 +1715,10 @@ function addon.SetupConfig()
                         order = 11,
                         width = 1.4,
                         values = {
-                            [0] = L["CharOptions"].recLevelDropdown["0"],
-                            [1] = L["CharOptions"].recLevelDropdown["1"],
-                            [2] = L["CharOptions"].recLevelDropdown["2"],
-                            [3] = L["CharOptions"].recLevelDropdown["3"],
+                            [0] = L["recLevelDropdown"]["0"],
+                            [1] = L["recLevelDropdown"]["1"],
+                            [2] = L["recLevelDropdown"]["2"],
+                            [3] = L["recLevelDropdown"]["3"],
                         },
                         set = function(info, val) addon.db.char.recommendedLevelRange = val end,
                         get = function(info) return addon.db.char.recommendedLevelRange end,
@@ -1725,7 +1726,7 @@ function addon.SetupConfig()
                     spacerdesc5 = { type = "description", name = " ", width = "full", order = 12 },
                     header5 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " " .. L["CharOptions"].AutoResponse,
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " " .. L["Auto-Response"],
                         order = 13,
                         fontSize = "medium",
                         hidden = true,
@@ -1733,7 +1734,7 @@ function addon.SetupConfig()
                     },
                     autoFriendsToggle = {
                         type = "toggle",
-                        name = L["CharOptions"].AutoFriends,
+                        name = L["AutoFriends"],
                         order = 14,
                         width = "full",
                         get = function(info) return addon.db.char.autoRespondFriends end,
@@ -1743,7 +1744,7 @@ function addon.SetupConfig()
                     },
                     autoGuildToggle = {
                         type = "toggle",
-                        name = L["CharOptions"].AutoGuild,
+                        name = L["AutoGuild"],
                         order = 15,
                         width = "full",
                         get = function(info) return addon.db.char.autoRespondGuild end,
@@ -1770,7 +1771,7 @@ function addon.SetupConfig()
                     spacerdesc6 = { type = "description", name = " ", width = "full", order = 18 },
                     header6 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " " .. L["CharOptions"].AfterParty,
+                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " " .. L["AfterParty"],
                         order = 19,
                         fontSize = "medium",
                         hidden = true,
@@ -1778,7 +1779,7 @@ function addon.SetupConfig()
                     },
                     afterPartyToggle = {
                         type = "toggle",
-                        name = "Enable " .. addonName .. " " .. L["CharOptions"].AfterParty,
+                        name = L["Enable"].. " " .. addonName .. " " .. L["AfterParty"],
                         order = 20,
                         width = "full",
                         get = function(info) return addon.db.char.afterParty end,
@@ -1791,62 +1792,62 @@ function addon.SetupConfig()
                         disabled = true, },
                     header7 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. L["CharOptions"].PullGroups,
+                        name = "|cff" .. addon.groupieSystemColor .. L["PullGroups"],
                         order = 22,
                         fontSize = "medium"
                     },
                     channelGuildToggle = {
                         type = "toggle",
-                        name = L["text_channels"].Guild,
+                        name = L["Guild"],
                         order = 23,
                         width = "full",
-                        get = function(info) return addon.db.char.useChannels[L["text_channels"].Guild] end,
-                        set = function(info, val) addon.db.char.useChannels[L["text_channels"].Guild] = val end,
+                        get = function(info) return addon.db.char.useChannels[L["Guild"]] end,
+                        set = function(info, val) addon.db.char.useChannels[L["Guild"]] = val end,
                     },
                     channelGeneralToggle = {
                         type = "toggle",
-                        name = L["text_channels"].General,
+                        name = L["General"],
                         order = 24,
                         width = "full",
-                        get = function(info) return addon.db.char.useChannels[L["text_channels"].General] end,
-                        set = function(info, val) addon.db.char.useChannels[L["text_channels"].General] = val end,
+                        get = function(info) return addon.db.char.useChannels[L["General"]] end,
+                        set = function(info, val) addon.db.char.useChannels[L["General"]] = val end,
                     },
                     channelTradeToggle = {
                         type = "toggle",
-                        name = L["text_channels"].Trade,
+                        name = L["Trade"],
                         order = 25,
                         width = "full",
-                        get = function(info) return addon.db.char.useChannels[L["text_channels"].Trade] end,
-                        set = function(info, val) addon.db.char.useChannels[L["text_channels"].Trade] = val end,
+                        get = function(info) return addon.db.char.useChannels[L["Trade"]] end,
+                        set = function(info, val) addon.db.char.useChannels[L["Trade"]] = val end,
                     },
                     channelLocalDefenseToggle = {
                         type = "toggle",
-                        name = L["text_channels"].LocalDefense,
+                        name = L["LocalDefense"],
                         order = 26,
                         width = "full",
-                        get = function(info) return addon.db.char.useChannels[L["text_channels"].LocalDefense] end,
-                        set = function(info, val) addon.db.char.useChannels[L["text_channels"].LocalDefense] = val end,
+                        get = function(info) return addon.db.char.useChannels[L["LocalDefense"]] end,
+                        set = function(info, val) addon.db.char.useChannels[L["LocalDefense"]] = val end,
                     },
                     channelLookingForGroupToggle = {
                         type = "toggle",
-                        name = L["text_channels"].LFG,
+                        name = L["LFG"],
                         order = 27,
                         width = "full",
-                        get = function(info) return addon.db.char.useChannels[L["text_channels"].LFG] end,
-                        set = function(info, val) addon.db.char.useChannels[L["text_channels"].LFG] = val end,
+                        get = function(info) return addon.db.char.useChannels[L["LFG"]] end,
+                        set = function(info, val) addon.db.char.useChannels[L["LFG"]] = val end,
                     },
                     channel5Toggle = {
                         type = "toggle",
-                        name = L["text_channels"].World,
+                        name = L["World"],
                         order = 28,
                         width = "full",
-                        get = function(info) return addon.db.char.useChannels[L["text_channels"].World] end,
-                        set = function(info, val) addon.db.char.useChannels[L["text_channels"].World] = val end,
+                        get = function(info) return addon.db.char.useChannels[L["World"]] end,
+                        set = function(info, val) addon.db.char.useChannels[L["World"]] = val end,
                     }
                 },
             },
             globaloptions = {
-                name = L["GlobalOptions"].Name,
+                name = L["Global Options"],
                 desc = "",
                 type = "group",
                 width = "double",
@@ -1855,14 +1856,14 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. L["GlobalOptions"].Name,
+                        name = "|cff" .. addon.groupieSystemColor .. L["Global Options"],
                         order = 0,
                         fontSize = "large"
                     },
                     spacerdesc1 = { type = "description", name = " ", width = "full", order = 1 },
                     minimapToggle = {
                         type = "toggle",
-                        name = L["GlobalOptions"].MiniMapButton,
+                        name = L["MiniMapButton"],
                         order = 2,
                         width = "full",
                         get = function(info) return addon.db.global.showMinimap end,
@@ -1878,7 +1879,7 @@ function addon.SetupConfig()
                     spacerdesc3 = { type = "description", name = " ", width = "full", order = 5 },
                     header2 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. L["GlobalOptions"].LFGData,
+                        name = "|cff" .. addon.groupieSystemColor .. L["LFGData"],
                         order = 6,
                         fontSize = "medium"
                     },
@@ -1888,18 +1889,18 @@ function addon.SetupConfig()
                         name = "",
                         order = 7,
                         width = 1.4,
-                        values = { [1] = L["GlobalOptions"].DurationDropdown["1"],
-                            [2] = L["GlobalOptions"].DurationDropdown["2"],
-                            [5] = L["GlobalOptions"].DurationDropdown["5"],
-                            [10] = L["GlobalOptions"].DurationDropdown["10"],
-                            [20] = L["GlobalOptions"].DurationDropdown["20"] },
+                        values = { [1] = L["DurationDropdown"]["1"],
+                            [2] = L["DurationDropdown"]["2"],
+                            [5] = L["DurationDropdown"]["5"],
+                            [10] = L["DurationDropdown"]["10"],
+                            [20] = L["DurationDropdown"]["20"] },
                         set = function(info, val) addon.db.global.minsToPreserve = val end,
                         get = function(info) return addon.db.global.minsToPreserve end,
                     },
                     spacerdesc4 = { type = "description", name = " ", width = "full", order = 8 },
                     header3 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. L["GlobalOptions"].UIScale,
+                        name = "|cff" .. addon.groupieSystemColor .. L["UI Scale"],
                         order = 9,
                         fontSize = "medium"
                     },
@@ -1973,9 +1974,9 @@ function addon.UpdateSpecOptions()
     local spec2, maxtalents2 = addon.GetSpecByGroupNum(2)
     --Set labels
     addon.options.args.charoptions.args.header2.name = "|cff" ..
-        addon.groupieSystemColor .. L["UpdateSpec"].Spec1 .. " - " .. spec1
+        addon.groupieSystemColor .. L["Role for Spec 1"] .. " - " .. spec1
     addon.options.args.charoptions.args.header3.name = "|cff" ..
-        addon.groupieSystemColor .. L["UpdateSpec"].Spec2 .. " - " .. spec2
+        addon.groupieSystemColor .. L["Role for Spec 2"] .. " - " .. spec2
     --Set dropdowns
     addon.options.args.charoptions.args.spec1Dropdown.values = addon.groupieClassRoleTable[englishClass][spec1]
     addon.options.args.charoptions.args.spec2Dropdown.values = addon.groupieClassRoleTable[englishClass][spec2]
@@ -2149,9 +2150,9 @@ end)
 --Send version check to players joining group/raid
 addon:RegisterEvent("CHAT_MSG_SYSTEM", function(...)
     local event, msg = ...
-    if strmatch(msg, L["VersionChecking"].JoinRaid) then
+    if strmatch(msg, L["JoinRaid"]) then
         C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "RAID")
-    elseif strmatch(msg, L["VersionChecking"].JoinParty) then
+    elseif strmatch(msg, L["JoinParty"]) then
         C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "PARTY")
     end
 end)
