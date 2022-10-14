@@ -2033,21 +2033,21 @@ function addon.UpdateFriends()
     --Update for the current character
     for i = 1, C_FriendList.GetNumFriends() do
         local name = C_FriendList.GetFriendInfoByIndex(i).name
-        if name then
+        if name and name ~= _G.UKNOWNOBJECT then
             name = name:gsub("%-.+", "")
             addon.db.global.friends[myserver][myname][name] = true
         end
     end
     for i = 1, C_FriendList.GetNumIgnores() do
         local name = C_FriendList.GetIgnoreName(i)
-        if name then
+        if name and name ~= _G.UKNOWNOBJECT then
             name = name:gsub("%-.+", "")
             addon.db.global.ignores[myserver][myname][name] = true
         end
     end
     for i = 1, GetNumGuildMembers() do
         local name = GetGuildRosterInfo(i)
-        if name then
+        if name and name ~= _G.UKNOWNOBJECT then
             name = name:gsub("%-.+", "")
             addon.db.global.guilds[myserver][myguild][name] = true
         end
