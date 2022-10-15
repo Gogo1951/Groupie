@@ -100,9 +100,9 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 	end
 
 	local askLootRules = ""
-	if resultID then
-		askLootRules = "MS > OS? Any Reserves?" .. " "
-	end
+	--if resultID then
+	--	askLootRules = "MS > OS? Any Reserves?" .. " "
+	--end
 
 	local groupieMsg = format("{rt3} %s : %s%s %s! %s %s%s %s. %s(%s)%s",
 		addonName,
