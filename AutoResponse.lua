@@ -7,8 +7,8 @@ local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 local time = time
 
 addon.recentPlayers = {}
-local askForPlayerInfo = format("{rt3} %s : What are you?", addonName)
-local askForInstance = format("{rt3} %s : What are you inviting me to? Let me know what Role you need, and if there are any reserves. Thanks!"
+local askForPlayerInfo = format("{rt3} %s : What Role are you?", addonName)
+local askForInstance = format("{rt3} %s : Please confirm what Instance you're inviting me to, thanks!"
     , addonName)
 
 --Clear table entries more than 1 minute old
