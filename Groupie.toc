@@ -1,7 +1,7 @@
 ## Interface: 30400
 ## Title: Groupie
 ## Notes: A better LFG tool for Classic WoW.
-## Version: 1.51
+## Version: 1.52
 ## Author: Gogo, LemonDrake, Kynura, Raegen
 ## SavedVariables: GroupieDB
 ## X-Curse-Project-ID: 661450
