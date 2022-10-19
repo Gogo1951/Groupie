@@ -39,7 +39,7 @@ end
 --Respond to requests to join player's group
 local function RespondToRequest(_, msg, ...)
     expireRecentPlayers()
-    
+
     if strmatch(msg, "has requested to join your group") then
         if not addon.db.char.autoRespondRequests then
             return
@@ -56,9 +56,9 @@ local function RespondToRequest(_, msg, ...)
         if not addon.db.char.autoRespondInvites then
             return
         end
-        
+
         local author = msg:gsub("%|Hplayer:", ""):gsub("%|h.+", "")
-    
+
         --Not someone recently spoken to
         if addon.recentPlayers[author] == nil and C_LFGList.HasActiveEntryInfo() then
             SendChatMessage(askForInstance, "WHISPER", "COMMON", author)
@@ -88,7 +88,6 @@ addon:RegisterEvent("CHAT_MSG_SYSTEM", RespondToRequest)
 addon:RegisterEvent("CHAT_MSG_WHISPER", function(...)
     OnWhisper(true, ...)
 end)
-
 addon:RegisterEvent("CHAT_MSG_WHISPER_INFORM", function(...)
     OnWhisper(false, ...)
 end)
