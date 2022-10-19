@@ -4,8 +4,7 @@ if not addon.tableContains(addon.validLocales, locale) then
     return
 end
 local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
-local AceEvent = LibStub("AceEvent-3.0")
-AceEvent:Embed(addon)
+
 
 local PROTECTED_TOKENS = {
     [1] = "%s*{rt3}%s*groupie%s*:",
@@ -44,6 +43,28 @@ local function GetLanguage(messageWords)
     end
 
     return language
+end
+
+--Check if a version of an instance is valid
+local function isValidVersion(instance, size, isHeroic)
+    local possibleVersions = addon.instanceVersions[instance]
+    local validVersionFlag = false
+
+    if isHeroic or size then
+        for version = 1, #possibleVersions do
+            if isHeroic == possibleVersions[version][2] then
+                if size == possibleVersions[version][1] then
+                    validVersionFlag = true
+                elseif size == nil then
+                    size = possibleVersions[version][1]
+                    validVersionFlag = true
+                end
+            end
+        end
+    end
+
+
+    return validVersionFlag, size
 end
 
 --Extract specified dungeon and version by matching each word in an LFG message to patterns in addon.groupieInstancePatterns
@@ -85,38 +106,44 @@ local function GetDungeons(messageWords)
                 if addon.EndsWith(word, key) then
                     lookupAttempt = addon.groupieInstancePatterns[strsub(word, 1, #word - #key)]
                     if lookupAttempt ~= nil then
-                        instance = lookupAttempt
-                        if val == 0 then
-                            isHeroic = true
-                        elseif val == 1 then
-                            forceSize = 10
-                        elseif val == 2 then
-                            forceSize = 25
-                        elseif val == 3 then
-                            isHeroic = true
-                            forceSize = 10
-                        elseif val == 4 then
-                            isHeroic = true
-                            forceSize = 25
+                        local validVersion, _ = isValidVersion(instance, forceSize, isHeroic)
+                        if validVersion then
+                            instance = lookupAttempt
+                            if val == 0 then
+                                isHeroic = true
+                            elseif val == 1 then
+                                forceSize = 10
+                            elseif val == 2 then
+                                forceSize = 25
+                            elseif val == 3 then
+                                isHeroic = true
+                                forceSize = 10
+                            elseif val == 4 then
+                                isHeroic = true
+                                forceSize = 25
+                            end
                         end
                     end
                 end
                 if addon.StartsWith(word, key) then
                     lookupAttempt = addon.groupieInstancePatterns[strsub(word, 1 + #key, #word)]
                     if lookupAttempt ~= nil then
-                        instance = lookupAttempt
-                        if val == 0 then
-                            isHeroic = true
-                        elseif val == 1 then
-                            forceSize = 10
-                        elseif val == 2 then
-                            forceSize = 25
-                        elseif val == 3 then
-                            isHeroic = true
-                            forceSize = 10
-                        elseif val == 4 then
-                            isHeroic = true
-                            forceSize = 25
+                        local validVersion, _ = isValidVersion(instance, forceSize, isHeroic)
+                        if validVersion then
+                            instance = lookupAttempt
+                            if val == 0 then
+                                isHeroic = true
+                            elseif val == 1 then
+                                forceSize = 10
+                            elseif val == 2 then
+                                forceSize = 25
+                            elseif val == 3 then
+                                isHeroic = true
+                                forceSize = 10
+                            elseif val == 4 then
+                                isHeroic = true
+                                forceSize = 25
+                            end
                         end
                     end
                 end
@@ -161,21 +188,10 @@ local function GetDungeons(messageWords)
     if instance == nil then
         return nil, nil, nil
     end
-    local possibleVersions = addon.instanceVersions[instance]
-    local validVersionFlag = false
+
     --Check that the found instance version is a valid version
-    if isHeroic or forceSize then
-        for version = 1, #possibleVersions do
-            if isHeroic == possibleVersions[version][2] then
-                if forceSize == possibleVersions[version][1] then
-                    validVersionFlag = true
-                elseif forceSize == nil then
-                    forceSize = possibleVersions[version][1]
-                    validVersionFlag = true
-                end
-            end
-        end
-    end
+    local possibleVersions = addon.instanceVersions[instance]
+    local validVersionFlag, forceSize = isValidVersion(instance, forceSize, isHeroic)
 
     --If the instance version is invalid, default to lowest size and normal mode
     if not validVersionFlag then
@@ -421,6 +437,7 @@ local function WhisperListener(_, msg, longAuthor, ...)
     local author = gsub(longAuthor, "-.*", "")
 
     --test phrases for debugging
+    print(msg, author, UnitName("player"))
     if msg == "clear" and author == UnitName("player") and addon.debugMenus then
         addon.db.global.listingTable = {}
     elseif msg == "all" and author == UnitName("player") and addon.debugMenus then
