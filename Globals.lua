@@ -826,6 +826,7 @@ addon.GroupieDevs = {
     ["Player-4408-03AA25B2"] = L["TeamMember"], -- Kattz-Faerlina
     ["Player-4647-023571C6"] = L["TeamMember"], -- Kynura-Grobbulus
     ["Player-4467-02AB80C7"] = L["TeamMember"], -- Raegen-Firemaw
+    ["Player-4703-02E18F15"] = L["TeamMember"], -- Artandor-Amnennar
 
     -- Special Thanks
     -- TODO
