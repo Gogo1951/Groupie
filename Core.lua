@@ -2094,69 +2094,71 @@ end
 -------------------
 --Event Registers--
 -------------------
-addon:RegisterEvent("CHARACTER_POINTS_CHANGED", addon.UpdateSpecOptions)
---Update player's saved instances on boss kill and login
---The api is very slow to populate saved instance data, so we need a delay on these events
-addon:RegisterEvent("PLAYER_ENTERING_WORLD", function()
-    addon.SetupConfig()
-    C_Timer.After(5, function()
-        addon.UpdateFriends()
-        addon.UpdateSavedInstances()
-        C_ChatInfo.RegisterAddonMessagePrefix(addon.ADDON_PREFIX)
-        C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "YELL")
+function addon:OnEnable()
+    addon:RegisterEvent("CHARACTER_POINTS_CHANGED", addon.UpdateSpecOptions)
+    --Update player's saved instances on boss kill and login
+    --The api is very slow to populate saved instance data, so we need a delay on these events
+    addon:RegisterEvent("PLAYER_ENTERING_WORLD", function()
+        addon.SetupConfig()
+        C_Timer.After(5, function()
+            addon.UpdateFriends()
+            addon.UpdateSavedInstances()
+            C_ChatInfo.RegisterAddonMessagePrefix(addon.ADDON_PREFIX)
+            C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "YELL")
+        end)
+        C_Timer.After(15, function()
+            local GroupieGroupBrowser = Groupie:GetModule("GroupieGroupBrowser")
+            if GroupieGroupBrowser then
+                --Queue updates from the LFG tool for dungeons and raids on login
+                local dungeons, dungeonactivities = GroupieGroupBrowser:GetActivitiesFor(2)
+                GroupieGroupBrowser:Queue(dungeons, dungeonactivities)
+                local raids, raidactivities = GroupieGroupBrowser:GetActivitiesFor(114)
+                GroupieGroupBrowser:Queue(raids, raidactivities)
+            end
+        end)
     end)
-    C_Timer.After(15, function()
-        local GroupieGroupBrowser = Groupie:GetModule("GroupieGroupBrowser")
-        if GroupieGroupBrowser then
-            --Queue updates from the LFG tool for dungeons and raids on login
-            local dungeons, dungeonactivities = GroupieGroupBrowser:GetActivitiesFor(2)
-            GroupieGroupBrowser:Queue(dungeons, dungeonactivities)
-            local raids, raidactivities = GroupieGroupBrowser:GetActivitiesFor(114)
-            GroupieGroupBrowser:Queue(raids, raidactivities)
+    --Update friend and ignore lists
+    addon:RegisterEvent("FRIENDLIST_UPDATE", function()
+        C_Timer.After(3, addon.UpdateFriends)
+    end)
+    addon:RegisterEvent("IGNORELIST_UPDATE", function()
+        C_Timer.After(3, addon.UpdateFriends)
+    end)
+    addon:RegisterEvent("GUILD_ROSTER_UPDATE", function()
+        C_Timer.After(3, addon.UpdateFriends)
+    end)
+    --Update saved instances
+    addon:RegisterEvent("BOSS_KILL", function()
+        C_Timer.After(5, addon.UpdateSavedInstances)
+    end)
+    --Send version check
+    addon:RegisterEvent("CHAT_MSG_ADDON", function(...)
+        local _, prefix, msg = ...
+        if prefix == addon.ADDON_PREFIX then
+            local strversion = gsub(msg, "v", "")
+            local version = tonumber(strversion)
+            if version > addon.db.global.highestSeenVersion then
+                addon.db.global.highestSeenVersion = version
+            end
         end
     end)
-end)
---Update friend and ignore lists
-addon:RegisterEvent("FRIENDLIST_UPDATE", function()
-    C_Timer.After(3, addon.UpdateFriends)
-end)
-addon:RegisterEvent("IGNORELIST_UPDATE", function()
-    C_Timer.After(3, addon.UpdateFriends)
-end)
-addon:RegisterEvent("GUILD_ROSTER_UPDATE", function()
-    C_Timer.After(3, addon.UpdateFriends)
-end)
---Update saved instances
-addon:RegisterEvent("BOSS_KILL", function()
-    C_Timer.After(5, addon.UpdateSavedInstances)
-end)
---Send version check
-addon:RegisterEvent("CHAT_MSG_ADDON", function(...)
-    local _, prefix, msg = ...
-    if prefix == addon.ADDON_PREFIX then
-        local strversion = gsub(msg, "v", "")
-        local version = tonumber(strversion)
-        if version > addon.db.global.highestSeenVersion then
-            addon.db.global.highestSeenVersion = version
+    --Send version check to group/raid
+    addon:RegisterEvent("GROUP_JOINED", function(...)
+        local inParty = UnitInParty("player")
+        local inRaid = UnitInRaid("player")
+        if inRaid then
+            C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "RAID")
+        elseif inParty then
+            C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "PARTY")
         end
-    end
-end)
---Send version check to group/raid
-addon:RegisterEvent("GROUP_JOINED", function(...)
-    local inParty = UnitInParty("player")
-    local inRaid = UnitInRaid("player")
-    if inRaid then
-        C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "RAID")
-    elseif inParty then
-        C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "PARTY")
-    end
-end)
---Send version check to players joining group/raid
-addon:RegisterEvent("CHAT_MSG_SYSTEM", function(...)
-    local event, msg = ...
-    if strmatch(msg, L["VersionChecking"].JoinRaid) then
-        C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "RAID")
-    elseif strmatch(msg, L["VersionChecking"].JoinParty) then
-        C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "PARTY")
-    end
-end)
+    end)
+    --Send version check to players joining group/raid
+    addon:RegisterEvent("CHAT_MSG_SYSTEM", function(...)
+        local event, msg = ...
+        if strmatch(msg, L["VersionChecking"].JoinRaid) then
+            C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "RAID")
+        elseif strmatch(msg, L["VersionChecking"].JoinParty) then
+            C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "PARTY")
+        end
+    end)
+end
