@@ -429,9 +429,10 @@ local function GroupieEventHandlers(...)
     return true
 end
 
--------------------------------
---DEBUG FUNCTIONS FOR TESTING--
--------------------------------
+--This function currently does two things
+--1. Provides testing functions when the player whispers commands to themselves
+--2. Checks that the message hash is valid and therefore a non fake groupie message
+--TODO: This should be separated into two seperate functions, and probably the hash validation should live in rightclick.lua
 local function WhisperListener(_, msg, longAuthor, ...)
 
     local author = gsub(longAuthor, "-.*", "")

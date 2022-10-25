@@ -1272,6 +1272,7 @@ function addon:OnInitialize()
             guilds = {},
             groupieFriends = {},
             groupieIgnores = {},
+            configVer = nil,
         }
     }
 
@@ -1283,11 +1284,13 @@ function addon:OnInitialize()
     addon.db = LibStub("AceDB-3.0"):New("GroupieDB", defaults)
     addon.icon = LibStub("LibDBIcon-1.0")
 
-    --Reset instance filters due to data changes
-    if addon.db.char.configVer == nil then
-        addon.db.char.hideInstances = {}
-        addon.db.char.configVer = addon.version
+    --For changes requiring resetting certain saved variables
+    if addon.db.global.configVer == nil or addon.db.global.configVer < 1.53 then
+        --Due to an issue with how guilds were stored
+        addon.db.global.guilds = {}
     end
+    addon.db.global.configVer = addon.version
+
     addon.icon:Register("GroupieLDB", addon.groupieLDB, addon.db.global or defaults.global)
     addon.icon:Hide("GroupieLDB")
 
@@ -2027,7 +2030,8 @@ function addon.UpdateFriends()
     addon.db.global.friends[myserver][myname] = {}
     addon.db.global.ignores[myserver][myname] = {}
     if myguild ~= nil then
-        addon.db.global.guilds[myserver][myguild] = {}
+        addon.db.global.guilds[myserver][myname] = {}
+        addon.db.global.guilds[myserver][myname]["__NAME__"] = myguild
     end
 
     --Update for the current character
@@ -2049,7 +2053,7 @@ function addon.UpdateFriends()
         local name = GetGuildRosterInfo(i)
         if name and name ~= _G.UKNOWNOBJECT then
             name = name:gsub("%-.+", "")
-            addon.db.global.guilds[myserver][myguild][name] = true
+            addon.db.global.guilds[myserver][myname][name] = true
         end
     end
 
@@ -2078,7 +2082,9 @@ function addon.UpdateFriends()
 
     for guild, roster in pairs(addon.db.global.guilds[myserver]) do
         for name, _ in pairs(roster) do
-            addon.friendList[name] = true
+            if name ~= "__NAME__" then
+                addon.friendList[name] = true
+            end
         end
     end
 end
@@ -2113,13 +2119,13 @@ addon:RegisterEvent("PLAYER_ENTERING_WORLD", function()
 end)
 --Update friend and ignore lists
 addon:RegisterEvent("FRIENDLIST_UPDATE", function()
-    addon.UpdateFriends()
+    C_Timer.After(3, addon.UpdateFriends)
 end)
 addon:RegisterEvent("IGNORELIST_UPDATE", function()
-    addon.UpdateFriends()
+    C_Timer.After(3, addon.UpdateFriends)
 end)
 addon:RegisterEvent("GUILD_ROSTER_UPDATE", function()
-    addon.UpdateFriends()
+    C_Timer.After(3, addon.UpdateFriends)
 end)
 --Update saved instances
 addon:RegisterEvent("BOSS_KILL", function()

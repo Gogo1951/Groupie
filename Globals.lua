@@ -252,7 +252,7 @@ addon.classColors = {
     ["WARRIOR"] = "C79C6E",
 }
 
-addon.edgeCasePatterns = { "mt", "os", "up", "dk", "eye", "st", "mh" }
+addon.edgeCasePatterns = { "mt", "os", "up", "dk", "eye", "st", "mh", "an" }
 
 --instanceVersions[instance] = {{size, isHeroic}, ...}
 addon.instanceVersions = {
