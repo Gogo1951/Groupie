@@ -1,18 +1,17 @@
 local addonName, addon = ...
+local GroupieListener = addon:NewModule("GroupieListener", "AceEvent-3.0")
+
 local locale = GetLocale()
 if not addon.tableContains(addon.validLocales, locale) then
     return
 end
 local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 
+local askForPlayerInfo = addon.askForPlayerInfo
+local askForInstance = addon.askForInstance
+local PROTECTED_TOKENS = addon.PROTECTED_TOKENS
+local WARNING_MESSAGE = addon.WARNING_MESSAGE
 
-local PROTECTED_TOKENS = {
-    [1] = "%s*{rt3}%s*groupie%s*:",
-    [2] = "%s*groupie%s*{rt3}%s*:",
-    [3] = "%s*{diamond}%s*groupie%s*:",
-    [4] = "%s*groupie%s*{diamond}%s*:",
-}
-local WARNING_MESSAGE = "{rt3} Groupie : Fake News! That is not a real Groupie Message. Quit being shady."
 
 --Local Function References for performance reasons
 local gsub = gsub
@@ -438,7 +437,6 @@ local function WhisperListener(_, msg, longAuthor, ...)
     local author = gsub(longAuthor, "-.*", "")
 
     --test phrases for debugging
-    print(msg, author, UnitName("player"))
     if msg == "clear" and author == UnitName("player") and addon.debugMenus then
         addon.db.global.listingTable = {}
     elseif msg == "all" and author == UnitName("player") and addon.debugMenus then
@@ -452,7 +450,7 @@ local function WhisperListener(_, msg, longAuthor, ...)
     else
         --Check the hash if it is a groupie branded message
         --Unless it is the warning message itself
-        if msg ~= WARNING_MESSAGE then
+        if msg ~= WARNING_MESSAGE and msg ~= askForInstance and msg ~= askForPlayerInfo then
             for key, val in pairs(PROTECTED_TOKENS) do
                 if strmatch(strlower(msg), val) then
                     --Remove the hash
@@ -472,6 +470,8 @@ end
 -------------------
 --Event Registers--
 -------------------
-addon:RegisterEvent("CHAT_MSG_CHANNEL", GroupieEventHandlers)
-addon:RegisterEvent("CHAT_MSG_GUILD", GroupieEventHandlers)
-addon:RegisterEvent("CHAT_MSG_WHISPER", WhisperListener)
+function GroupieListener:OnEnable()
+    self:RegisterEvent("CHAT_MSG_CHANNEL", GroupieEventHandlers)
+    self:RegisterEvent("CHAT_MSG_GUILD", GroupieEventHandlers)
+    self:RegisterEvent("CHAT_MSG_WHISPER", WhisperListener)
+end

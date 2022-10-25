@@ -8,6 +8,17 @@ addon.version = tonumber(GetAddOnMetadata(addonName, "Version"))
 addon.friendList = {}
 addon.ignoreList = {}
 
+--Message formats for various checked messages
+addon.askForPlayerInfo = format("{rt3} %s : What Role are you?", addonName)
+addon.askForInstance = format("{rt3} %s : What are you inviting me to?", addonName)
+addon.PROTECTED_TOKENS = {
+    [1] = "%s*{rt3}%s*groupie%s*:",
+    [2] = "%s*groupie%s*{rt3}%s*:",
+    [3] = "%s*{diamond}%s*groupie%s*:",
+    [4] = "%s*groupie%s*{diamond}%s*:",
+}
+addon.WARNING_MESSAGE = "{rt3} Groupie : Fake News! That is not a real Groupie Message. Quit being shady."
+
 --Supported localizations, we only load the addon for these
 addon.validLocales = { "enGB", "enUS" }
 --Localizations for which we have all the saved instance data

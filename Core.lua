@@ -2092,9 +2092,6 @@ end
 -------------------
 --Event Registers--
 -------------------
---Leave this commented for now, may trigger when swapping dual specs, which we dont want to reset settings
---Only actual talent changes
---addon:RegisterEvent("PLAYER_TALENT_UPDATE", addon.UpdateSpecOptions)
 addon:RegisterEvent("CHARACTER_POINTS_CHANGED", addon.UpdateSpecOptions)
 --Update player's saved instances on boss kill and login
 --The api is very slow to populate saved instance data, so we need a delay on these events
@@ -2102,6 +2099,7 @@ addon:RegisterEvent("PLAYER_ENTERING_WORLD", function()
     addon.SetupConfig()
     C_Timer.After(5, function()
         addon.UpdateFriends()
+        print(1)
         addon.UpdateSavedInstances()
         C_ChatInfo.RegisterAddonMessagePrefix(addon.ADDON_PREFIX)
         C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "YELL")

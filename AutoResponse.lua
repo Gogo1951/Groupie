@@ -1,4 +1,6 @@
 local addonName, addon = ...
+local GroupieAutoResponse = addon:NewModule("GroupieAutoResponse", "AceEvent-3.0")
+
 local locale = GetLocale()
 if not addon.tableContains(addon.validLocales, locale) then
     return
@@ -7,9 +9,8 @@ local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 local time = time
 
 addon.recentPlayers = {}
-local askForPlayerInfo = format("{rt3} %s : What Role are you?", addonName)
-local askForInstance = format("{rt3} %s : What are you inviting me to?"
-    , addonName)
+local askForPlayerInfo = addon.askForPlayerInfo
+local askForInstance = addon.askForInstance
 
 --Clear table entries more than 1 minute old
 local function expireRecentPlayers()
@@ -80,14 +81,15 @@ end
 -------------------
 --EVENT REGISTERS--
 -------------------
-
-addon:RegisterEvent("PARTY_INVITE_REQUEST", RespondToInvite)
---GROUP_INVITE_CONFIRMATION is the event fired for invite requests
---but doesnt return any context, so we need to use the system message
-addon:RegisterEvent("CHAT_MSG_SYSTEM", RespondToRequest)
-addon:RegisterEvent("CHAT_MSG_WHISPER", function(...)
-    OnWhisper(true, ...)
-end)
-addon:RegisterEvent("CHAT_MSG_WHISPER_INFORM", function(...)
-    OnWhisper(false, ...)
-end)
+function GroupieAutoResponse:OnEnable()
+    self:RegisterEvent("PARTY_INVITE_REQUEST", RespondToInvite)
+    --GROUP_INVITE_CONFIRMATION is the event fired for invite requests
+    --but doesnt return any context, so we need to use the system message
+    self:RegisterEvent("CHAT_MSG_SYSTEM", RespondToRequest)
+    self:RegisterEvent("CHAT_MSG_WHISPER", function(...)
+        OnWhisper(true, ...)
+    end)
+    --self:RegisterEvent("CHAT_MSG_WHISPER_INFORM", function(...)
+    --    OnWhisper(false, ...)
+    --end)
+end
