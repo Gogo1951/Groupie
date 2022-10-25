@@ -106,7 +106,7 @@ local function GetDungeons(messageWords)
                 if addon.EndsWith(word, key) then
                     lookupAttempt = addon.groupieInstancePatterns[strsub(word, 1, #word - #key)]
                     if lookupAttempt ~= nil then
-                        local validVersion, _ = isValidVersion(instance, forceSize, isHeroic)
+                        local validVersion, _ = isValidVersion(lookupAttempt, forceSize, isHeroic)
                         if validVersion then
                             instance = lookupAttempt
                             if val == 0 then
@@ -128,7 +128,7 @@ local function GetDungeons(messageWords)
                 if addon.StartsWith(word, key) then
                     lookupAttempt = addon.groupieInstancePatterns[strsub(word, 1 + #key, #word)]
                     if lookupAttempt ~= nil then
-                        local validVersion, _ = isValidVersion(instance, forceSize, isHeroic)
+                        local validVersion, _ = isValidVersion(lookupAttempt, forceSize, isHeroic)
                         if validVersion then
                             instance = lookupAttempt
                             if val == 0 then
