@@ -2049,11 +2049,13 @@ function addon.UpdateFriends()
             addon.db.global.ignores[myserver][myname][name] = true
         end
     end
-    for i = 1, GetNumGuildMembers() do
-        local name = GetGuildRosterInfo(i)
-        if name and name ~= _G.UKNOWNOBJECT then
-            name = name:gsub("%-.+", "")
-            addon.db.global.guilds[myserver][myname][name] = true
+    if myguild ~= nil then
+        for i = 1, GetNumGuildMembers() do
+            local name = GetGuildRosterInfo(i)
+            if name and name ~= _G.UKNOWNOBJECT then
+                name = name:gsub("%-.+", "")
+                addon.db.global.guilds[myserver][myname][name] = true
+            end
         end
     end
 
@@ -2099,7 +2101,6 @@ addon:RegisterEvent("PLAYER_ENTERING_WORLD", function()
     addon.SetupConfig()
     C_Timer.After(5, function()
         addon.UpdateFriends()
-        print(1)
         addon.UpdateSavedInstances()
         C_ChatInfo.RegisterAddonMessagePrefix(addon.ADDON_PREFIX)
         C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "YELL")
