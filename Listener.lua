@@ -447,6 +447,10 @@ local function WhisperListener(_, msg, longAuthor, ...)
             ParseMessage(nil, "lfm " .. temppattern, tostring(idx), nil, nil, UnitGUID("player"))
             idx = idx + 1
         end
+    elseif msg == "friends" and author == UnitName("player") and addon.debugMenus then
+        for k, v in pairs(addon.friendList) do
+            print(k, v)
+        end
     else
         --Check the hash if it is a groupie branded message
         --Unless it is the warning message itself

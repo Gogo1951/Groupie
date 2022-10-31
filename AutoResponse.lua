@@ -34,7 +34,8 @@ local function RespondToInvite(_, author)
         for i = 1, STATICPOPUP_NUMDIALOGS do
             if _G["StaticPopup" .. i].which == "PARTY_INVITE" then
                 local player = _G["StaticPopup" .. i].text.text_arg1:gsub(" invites you.+", "")
-                if addon.recentPlayers[player] == nil then
+                --dont reject recently spoken to players or friends
+                if addon.recentPlayers[player] == nil and addon.friendList[player] == nil then
                     _G["StaticPopup" .. i .. "Button2"]:Click()
                 end
             end
@@ -113,7 +114,7 @@ local function RejectInviteRequest()
         for i = 1, STATICPOPUP_NUMDIALOGS do
             if _G["StaticPopup" .. i].which == "GROUP_INVITE_CONFIRMATION" then
                 local player = _G["StaticPopup" .. i].text.text_arg1:gsub(" has requested.+", "")
-                if addon.recentPlayers[player] == nil then
+                if addon.recentPlayers[player] == nil and addon.friendList[player] == nil then
                     _G["StaticPopup" .. i .. "Button2"]:Click()
                 end
             end
