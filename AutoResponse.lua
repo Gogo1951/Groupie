@@ -27,13 +27,31 @@ end
 --Respond to invitations the player recieves to another's group
 local function RespondToInvite(_, author)
     expireRecentPlayers()
+    local listedLFG = C_LFGList.HasActiveEntryInfo()
+
+    --automatically reject party invites
+    if addon.db.char.autoRejectInvites and listedLFG then
+        for i = 1, STATICPOPUP_NUMDIALOGS do
+            if _G["StaticPopup" .. i].which == "PARTY_INVITE" then
+                local player = _G["StaticPopup" .. i].text.text_arg1:gsub(" invites you.+", "")
+                if addon.recentPlayers[player] == nil then
+                    _G["StaticPopup" .. i .. "Button2"]:Click()
+                end
+            end
+        end
+    end
+
     if not addon.db.char.autoRespondInvites then
         return
     end
 
     --Not someone recently spoken to
-    if addon.recentPlayers[author] == nil and C_LFGList.HasActiveEntryInfo() then
-        SendChatMessage(askForInstance, "WHISPER", "COMMON", author)
+    if addon.recentPlayers[author] == nil and listedLFG then
+        local msg = askForInstance
+        if addon.db.char.autoRejectInvites then
+            msg = msg .. " " .. autoReject
+        end
+        SendChatMessage(msg, "WHISPER", "COMMON", author)
         addon.recentPlayers[author] = time()
     end
 end
@@ -41,8 +59,11 @@ end
 --Respond to requests to join player's group
 local function RespondToRequest(_, msg, ...)
     expireRecentPlayers()
+    local listedLFG = C_LFGList.HasActiveEntryInfo()
 
     if strmatch(msg, "has requested to join your group") then
+
+
         if not addon.db.char.autoRespondRequests then
             return
         end
@@ -50,10 +71,10 @@ local function RespondToRequest(_, msg, ...)
         local author = msg:gsub("%|Hplayer:", ""):gsub("%|h.+", "")
 
         --Not someone recently spoken to
-        if addon.recentPlayers[author] == nil and C_LFGList.HasActiveEntryInfo() then
+        if addon.recentPlayers[author] == nil and listedLFG then
             local msg = askForPlayerInfo
             if addon.db.char.autoRejectRequests then
-                msg = msg .. autoReject
+                msg = msg .. " " .. autoReject
             end
             SendChatMessage(msg, "WHISPER", "COMMON", author)
             addon.recentPlayers[author] = time()
@@ -66,7 +87,7 @@ local function RespondToRequest(_, msg, ...)
         local author = msg:gsub("%|Hplayer:", ""):gsub("%|h.+", "")
 
         --Not someone recently spoken to
-        if addon.recentPlayers[author] == nil and C_LFGList.HasActiveEntryInfo() then
+        if addon.recentPlayers[author] == nil and listedLFG then
             SendChatMessage(askForInstance, "WHISPER", "COMMON", author)
             addon.recentPlayers[author] = time()
         end
@@ -83,6 +104,23 @@ local function OnWhisper(isReceiver, _, msg, longAuthor, ...)
     end
 end
 
+local function RejectInviteRequest()
+    expireRecentPlayers()
+    local listedLFG = C_LFGList.HasActiveEntryInfo()
+
+    --automatically reject party invite requests
+    if addon.db.char.autoRejectRequests and listedLFG then
+        for i = 1, STATICPOPUP_NUMDIALOGS do
+            if _G["StaticPopup" .. i].which == "GROUP_INVITE_CONFIRMATION" then
+                local player = _G["StaticPopup" .. i].text.text_arg1:gsub(" has requested.+", "")
+                if addon.recentPlayers[player] == nil then
+                    _G["StaticPopup" .. i .. "Button2"]:Click()
+                end
+            end
+        end
+    end
+end
+
 -------------------
 --EVENT REGISTERS--
 -------------------
@@ -94,6 +132,10 @@ function GroupieAutoResponse:OnEnable()
     self:RegisterEvent("CHAT_MSG_WHISPER", function(...)
         OnWhisper(true, ...)
     end)
+    --This requires a seperate event register, as we use system message for
+    --responding to invite requests, but this fires before the popup sometimes
+    self:RegisterEvent("GROUP_INVITE_CONFIRMATION", RejectInviteRequest)
+
     --self:RegisterEvent("CHAT_MSG_WHISPER_INFORM", function(...)
     --    OnWhisper(false, ...)
     --end)

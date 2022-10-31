@@ -1226,7 +1226,8 @@ function addon:OnInitialize()
             recommendedLevelRange = 0,
             autoRespondFriends = true,
             autoRespondGuild = true,
-            autoRespondInvites = true,
+            autoRespondInvites = false,
+            autoRejectInvites = false,
             autoRespondRequests = true,
             autoRejectRequests = true,
             afterParty = true,
@@ -1755,27 +1756,74 @@ function addon.SetupConfig()
                         hidden = true,
                         disabled = true,
                     },
-                    autoInviteResponseToggle = {
-                        type = "toggle",
-                        name = L["AutoInviteResponse"],
-                        order = 16,
+                    spacerdesc6 = { type = "description", name = " ", width = "full", order = 16 },
+                    respondRequestHeader = {
+                        type = "description",
+                        name = "|cff" ..
+                            addon.groupieSystemColor ..
+                            "Auto-Respond : When someone Requests to Join your group, without messaging you first...",
+                        order = 17,
+                        fontSize = "medium"
+                    },
+                    respondRequestDesc = {
+                        type = "description",
+                        name = "Note: This will only engage when you are listed in the LFG Tool.",
                         width = "full",
-                        get = function(info) return addon.db.char.autoRespondInvites end,
-                        set = function(info, val) addon.db.char.autoRespondInvites = val end,
+                        order = 18,
                     },
                     autoRequestResponseToggle = {
                         type = "toggle",
-                        name = L["AutoRequestResponse"],
-                        order = 17,
+                        name = "Auto Response with, \"What Role are you?...\"",
+                        order = 19,
                         width = "full",
                         get = function(info) return addon.db.char.autoRespondRequests end,
                         set = function(info, val) addon.db.char.autoRespondRequests = val end,
                     },
-                    spacerdesc6 = { type = "description", name = " ", width = "full", order = 18 },
+                    autoRequestRejectToggle = {
+                        type = "toggle",
+                        name = "...and Reject Request",
+                        order = 20,
+                        width = "full",
+                        get = function(info) return addon.db.char.autoRejectRequests end,
+                        set = function(info, val) addon.db.char.autoRejectRequests = val end,
+                    },
+                    spacerdesc7 = { type = "description", name = " ", width = "full", order = 21 },
+                    respondInviteHeader = {
+                        type = "description",
+                        name = "|cff" ..
+                            addon.groupieSystemColor ..
+                            "(Yellow Title) Auto-Respond : When someone Invites you to their group, without messaging you first...",
+                        order = 22,
+                        fontSize = "medium"
+                    },
+                    respondInviteDesc = {
+                        type = "description",
+                        name = "Note: This will only engage when you are listed in the LFG Tool.",
+                        width = "full",
+                        order = 23,
+                    },
+                    autoInviteResponseToggle = {
+                        type = "toggle",
+                        name = "Auto Response with, \"What's this Invite for?...\"",
+                        order = 24,
+                        width = "full",
+                        get = function(info) return addon.db.char.autoRespondInvites end,
+                        set = function(info, val) addon.db.char.autoRespondInvites = val end,
+                    },
+                    autoInviteRejectToggle = {
+                        type = "toggle",
+                        name = "...and Reject Request",
+                        order = 25,
+                        width = "full",
+                        get = function(info) return addon.db.char.autoRejectInvites end,
+                        set = function(info, val) addon.db.char.autoRejectInvites = val end,
+                    },
+
+                    spacerdesc8 = { type = "description", name = " ", width = "full", order = 26 },
                     header6 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. addonName .. " " .. L["CharOptions"].AfterParty,
-                        order = 19,
+                        order = 27,
                         fontSize = "medium",
                         hidden = true,
                         disabled = true,
@@ -1783,26 +1831,26 @@ function addon.SetupConfig()
                     afterPartyToggle = {
                         type = "toggle",
                         name = "Enable " .. addonName .. " " .. L["CharOptions"].AfterParty,
-                        order = 20,
+                        order = 28,
                         width = "full",
                         get = function(info) return addon.db.char.afterParty end,
                         set = function(info, val) addon.db.char.afterParty = val end,
                         hidden = true,
                         disabled = true,
                     },
-                    spacerdesc7 = { type = "description", name = " ", width = "full", order = 21,
+                    spacerdesc9 = { type = "description", name = " ", width = "full", order = 29,
                         hidden = true,
                         disabled = true, },
                     header7 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. L["CharOptions"].PullGroups,
-                        order = 22,
+                        order = 30,
                         fontSize = "medium"
                     },
                     channelGuildToggle = {
                         type = "toggle",
                         name = L["text_channels"].Guild,
-                        order = 23,
+                        order = 31,
                         width = "full",
                         get = function(info) return addon.db.char.useChannels[L["text_channels"].Guild] end,
                         set = function(info, val) addon.db.char.useChannels[L["text_channels"].Guild] = val end,
@@ -1810,7 +1858,7 @@ function addon.SetupConfig()
                     channelGeneralToggle = {
                         type = "toggle",
                         name = L["text_channels"].General,
-                        order = 24,
+                        order = 32,
                         width = "full",
                         get = function(info) return addon.db.char.useChannels[L["text_channels"].General] end,
                         set = function(info, val) addon.db.char.useChannels[L["text_channels"].General] = val end,
@@ -1818,7 +1866,7 @@ function addon.SetupConfig()
                     channelTradeToggle = {
                         type = "toggle",
                         name = L["text_channels"].Trade,
-                        order = 25,
+                        order = 33,
                         width = "full",
                         get = function(info) return addon.db.char.useChannels[L["text_channels"].Trade] end,
                         set = function(info, val) addon.db.char.useChannels[L["text_channels"].Trade] = val end,
@@ -1826,7 +1874,7 @@ function addon.SetupConfig()
                     channelLocalDefenseToggle = {
                         type = "toggle",
                         name = L["text_channels"].LocalDefense,
-                        order = 26,
+                        order = 34,
                         width = "full",
                         get = function(info) return addon.db.char.useChannels[L["text_channels"].LocalDefense] end,
                         set = function(info, val) addon.db.char.useChannels[L["text_channels"].LocalDefense] = val end,
@@ -1834,7 +1882,7 @@ function addon.SetupConfig()
                     channelLookingForGroupToggle = {
                         type = "toggle",
                         name = L["text_channels"].LFG,
-                        order = 27,
+                        order = 35,
                         width = "full",
                         get = function(info) return addon.db.char.useChannels[L["text_channels"].LFG] end,
                         set = function(info, val) addon.db.char.useChannels[L["text_channels"].LFG] = val end,
@@ -1842,7 +1890,7 @@ function addon.SetupConfig()
                     channel5Toggle = {
                         type = "toggle",
                         name = L["text_channels"].World,
-                        order = 28,
+                        order = 36,
                         width = "full",
                         get = function(info) return addon.db.char.useChannels[L["text_channels"].World] end,
                         set = function(info, val) addon.db.char.useChannels[L["text_channels"].World] = val end,
