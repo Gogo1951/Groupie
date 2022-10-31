@@ -450,20 +450,20 @@ local function WhisperListener(_, msg, longAuthor, ...)
     else
         --Check the hash if it is a groupie branded message
         --Unless it is the warning message itself
-        if msg ~= WARNING_MESSAGE and msg ~= askForInstance and msg ~= askForPlayerInfo then
-            for key, val in pairs(PROTECTED_TOKENS) do
-                if strmatch(strlower(msg), val) then
-                    --Remove the hash
-                    local hashRecieved = gsub(gsub(msg, ".+ %[%#", ""), "%]", "")
-                    local suffixRemoved = gsub(msg, " %[%#.+", "")
-                    local hashCalculated = addon.StringHash(author .. suffixRemoved)
-                    --Fake found
-                    if hashCalculated ~= hashRecieved then
-                        SendChatMessage(WARNING_MESSAGE, "WHISPER", "COMMON", longAuthor)
-                    end
-                end
-            end
-        end
+        --if msg ~= WARNING_MESSAGE and msg ~= askForInstance and msg ~= askForPlayerInfo then
+        --    for key, val in pairs(PROTECTED_TOKENS) do
+        --        if strmatch(strlower(msg), val) then
+        --            --Remove the hash
+        --            local hashRecieved = gsub(gsub(msg, ".+ %[%#", ""), "%]", "")
+        --            local suffixRemoved = gsub(msg, " %[%#.+", "")
+        --            local hashCalculated = addon.StringHash(author .. suffixRemoved)
+        --            --Fake found
+        --            if hashCalculated ~= hashRecieved then
+        --                SendChatMessage(WARNING_MESSAGE, "WHISPER", "COMMON", longAuthor)
+        --            end
+        --        end
+        --    end
+        --end
     end
 end
 

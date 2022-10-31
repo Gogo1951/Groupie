@@ -99,12 +99,7 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 		lvlStr = "Level " .. tostring(mylevel)
 	end
 
-	local askLootRules = ""
-	--if resultID then
-	--	askLootRules = "MS > OS? Any Reserves?" .. " "
-	--end
-
-	local groupieMsg = format("{rt3} %s : %s%s %s! %s %s%s %s. %s(%s)%s",
+	local groupieMsg = format("{rt3} %s : %s%s %s! %s %s%s %s. %s",
 		addonName,
 		activeRole,
 		otherRoleMsg,
@@ -113,8 +108,6 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 		activeTalentSpec,
 		otherSpecMsg,
 		myclass,
-		askLootRules,
-		addon.localeCodes[locale],
 		achieveLinkStr
 	)
 
