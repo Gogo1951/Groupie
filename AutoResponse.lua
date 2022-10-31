@@ -11,6 +11,7 @@ local time = time
 addon.recentPlayers = {}
 local askForPlayerInfo = addon.askForPlayerInfo
 local askForInstance = addon.askForInstance
+local autoReject = addon.autoReject
 
 --Clear table entries more than 1 minute old
 local function expireRecentPlayers()
@@ -50,7 +51,11 @@ local function RespondToRequest(_, msg, ...)
 
         --Not someone recently spoken to
         if addon.recentPlayers[author] == nil and C_LFGList.HasActiveEntryInfo() then
-            SendChatMessage(askForPlayerInfo, "WHISPER", "COMMON", author)
+            local msg = askForPlayerInfo
+            if addon.db.char.autoRejectRequests then
+                msg = msg .. autoReject
+            end
+            SendChatMessage(msg, "WHISPER", "COMMON", author)
             addon.recentPlayers[author] = time()
         end
     elseif strmatch(msg, "could not accept because you are already in a group") then

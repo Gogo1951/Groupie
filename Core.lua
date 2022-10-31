@@ -1228,6 +1228,7 @@ function addon:OnInitialize()
             autoRespondGuild = true,
             autoRespondInvites = true,
             autoRespondRequests = true,
+            autoRejectRequests = true,
             afterParty = true,
             useChannels = {
                 [L["text_channels"].Guild] = true,
