@@ -119,6 +119,10 @@ local COL_TIME              = 75
 local COL_LEADER            = 105
 local COL_INSTANCE          = 135
 local COL_LOOT              = 76
+local COL_FRIENDNAME        = 105
+local REMOVE_BTN_WIDTH      = 75
+local COL_GROUPIENOTE       = floor((WINDOW_WIDTH - COL_FRIENDNAME - REMOVE_BTN_WIDTH - 58) / 2)
+local COL_NOTE              = floor((WINDOW_WIDTH - COL_FRIENDNAME - REMOVE_BTN_WIDTH - 58) / 2)
 local DROPDOWN_WIDTH        = 100
 local DROPDOWN_LEFTOFFSET   = 115
 local DROPDOWN_PAD          = 32
@@ -133,6 +137,7 @@ local time        = time
 
 addon.groupieBoardButtons = {}
 addon.filteredListings    = {}
+addon.filteredFriends     = {}
 addon.selectedListing     = nil
 addon.ADDON_PREFIX        = "Groupie.Core"
 
@@ -193,6 +198,96 @@ local function GetSortedListingIndex(sortType, sortDir)
         else
             table.sort(numindex, function(a, b) return a.lootType > b.lootType end)
         end
+    end
+
+    return numindex
+end
+
+--Create a sorted index of friends/ignores alphabetically by name
+local function GetSortedFriendIndex(sortDir)
+    local idx = 1
+    local numindex = {}
+    sortDir = sortDir or false
+    local myserver = GetRealmName()
+
+    --Build a numerical index to sort on
+    if MainTabFrame.tabType == 10 then --Friends
+        --Include Friends
+        for source, list in pairs(addon.db.global.friends[myserver]) do
+            for name, _ in pairs(list) do
+                numindex[idx] = {
+                    name = name,
+                    groupieNote = "Friend : " .. source,
+                    userNote = addon.db.global.friendnotes[myserver][name] or "",
+                    isGroupieFriend = false
+                }
+                idx = idx + 1
+            end
+        end
+
+        --Include Groupie Friends
+        for source, list in pairs(addon.db.global.groupieFriends[myserver]) do
+            for name, _ in pairs(list) do
+                numindex[idx] = {
+                    name = name,
+                    groupieNote = "Groupie Global Friend",
+                    userNote = addon.db.global.friendnotes[myserver][name] or "",
+                    isGroupieFriend = true
+                }
+                idx = idx + 1
+            end
+        end
+
+        --Include Guilds
+        for source, guild in pairs(addon.db.global.guilds[myserver]) do
+            local currentGuildName = guild["__NAME__"]
+            for name, _ in pairs(guild) do
+                if name ~= "__NAME__" then
+                    numindex[idx] = {
+                        name = name,
+                        groupieNote = "Guild : " .. currentGuildName,
+                        userNote = addon.db.global.friendnotes[myserver][name] or "",
+                        isGroupieFriend = false
+                    }
+                    idx = idx + 1
+                end
+            end
+        end
+    elseif MainTabFrame.tabType == 11 then --Ignores
+        --Include Ignores
+        for source, list in pairs(addon.db.global.ignores[myserver]) do
+            for name, _ in pairs(list) do
+                numindex[idx] = {
+                    name = name,
+                    groupieNote = "Ignore : " .. source,
+                    userNote = addon.db.global.ignorenotes[myserver][name] or "",
+                    isGroupieFriend = false
+                }
+                idx = idx + 1
+            end
+        end
+
+        --Include Groupie Ignores
+        for source, list in pairs(addon.db.global.groupieIgnores[myserver]) do
+            for name, _ in pairs(list) do
+                numindex[idx] = {
+                    name = name,
+                    groupieNote = "Groupie Global Ignore",
+                    userNote = addon.db.global.ignorenotes[myserver][name] or "",
+                    isGroupieFriend = true
+                }
+                idx = idx + 1
+            end
+        end
+
+    end
+
+
+    --Then sort the index
+    if sortDir then
+        table.sort(numindex, function(a, b) return (a.name or 0) > (b.name or 0) end)
+    else
+        table.sort(numindex, function(a, b) return (a.name or 0) < (b.name or 0) end)
     end
 
     return numindex
@@ -365,6 +460,23 @@ local function filterListings()
     end
 end
 
+--Create a numerically indexed table of listings for use in the scroller
+--Tab numbers:
+-- 10 - Friends | 11 - Ignores
+local function filterFriends()
+    addon.filteredFriends = {}
+    local idx = 1
+    local total = 0
+    local now = time()
+    local playerName = UnitName("player")
+    local sortDir = MainTabFrame.sortDir or false
+    local sorted = GetSortedFriendIndex(sortDir)
+    for key, listing in pairs(sorted) do
+        addon.filteredFriends[idx] = listing
+        idx = idx + 1
+    end
+end
+
 --Apply filters and draw matching listings in the LFG board
 local function DrawListings(self)
     --Create a numerical index for use populating the table
@@ -431,6 +543,58 @@ local function DrawListings(self)
     end
 end
 
+--Draw Friends/Ignore listings in the LFG board
+local function DrawFriends(self)
+    --Create a numerical index for use populating the table
+    filterFriends()
+
+    FauxScrollFrame_Update(self, #addon.filteredFriends, BUTTON_TOTAL, BUTTON_HEIGHT)
+
+    if addon.selectedListing then
+        if addon.selectedListing > #addon.filteredFriends then
+            addon.selectedListing = nil
+        end
+    end
+
+    local offset = FauxScrollFrame_GetOffset(self)
+    local idx = 0
+    local myName = UnitName("player") .. "-" .. gsub(GetRealmName(), " ", "")
+    for btnNum = 1, BUTTON_TOTAL do
+        idx = btnNum + offset
+        local button = addon.friendBoardButtons[btnNum]
+        local listing = addon.filteredFriends[idx]
+        if idx <= #addon.filteredFriends then
+            if btnNum == addon.selectedListing then
+                button:LockHighlight()
+            else
+                button:UnlockHighlight()
+            end
+            button.listing = listing
+            button.name:SetText(listing.name)
+            button.groupieNote:SetText(listing.groupieNote)
+            button.userNote:SetText(listing.userNote)
+            button.btn:SetScript("OnClick", function()
+                C_FriendList.RemoveFriend(listing.name)
+            end)
+            if listing.isGroupieFriend then
+                button.btn:Show()
+            else
+                button.btn:Hide()
+            end
+            button:SetScript("OnEnter", function()
+                GameTooltip:SetOwner(button, "ANCHOR_CURSOR")
+                GameTooltip:SetText(listing.userNote, 1, 1, 1, 1, true)
+                GameTooltip:Show()
+            end)
+            button:SetID(idx)
+            button:Show()
+            btnNum = btnNum + 1
+        else
+            button:Hide()
+        end
+    end
+end
+
 --Onclick for group listings, highlights the selected listing
 local function ListingOnClick(self, button, down)
     if addon.selectedListing then
@@ -451,23 +615,26 @@ local function ListingOnClick(self, button, down)
             --print(addon.groupieBoardButtons[addon.selectedListing].listing.isLFM)
             --print(addon.groupieBoardButtons[addon.selectedListing].listing.isLFG)
             --print(addon.groupieBoardButtons[addon.selectedListing].listing.timestamp)
-            print(addon.groupieBoardButtons[addon.selectedListing].listing.instanceName)
-            print(addon.groupieBoardButtons[addon.selectedListing].listing.fullName)
-            print(addon.groupieBoardButtons[addon.selectedListing].listing.isHeroic)
-            print(addon.groupieBoardButtons[addon.selectedListing].listing.groupSize)
-            print(addon.groupieBoardButtons[addon.selectedListing].listing.lootType)
-            print(addon.groupieBoardButtons[addon.selectedListing].listing.rolesNeeded)
-            print(addon.groupieBoardButtons[addon.selectedListing].listing.msg)
-            print(addon.groupieBoardButtons[addon.selectedListing].listing.author)
-            print(addon.groupieBoardButtons[addon.selectedListing].listing.words)
-            print(addon.groupieBoardButtons[addon.selectedListing].listing.minLevel)
-            print(addon.groupieBoardButtons[addon.selectedListing].listing.maxLevel)
-            print(addon.groupieBoardButtons[addon.selectedListing].listing.order)
-            print(addon.groupieBoardButtons[addon.selectedListing].listing.instanceID)
-            print(addon.groupieBoardButtons[addon.selectedListing].listing.resultID)
-            print(addon.groupieBoardButtons[addon.selectedListing].listing.createdat)
-            for k, v in pairs(addon.groupieBoardButtons[addon.selectedListing].listing.rolesNeeded) do
-                print(v)
+            --print(addon.groupieBoardButtons[addon.selectedListing].listing.instanceName)
+            --print(addon.groupieBoardButtons[addon.selectedListing].listing.fullName)
+            --print(addon.groupieBoardButtons[addon.selectedListing].listing.isHeroic)
+            --print(addon.groupieBoardButtons[addon.selectedListing].listing.groupSize)
+            --print(addon.groupieBoardButtons[addon.selectedListing].listing.lootType)
+            --print(addon.groupieBoardButtons[addon.selectedListing].listing.rolesNeeded)
+            --print(addon.groupieBoardButtons[addon.selectedListing].listing.msg)
+            --print(addon.groupieBoardButtons[addon.selectedListing].listing.author)
+            --print(addon.groupieBoardButtons[addon.selectedListing].listing.words)
+            --print(addon.groupieBoardButtons[addon.selectedListing].listing.minLevel)
+            --print(addon.groupieBoardButtons[addon.selectedListing].listing.maxLevel)
+            --print(addon.groupieBoardButtons[addon.selectedListing].listing.order)
+            --print(addon.groupieBoardButtons[addon.selectedListing].listing.instanceID)
+            --print(addon.groupieBoardButtons[addon.selectedListing].listing.resultID)
+            --print(addon.groupieBoardButtons[addon.selectedListing].listing.createdat)
+            --for k, v in pairs(addon.groupieBoardButtons[addon.selectedListing].listing.rolesNeeded) do
+            --    print(v)
+            --end
+            for k, v in pairs(C_FriendList.GetFriendInfoByIndex(1)) do
+                print(k, v)
             end
         end
         if IsShiftKeyDown() then
@@ -524,6 +691,86 @@ local function ListingOnClick(self, button, down)
         local f = CreateFrame("Frame", "GroupieListingRightClick", UIParent, "UIDropDownMenuTemplate")
         EasyMenu(ListingRightClick, f, "cursor", 0, 0, "MENU")
     end
+end
+
+--Onclick for group listings, highlights the selected listing
+local function FriendListingOnClick(self, button, down)
+    if addon.selectedListing then
+        addon.friendBoardButtons[addon.selectedListing]:UnlockHighlight()
+    end
+    addon.selectedListing = self.id
+    addon.friendBoardButtons[addon.selectedListing]:LockHighlight()
+    local name = addon.friendBoardButtons[addon.selectedListing].listing.name
+    DrawFriends(FriendScrollFrame)
+
+    --Select a listing, if shift is held, do a Who Request
+    if button == "LeftButton" then
+        if IsShiftKeyDown() then
+            DEFAULT_CHAT_FRAME.editBox:SetText("/who " .. name)
+            ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
+        end
+        --Open Right click Menu
+    elseif button == "RightButton" then
+    end
+end
+
+--Create entries in the LFG board for each group listing
+local function CreateFriendListingButtons()
+    addon.friendBoardButtons = {}
+    local currentListing
+    for listcount = 1, BUTTON_TOTAL do
+        addon.friendBoardButtons[listcount] = CreateFrame(
+            "Button",
+            "ListingBtn" .. tostring(listcount),
+            FriendScrollFrame:GetParent(),
+            "IgnoreListButtonTemplate2"
+        )
+        currentListing = addon.friendBoardButtons[listcount]
+        if listcount == 1 then
+            currentListing:SetPoint("TOPLEFT", FriendScrollFrame, -1, 0)
+        else
+            currentListing:SetPoint("TOP", addon.friendBoardButtons[listcount - 1], "BOTTOM", 0, 0)
+        end
+        currentListing:SetSize(BUTTON_WIDTH, BUTTON_HEIGHT)
+        currentListing:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+        currentListing:SetScript("OnClick", FriendListingOnClick)
+        currentListing:SetScript("OnLeave", function()
+            GameTooltip:Hide()
+        end)
+
+        --Name Column
+        currentListing.name:SetWidth(COL_FRIENDNAME)
+
+        --Groupie Note Column
+        currentListing.groupieNote = currentListing:CreateFontString("FontString", "OVERLAY", "GameFontNormal")
+        currentListing.groupieNote:SetPoint("LEFT", currentListing.name, "RIGHT", 0, 0)
+        currentListing.groupieNote:SetWidth(COL_GROUPIENOTE)
+        currentListing.groupieNote:SetJustifyH("LEFT")
+        currentListing.groupieNote:SetJustifyV("MIDDLE")
+
+        --User Note Column
+        currentListing.userNote = currentListing:CreateFontString("FontString", "OVERLAY", "GameFontNormal")
+        currentListing.userNote:SetPoint("LEFT", currentListing.groupieNote, "RIGHT", -4, 0)
+        currentListing.userNote:SetWidth(COL_NOTE)
+        currentListing.userNote:SetJustifyH("LEFT")
+        currentListing.userNote:SetJustifyV("MIDDLE")
+
+        --Apply button
+        currentListing.btn = CreateFrame("Button", "$parentApplyBtn", currentListing, "UIPanelButtonTemplate")
+        currentListing.btn:SetPoint("LEFT", currentListing.userNote, "RIGHT", 4, 0)
+        currentListing.btn:SetWidth(REMOVE_BTN_WIDTH)
+        currentListing.btn:SetText("Remove")
+        currentListing.btn:SetScript("OnClick", function()
+            return
+        end)
+
+
+        currentListing.id = listcount
+        listcount = listcount + 1
+        --Initially hide for friend columns
+        currentListing:Hide()
+    end
+    DrawFriends(FriendScrollFrame)
 end
 
 --Create entries in the LFG board for each group listing
@@ -613,7 +860,7 @@ local function CreateListingButtons()
 end
 
 --Create column headers for the main tab
-local function createColumn(text, width, parent, sortType)
+local function createColumn(text, width, parent, sortType, isFriendTab)
     columnCount = columnCount + 1
     local Header = CreateFrame("Button", parent:GetName() .. "Header" .. columnCount, parent,
         "WhoFrameColumnHeaderTemplate")
@@ -627,7 +874,7 @@ local function createColumn(text, width, parent, sortType)
         Header:Disable()
     end
 
-    if columnCount == 1 then
+    if columnCount == 1 or columnCount == 7 then
         Header:SetPoint("TOPLEFT", parent, "TOPLEFT", 1, 22)
     else
         Header:SetPoint("LEFT", parent:GetName() .. "Header" .. columnCount - 1, "RIGHT", 0, 0)
@@ -636,7 +883,11 @@ local function createColumn(text, width, parent, sortType)
         Header:SetScript("OnClick", function()
             MainTabFrame.sortType = sortType
             MainTabFrame.sortDir = not MainTabFrame.sortDir
-            DrawListings(LFGScrollFrame)
+            if isFriendTab then
+                DrawFriends(FriendScrollFrame)
+            else
+                DrawListings(LFGScrollFrame)
+            end
         end)
     else
         Header:SetScript("OnClick", function() return end)
@@ -681,39 +932,89 @@ local function TabSwap(isHeroic, size, tabType, tabNum)
     end
     addon.selectedListing = nil
 
-    --Only show level dropdown on normal dungeon tab
-    --Show no filters on pvp tab
-    if tabNum == 1 then --Normal dungeons
-        GroupieLangDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
-        GroupieLevelDropdown:Show()
-        GroupieRoleDropdown:Show()
-        GroupieLootDropdown:Show()
-        GroupieLangDropdown:Show()
-        ShowingFontStr:Show()
-    elseif tabNum == 8 then --Other
-        GroupieLangDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 1, 55)
-        GroupieLevelDropdown:Hide()
-        GroupieRoleDropdown:Show()
-        GroupieLootDropdown:Hide()
-        GroupieLangDropdown:Show()
-        ShowingFontStr:Show()
-    elseif tabNum == 7 then --PVP
-        GroupieLangDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
+    if tabNum == 10 then --Friends
+        for i = 1, 6 do --Hide group listing columns
+            _G["GroupieFrame1Header" .. i]:Hide()
+        end
+        for i = 7, 10 do --Show friend related columns
+            _G["GroupieFrame1Header" .. i]:Show()
+        end
         GroupieLevelDropdown:Hide()
         GroupieRoleDropdown:Hide()
         GroupieLootDropdown:Hide()
         GroupieLangDropdown:Hide()
         ShowingFontStr:Hide()
-    else --All other tabs
-        GroupieLangDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
-        GroupieLevelDropdown:Hide()
-        GroupieRoleDropdown:Show()
-        GroupieLootDropdown:Show()
-        GroupieLangDropdown:Show()
-        ShowingFontStr:Show()
-    end
+        LFGScrollFrame:Hide()
+        FriendScrollFrame:Show()
+        for k, v in pairs(addon.groupieBoardButtons) do
+            v:Hide()
+        end
+        DrawFriends(FriendScrollFrame)
 
-    DrawListings(LFGScrollFrame)
+    elseif tabNum == 11 then --Ignores
+        for i = 1, 6 do --Hide group listing columns
+            _G["GroupieFrame1Header" .. i]:Hide()
+        end
+        for i = 7, 10 do --Show friend related columns
+            _G["GroupieFrame1Header" .. i]:Show()
+        end
+        GroupieLevelDropdown:Hide()
+        GroupieRoleDropdown:Hide()
+        GroupieLootDropdown:Hide()
+        GroupieLangDropdown:Hide()
+        ShowingFontStr:Hide()
+        LFGScrollFrame:Hide()
+        FriendScrollFrame:Show()
+        for k, v in pairs(addon.groupieBoardButtons) do
+            v:Hide()
+        end
+        DrawFriends(FriendScrollFrame)
+
+    else --Non friend list related tabs
+        LFGScrollFrame:Show()
+        FriendScrollFrame:Hide()
+        for k, v in pairs(addon.friendBoardButtons) do
+            v:Hide()
+        end
+        for i = 1, 6 do --Show group listing columns
+            _G["GroupieFrame1Header" .. i]:Show()
+        end
+        for i = 7, 10 do --Hide friend related columns
+            _G["GroupieFrame1Header" .. i]:Hide()
+        end
+        --Only show level dropdown on normal dungeon tab
+        --Show no filters on pvp tab
+        if tabNum == 1 then --Normal dungeons
+            GroupieLangDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
+            GroupieLevelDropdown:Show()
+            GroupieRoleDropdown:Show()
+            GroupieLootDropdown:Show()
+            GroupieLangDropdown:Show()
+            ShowingFontStr:Show()
+        elseif tabNum == 8 then --Other
+            GroupieLangDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 1, 55)
+            GroupieLevelDropdown:Hide()
+            GroupieRoleDropdown:Show()
+            GroupieLootDropdown:Hide()
+            GroupieLangDropdown:Show()
+            ShowingFontStr:Show()
+        elseif tabNum == 7 then --PVP
+            GroupieLangDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
+            GroupieLevelDropdown:Hide()
+            GroupieRoleDropdown:Hide()
+            GroupieLootDropdown:Hide()
+            GroupieLangDropdown:Hide()
+            ShowingFontStr:Hide()
+        else --All other tabs
+            GroupieLangDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
+            GroupieLevelDropdown:Hide()
+            GroupieRoleDropdown:Show()
+            GroupieLootDropdown:Show()
+            GroupieLangDropdown:Show()
+            ShowingFontStr:Show()
+        end
+        DrawListings(LFGScrollFrame)
+    end
     PanelTemplates_SetTab(GroupieFrame, tabNum)
 end
 
@@ -860,6 +1161,24 @@ local function BuildGroupieWindow()
             TabSwap(nil, nil, 2, 9)
         end)
 
+    local FriendsTabButton = CreateFrame("Button", "GroupieTab10", GroupieFrame, "CharacterFrameTabButtonTemplate")
+    FriendsTabButton:SetPoint("LEFT", "GroupieTab9", "RIGHT", -16, 0)
+    FriendsTabButton:SetText("Friends")
+    FriendsTabButton:SetID("10")
+    FriendsTabButton:SetScript("OnClick",
+        function(self)
+            TabSwap(nil, nil, nil, 10)
+        end)
+
+    local IgnoresTabButton = CreateFrame("Button", "GroupieTab11", GroupieFrame, "CharacterFrameTabButtonTemplate")
+    IgnoresTabButton:SetPoint("LEFT", "GroupieTab10", "RIGHT", -16, 0)
+    IgnoresTabButton:SetText("Ignores")
+    IgnoresTabButton:SetID("11")
+    IgnoresTabButton:SetScript("OnClick",
+        function(self)
+            TabSwap(nil, nil, nil, 11)
+        end)
+
 
 
     --------------------
@@ -886,13 +1205,22 @@ local function BuildGroupieWindow()
     MainTabFrame.size = 5
     MainTabFrame.tabType = 0
 
-    createColumn(L["UI_columns"].Created, COL_CREATED, MainTabFrame, -1)
-    createColumn(L["UI_columns"].Updated, COL_TIME, MainTabFrame, 0)
-    createColumn(L["UI_columns"].Leader, COL_LEADER, MainTabFrame, 1)
-    createColumn(L["UI_columns"].InstanceName, COL_INSTANCE + ICON_WIDTH, MainTabFrame, 2)
-    createColumn(L["UI_columns"].LootType, COL_LOOT, MainTabFrame, 3)
-    createColumn(L["UI_columns"].Message, COL_MSG, MainTabFrame)
-
+    --Listing Columns
+    createColumn(L["UI_columns"].Created, COL_CREATED, MainTabFrame, -1, nil)
+    createColumn(L["UI_columns"].Updated, COL_TIME, MainTabFrame, 0, nil)
+    createColumn(L["UI_columns"].Leader, COL_LEADER, MainTabFrame, 1, nil)
+    createColumn(L["UI_columns"].InstanceName, COL_INSTANCE + ICON_WIDTH, MainTabFrame, 2, nil)
+    createColumn(L["UI_columns"].LootType, COL_LOOT, MainTabFrame, 3, nil)
+    createColumn(L["UI_columns"].Message, COL_MSG, MainTabFrame, nil)
+    --Friend Columns
+    createColumn("Name", COL_FRIENDNAME, MainTabFrame, -1)
+    createColumn(addonName .. " Auto Note", COL_GROUPIENOTE, MainTabFrame, 0)
+    createColumn("Your Note", COL_NOTE, MainTabFrame, 1)
+    createColumn("Action", REMOVE_BTN_WIDTH, MainTabFrame, 2)
+    --Initially hide Friend Columns
+    for i = 7, 10 do --Hide friend related columns
+        _G["GroupieFrame1Header" .. i]:Hide()
+    end
 
     ---------------------------------
     --Group Listing Board Dropdowns--
@@ -1058,9 +1386,9 @@ local function BuildGroupieWindow()
         addon:OpenConfig()
     end)
 
-    ------------------
-    --Scroller Frame--
-    ------------------
+    ----------------------
+    --LFG Scroller Frame--
+    ----------------------
     LFGScrollFrame = CreateFrame("ScrollFrame", "LFGScrollFrame", MainTabFrame, "FauxScrollFrameTemplate")
     LFGScrollFrame:SetWidth(WINDOW_WIDTH - 46)
     LFGScrollFrame:SetHeight(BUTTON_TOTAL * BUTTON_HEIGHT)
@@ -1078,11 +1406,26 @@ local function BuildGroupieWindow()
         --Expire out of date listings
         addon.ExpireListings()
     end)
-
     CreateListingButtons()
 
+    --------------------------
+    --Friends Scroller Frame--
+    --------------------------
+    FriendScrollFrame = CreateFrame("ScrollFrame", "FriendScrollFrame", MainTabFrame, "FauxScrollFrameTemplate")
+    FriendScrollFrame:SetWidth(WINDOW_WIDTH - 46)
+    FriendScrollFrame:SetHeight(BUTTON_TOTAL * BUTTON_HEIGHT)
+    FriendScrollFrame:SetPoint("TOPLEFT", 0, -4)
+    FriendScrollFrame:SetScript("OnVerticalScroll",
+        function(self, offset)
+            addon.selectedListing = nil
+            FauxScrollFrame_OnVerticalScroll(self, offset, BUTTON_HEIGHT, DrawFriends)
+        end)
+    CreateFriendListingButtons()
+    --Initially hide all friend related UI
+    FriendScrollFrame:Hide()
 
-    PanelTemplates_SetNumTabs(GroupieFrame, 9)
+
+    PanelTemplates_SetNumTabs(GroupieFrame, 11)
     PanelTemplates_SetTab(GroupieFrame, 1)
 
     -------------
@@ -1271,6 +1614,8 @@ function addon:OnInitialize()
             savedInstanceLogs = {},
             friends = {},
             ignores = {},
+            friendnotes = {},
+            ignorenotes = {},
             guilds = {},
             groupieFriends = {},
             groupieIgnores = {},
@@ -2073,6 +2418,18 @@ function addon.UpdateFriends()
     end
     if addon.db.global.guilds[myserver] == nil then
         addon.db.global.guilds[myserver] = {}
+    end
+    if addon.db.global.groupieFriends[myserver] == nil then
+        addon.db.global.groupieFriends[myserver] = {}
+    end
+    if addon.db.global.groupieIgnores[myserver] == nil then
+        addon.db.global.groupieIgnores[myserver] = {}
+    end
+    if addon.db.global.friendnotes[myserver] == nil then
+        addon.db.global.friendnotes[myserver] = {}
+    end
+    if addon.db.global.ignorenotes[myserver] == nil then
+        addon.db.global.ignorenotes[myserver] = {}
     end
 
     --Always clear and reload the current character

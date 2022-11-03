@@ -11,6 +11,7 @@ Localization\enUS.lua
 Localization\frFR.lua
 UI/minimap.xml
 UI/listingtemplate.xml
+UI/friendlistingtemplate.xml
 Helpers.lua
 Globals.lua
 Core.lua
