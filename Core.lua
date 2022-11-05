@@ -6,6 +6,7 @@ local addon                        = LibStub("AceAddon-3.0"):NewAddon(Groupie, a
 local L                            = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 local localizedClass, englishClass = UnitClass("player")
 local myserver                     = GetRealmName()
+local myname                       = UnitName("player")
 
 -------------------------
 --Unsupported Locale UI--
@@ -220,14 +221,18 @@ local function GetSortedFriendIndex(sortType, sortDir)
     if MainTabFrame.tabType == 10 then --Friends
         --Include Friends
         for source, list in pairs(addon.db.global.friends[myserver]) do
-            for name, _ in pairs(list) do
-                numindex[idx] = {
-                    name = name,
-                    groupieNote = "Friend : " .. source,
-                    userNote = addon.db.global.friendnotes[myserver][name] or "",
-                    isGroupieFriend = false
-                }
-                idx = idx + 1
+            if addon.db.global.hiddenFriendLists[myserver][source] then
+                --Hide this character's friends
+            else
+                for name, _ in pairs(list) do
+                    numindex[idx] = {
+                        name = name,
+                        groupieNote = "Friend : " .. source,
+                        userNote = addon.db.global.friendnotes[myserver][name] or "",
+                        isGroupieFriend = false
+                    }
+                    idx = idx + 1
+                end
             end
         end
 
@@ -245,29 +250,37 @@ local function GetSortedFriendIndex(sortType, sortDir)
         --Include Guilds
         for source, guild in pairs(addon.db.global.guilds[myserver]) do
             local currentGuildName = guild["__NAME__"]
-            for name, _ in pairs(guild) do
-                if name ~= "__NAME__" then
-                    numindex[idx] = {
-                        name = name,
-                        groupieNote = "Guild : " .. currentGuildName,
-                        userNote = addon.db.global.friendnotes[myserver][name] or "",
-                        isGroupieFriend = false
-                    }
-                    idx = idx + 1
+            if addon.db.global.hiddenGuilds[myserver][currentGuildName] then
+                --Hide this guild
+            else
+                for name, _ in pairs(guild) do
+                    if name ~= "__NAME__" then
+                        numindex[idx] = {
+                            name = name,
+                            groupieNote = "Guild : " .. currentGuildName,
+                            userNote = addon.db.global.friendnotes[myserver][name] or "",
+                            isGroupieFriend = false
+                        }
+                        idx = idx + 1
+                    end
                 end
             end
         end
     elseif MainTabFrame.tabType == 11 then --Ignores
         --Include Ignores
         for source, list in pairs(addon.db.global.ignores[myserver]) do
-            for name, _ in pairs(list) do
-                numindex[idx] = {
-                    name = name,
-                    groupieNote = "Ignore : " .. source,
-                    userNote = addon.db.global.ignorenotes[myserver][name] or "",
-                    isGroupieFriend = false
-                }
-                idx = idx + 1
+            if addon.db.global.hiddenFriendLists[myserver][source] then
+                --Hide this character's ignores
+            else
+                for name, _ in pairs(list) do
+                    numindex[idx] = {
+                        name = name,
+                        groupieNote = "Ignore : " .. source,
+                        userNote = addon.db.global.ignorenotes[myserver][name] or "",
+                        isGroupieFriend = false
+                    }
+                    idx = idx + 1
+                end
             end
         end
 
@@ -321,7 +334,6 @@ local function filterListings()
     local total = 0
     local sortType = MainTabFrame.sortType or -1
     local now = time()
-    local playerName = UnitName("player")
     local sortDir = MainTabFrame.sortDir or false
     local sorted = GetSortedListingIndex(sortType, sortDir)
 
@@ -368,8 +380,8 @@ local function filterListings()
             elseif addon.db.char.hideInstances[listing.order] == true then
                 --Ignoring specifically hidden instances
             elseif addon.db.char.ignoreSavedInstances and addon.db.global.savedInstanceInfo[listing.order] and
-                addon.db.global.savedInstanceInfo[listing.order][playerName] and
-                (addon.db.global.savedInstanceInfo[listing.order][playerName].resetTime > now) then
+                addon.db.global.savedInstanceInfo[listing.order][myname] and
+                (addon.db.global.savedInstanceInfo[listing.order][myname].resetTime > now) then
                 --Ignore instances the player is saved to
                 if addon.debugMenus then
                     print("FILTERED DUE TO LOCKOUT: ", listing.fullName)
@@ -445,8 +457,8 @@ local function filterListings()
             elseif addon.db.char.hideInstances[listing.order] == true then
                 --Ignoring specifically hidden instances
             elseif addon.db.char.ignoreSavedInstances and addon.db.global.savedInstanceInfo[listing.order] and
-                addon.db.global.savedInstanceInfo[listing.order][playerName] and
-                (addon.db.global.savedInstanceInfo[listing.order][playerName].resetTime > now) then
+                addon.db.global.savedInstanceInfo[listing.order][myname] and
+                (addon.db.global.savedInstanceInfo[listing.order][myname].resetTime > now) then
                 --Ignore instances the player is saved to
                 if addon.debugMenus then
                     print("FILTERED DUE TO LOCKOUT: ", listing.fullName)
@@ -484,9 +496,6 @@ local function filterFriends()
     addon.filteredFriends = {}
     local seen = {}
     local idx = 1
-    local total = 0
-    local now = time()
-    local playerName = UnitName("player")
     local sortDir = MainTabFrame.sortDir or false
     local sortType = MainTabFrame.sortType or -1
     local sorted = GetSortedFriendIndex(sortType, sortDir)
@@ -515,7 +524,7 @@ local function DrawListings(self)
 
     local offset = FauxScrollFrame_GetOffset(self)
     local idx = 0
-    local myName = UnitName("player") .. "-" .. gsub(GetRealmName(), " ", "")
+    local myName = myname .. "-" .. gsub(GetRealmName(), " ", "")
     for btnNum = 1, BUTTON_TOTAL do
         idx = btnNum + offset
         local button = addon.groupieBoardButtons[btnNum]
@@ -592,7 +601,7 @@ local function DrawFriends(self)
 
     local offset = FauxScrollFrame_GetOffset(self)
     local idx = 0
-    local myName = UnitName("player") .. "-" .. gsub(GetRealmName(), " ", "")
+    local myName = myname .. "-" .. gsub(GetRealmName(), " ", "")
     for btnNum = 1, BUTTON_TOTAL do
         idx = btnNum + offset
         local button = addon.friendBoardButtons[btnNum]
@@ -999,7 +1008,7 @@ local function TabSwap(isHeroic, size, tabType, tabNum)
             v:Hide()
         end
         AddButton:SetText("Add Groupie Friend")
-        AddButton:Show()
+        AddButton:Hide() --TODO: Show()
         SetNoteButton:Show()
         DrawFriends(FriendScrollFrame)
 
@@ -1021,7 +1030,7 @@ local function TabSwap(isHeroic, size, tabType, tabNum)
             v:Hide()
         end
         AddButton:SetText("Add Groupie Ignore")
-        AddButton:Show()
+        AddButton:Hide() --TODO: Show()
         SetNoteButton:Show()
         DrawFriends(FriendScrollFrame)
 
@@ -1485,13 +1494,80 @@ local function BuildGroupieWindow()
     PanelTemplates_SetNumTabs(GroupieFrame, 11)
     PanelTemplates_SetTab(GroupieFrame, 1)
 
+    -------------------
+    --Set Note Button--
+    -------------------
+    SetNoteButton = CreateFrame("Button", "GroupieNoteButton", MainTabFrame, "UIPanelButtonTemplate")
+    SetNoteButton:SetSize(85, 22)
+    SetNoteButton:SetText("Set Note")
+    SetNoteButton:SetPoint("BOTTOMRIGHT", -1, -24)
+    SetNoteButton:SetScript("OnClick", function(self)
+        if addon.selectedListing then
+            MainTabFrame.selectedFriend = addon.friendBoardButtons[addon.selectedListing].listing.name
+            if MainTabFrame.selectedFriend then
+                if MainTabFrame.tabType == 10 then --Friend
+                    StaticPopupDialogs["GroupieAddFriendNote"] = {
+                        text = "Set Note for " .. MainTabFrame.selectedFriend,
+                        hasEditBox = 1,
+                        maxLetters = 255,
+                        OnShow = function(self)
+                            local editBox = self.editBox
+                            editBox:SetText("")
+                            editBox:SetFocus()
+                        end,
+                        EditBoxOnEnterPressed = function(self)
+                            local editBox = self:GetParent().editBox
+                            local text = editBox:GetText()
+                            addon.db.global.friendnotes[myserver][MainTabFrame.selectedFriend] = text
+
+                            self:GetParent():Hide()
+                        end,
+                        EditBoxOnEscapePressed = function(self)
+                            self:GetParent():Hide()
+                        end,
+                        timeout = 0,
+                        whileDead = 1,
+                        hideOnEscape = 1
+                    }
+                    StaticPopup_Show("GroupieAddFriendNote")
+                else --Ignore
+                    StaticPopupDialogs["GroupieAddIgnoreNote"] = {
+                        text = "Set Note for " .. MainTabFrame.selectedFriend,
+                        hasEditBox = 1,
+                        maxLetters = 255,
+                        OnShow = function(self)
+                            local editBox = self.editBox
+                            editBox:SetText("")
+                            editBox:SetFocus()
+                        end,
+                        EditBoxOnEnterPressed = function(self)
+                            local editBox = self:GetParent().editBox
+                            local text = editBox:GetText()
+                            addon.db.global.ignorenotes[myserver][MainTabFrame.selectedFriend] = text
+
+                            self:GetParent():Hide()
+                        end,
+                        EditBoxOnEscapePressed = function(self)
+                            self:GetParent():Hide()
+                        end,
+                        timeout = 0,
+                        whileDead = 1,
+                        hideOnEscape = 1
+                    }
+                    StaticPopup_Show("GroupieAddIgnoreNote")
+                end
+            end
+        end
+    end)
+    SetNoteButton:Hide()
+
     ----------------------------
     --Add Friend/Ignore Button--
     ----------------------------
     AddButton = CreateFrame("Button", "GroupieAddButton", MainTabFrame, "UIPanelButtonTemplate")
     AddButton:SetSize(155, 22)
     AddButton:SetText("Add Groupie Friend")
-    AddButton:SetPoint("BOTTOMRIGHT", -1, -24)
+    AddButton:SetPoint("RIGHT", SetNoteButton, "LEFT", -24, 0)
     AddButton:SetScript("OnClick", function(self)
         if MainTabFrame.tabType == 10 then --Friend
             StaticPopupDialogs["GroupieAddFriend"] = {
@@ -1561,72 +1637,7 @@ local function BuildGroupieWindow()
     end)
     AddButton:Hide()
 
-    -------------------
-    --Set Note Button--
-    -------------------
-    SetNoteButton = CreateFrame("Button", "GroupieNoteButton", MainTabFrame, "UIPanelButtonTemplate")
-    SetNoteButton:SetSize(85, 22)
-    SetNoteButton:SetText("Set Note")
-    SetNoteButton:SetPoint("RIGHT", AddButton, "LEFT", -24, 0)
-    SetNoteButton:SetScript("OnClick", function(self)
-        if addon.selectedListing then
-            MainTabFrame.selectedFriend = addon.friendBoardButtons[addon.selectedListing].listing.name
-            if MainTabFrame.selectedFriend then
-                if MainTabFrame.tabType == 10 then --Friend
-                    StaticPopupDialogs["GroupieAddFriendNote"] = {
-                        text = "Set Note for " .. MainTabFrame.selectedFriend,
-                        hasEditBox = 1,
-                        maxLetters = 255,
-                        OnShow = function(self)
-                            local editBox = self.editBox
-                            editBox:SetText("")
-                            editBox:SetFocus()
-                        end,
-                        EditBoxOnEnterPressed = function(self)
-                            local editBox = self:GetParent().editBox
-                            local text = editBox:GetText()
-                            addon.db.global.friendnotes[myserver][MainTabFrame.selectedFriend] = text
 
-                            self:GetParent():Hide()
-                        end,
-                        EditBoxOnEscapePressed = function(self)
-                            self:GetParent():Hide()
-                        end,
-                        timeout = 0,
-                        whileDead = 1,
-                        hideOnEscape = 1
-                    }
-                    StaticPopup_Show("GroupieAddFriendNote")
-                else --Ignore
-                    StaticPopupDialogs["GroupieAddIgnoreNote"] = {
-                        text = "Set Note for " .. MainTabFrame.selectedFriend,
-                        hasEditBox = 1,
-                        maxLetters = 255,
-                        OnShow = function(self)
-                            local editBox = self.editBox
-                            editBox:SetText("")
-                            editBox:SetFocus()
-                        end,
-                        EditBoxOnEnterPressed = function(self)
-                            local editBox = self:GetParent().editBox
-                            local text = editBox:GetText()
-                            addon.db.global.ignorenotes[myserver][MainTabFrame.selectedFriend] = text
-
-                            self:GetParent():Hide()
-                        end,
-                        EditBoxOnEscapePressed = function(self)
-                            self:GetParent():Hide()
-                        end,
-                        timeout = 0,
-                        whileDead = 1,
-                        hideOnEscape = 1
-                    }
-                    StaticPopup_Show("GroupieAddIgnoreNote")
-                end
-            end
-        end
-    end)
-    SetNoteButton:Hide()
 
     -------------
     --Statusbar--
@@ -1799,6 +1810,51 @@ function addon:OnInitialize()
             ignoreSavedInstances = true,
             ignoreLFM = false,
             ignoreLFG = true,
+            --Auto Response Types:
+            -- 1 : Respond to Global Friends, but only when You are in Town
+            -- 2 : Respond to Local Friends & Guildies, but only when You are in Town
+            -- 3 : Respond to Local Friends, but only when You are in Town
+            -- 4 : Respond to Global Friends
+            -- 5 : Respond to Local Friends & Guildies
+            -- 6 : Respond to Local Friends
+            -- 7 : Disable Auto Responses for Raid 25 Groups
+            --Alert Sound Types
+            -- 1 : When a Global Friend Creates a Group, but only when You are in Town
+            -- 2 : When a Local Friend or Guildie Creates a Group, but only when You are in Town
+            -- 3 : When a Local Friend Creates a Group, but only when You are in Town
+            -- 4 : Whenever Anyone Creates a Group, but only when You are in Town
+            -- 5 : When a Global Friend Creates a Group
+            -- 6 : When a Local Friend or Guildie Creates a Group
+            -- 7 : When a Local Friend Creates a Group
+            -- 8 : Whenever Anyone Creates a Group
+            -- 9 : Disable Alert Sounds for Raid 25 Groups
+            autoResponseOptions = {
+                ["25"] = {
+                    responseType = 7,
+                    soundType = 5,
+                    alertSoundID = 17318,
+                },
+                ["10"] = {
+                    responseType = 7,
+                    soundType = 5,
+                    alertSoundID = 17318,
+                },
+                ["5H"] = {
+                    responseType = 0,
+                    soundType = 5,
+                    alertSoundID = 17318,
+                },
+                ["5"] = {
+                    responseType = 0,
+                    soundType = 5,
+                    alertSoundID = 17318,
+                },
+                ["PVP"] = {
+                    responseType = 7,
+                    soundType = 9,
+                    alertSoundID = 17318,
+                },
+            }
         },
         global = {
             lastServer = nil,
@@ -1820,6 +1876,9 @@ function addon:OnInitialize()
             groupieFriends = {},
             groupieIgnores = {},
             configVer = nil,
+            enableGlobalFriends = true,
+            hiddenFriendLists = {},
+            hiddenGuilds = {}
         }
     }
 
@@ -2187,9 +2246,52 @@ function addon.SetupConfig()
                 width = "double",
                 inline = false,
                 order = 2,
-                args = {},
-                hidden = true,
-                disabled = true,
+                args = {
+                    header1 = {
+                        type = "description",
+                        name = "|cff" .. addon.groupieSystemColor .. "Global Options: Global Friends List",
+                        order = 0,
+                        fontSize = "large"
+                    },
+                    spacerdesc1 = { type = "description", name = " ", width = "full", order = 1 },
+                    enableGlobalFriendsToggle = {
+                        type = "toggle",
+                        name = "Enable Global Friends & Ignore Lists",
+                        order = 2,
+                        width = "full",
+                        get = function(info) return addon.db.global.enableGlobalFriends end,
+                        set = function(info, val)
+                            addon.db.global.enableGlobalFriends = val
+                            for k, v in pairs(addon.options.args.globalfriendslist.args) do
+                                if v and v.order then
+                                    if v.order > 2 then
+                                        if val then
+                                            v.hidden = false
+                                        else
+                                            v.hidden = true
+                                        end
+                                    end
+                                end
+                            end
+                        end,
+                    },
+                    spacerdesc2 = { type = "description", name = " ", width = "full", order = 3 },
+                    header2 = {
+                        type = "description",
+                        name = "|cff" .. addon.groupieSystemColor .. "Include Friends & Ignore Data From",
+                        order = 4,
+                        fontSize = "medium"
+                    },
+                    spacerdesc3 = { type = "description", name = " ", width = "full", order = 5 },
+                    spacerdesc4 = { type = "description", name = " ", width = "full", order = 1000 },
+                    header3 = {
+                        type = "description",
+                        name = "|cff" .. addon.groupieSystemColor .. "Include Guild Roster Data From",
+                        order = 1001,
+                        fontSize = "medium"
+                    },
+                    spacerdesc5 = { type = "description", name = " ", width = "full", order = 1002 },
+                },
             },
             charoptions = {
                 name = L["CharOptions"].Name,
@@ -2201,7 +2303,7 @@ function addon.SetupConfig()
                 args = {
                     header1 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. UnitName("player") .. " " .. L["Options"],
+                        name = "|cff" .. addon.groupieSystemColor .. myname .. " " .. L["Options"],
                         order = 0,
                         fontSize = "large"
                     },
@@ -2530,9 +2632,13 @@ function addon.SetupConfig()
     addon.GenerateInstanceToggles(801, "The Burning Crusade Dungeons", true, "instancefiltersTBC")
     addon.GenerateInstanceToggles(901, "Classic Raids", false, "instancefiltersClassic")
     addon.GenerateInstanceToggles(1001, "Classic Dungeons", true, "instancefiltersClassic")
-    ----------------------------------
-    -- End Instance Filter Controls --
-    ----------------------------------
+    -----------------------------------
+    -- Generate Friend List Controls --
+    -----------------------------------
+    addon.GenerateFriendToggles(10, myserver, "globalfriendslist")
+    addon.GenerateGuildToggles(1010, myserver, "globalfriendslist")
+
+
     if not addon.addedToBlizz then
         LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, addon.options)
         addon.AceConfigDialog = LibStub("AceConfigDialog-3.0")
@@ -2605,7 +2711,6 @@ end
 
 --Load the current character's friend, ignore, and guild lists, and merge them with all others
 function addon.UpdateFriends()
-    local myname = UnitName("player")
     local myguild = GetGuildInfo("player")
 
     --create tables for the current server if needed
@@ -2629,6 +2734,12 @@ function addon.UpdateFriends()
     end
     if addon.db.global.ignorenotes[myserver] == nil then
         addon.db.global.ignorenotes[myserver] = {}
+    end
+    if addon.db.global.hiddenFriendLists[myserver] == nil then
+        addon.db.global.hiddenFriendLists[myserver] = {}
+    end
+    if addon.db.global.hiddenGuilds[myserver] == nil then
+        addon.db.global.hiddenGuilds[myserver] = {}
     end
 
     --Always clear and reload the current character
@@ -2671,26 +2782,39 @@ function addon.UpdateFriends()
     addon.ignoreList = {}
 
     for char, friendlist in pairs(addon.db.global.friends[myserver]) do
-        for name, _ in pairs(friendlist) do
-            addon.friendList[name] = true
+        if addon.db.global.hiddenFriendLists[myserver][char] then
+            --Hide this character's friends
+        else
+            for name, _ in pairs(friendlist) do
+                addon.friendList[name] = true
+            end
         end
     end
 
     for char, ignorelist in pairs(addon.db.global.ignores[myserver]) do
-        for name, _ in pairs(ignorelist) do
-            addon.ignoreList[name] = true
-            --Remove listings from the table as well
-            if not strfind(name, "-") then
-                name = name .. "-" .. gsub(GetRealmName(), " ", "")
+        if addon.db.global.hiddenFriendLists[myserver][char] then
+            --Hide this character's ignores
+        else
+            for name, _ in pairs(ignorelist) do
+                addon.ignoreList[name] = true
+                --Remove listings from the table as well
+                if not strfind(name, "-") then
+                    name = name .. "-" .. gsub(GetRealmName(), " ", "")
+                end
+                addon.db.global.listingTable[name] = nil
             end
-            addon.db.global.listingTable[name] = nil
         end
     end
 
     for guild, roster in pairs(addon.db.global.guilds[myserver]) do
-        for name, _ in pairs(roster) do
-            if name ~= "__NAME__" then
-                addon.friendList[name] = true
+        local currentGuildName = roster["__NAME__"]
+        if addon.db.global.hiddenGuilds[myserver][currentGuildName] then
+            --Hide this guild
+        else
+            for name, _ in pairs(roster) do
+                if name ~= "__NAME__" then
+                    addon.friendList[name] = true
+                end
             end
         end
     end

@@ -6,6 +6,8 @@ if not addon.tableContains(addon.validLocales, locale) then
     return
 end
 local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
+local myname = UnitName("player")
+local myserver = GetRealmName()
 
 local askForPlayerInfo = addon.askForPlayerInfo
 local askForInstance = addon.askForInstance
@@ -23,8 +25,68 @@ local tinsert = tinsert
 local next = next
 local format = format
 
---Play a sound and auto respond when a friend lists a group the player is interested in
-local function FriendAutoResponse()
+--Decide whether to auto respond
+local function ShouldAutoRespond(author, groupType, order)
+    local resting = IsResting()
+    local responseType = addon.db.char.autoResponseOptions[groupType].responseType
+
+    -------------------------
+    --Dont auto respond if:--
+    -------------------------
+
+    --Its our own group
+    if myname == author then return false end
+
+    --AFK or DND
+    if UnitIsAFK("player") then return false end
+    if UnitIsDND("player") then return false end
+
+    --Instance is saved or hidden
+    if addon.db.global.savedInstanceInfo[order] then
+        if addon.db.global.savedInstanceInfo[order][myname] then return false end
+    end
+    if addon.db.char.hideInstances[order] then return false end
+
+    --Instance is out of level range
+    --TODO
+
+    --In a group
+    if UnitInAnyGroup("player") or IsActiveBattlefieldArena() then return false end
+
+    --In a battleground/arena queue
+    for i = 1, GetMaxBattlefieldID() do
+        local status = GetBattlefieldStatus(i)
+        if status and status ~= "none" then return false end
+    end
+
+    --Responses are disabled for this group type
+    if responseType == 7 then return false end
+
+    -----------------------------
+    --End Auto response filters--
+    -----------------------------
+
+    --These values require the player to be in town
+    if responseType == 1 or responseType == 2 or responseType == 3 then
+        if not resting then return false end
+    end
+
+    --Make sure that we dont auto respond to the same group twice
+    --TODO
+
+    if responseType == 1 or responseType == 4 then --Global friends
+
+    elseif responseType == 2 or responseType == 5 then --Local friends and guild
+
+    elseif responseType == 3 or responseType == 6 then --Local friends
+    end
+    return false
+end
+
+--Decide whether to play an alert sound
+local function ShouldPlaySound(author, groupType, order)
+    local resting = IsResting()
+    local soundType = addon.db.char.autoResponseOptions[groupType].soundType
 
 end
 
@@ -397,10 +459,33 @@ local function ParseMessage(event, msg, author, _, channel, guid)
     addon.db.global.listingTable[author].icon = icon
     addon.db.global.listingTable[author].classColor = classColor
     addon.db.global.listingTable[author].resultID = nil -- Required to prevent /4 listings from being overwritten by LFG listings
-    --Collect data to debug with
-    --if addon.debugMenus then
-    --tinsert(addon.db.global.debugData, { msg, preprocessedStr, addon.db.global.listingTable[author] })
-    --end
+
+    --Find the group type string for auto response options
+    local optionsGroupType = nil
+    if lootType == "PVP" then
+        optionsGroupType = "PVP"
+    elseif groupSize == 25 and lootType ~= "Other" then
+        optionsGroupType = "25"
+    elseif groupSize == 10 and lootType ~= "Other" then
+        optionsGroupType = "10"
+    elseif groupSize == 5 and isHeroic == true and lootType ~= "Other" then
+        optionsGroupType = "5H"
+    elseif groupSize == 5 and lootType ~= "Other" then
+        optionsGroupType = "5"
+    end
+    --Remove server name from author string
+    local shortAuthor = author:gsub("-.+", "")
+
+    if optionsGroupType then
+        if ShouldAutoRespond(shortAuthor, optionsGroupType, instanceOrder) then
+            --TODO: Send auto response whisper
+        end
+
+        if ShouldPlaySound(shortAuthor, optionsGroupType, instanceOrder) then
+            PlaySound(addon.db.char.autoResponseOptions[optionsGroupType].alertSoundID)
+        end
+    end
+
     return true
 end
 
@@ -437,9 +522,9 @@ local function WhisperListener(_, msg, longAuthor, ...)
     local author = gsub(longAuthor, "-.*", "")
 
     --test phrases for debugging
-    if msg == "clear" and author == UnitName("player") and addon.debugMenus then
+    if msg == "clear" and author == myname and addon.debugMenus then
         addon.db.global.listingTable = {}
-    elseif msg == "all" and author == UnitName("player") and addon.debugMenus then
+    elseif msg == "all" and author == myname and addon.debugMenus then
         addon.db.global.listingTable = {}
         local idx = 0
         for key, val in pairs(addon.groupieUnflippedDungeonPatterns) do
@@ -447,7 +532,7 @@ local function WhisperListener(_, msg, longAuthor, ...)
             ParseMessage(nil, "lfm " .. temppattern, tostring(idx), nil, nil, UnitGUID("player"))
             idx = idx + 1
         end
-    elseif msg == "friends" and author == UnitName("player") and addon.debugMenus then
+    elseif msg == "friends" and author == myname and addon.debugMenus then
         for k, v in pairs(addon.friendList) do
             print(k, v)
         end

@@ -3,6 +3,7 @@ local GetTalentTabInfo = GetTalentTabInfo
 local time             = time
 local gmatch           = gmatch
 local L                = LibStub('AceLocale-3.0'):GetLocale('Groupie')
+local myname           = UnitName("player")
 
 --Return the primary talent spec for either main or dual specialization
 function addon.GetSpecByGroupNum(groupnum)
@@ -196,6 +197,104 @@ function addon.GenerateInstanceToggles(order, instanceType, showMaxLevel, config
     end
 end
 
+--Generate toggles for including friends/ignores from a certain character
+function addon.GenerateFriendToggles(order, myserver, configGroup)
+    local initorder = order
+    --create tables for the current server if needed
+    if addon.db.global.friends[myserver] == nil then
+        addon.db.global.friends[myserver] = {}
+    end
+    if addon.db.global.ignores[myserver] == nil then
+        addon.db.global.ignores[myserver] = {}
+    end
+    if addon.db.global.guilds[myserver] == nil then
+        addon.db.global.guilds[myserver] = {}
+    end
+    if addon.db.global.groupieFriends[myserver] == nil then
+        addon.db.global.groupieFriends[myserver] = {}
+    end
+    if addon.db.global.groupieIgnores[myserver] == nil then
+        addon.db.global.groupieIgnores[myserver] = {}
+    end
+    if addon.db.global.friendnotes[myserver] == nil then
+        addon.db.global.friendnotes[myserver] = {}
+    end
+    if addon.db.global.ignorenotes[myserver] == nil then
+        addon.db.global.ignorenotes[myserver] = {}
+    end
+    if addon.db.global.hiddenFriendLists[myserver] == nil then
+        addon.db.global.hiddenFriendLists[myserver] = {}
+    end
+    if addon.db.global.hiddenGuilds[myserver] == nil then
+        addon.db.global.hiddenGuilds[myserver] = {}
+    end
+
+    for character, list in pairs(addon.db.global.friends[myserver]) do
+        local nameStr = ""
+        addon.options.args[configGroup].args[character .. "toggle"] = {
+            type = "toggle",
+            name = character .. "-" .. myserver,
+            order = initorder,
+            width = "full",
+            get = function(info) return not addon.db.global.hiddenFriendLists[myserver][character] end,
+            set = function(info, val)
+                addon.db.global.hiddenFriendLists[myserver][character] = not val
+                addon.UpdateFriends()
+            end,
+        }
+        initorder = initorder + 1
+    end
+end
+
+--Generate toggles for including friends/ignores from a certain character
+function addon.GenerateGuildToggles(order, myserver, configGroup)
+    local initorder = order
+    --create tables for the current server if needed
+    if addon.db.global.friends[myserver] == nil then
+        addon.db.global.friends[myserver] = {}
+    end
+    if addon.db.global.ignores[myserver] == nil then
+        addon.db.global.ignores[myserver] = {}
+    end
+    if addon.db.global.guilds[myserver] == nil then
+        addon.db.global.guilds[myserver] = {}
+    end
+    if addon.db.global.groupieFriends[myserver] == nil then
+        addon.db.global.groupieFriends[myserver] = {}
+    end
+    if addon.db.global.groupieIgnores[myserver] == nil then
+        addon.db.global.groupieIgnores[myserver] = {}
+    end
+    if addon.db.global.friendnotes[myserver] == nil then
+        addon.db.global.friendnotes[myserver] = {}
+    end
+    if addon.db.global.ignorenotes[myserver] == nil then
+        addon.db.global.ignorenotes[myserver] = {}
+    end
+    if addon.db.global.hiddenFriendLists[myserver] == nil then
+        addon.db.global.hiddenFriendLists[myserver] = {}
+    end
+    if addon.db.global.hiddenGuilds[myserver] == nil then
+        addon.db.global.hiddenGuilds[myserver] = {}
+    end
+
+    for guild, list in pairs(addon.db.global.guilds[myserver]) do
+        local nameStr = list["__NAME__"]
+        addon.options.args[configGroup].args[nameStr .. "toggle"] = {
+            type = "toggle",
+            name = nameStr .. "-" .. myserver,
+            order = initorder,
+            width = "full",
+            get = function(info) return not addon.db.global.hiddenGuilds[myserver][nameStr] end,
+            set = function(info, val)
+                addon.db.global.hiddenGuilds[myserver][nameStr] = not val
+                addon.UpdateFriends()
+            end,
+        }
+        initorder = initorder + 1
+    end
+end
+
 --Remove expired listings from the listing table
 function addon.ExpireListings()
     --Save 20 mins of data for everyone
@@ -306,7 +405,7 @@ end
 --Stored in a double nested table with form:
 --savedInstanceInfo[instanceOrder][playerName]
 function addon.UpdateSavedInstances()
-    local playerName = UnitName("player")
+    local playerName = myname
     local locClass, engClass = UnitClass("player")
     local locale = GetLocale()
     if addon.db.global.savedInstanceLogs[locale] == nil then

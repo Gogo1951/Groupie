@@ -8,6 +8,14 @@ addon.version = tonumber(GetAddOnMetadata(addonName, "Version"))
 addon.friendList = {}
 addon.ignoreList = {}
 
+--Store players we have auto responded to and/or played a notification sound for, so we dont repeat
+addon.autoRespondedRecently = {}
+
+--Sounds for group alerts
+addon.sounds = {
+    ["LFG-DungeonReady"] = 17318
+}
+
 --Message formats for various checked messages
 addon.askForPlayerInfo = format("{rt3} %s : What Role are you?", addonName)
 addon.askForInstance = format("{rt3} %s : What are you inviting me to?", addonName)

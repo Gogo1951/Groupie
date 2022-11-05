@@ -4,6 +4,7 @@ if not addon.tableContains(addon.validLocales, locale) then
 	return
 end
 local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
+local myname = UnitName("player")
 
 -------------------------------
 -- Right Click Functionality --
@@ -34,7 +35,6 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 
 	local myclass = UnitClass("player")
 	local mylevel = UnitLevel("player")
-	local myname = UnitName("player")
 
 	--Find out which spec group is active
 	local specGroup = addon.GetActiveSpecGroup()
@@ -125,7 +125,7 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 end
 
 function addon.SendWCLInfo(targetName, dropdownMenu, which)
-	local myname = UnitName("player")
+
 	local myserver = (GetRealmName()):gsub("[ '`]", "-"):lower() or nil
 	local region = (GetCVar("portal")):lower() or nil
 	local link
@@ -175,7 +175,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 	if unit == "player" and not addon.debugMenus then
 		return
 	end
-	if UnitName("player") == name and not addon.debugMenus then
+	if myname == name and not addon.debugMenus then
 		return
 	end
 
