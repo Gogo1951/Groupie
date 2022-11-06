@@ -2769,9 +2769,12 @@ function addon.UpdateFriends()
         addon.db.global.guilds[myserver][myname] = {}
         addon.db.global.guilds[myserver][myname]["__NAME__"] = myguild
         --Show title in options
-        addon.options.args.globalfriendslist.args.header3.hidden = false
-    else
+    end
+
+    if #addon.db.global.guilds[myserver] < 1 then
         addon.options.args.globalfriendslist.args.header3.hidden = true
+    else
+        addon.options.args.globalfriendslist.args.header3.hidden = false
     end
 
     --Update for the current character
