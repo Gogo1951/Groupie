@@ -104,7 +104,7 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 		isAutoResponseString = "Hey Friend, you can count on me! "
 	end
 
-	local groupieMsg = format("{rt3} %s : %s%s%s %s! %s %s%s %s. %s",
+	local groupieMsg = format("{rt3} %s : %s%s%s %s! %s %s%s %s.  %s",
 		addonName,
 		isAutoResponseString,
 		activeRole,
