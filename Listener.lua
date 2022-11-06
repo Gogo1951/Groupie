@@ -26,11 +26,9 @@ local tinsert = tinsert
 local next = next
 local format = format
 
---Decide whether to auto respond
-function addon.ShouldAutoRespond(author, groupType, order, minlevel, maxlevel)
-    local resting = IsResting()
-    local responseType = addon.db.char.autoResponseOptions[groupType].responseType
 
+--Decide whether we can auto respond OR play a sound
+function addon.CanRespondOrSound(author, order, minlevel, maxlevel)
     -------------------------
     --Dont auto respond if:--
     -------------------------
@@ -63,13 +61,16 @@ function addon.ShouldAutoRespond(author, groupType, order, minlevel, maxlevel)
         local status = GetBattlefieldStatus(i)
         if status and status ~= "none" then return false end
     end
+    return true
+end
+
+--Decide whether to auto respond
+function addon.ShouldAutoRespond(author, groupType)
+    local resting = IsResting()
+    local responseType = addon.db.char.autoResponseOptions[groupType].responseType
 
     --Responses are disabled for this group type
     if responseType == 7 then return false end
-
-    -----------------------------
-    --End Auto response filters--
-    -----------------------------
 
     --These values require the player to be in town
     if responseType == 1 or responseType == 2 or responseType == 3 then
@@ -88,10 +89,29 @@ function addon.ShouldAutoRespond(author, groupType, order, minlevel, maxlevel)
 end
 
 --Decide whether to play an alert sound
-function addon.ShouldPlaySound(author, groupType, order, minlevel, maxlevel)
+function addon.ShouldPlaySound(author, groupType)
     local resting = IsResting()
     local soundType = addon.db.char.autoResponseOptions[groupType].soundType
 
+    --Responses are disabled for this group type
+    if soundType == 9 then return false end
+
+    --These values require the player to be in town
+    if soundType == 1 or soundType == 2 or soundType == 3 or soundType == 4 then
+        if not resting then return false end
+    end
+
+    if soundType == 1 or soundType == 5 then --Global friends
+        if addon.friendList[author] then return true end
+    elseif soundType == 2 or soundType == 6 then --Local friends and guild
+        if addon.db.global.friends[myserver][myname][author] then return true end
+        if addon.db.global.guild[myserver][myname][author] then return true end
+    elseif soundType == 3 or soundType == 7 then --Local friends
+        if addon.db.global.friends[myserver][myname][author] then return true end
+    elseif soundType == 4 or soundType == 8 then --Anyone
+        return true
+    end
+    return false
 end
 
 --Extract a specified language from an LFG message, if it exists
@@ -484,14 +504,15 @@ local function ParseMessage(event, msg, author, _, channel, guid)
 
         --Remove server name from author string
         local shortAuthor = author:gsub("-.+", "")
-
         if optionsGroupType then
-            if addon.ShouldAutoRespond(shortAuthor, optionsGroupType, instanceOrder, minLevel, maxLevel) then
-                addon.SendPlayerInfo(author, nil, nil, fullName, nil, true)
-            end
+            if addon.CanRespondOrSound(shortAuthor, instanceOrder, minLevel, maxLevel) then
+                if addon.ShouldAutoRespond(shortAuthor, optionsGroupType) then
+                    addon.SendPlayerInfo(author, nil, nil, fullName, nil, true)
+                end
 
-            if addon.ShouldPlaySound(shortAuthor, optionsGroupType, instanceOrder, minLevel, maxLevel) then
-                PlaySound(addon.db.char.autoResponseOptions[optionsGroupType].alertSoundID)
+                if addon.ShouldPlaySound(shortAuthor, optionsGroupType) then
+                    PlaySound(addon.db.char.autoResponseOptions[optionsGroupType].alertSoundID)
+                end
             end
         end
     end

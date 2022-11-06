@@ -1076,14 +1076,15 @@ function GroupieGroupBrowser:MapResultToListing(resultID, resultData, leader, me
 
         --Remove server name from author string
         local shortAuthor = author:gsub("-.+", "")
-
         if optionsGroupType then
-          if Groupie.ShouldAutoRespond(shortAuthor, optionsGroupType, order, minLevel, maxLevel) then
-            Groupie.SendPlayerInfo(author, nil, nil, fullName, nil, true)
-          end
+          if Groupie.CanRespondOrSound(shortAuthor, order, minLevel, maxLevel) then
+            if Groupie.ShouldAutoRespond(shortAuthor, optionsGroupType) then
+              Groupie.SendPlayerInfo(author, nil, nil, fullName, nil, true)
+            end
 
-          if Groupie.ShouldPlaySound(shortAuthor, optionsGroupType, order, minLevel, maxLevel) then
-            PlaySound(Groupie.db.char.autoResponseOptions[optionsGroupType].alertSoundID)
+            if Groupie.ShouldPlaySound(shortAuthor, optionsGroupType) then
+              PlaySound(Groupie.db.char.autoResponseOptions[optionsGroupType].alertSoundID)
+            end
           end
         end
       end
