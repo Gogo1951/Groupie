@@ -849,7 +849,7 @@ addon.GroupieDevs = {
     -- TODO
 
     -- Test Accounts
-    ["Player-4728-03F542F0"] = L["TeamMember"], -- Cooltestguy-Benediction
+    ["Player-4395-034E469C"] = L["TeamMember"], -- Cooltestguy-Benediction
 }
 
 addon.groupieAchievementPriorities = {

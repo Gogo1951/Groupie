@@ -1924,8 +1924,8 @@ function addon:OnInitialize()
                     local specName = CI:GetSpecializationName(class, mainSpecIndex)
                     local unspentTalents = (mylevel - 9) > (spec1 + spec2 + spec3)
                     if specName ~= nil then
-                        GameTooltip:AddLine("")
-                        GameTooltip:AddDoubleLine(specName, format("%d/%d/%d", spec1, spec2, spec3))
+                        GameTooltip:AddLine(" ")
+                        GameTooltip:AddDoubleLine(specName, format("%d / %d / %d", spec1, spec2, spec3))
                         if unspentTalents then
                             GameTooltip:AddLine("Unspent Talent Points!", 148, 0, 211)
                         end
@@ -1939,13 +1939,16 @@ function addon:OnInitialize()
                 local ilvl = 0
 
                 if gearScore and gearScore.GearScore > 0 then
-                    GameTooltip:AddDoubleLine(format("Item-level: %d", ilvl),
-                        format("GearScore: %d", gearScore.GearScore))
+                    GameTooltip:AddLine(" ")
+                    GameTooltip:AddDoubleLine(format("Item-level : %d", ilvl),
+                        format("GearScore : %d", gearScore.GearScore))
                 else
-                    GameTooltip:AddLine(format("Item-level: %d", ilvl))
+                    GameTooltip:AddLine(" ")
+                    GameTooltip:AddLine(format("Item-level : %d", ilvl))
                 end
                 --TODO: Item-level: xxx                 GearScore: x,xxx
                 if addon.GroupieDevs[curMouseOver] then
+                    GameTooltip:AddLine(" ")
                     GameTooltip:AddLine(format("|TInterface\\AddOns\\" ..
                         addonName .. "\\Images\\icon64:16:16:0:0|t %s : %s"
                         ,
