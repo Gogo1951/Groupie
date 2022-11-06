@@ -282,7 +282,7 @@ function addon.GenerateGuildToggles(order, myserver, configGroup)
         local nameStr = list["__NAME__"]
         addon.options.args[configGroup].args[nameStr .. "toggle"] = {
             type = "toggle",
-            name = nameStr .. "-" .. myserver,
+            name = "<" .. nameStr .. "> of " .. myserver,
             order = initorder,
             width = "full",
             get = function(info) return not addon.db.global.hiddenGuilds[myserver][nameStr] end,
