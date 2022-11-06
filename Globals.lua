@@ -13,7 +13,7 @@ addon.autoRespondedRecently = {}
 
 --Sounds for group alerts
 addon.sounds = {
-    ["LFG-DungeonReady"] = 17318
+    [17318] = "LFG-DungeonReady"
 }
 
 --Message formats for various checked messages

@@ -2490,14 +2490,27 @@ function addon.SetupConfig()
                         disabled = true, },
                     header7 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. L["CharOptions"].PullGroups,
+                        name = "|cff" .. addon.groupieSystemColor .. "Enable Auto Responses",
                         order = 30,
+                        fontSize = "medium",
+                    },
+                    autorespDesc = {
+                        type = "description",
+                        name = "NOTE: Auto-Response will only fire when you are not already in an arena, battleground, or group of any kind.\n\n    \"Hey Friend, you can count on me!...\"",
+                        order = 31,
+                    },
+
+                    spacerdesc10 = { type = "description", name = " ", width = "full", order = 999 },
+                    header8 = {
+                        type = "description",
+                        name = "|cff" .. addon.groupieSystemColor .. L["CharOptions"].PullGroups,
+                        order = 1000,
                         fontSize = "medium"
                     },
                     channelGuildToggle = {
                         type = "toggle",
                         name = L["text_channels"].Guild,
-                        order = 31,
+                        order = 1001,
                         width = "full",
                         get = function(info) return addon.db.char.useChannels[L["text_channels"].Guild] end,
                         set = function(info, val) addon.db.char.useChannels[L["text_channels"].Guild] = val end,
@@ -2505,7 +2518,7 @@ function addon.SetupConfig()
                     channelGeneralToggle = {
                         type = "toggle",
                         name = L["text_channels"].General,
-                        order = 32,
+                        order = 1002,
                         width = "full",
                         get = function(info) return addon.db.char.useChannels[L["text_channels"].General] end,
                         set = function(info, val) addon.db.char.useChannels[L["text_channels"].General] = val end,
@@ -2513,7 +2526,7 @@ function addon.SetupConfig()
                     channelTradeToggle = {
                         type = "toggle",
                         name = L["text_channels"].Trade,
-                        order = 33,
+                        order = 1003,
                         width = "full",
                         get = function(info) return addon.db.char.useChannels[L["text_channels"].Trade] end,
                         set = function(info, val) addon.db.char.useChannels[L["text_channels"].Trade] = val end,
@@ -2521,7 +2534,7 @@ function addon.SetupConfig()
                     channelLocalDefenseToggle = {
                         type = "toggle",
                         name = L["text_channels"].LocalDefense,
-                        order = 34,
+                        order = 1004,
                         width = "full",
                         get = function(info) return addon.db.char.useChannels[L["text_channels"].LocalDefense] end,
                         set = function(info, val) addon.db.char.useChannels[L["text_channels"].LocalDefense] = val end,
@@ -2529,7 +2542,7 @@ function addon.SetupConfig()
                     channelLookingForGroupToggle = {
                         type = "toggle",
                         name = L["text_channels"].LFG,
-                        order = 35,
+                        order = 1005,
                         width = "full",
                         get = function(info) return addon.db.char.useChannels[L["text_channels"].LFG] end,
                         set = function(info, val) addon.db.char.useChannels[L["text_channels"].LFG] = val end,
@@ -2537,7 +2550,7 @@ function addon.SetupConfig()
                     channel5Toggle = {
                         type = "toggle",
                         name = L["text_channels"].World,
-                        order = 36,
+                        order = 1006,
                         width = "full",
                         get = function(info) return addon.db.char.useChannels[L["text_channels"].World] end,
                         set = function(info, val) addon.db.char.useChannels[L["text_channels"].World] = val end,
@@ -2637,6 +2650,11 @@ function addon.SetupConfig()
     -----------------------------------
     addon.GenerateFriendToggles(10, myserver, "globalfriendslist")
     addon.GenerateGuildToggles(1010, myserver, "globalfriendslist")
+    addon.GenerateAutoResponseOptions(100, "Raid 25", "25", "charoptions")
+    addon.GenerateAutoResponseOptions(150, "Raid 10", "10", "charoptions")
+    addon.GenerateAutoResponseOptions(200, "Heroic Dungeon", "5H", "charoptions")
+    addon.GenerateAutoResponseOptions(250, "Dungeon", "5", "charoptions")
+    addon.GenerateAutoResponseOptions(300, "PVP", "PVP", "charoptions")
 
 
     if not addon.addedToBlizz then

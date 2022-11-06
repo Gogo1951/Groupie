@@ -295,6 +295,170 @@ function addon.GenerateGuildToggles(order, myserver, configGroup)
     end
 end
 
+--Generate dropdowns for all auto response/sound alert options
+function addon.GenerateAutoResponseOptions(order, groupTypeTitle, groupTypeKey, configGroup)
+    local initorder = order
+    --spacer
+    addon.options.args[configGroup].args[tostring(initorder) .. "headerspacer"] = {
+        type = "description",
+        name = " ",
+        width = "full",
+        order = initorder
+    }
+    initorder = initorder + 1
+    --Group Type Title
+    addon.options.args[configGroup].args[tostring(initorder) .. "header"] = {
+        type = "description",
+        name = "|cff" ..
+            addon.groupieSystemColor .. "When a " .. groupTypeTitle ..
+            " Group that Matches Your Filters is Discovered...",
+        width = "full",
+        fontSize = "medium",
+        order = initorder
+    }
+    initorder = initorder + 1
+    --spacer
+    addon.options.args[configGroup].args[tostring(initorder) .. "headerspacer"] = {
+        type = "description",
+        name = " ",
+        width = "full",
+        order = initorder
+    }
+    initorder = initorder + 1
+
+    --indent spacer
+    addon.options.args[configGroup].args[tostring(initorder) .. "indentspacer"] = {
+        type = "description",
+        name = " ",
+        width = 0.2,
+        order = initorder
+    }
+    initorder = initorder + 1
+    --Auto response dropdown
+    addon.options.args[configGroup].args[groupTypeTitle .. "responsedropdown"] = {
+        type = "select",
+        style = "dropdown",
+        name = "",
+        width = 1.8,
+        order = initorder,
+        values = {
+            [1] = "Respond to Global Friends, When in in Town",
+            [2] = "Respond to Local Friends & Guildies, When in in Town",
+            [3] = "Respond to Local Friends, When in in Town",
+            [4] = "Respond to Global Friends",
+            [5] = "Respond to Local Friends & Guildies",
+            [6] = "Respond to Local Friends",
+            [7] = "Disable Auto Responses for Raid 25 Groups",
+        },
+        get = function(info) return addon.db.char.autoResponseOptions[groupTypeKey].responseType end,
+        set = function(info, val) addon.db.char.autoResponseOptions[groupTypeKey].responseType = val end,
+    }
+    initorder = initorder + 1
+    --spacer
+    addon.options.args[configGroup].args[tostring(initorder) .. "headerspacer"] = {
+        type = "description",
+        name = " ",
+        width = "full",
+        order = initorder
+    }
+    initorder = initorder + 1
+    --indent spacer
+    addon.options.args[configGroup].args[tostring(initorder) .. "indentspacer"] = {
+        type = "description",
+        name = " ",
+        width = 0.2,
+        order = initorder
+    }
+    initorder = initorder + 1
+    --Alert sound title
+    addon.options.args[configGroup].args[tostring(initorder) .. "header"] = {
+        type = "description",
+        name = "|cff" ..
+            addon.groupieSystemColor .. "... Play an Alert Sound When a",
+        width = 1.9,
+        fontSize = "medium",
+        order = initorder
+    }
+    initorder = initorder + 1
+    --indent spacer
+    addon.options.args[configGroup].args[tostring(initorder) .. "indentspacer"] = {
+        type = "description",
+        name = " ",
+        width = 0.2,
+        order = initorder
+    }
+    initorder = initorder + 1
+    --Alert sound dropdown
+    addon.options.args[configGroup].args[groupTypeTitle .. "sounddropdown"] = {
+        type = "select",
+        style = "dropdown",
+        name = "",
+        width = 1.8,
+        order = initorder,
+        values = {
+            [1] = "Global Friend Creates a Group, When in in Town",
+            [2] = "Local Friend or Guildie Creates a Group, When in in Town",
+            [3] = "Local Friend Creates a Group, When in in Town",
+            [4] = "Anyone Creates a Group, When in in Town",
+            [5] = "Global Friend Creates a Group",
+            [6] = "Local Friend or Guildie Creates a Group",
+            [7] = "Local Friend Creates a Group",
+            [8] = "Anyone Creates a Group",
+            [9] = "Disable Alert Sounds for Raid 25 Groups",
+        },
+        get = function(info) return addon.db.char.autoResponseOptions[groupTypeKey].soundType end,
+        set = function(info, val) addon.db.char.autoResponseOptions[groupTypeKey].soundType = val end,
+    }
+    initorder = initorder + 1
+    --spacer
+    addon.options.args[configGroup].args[tostring(initorder) .. "headerspacer"] = {
+        type = "description",
+        name = " ",
+        width = "full",
+        order = initorder
+    }
+    initorder = initorder + 1
+    --indent spacer
+    addon.options.args[configGroup].args[tostring(initorder) .. "indentspacer"] = {
+        type = "description",
+        name = " ",
+        width = 0.2,
+        order = initorder
+    }
+    initorder = initorder + 1
+    --Alert sound selection title
+    addon.options.args[configGroup].args[tostring(initorder) .. "header"] = {
+        type = "description",
+        name = "|cff" ..
+            addon.groupieSystemColor .. "... Play Sound",
+        width = 1.9,
+        fontSize = "medium",
+        order = initorder
+    }
+    initorder = initorder + 1
+
+    --indent spacer
+    addon.options.args[configGroup].args[tostring(initorder) .. "indentspacer"] = {
+        type = "description",
+        name = " ",
+        width = 0.2,
+        order = initorder
+    }
+    initorder = initorder + 1
+    --Alert sound selection dropdown
+    addon.options.args[configGroup].args[groupTypeTitle .. "soundiddropdown"] = {
+        type = "select",
+        style = "dropdown",
+        name = "",
+        width = 1.8,
+        order = initorder,
+        values = addon.sounds,
+        get = function(info) return addon.db.char.autoResponseOptions[groupTypeKey].alertSoundID end,
+        set = function(info, val) addon.db.char.autoResponseOptions[groupTypeKey].alertSoundID = val end,
+    }
+    initorder = initorder + 1
+end
+
 --Remove expired listings from the listing table
 function addon.ExpireListings()
     --Save 20 mins of data for everyone

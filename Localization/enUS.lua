@@ -285,7 +285,7 @@ L["InstanceLog"] = {
     ["Name"] = "Missing Data Log",
     ["Desc"] = "Help Groupie!",
 }
-L["InstanceLogInfo"] = "You can help improve Groupie by sharing the data here on our Discord, if promoted to. Thanks!"
+L["InstanceLogInfo"] = "You can help improve Groupie by sharing the data here on our Discord, if prompted to. Thanks!"
 L["About"] = {
     ["Desc"] = "About Groupie",
     ["Paragraph"] = "A better LFG tool for Classic WoW.\n\n\nGroupie was created by Gogo, LemonDrake, Kynura, and Raegen...\n\n...with help from Katz, Aevala, and Fathom.",

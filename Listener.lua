@@ -8,6 +8,7 @@ end
 local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 local myname = UnitName("player")
 local myserver = GetRealmName()
+local mylevel = UnitLevel("player")
 
 local askForPlayerInfo = addon.askForPlayerInfo
 local askForInstance = addon.askForInstance
@@ -26,7 +27,7 @@ local next = next
 local format = format
 
 --Decide whether to auto respond
-local function ShouldAutoRespond(author, groupType, order)
+local function ShouldAutoRespond(author, groupType, order, minlevel, maxlevel)
     local resting = IsResting()
     local responseType = addon.db.char.autoResponseOptions[groupType].responseType
 
@@ -48,7 +49,11 @@ local function ShouldAutoRespond(author, groupType, order)
     if addon.db.char.hideInstances[order] then return false end
 
     --Instance is out of level range
-    --TODO
+    if not minlevel or not maxlevel then return false end --required nil check for non raid/dungeon activities
+    if (minlevel > (mylevel + addon.db.char.recommendedLevelRange)) or
+        maxlevel < mylevel then
+        return false
+    end
 
     --In a group
     if UnitInAnyGroup("player") or IsActiveBattlefieldArena() then return false end
@@ -72,19 +77,21 @@ local function ShouldAutoRespond(author, groupType, order)
     end
 
     --Make sure that we dont auto respond to the same group twice
-    --TODO
+    if addon.autoRespondedRecently[author] then return false end
 
     if responseType == 1 or responseType == 4 then --Global friends
-
+        if addon.friendList[author] then return true end
     elseif responseType == 2 or responseType == 5 then --Local friends and guild
-
+        if addon.db.global.friends[myserver][myname][author] then return true end
+        if addon.db.global.guild[myserver][myname][author] then return true end
     elseif responseType == 3 or responseType == 6 then --Local friends
+        if addon.db.global.friends[myserver][myname][author] then return true end
     end
     return false
 end
 
 --Decide whether to play an alert sound
-local function ShouldPlaySound(author, groupType, order)
+local function ShouldPlaySound(author, groupType, order, minlevel, maxlevel)
     local resting = IsResting()
     local soundType = addon.db.char.autoResponseOptions[groupType].soundType
 
@@ -476,14 +483,21 @@ local function ParseMessage(event, msg, author, _, channel, guid)
     --Remove server name from author string
     local shortAuthor = author:gsub("-.+", "")
 
+    local respondedFlag = false
     if optionsGroupType then
-        if ShouldAutoRespond(shortAuthor, optionsGroupType, instanceOrder) then
-            --TODO: Send auto response whisper
+        if ShouldAutoRespond(shortAuthor, optionsGroupType, instanceOrder, minLevel, maxLevel) then
+            addon.SendPlayerInfo(author, nil, nil, fullName, nil, true)
+            respondedFlag = true
         end
 
-        if ShouldPlaySound(shortAuthor, optionsGroupType, instanceOrder) then
+        if ShouldPlaySound(shortAuthor, optionsGroupType, instanceOrder, minLevel, maxLevel) then
             PlaySound(addon.db.char.autoResponseOptions[optionsGroupType].alertSoundID)
+            respondedFlag = true
         end
+    end
+
+    if respondedFlag then
+        addon.autoRespondedRecently[shortAuthor] = true
     end
 
     return true

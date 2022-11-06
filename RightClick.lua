@@ -9,7 +9,7 @@ local myname = UnitName("player")
 -------------------------------
 -- Right Click Functionality --
 -------------------------------
-function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultID)
+function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultID, isAutoResponse)
 	addon.UpdateSpecOptions()
 	--Calculate average itemlevel
 	local iLevelSum = 0
@@ -99,8 +99,14 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 		lvlStr = "Level " .. tostring(mylevel)
 	end
 
-	local groupieMsg = format("{rt3} %s : %s%s %s! %s %s%s %s. %s",
+	local isAutoResponseString = ""
+	if isAutoResponse then
+		isAutoResponseString = "Hey Friend, you can count on me! "
+	end
+
+	local groupieMsg = format("{rt3} %s : %s%s%s %s! %s %s%s %s. %s",
 		addonName,
+		isAutoResponseString,
 		activeRole,
 		otherRoleMsg,
 		lfgStr,
