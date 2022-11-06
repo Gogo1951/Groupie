@@ -8,9 +8,6 @@ addon.version = tonumber(GetAddOnMetadata(addonName, "Version"))
 addon.friendList = {}
 addon.ignoreList = {}
 
---Store players we have auto responded to and/or played a notification sound for, so we dont repeat
-addon.autoRespondedRecently = {}
-
 --Sounds for group alerts
 addon.sounds = {
     [17318] = "LFG-DungeonReady"

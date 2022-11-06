@@ -1030,6 +1030,11 @@ function GroupieGroupBrowser:MapResultToListing(resultID, resultData, leader, me
       msg = self:CreateMsg(isLFM, isLFG, groupieInstanceName, isHeroic, groupSize, numMembers, lootType, minLevel,
         maxLevel,
         membercounts.TANK_REMAINING, membercounts.HEALER_REMAINING, membercounts.DAMAGER_REMAINING, leader[2])
+
+      local isNewListing = false
+      if listingTable[author] == nil then
+        isNewListing = true
+      end
       listingTable[author] = listingTable[author] or {}
       listingTable[author].isLFM = isLFM
       listingTable[author].isLFG = isLFG
@@ -1053,6 +1058,35 @@ function GroupieGroupBrowser:MapResultToListing(resultID, resultData, leader, me
       listingTable[author].resultID = resultID -- new field only for GroupBrowser listings, we can use it to add C_LFGList.RequestInvite(resultID) functionality to the LFG button for those listings.
       GroupieGroupBrowser:SendMessage("GROUPIE_GROUPBROWSER_UPDATE", resultID)
       -- We can Groupie:RegisterMessage("GROUPIE_GROUPBROWSER_UPDATE", callback) and do something in our callback function when a listing is added from this module
+
+      if isNewListing then --If the listing is new, we can autoRespond
+        --Find the group type string for auto response options
+        local optionsGroupType = nil
+        if lootType == "PVP" then
+          optionsGroupType = "PVP"
+        elseif groupSize == 25 and lootType ~= "Other" then
+          optionsGroupType = "25"
+        elseif groupSize == 10 and lootType ~= "Other" then
+          optionsGroupType = "10"
+        elseif groupSize == 5 and isHeroic == true and lootType ~= "Other" then
+          optionsGroupType = "5H"
+        elseif groupSize == 5 and lootType ~= "Other" then
+          optionsGroupType = "5"
+        end
+
+        --Remove server name from author string
+        local shortAuthor = author:gsub("-.+", "")
+
+        if optionsGroupType then
+          if Groupie.ShouldAutoRespond(shortAuthor, optionsGroupType, order, minLevel, maxLevel) then
+            Groupie.SendPlayerInfo(author, nil, nil, fullName, nil, true)
+          end
+
+          if Groupie.ShouldPlaySound(shortAuthor, optionsGroupType, order, minLevel, maxLevel) then
+            PlaySound(Groupie.db.char.autoResponseOptions[optionsGroupType].alertSoundID)
+          end
+        end
+      end
     end
   end
 end

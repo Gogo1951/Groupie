@@ -27,7 +27,7 @@ local next = next
 local format = format
 
 --Decide whether to auto respond
-local function ShouldAutoRespond(author, groupType, order, minlevel, maxlevel)
+function addon.ShouldAutoRespond(author, groupType, order, minlevel, maxlevel)
     local resting = IsResting()
     local responseType = addon.db.char.autoResponseOptions[groupType].responseType
 
@@ -76,9 +76,6 @@ local function ShouldAutoRespond(author, groupType, order, minlevel, maxlevel)
         if not resting then return false end
     end
 
-    --Make sure that we dont auto respond to the same group twice
-    if addon.autoRespondedRecently[author] then return false end
-
     if responseType == 1 or responseType == 4 then --Global friends
         if addon.friendList[author] then return true end
     elseif responseType == 2 or responseType == 5 then --Local friends and guild
@@ -91,7 +88,7 @@ local function ShouldAutoRespond(author, groupType, order, minlevel, maxlevel)
 end
 
 --Decide whether to play an alert sound
-local function ShouldPlaySound(author, groupType, order, minlevel, maxlevel)
+function addon.ShouldPlaySound(author, groupType, order, minlevel, maxlevel)
     local resting = IsResting()
     local soundType = addon.db.char.autoResponseOptions[groupType].soundType
 
@@ -423,10 +420,13 @@ local function ParseMessage(event, msg, author, _, channel, guid)
         rolesNeeded = { 1, 2, 3, 4 }
     end
 
+
+    local isNewListing = false
     --Create a new entry for the author if one doesnt exist
     --Used in listing board to prevent jumpy data by default
     if addon.db.global.listingTable[author] == nil or addon.db.global.listingTable[author].resultID ~= nil then
         addon.db.global.listingTable[author] = {}
+        isNewListing = true
     end
     if addon.db.global.listingTable[author].createdat == nil then
         --Set the created time if it isnt already set
@@ -467,37 +467,33 @@ local function ParseMessage(event, msg, author, _, channel, guid)
     addon.db.global.listingTable[author].classColor = classColor
     addon.db.global.listingTable[author].resultID = nil -- Required to prevent /4 listings from being overwritten by LFG listings
 
-    --Find the group type string for auto response options
-    local optionsGroupType = nil
-    if lootType == "PVP" then
-        optionsGroupType = "PVP"
-    elseif groupSize == 25 and lootType ~= "Other" then
-        optionsGroupType = "25"
-    elseif groupSize == 10 and lootType ~= "Other" then
-        optionsGroupType = "10"
-    elseif groupSize == 5 and isHeroic == true and lootType ~= "Other" then
-        optionsGroupType = "5H"
-    elseif groupSize == 5 and lootType ~= "Other" then
-        optionsGroupType = "5"
-    end
-    --Remove server name from author string
-    local shortAuthor = author:gsub("-.+", "")
-
-    local respondedFlag = false
-    if optionsGroupType then
-        if ShouldAutoRespond(shortAuthor, optionsGroupType, instanceOrder, minLevel, maxLevel) then
-            addon.SendPlayerInfo(author, nil, nil, fullName, nil, true)
-            respondedFlag = true
+    if isNewListing then --If the listing is new, we can autoRespond
+        --Find the group type string for auto response options
+        local optionsGroupType = nil
+        if lootType == "PVP" then
+            optionsGroupType = "PVP"
+        elseif groupSize == 25 and lootType ~= "Other" then
+            optionsGroupType = "25"
+        elseif groupSize == 10 and lootType ~= "Other" then
+            optionsGroupType = "10"
+        elseif groupSize == 5 and isHeroic == true and lootType ~= "Other" then
+            optionsGroupType = "5H"
+        elseif groupSize == 5 and lootType ~= "Other" then
+            optionsGroupType = "5"
         end
 
-        if ShouldPlaySound(shortAuthor, optionsGroupType, instanceOrder, minLevel, maxLevel) then
-            PlaySound(addon.db.char.autoResponseOptions[optionsGroupType].alertSoundID)
-            respondedFlag = true
-        end
-    end
+        --Remove server name from author string
+        local shortAuthor = author:gsub("-.+", "")
 
-    if respondedFlag then
-        addon.autoRespondedRecently[shortAuthor] = true
+        if optionsGroupType then
+            if addon.ShouldAutoRespond(shortAuthor, optionsGroupType, instanceOrder, minLevel, maxLevel) then
+                addon.SendPlayerInfo(author, nil, nil, fullName, nil, true)
+            end
+
+            if addon.ShouldPlaySound(shortAuthor, optionsGroupType, instanceOrder, minLevel, maxLevel) then
+                PlaySound(addon.db.char.autoResponseOptions[optionsGroupType].alertSoundID)
+            end
+        end
     end
 
     return true
