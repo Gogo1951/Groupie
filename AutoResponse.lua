@@ -11,7 +11,8 @@ local time = time
 addon.recentPlayers = {}
 local askForPlayerInfo = addon.askForPlayerInfo
 local askForInstance = addon.askForInstance
-local autoReject = addon.autoReject
+local autoRejectInviteString = addon.autoRejectInviteString
+local autoRejectRequestString = addon.autoRejectRequestString
 
 --Clear table entries more than 1 minute old
 local function expireRecentPlayers()
@@ -50,7 +51,7 @@ local function RespondToInvite(_, author)
     if addon.recentPlayers[author] == nil and listedLFG then
         local msg = askForInstance
         if addon.db.char.autoRejectInvites then
-            msg = msg .. " " .. autoReject
+            msg = msg .. " " .. addon.autoRejectInviteString
         end
         SendChatMessage(msg, "WHISPER", "COMMON", author)
         addon.recentPlayers[author] = time()
@@ -75,7 +76,7 @@ local function RespondToRequest(_, msg, ...)
         if addon.recentPlayers[author] == nil and listedLFG then
             local msg = askForPlayerInfo
             if addon.db.char.autoRejectRequests then
-                msg = msg .. " " .. autoReject
+                msg = msg .. " " .. addon.autoRejectRequestString
             end
             SendChatMessage(msg, "WHISPER", "COMMON", author)
             addon.recentPlayers[author] = time()
