@@ -2441,7 +2441,7 @@ function addon.SetupConfig()
                         type = "description",
                         name = "|cff" ..
                             addon.groupieSystemColor ..
-                            "(Yellow Title) Auto-Respond : When someone Invites you to their group, without messaging you first...",
+                            "Auto-Respond : When someone Invites you to their group, without messaging you first...",
                         order = 22,
                         fontSize = "medium"
                     },
@@ -2838,6 +2838,8 @@ function addon.UpdateFriends()
             end
         end
     end
+    addon.GenerateFriendToggles(10, myserver, "globalfriendslist")
+    addon.GenerateGuildToggles(1010, myserver, "globalfriendslist")
 end
 
 -------------------
