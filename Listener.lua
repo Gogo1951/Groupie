@@ -185,50 +185,46 @@ local function GetDungeons(messageWords)
             --        instance = lookupAttempt
             --    end
             --end
-        elseif instance == nil then -- We shouldn't try matching for instance+heroic+size patterns if we've already found one
+        elseif instance == nil or addon.tableContains(addon.edgeCasePatterns, lastUsedToken) then -- We shouldn't try matching for instance+heroic+size patterns if we've already found one
             --If we couldn't recognize an instance, try removing heroic/size patterns from the start and end of the word
             for key, val in pairs(addon.groupieVersionPatterns) do
                 if addon.EndsWith(word, key) then
                     lookupAttempt = addon.groupieInstancePatterns[strsub(word, 1, #word - #key)]
                     if lookupAttempt ~= nil then
-                        local validVersion, _ = isValidVersion(lookupAttempt, forceSize, isHeroic)
-                        if validVersion then
-                            instance = lookupAttempt
-                            if val == 0 then
-                                isHeroic = true
-                            elseif val == 1 then
-                                forceSize = 10
-                            elseif val == 2 then
-                                forceSize = 25
-                            elseif val == 3 then
-                                isHeroic = true
-                                forceSize = 10
-                            elseif val == 4 then
-                                isHeroic = true
-                                forceSize = 25
-                            end
+                        --local validVersion, _ = isValidVersion(lookupAttempt, forceSize, isHeroic)
+                        instance = lookupAttempt
+                        if val == 0 then
+                            isHeroic = true
+                        elseif val == 1 then
+                            forceSize = 10
+                        elseif val == 2 then
+                            forceSize = 25
+                        elseif val == 3 then
+                            isHeroic = true
+                            forceSize = 10
+                        elseif val == 4 then
+                            isHeroic = true
+                            forceSize = 25
                         end
                     end
                 end
                 if addon.StartsWith(word, key) then
                     lookupAttempt = addon.groupieInstancePatterns[strsub(word, 1 + #key, #word)]
                     if lookupAttempt ~= nil then
-                        local validVersion, _ = isValidVersion(lookupAttempt, forceSize, isHeroic)
-                        if validVersion then
-                            instance = lookupAttempt
-                            if val == 0 then
-                                isHeroic = true
-                            elseif val == 1 then
-                                forceSize = 10
-                            elseif val == 2 then
-                                forceSize = 25
-                            elseif val == 3 then
-                                isHeroic = true
-                                forceSize = 10
-                            elseif val == 4 then
-                                isHeroic = true
-                                forceSize = 25
-                            end
+                        --local validVersion, _ = isValidVersion(lookupAttempt, forceSize, isHeroic)
+                        instance = lookupAttempt
+                        if val == 0 then
+                            isHeroic = true
+                        elseif val == 1 then
+                            forceSize = 10
+                        elseif val == 2 then
+                            forceSize = 25
+                        elseif val == 3 then
+                            isHeroic = true
+                            forceSize = 10
+                        elseif val == 4 then
+                            isHeroic = true
+                            forceSize = 25
                         end
                     end
                 end
