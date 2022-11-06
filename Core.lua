@@ -3,10 +3,13 @@ local locale                       = GetLocale()
 local addon                        = LibStub("AceAddon-3.0"):NewAddon(Groupie, addonName, "AceEvent-3.0",
     "AceConsole-3.0",
     "AceTimer-3.0")
+local CI                           = LibStub("LibClassicInspector")
+local LGS                          = LibStub:GetLibrary("LibGearScore.1000", true)
 local L                            = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 local localizedClass, englishClass = UnitClass("player")
 local myserver                     = GetRealmName()
 local myname                       = UnitName("player")
+local mylevel                      = UnitLevel("player")
 
 -------------------------
 --Unsupported Locale UI--
@@ -1914,6 +1917,34 @@ function addon:OnInitialize()
         if unittype then
             local curMouseOver = UnitGUID(unittype)
             if curMouseOver then
+                local spec1, spec2, spec3 = CI:GetTalentPoints(curMouseOver)
+                local _, class = GetPlayerInfoByGUID(curMouseOver)
+                local mainSpecIndex, pointsSpent = CI:GetSpecialization(curMouseOver)
+                if mainSpecIndex then
+                    local specName = CI:GetSpecializationName(class, mainSpecIndex)
+                    local unspentTalents = (mylevel - 9) > (spec1 + spec2 + spec3)
+                    if specName ~= nil then
+                        GameTooltip:AddLine("")
+                        GameTooltip:AddDoubleLine(specName, format("%d/%d/%d", spec1, spec2, spec3))
+                        if unspentTalents then
+                            GameTooltip:AddLine("Unspent Talent Points!", 148, 0, 211)
+                        end
+                    end
+                end
+
+                if CI:CanInspect(curMouseOver) then
+                    CI:DoInspect(curMouseOver)
+                end
+                local guid, gearScore = LGS:GetScore(curMouseOver)
+                local ilvl = 0
+
+                if gearScore and gearScore.GearScore > 0 then
+                    GameTooltip:AddDoubleLine(format("Item-level: %d", ilvl),
+                        format("GearScore: %d", gearScore.GearScore))
+                else
+                    GameTooltip:AddLine(format("Item-level: %d", ilvl))
+                end
+                --TODO: Item-level: xxx                 GearScore: x,xxx
                 if addon.GroupieDevs[curMouseOver] then
                     GameTooltip:AddLine(format("|TInterface\\AddOns\\" ..
                         addonName .. "\\Images\\icon64:16:16:0:0|t %s : %s"
