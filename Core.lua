@@ -1717,7 +1717,9 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
     OnTooltipShow = function(tooltip)
         addon.ExpireSavedInstances()
         local now = time()
-        tooltip:AddLine(addonName .. " - v" .. tostring(addon.version))
+        --tooltip:AddLine(addonName .. " - v" .. tostring(addon.version))
+        tooltip:AddDoubleLine(addonName, tostring(addon.version),
+            1, 0.85, 0.00, 1, 0.85, 0.00)
         tooltip:AddLine(L["slogan"], 255, 255, 255, false)
         tooltip:AddLine(" ")
         tooltip:AddLine(L["Click"] ..
