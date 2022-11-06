@@ -82,17 +82,20 @@ local function RespondToRequest(_, msg, ...)
             addon.recentPlayers[author] = time()
         end
     elseif strmatch(msg, "could not accept because you are already in a group") then
-        if not addon.db.char.autoRespondInvites then
-            return
-        end
-
-        local author = msg:gsub("%|Hplayer:", ""):gsub("%|h.+", "")
-
-        --Not someone recently spoken to
-        if addon.recentPlayers[author] == nil and listedLFG then
-            SendChatMessage(askForInstance, "WHISPER", "COMMON", author)
-            addon.recentPlayers[author] = time()
-        end
+        --Decided not to auto respond in this situation. If you are already
+        --in a group you likely dont care what they are inviting you to anymore
+        return
+        --if not addon.db.char.autoRespondInvites then
+        --    return
+        --end
+        --
+        --local author = msg:gsub("%|Hplayer:", ""):gsub("%|h.+", "")
+        --
+        ----Not someone recently spoken to
+        --if addon.recentPlayers[author] == nil and listedLFG then
+        --    SendChatMessage(askForInstance, "WHISPER", "COMMON", author)
+        --    addon.recentPlayers[author] = time()
+        --end
     end
 end
 
