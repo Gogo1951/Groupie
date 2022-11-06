@@ -19,7 +19,8 @@ addon.sounds = {
 --Message formats for various checked messages
 addon.askForPlayerInfo = format("{rt3} %s : What Role are you?", addonName)
 addon.askForInstance = format("{rt3} %s : What are you inviting me to?", addonName)
-addon.autoReject = "FYI, I have Auto-Reject enabled. Message me back and if it's a good fit I'll send you an invite. Thanks!"
+addon.autoRejectRequestString = "FYI, I have Auto-Reject enabled. Message me back and if it's a good fit I'll send you an invite. Thanks!"
+addon.autoRejectInviteString = "FYI, I have Auto-Reject enabled. Message me back and if it's a good fit I'll come. Thanks!""
 addon.PROTECTED_TOKENS = {
     [1] = "%s*{rt3}%s*groupie%s*:",
     [2] = "%s*groupie%s*{rt3}%s*:",
