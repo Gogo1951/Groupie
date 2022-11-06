@@ -1842,12 +1842,12 @@ function addon:OnInitialize()
                     alertSoundID = 17318,
                 },
                 ["5H"] = {
-                    responseType = 0,
+                    responseType = 1,
                     soundType = 5,
                     alertSoundID = 17318,
                 },
                 ["5"] = {
-                    responseType = 0,
+                    responseType = 1,
                     soundType = 5,
                     alertSoundID = 17318,
                 },
