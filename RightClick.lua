@@ -83,7 +83,7 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 					if completed then
 						local achieveLink = GetAchievementLink(priorities[i])
 						if achieveLink then
-							achieveLinkStr = " " .. achieveLink
+							achieveLinkStr = "  " .. achieveLink
 						end
 					end
 				end
@@ -104,7 +104,7 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 		isAutoResponseString = "Hey Friend, you can count on me! "
 	end
 
-	local groupieMsg = format("{rt3} %s : %s%s%s %s! %s %s%s %s.  %s",
+	local groupieMsg = format("{rt3} %s : %s%s%s %s! %s %s%s %s. %s",
 		addonName,
 		isAutoResponseString,
 		activeRole,
