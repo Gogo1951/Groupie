@@ -692,3 +692,22 @@ function addon.StringHash(text)
     local numhash = math.fmod(counter, 4294967291) -- 2^32 - 5: Prime (and different from the prime in the loop)
     return strsub(format("%x", numhash), -4)
 end
+
+--Return a string of 3 raid target icons from the hash of a given string input
+--From https://wowwiki-archive.fandom.com/wiki/USERAPI_StringHash
+function addon.RTHash(text)
+    local counter = 1
+    local len = string.len(text)
+    for i = 1, len, 3 do
+        counter = math.fmod(counter * 8161, 4294967279) + -- 2^32 - 17: Prime!
+            (string.byte(text, i) * 16776193) +
+            ((string.byte(text, i + 1) or (len - i + 256)) * 8372226) +
+            ((string.byte(text, i + 2) or (len - i + 256)) * 3932164)
+    end
+    local numhash = math.fmod(counter, 4294967291) -- 2^32 - 5: Prime (and different from the prime in the loop)
+    local strhash = format("%x", numhash)
+    local char1 = tonumber(strsub(strhash, -3, -3), 16) % 8 + 1
+    local char2 = tonumber(strsub(strhash, -2, -2), 16) % 8 + 1
+    local char3 = tonumber(strsub(strhash, -1, -1), 16) % 8 + 1
+    return format("{rt%d}{rt%d}{rt%d}", char1, char2, char3)
+end

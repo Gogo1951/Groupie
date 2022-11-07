@@ -122,8 +122,16 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 	)
 
 	--Hash the message and attach the suffix of the hash
+	------------
+	--Old Hash--
+	------------
 	local msgHash = addon.StringHash(myname .. groupieMsg)
 	groupieMsg = format("%s [#%s]", groupieMsg, msgHash)
+	------------
+	--New Hash--
+	------------
+	--local msgHash = addon.RTHash(myname .. groupieMsg)
+	--groupieMsg = format("%s %s", groupieMsg, msgHash)
 
 	--Sending Current Spec Info
 	if which == "BN_FRIEND" then
@@ -147,8 +155,17 @@ function addon.SendWCLInfo(targetName, dropdownMenu, which)
 	local groupieMsg = "{rt3} " .. addonName .. " : Check My Parses on Warcraft Logs " .. link
 
 	--Hash the message and attach the suffix of the hash
+	------------
+	--Old Hash--
+	------------
 	local msgHash = addon.StringHash(myname .. groupieMsg)
 	groupieMsg = format("%s [#%s]", groupieMsg, msgHash)
+	------------
+	--New Hash--
+	------------
+	--local msgHash = addon.RTHash(myname .. groupieMsg)
+	--groupieMsg = format("%s %s", groupieMsg, msgHash)
+
 
 	if which == "BN_FRIEND" then
 		BNSendWhisper(dropdownMenu.accountInfo.bnetAccountID, groupieMsg)
