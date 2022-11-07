@@ -580,7 +580,6 @@ local function WhisperListener(_, msg, longAuthor, ...)
                     --Fake found
                     if hashCalculated ~= hashRecieved then
                         flag1 = true
-                        print(1)
                     end
                     ------------
                     --New Hash--
@@ -592,7 +591,6 @@ local function WhisperListener(_, msg, longAuthor, ...)
                     --Fake found
                     if hashCalculated ~= hashRecieved then
                         flag2 = true
-                        print(2)
                     end
                     if flag1 and flag2 then
                         SendChatMessage(WARNING_MESSAGE, "WHISPER", "COMMON", longAuthor)

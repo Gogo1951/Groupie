@@ -3,9 +3,11 @@ local locale = GetLocale()
 if not addon.tableContains(addon.validLocales, locale) then
 	return
 end
-local L      = LibStub('AceLocale-3.0'):GetLocale('Groupie')
-local LGS    = LibStub:GetLibrary("LibGearScore.1000", true)
-local myname = UnitName("player")
+local L       = LibStub('AceLocale-3.0'):GetLocale('Groupie')
+local LGS     = LibStub:GetLibrary("LibGearScore.1000", true)
+local myname  = UnitName("player")
+local myclass = UnitClass("player")
+local mylevel = UnitLevel("player")
 
 -------------------------------
 -- Right Click Functionality --
@@ -34,8 +36,7 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 	end
 	local averageiLevel = floor(iLevelSum / 17)
 
-	local myclass = UnitClass("player")
-	local mylevel = UnitLevel("player")
+
 
 	--Find out which spec group is active
 	local specGroup = addon.GetActiveSpecGroup()
@@ -94,7 +95,7 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 
 	local lvlStr = ""
 	--Show ilvl or gearscore or level
-	if addon.db.char.LFGMsgGearType == 1 then
+	if mylevel < 80 or addon.db.char.LFGMsgGearType == 1 then
 		lvlStr = "Level " .. tostring(mylevel)
 	elseif addon.db.char.LFGMsgGearType == 2 then
 		lvlStr = "Item-Level " .. tostring(averageiLevel)

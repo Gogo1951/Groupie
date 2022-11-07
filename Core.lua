@@ -1815,7 +1815,7 @@ function addon:OnInitialize()
             ignoreSavedInstances = true,
             ignoreLFM = false,
             ignoreLFG = true,
-            LFGMsgGearType = 1,
+            LFGMsgGearType = 3,
             --Auto Response Types:
             -- 1 : Respond to Global Friends, but only when You are in Town
             -- 2 : Respond to Local Friends & Guildies, but only when You are in Town
