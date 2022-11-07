@@ -3,7 +3,8 @@ local locale = GetLocale()
 if not addon.tableContains(addon.validLocales, locale) then
 	return
 end
-local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
+local L      = LibStub('AceLocale-3.0'):GetLocale('Groupie')
+local LGS    = LibStub:GetLibrary("LibGearScore.1000", true)
 local myname = UnitName("player")
 
 -------------------------------
@@ -92,11 +93,14 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 	end
 
 	local lvlStr = ""
-	--Show ilvl for level 70/80 players, otherwise show level
-	if mylevel == 80 then
-		lvlStr = "Item-Level " .. tostring(averageiLevel)
-	else
+	--Show ilvl or gearscore or level
+	if addon.db.char.LFGMsgGearType == 1 then
 		lvlStr = "Level " .. tostring(mylevel)
+	elseif addon.db.char.LFGMsgGearType == 2 then
+		lvlStr = "Item-Level " .. tostring(averageiLevel)
+	elseif addon.db.char.LFGMsgGearType == 3 then
+		local guid, gearScore = LGS:GetScore("player")
+		lvlStr = "GearScore " .. tostring(gearScore.GearScore)
 	end
 
 	local isAutoResponseString = ""

@@ -1815,6 +1815,7 @@ function addon:OnInitialize()
             ignoreSavedInstances = true,
             ignoreLFM = false,
             ignoreLFG = true,
+            LFGMsgGearType = 1,
             --Auto Response Types:
             -- 1 : Respond to Global Friends, but only when You are in Town
             -- 2 : Respond to Local Friends & Guildies, but only when You are in Town
@@ -2390,26 +2391,53 @@ function addon.SetupConfig()
                         get = function(info) return addon.db.char.groupieSpec2Role end,
                     },
                     spacerdesc3 = { type = "description", name = " ", width = "full", order = 7 },
+                    headerLFG = {
+                        type = "description",
+                        name = "|cff" .. addon.groupieSystemColor .. "LFG Messages",
+                        order = 8,
+                        fontSize = "medium"
+                    },
+                    spacerdescLFG = { type = "description", name = " ", width = "full", order = 9 },
+                    descLFG = {
+                        type = "description",
+                        name = "LFG Messages sent before Max Level will always show your Character Level.\n\nAt Max Level, show:",
+                        order = 10,
+                    },
+                    LFGMsgDropdown = {
+                        type = "select",
+                        style = "dropdown",
+                        name = "",
+                        order = 11,
+                        width = 1.4,
+                        values = {
+                            [1] = "Character Level",
+                            [2] = "Item-Level",
+                            [3] = "GearScore"
+                        },
+                        set = function(info, val) addon.db.char.LFGMsgGearType = val end,
+                        get = function(info) return addon.db.char.LFGMsgGearType end,
+                    },
+                    spacerdescLFG2 = { type = "description", name = " ", width = "full", order = 12 },
                     otherRoleToggle = {
                         type = "toggle",
                         name = L["CharOptions"].OtherRole,
-                        order = 8,
+                        order = 13,
                         width = "full",
                         get = function(info) return addon.db.char.sendOtherRole end,
                         set = function(info, val) addon.db.char.sendOtherRole = val end,
                     },
-                    spacerdesc4 = { type = "description", name = " ", width = "full", order = 9 },
+                    spacerdesc4 = { type = "description", name = " ", width = "full", order = 14 },
                     header4 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. L["CharOptions"].DungeonLevelRange,
-                        order = 10,
+                        order = 15,
                         fontSize = "medium"
                     },
                     recLevelDropdown = {
                         type = "select",
                         style = "dropdown",
                         name = "",
-                        order = 11,
+                        order = 16,
                         width = 1.4,
                         values = {
                             [0] = L["CharOptions"].recLevelDropdown["0"],
@@ -2420,11 +2448,11 @@ function addon.SetupConfig()
                         set = function(info, val) addon.db.char.recommendedLevelRange = val end,
                         get = function(info) return addon.db.char.recommendedLevelRange end,
                     },
-                    spacerdesc5 = { type = "description", name = " ", width = "full", order = 12 },
+                    spacerdesc5 = { type = "description", name = " ", width = "full", order = 17 },
                     header5 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. addonName .. " " .. L["CharOptions"].AutoResponse,
-                        order = 13,
+                        order = 18,
                         fontSize = "medium",
                         hidden = true,
                         disabled = true,
@@ -2432,7 +2460,7 @@ function addon.SetupConfig()
                     autoFriendsToggle = {
                         type = "toggle",
                         name = L["CharOptions"].AutoFriends,
-                        order = 14,
+                        order = 19,
                         width = "full",
                         get = function(info) return addon.db.char.autoRespondFriends end,
                         set = function(info, val) addon.db.char.autoRespondFriends = val end,
@@ -2442,32 +2470,32 @@ function addon.SetupConfig()
                     autoGuildToggle = {
                         type = "toggle",
                         name = L["CharOptions"].AutoGuild,
-                        order = 15,
+                        order = 20,
                         width = "full",
                         get = function(info) return addon.db.char.autoRespondGuild end,
                         set = function(info, val) addon.db.char.autoRespondGuild = val end,
                         hidden = true,
                         disabled = true,
                     },
-                    spacerdesc6 = { type = "description", name = " ", width = "full", order = 16 },
+                    spacerdesc6 = { type = "description", name = " ", width = "full", order = 21 },
                     respondRequestHeader = {
                         type = "description",
                         name = "|cff" ..
                             addon.groupieSystemColor ..
                             "Auto-Respond : When someone Requests to Join your group, without messaging you first...",
-                        order = 17,
+                        order = 22,
                         fontSize = "medium"
                     },
                     respondRequestDesc = {
                         type = "description",
                         name = "Note: This will only engage when you are listed in the LFG Tool.",
                         width = "full",
-                        order = 18,
+                        order = 23,
                     },
                     autoRequestResponseToggle = {
                         type = "toggle",
                         name = "Auto Response with, \"What Role are you?...\"",
-                        order = 19,
+                        order = 24,
                         width = "full",
                         get = function(info) return addon.db.char.autoRespondRequests end,
                         set = function(info, val) addon.db.char.autoRespondRequests = val end,
@@ -2475,30 +2503,30 @@ function addon.SetupConfig()
                     autoRequestRejectToggle = {
                         type = "toggle",
                         name = "...and Reject Request",
-                        order = 20,
+                        order = 25,
                         width = "full",
                         get = function(info) return addon.db.char.autoRejectRequests end,
                         set = function(info, val) addon.db.char.autoRejectRequests = val end,
                     },
-                    spacerdesc7 = { type = "description", name = " ", width = "full", order = 21 },
+                    spacerdesc7 = { type = "description", name = " ", width = "full", order = 26 },
                     respondInviteHeader = {
                         type = "description",
                         name = "|cff" ..
                             addon.groupieSystemColor ..
                             "Auto-Respond : When someone Invites you to their group, without messaging you first...",
-                        order = 22,
+                        order = 27,
                         fontSize = "medium"
                     },
                     respondInviteDesc = {
                         type = "description",
                         name = "Note: This will only engage when you are listed in the LFG Tool.",
                         width = "full",
-                        order = 23,
+                        order = 28,
                     },
                     autoInviteResponseToggle = {
                         type = "toggle",
                         name = "Auto Response with, \"What's this Invite for?...\"",
-                        order = 24,
+                        order = 29,
                         width = "full",
                         get = function(info) return addon.db.char.autoRespondInvites end,
                         set = function(info, val) addon.db.char.autoRespondInvites = val end,
@@ -2506,17 +2534,17 @@ function addon.SetupConfig()
                     autoInviteRejectToggle = {
                         type = "toggle",
                         name = "...and Reject Request",
-                        order = 25,
+                        order = 30,
                         width = "full",
                         get = function(info) return addon.db.char.autoRejectInvites end,
                         set = function(info, val) addon.db.char.autoRejectInvites = val end,
                     },
 
-                    spacerdesc8 = { type = "description", name = " ", width = "full", order = 26 },
+                    spacerdesc8 = { type = "description", name = " ", width = "full", order = 31 },
                     header6 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. addonName .. " " .. L["CharOptions"].AfterParty,
-                        order = 27,
+                        order = 32,
                         fontSize = "medium",
                         hidden = true,
                         disabled = true,
@@ -2524,26 +2552,26 @@ function addon.SetupConfig()
                     afterPartyToggle = {
                         type = "toggle",
                         name = "Enable " .. addonName .. " " .. L["CharOptions"].AfterParty,
-                        order = 28,
+                        order = 33,
                         width = "full",
                         get = function(info) return addon.db.char.afterParty end,
                         set = function(info, val) addon.db.char.afterParty = val end,
                         hidden = true,
                         disabled = true,
                     },
-                    spacerdesc9 = { type = "description", name = " ", width = "full", order = 29,
+                    spacerdesc9 = { type = "description", name = " ", width = "full", order = 34,
                         hidden = true,
                         disabled = true, },
                     header7 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. "Enable Auto Responses",
-                        order = 30,
+                        order = 35,
                         fontSize = "medium",
                     },
                     autorespDesc = {
                         type = "description",
                         name = "NOTE: Auto-Response will only fire when you are not already in an arena, battleground, or group of any kind.\n\n    \"Hey Friend, you can count on me!...\"",
-                        order = 31,
+                        order = 36,
                     },
 
                     spacerdesc10 = { type = "description", name = " ", width = "full", order = 999 },
