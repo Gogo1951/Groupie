@@ -1917,35 +1917,37 @@ function addon:OnInitialize()
         if unittype then
             local curMouseOver = UnitGUID(unittype)
             if curMouseOver then
-                --Talents/Spec Information
-                local spec1, spec2, spec3 = CI:GetTalentPoints(curMouseOver)
-                local _, class = GetPlayerInfoByGUID(curMouseOver)
-                local playerLevel = UnitLevel(unittype)
-                local mainSpecIndex, pointsSpent = CI:GetSpecialization(curMouseOver)
-                if mainSpecIndex then
-                    local specName = CI:GetSpecializationName(class, mainSpecIndex)
-                    local unspentTalents = (mylevel - 9) > (spec1 + spec2 + spec3)
-                    if specName ~= nil then
-                        GameTooltip:AddLine(" ")
-                        GameTooltip:AddDoubleLine(specName, format("%d / %d / %d", spec1, spec2, spec3))
-                        if unspentTalents then
-                            GameTooltip:AddLine("Unspent Talent Points!", 148, 0, 211)
+                if not InCombatLockdown() then
+                    --Talents/Spec Information
+                    local spec1, spec2, spec3 = CI:GetTalentPoints(curMouseOver)
+                    local _, class = GetPlayerInfoByGUID(curMouseOver)
+                    local playerLevel = UnitLevel(unittype)
+                    local mainSpecIndex, pointsSpent = CI:GetSpecialization(curMouseOver)
+                    if mainSpecIndex then
+                        local specName = CI:GetSpecializationName(class, mainSpecIndex)
+                        local unspentTalents = (mylevel - 9) > (spec1 + spec2 + spec3)
+                        if specName ~= nil then
+                            GameTooltip:AddLine(" ")
+                            GameTooltip:AddDoubleLine(specName, format("%d / %d / %d", spec1, spec2, spec3))
+                            if unspentTalents then
+                                GameTooltip:AddLine("Unspent Talent Points!", 148, 0, 211)
+                            end
                         end
                     end
-                end
 
-                --Gearscore/Ilevel Information
-                if playerLevel and playerLevel >= 80 then
-                    if not TacoTip_GSCallback then -- Dont show information TacoTip shows if it is loaded
-                        if CI:CanInspect(curMouseOver) then
-                            CI:DoInspect(curMouseOver)
-                        end
-                        local guid, gearScore = LGS:GetScore(curMouseOver)
-                        local ilvl = 0
+                    --Gearscore/Ilevel Information
+                    if playerLevel and playerLevel >= 80 then
+                        if not TacoTip_GSCallback then -- Dont show information TacoTip shows if it is loaded
+                            if CI:CanInspect(curMouseOver) then
+                                CI:DoInspect(curMouseOver)
+                            end
+                            local guid, gearScore = LGS:GetScore(curMouseOver)
+                            local ilvl = 0
 
-                        if gearScore and gearScore.GearScore > 0 and ilvl and ilvl > 0 then
-                            GameTooltip:AddDoubleLine(format("Item-level : %d", ilvl),
-                                format("GearScore : %d", gearScore.GearScore))
+                            if gearScore and gearScore.GearScore > 0 and ilvl and ilvl > 0 then
+                                GameTooltip:AddDoubleLine(format("Item-level : %d", ilvl),
+                                    format("GearScore : %d", gearScore.GearScore))
+                            end
                         end
                     end
                 end
