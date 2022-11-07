@@ -47,11 +47,11 @@ function addon.CanRespondOrSound(author, order, minlevel, maxlevel)
     if addon.db.char.hideInstances[order] then return false end
 
     --Instance is out of level range
-    if not minlevel or not maxlevel then return false end --required nil check for non raid/dungeon activities
-    if (minlevel > (mylevel + addon.db.char.recommendedLevelRange)) or
-        maxlevel < mylevel then
-        return false
-    end
+    --if not minlevel or not maxlevel then return false end --required nil check for non raid/dungeon activities
+    --if (minlevel > (mylevel + addon.db.char.recommendedLevelRange)) or
+    --    maxlevel < mylevel then
+    --    return false
+    --end
 
     --In a group
     if UnitInAnyGroup("player") or IsActiveBattlefieldArena() then return false end
@@ -66,9 +66,9 @@ end
 
 --Decide whether to auto respond
 function addon.ShouldAutoRespond(author, groupType)
+
     local resting = IsResting()
     local responseType = addon.db.char.autoResponseOptions[groupType].responseType
-
     --Responses are disabled for this group type
     if responseType == 7 then return false end
 
@@ -483,7 +483,7 @@ local function ParseMessage(event, msg, author, _, channel, guid)
     addon.db.global.listingTable[author].classColor = classColor
     addon.db.global.listingTable[author].resultID = nil -- Required to prevent /4 listings from being overwritten by LFG listings
 
-    if isNewListing then --If the listing is new, we can autoRespond
+    if isNewListing and addon.LFGMode then --If the listing is new, we can autoRespond
         --Find the group type string for auto response options
         local optionsGroupType = nil
         if lootType == "PVP" then

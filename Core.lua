@@ -1917,8 +1917,10 @@ function addon:OnInitialize()
         if unittype then
             local curMouseOver = UnitGUID(unittype)
             if curMouseOver then
+                --Talents/Spec Information
                 local spec1, spec2, spec3 = CI:GetTalentPoints(curMouseOver)
                 local _, class = GetPlayerInfoByGUID(curMouseOver)
+                local playerLevel = UnitLevel(unittype)
                 local mainSpecIndex, pointsSpent = CI:GetSpecialization(curMouseOver)
                 if mainSpecIndex then
                     local specName = CI:GetSpecializationName(class, mainSpecIndex)
@@ -1932,21 +1934,22 @@ function addon:OnInitialize()
                     end
                 end
 
-                if CI:CanInspect(curMouseOver) then
-                    CI:DoInspect(curMouseOver)
-                end
-                local guid, gearScore = LGS:GetScore(curMouseOver)
-                local ilvl = 0
+                --Gearscore/Ilevel Information
+                if playerLevel and playerLevel >= 80 then
+                    if not TacoTip_GSCallback then -- Dont show information TacoTip shows if it is loaded
+                        if CI:CanInspect(curMouseOver) then
+                            CI:DoInspect(curMouseOver)
+                        end
+                        local guid, gearScore = LGS:GetScore(curMouseOver)
+                        local ilvl = 0
 
-                if gearScore and gearScore.GearScore > 0 then
-                    GameTooltip:AddLine(" ")
-                    GameTooltip:AddDoubleLine(format("Item-level : %d", ilvl),
-                        format("GearScore : %d", gearScore.GearScore))
-                else
-                    GameTooltip:AddLine(" ")
-                    GameTooltip:AddLine(format("Item-level : %d", ilvl))
+                        if gearScore and gearScore.GearScore > 0 and ilvl and ilvl > 0 then
+                            GameTooltip:AddDoubleLine(format("Item-level : %d", ilvl),
+                                format("GearScore : %d", gearScore.GearScore))
+                        end
+                    end
                 end
-                --TODO: Item-level: xxx                 GearScore: x,xxx
+
                 if addon.GroupieDevs[curMouseOver] then
                     GameTooltip:AddLine(" ")
                     GameTooltip:AddLine(format("|TInterface\\AddOns\\" ..
@@ -2623,18 +2626,27 @@ function addon.SetupConfig()
                             end
                         end,
                     },
-                    spacerdesc3 = { type = "description", name = " ", width = "full", order = 5 },
+                    spacerdesc2 = { type = "description", name = " ", width = "full", order = 5 },
+                    LFGtoggle = {
+                        type = "toggle",
+                        name = "Enable LFG Mode - Placeholder",
+                        order = 6,
+                        width = "full",
+                        get = function(info) return addon.LFGMode end,
+                        set = function(info, val) addon.LFGMode = val end,
+                    },
+                    spacerdesc3 = { type = "description", name = " ", width = "full", order = 7 },
                     header2 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. L["GlobalOptions"].LFGData,
-                        order = 6,
+                        order = 8,
                         fontSize = "medium"
                     },
                     preserveDurationDropdown = {
                         type = "select",
                         style = "dropdown",
                         name = "",
-                        order = 7,
+                        order = 9,
                         width = 1.4,
                         values = { [1] = L["GlobalOptions"].DurationDropdown["1"],
                             [2] = L["GlobalOptions"].DurationDropdown["2"],
@@ -2644,11 +2656,11 @@ function addon.SetupConfig()
                         set = function(info, val) addon.db.global.minsToPreserve = val end,
                         get = function(info) return addon.db.global.minsToPreserve end,
                     },
-                    spacerdesc4 = { type = "description", name = " ", width = "full", order = 8 },
+                    spacerdesc4 = { type = "description", name = " ", width = "full", order = 10 },
                     header3 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. L["GlobalOptions"].UIScale,
-                        order = 9,
+                        order = 11,
                         fontSize = "medium"
                     },
                     scaleSlider = {
@@ -2657,6 +2669,7 @@ function addon.SetupConfig()
                         min = 0.5,
                         max = 2.0,
                         step = 0.1,
+                        order = 12,
                         set = function(info, val)
                             addon.db.global.UIScale = val
                             GroupieFrame:SetScale(val)
