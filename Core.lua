@@ -1883,7 +1883,10 @@ function addon:OnInitialize()
             configVer = nil,
             enableGlobalFriends = true,
             hiddenFriendLists = {},
-            hiddenGuilds = {}
+            hiddenGuilds = {},
+            talentTooltips = true,
+            gearSummaryTooltips = true,
+            charSheetGear = true,
         }
     }
 
@@ -1919,24 +1922,26 @@ function addon:OnInitialize()
             if curMouseOver then
                 if not InCombatLockdown() then
                     --Talents/Spec Information
-                    local spec1, spec2, spec3 = CI:GetTalentPoints(curMouseOver)
-                    local _, class = GetPlayerInfoByGUID(curMouseOver)
-                    local playerLevel = UnitLevel(unittype)
-                    local mainSpecIndex, pointsSpent = CI:GetSpecialization(curMouseOver)
-                    if mainSpecIndex then
-                        local specName = CI:GetSpecializationName(class, mainSpecIndex)
-                        local unspentTalents = (mylevel - 9) > (spec1 + spec2 + spec3)
-                        if specName ~= nil then
-                            GameTooltip:AddLine(" ")
-                            GameTooltip:AddDoubleLine(specName, format("%d / %d / %d", spec1, spec2, spec3))
-                            if unspentTalents then
-                                GameTooltip:AddLine("Unspent Talent Points!", 148, 0, 211)
+                    if addon.db.global.talentTooltips then
+                        local spec1, spec2, spec3 = CI:GetTalentPoints(curMouseOver)
+                        local _, class = GetPlayerInfoByGUID(curMouseOver)
+                        local playerLevel = UnitLevel(unittype)
+                        local mainSpecIndex, pointsSpent = CI:GetSpecialization(curMouseOver)
+                        if mainSpecIndex then
+                            local specName = CI:GetSpecializationName(class, mainSpecIndex)
+                            local unspentTalents = (mylevel - 9) > (spec1 + spec2 + spec3)
+                            if specName ~= nil then
+                                GameTooltip:AddLine(" ")
+                                GameTooltip:AddDoubleLine(specName, format("%d / %d / %d", spec1, spec2, spec3))
+                                if unspentTalents then
+                                    GameTooltip:AddLine("Unspent Talent Points!", 148, 0, 211)
+                                end
                             end
                         end
                     end
 
                     --Gearscore/Ilevel Information
-                    if playerLevel and playerLevel >= 80 then
+                    if playerLevel and playerLevel >= 80 and addon.db.global.gearSummaryTooltips then
                         if not TacoTip_GSCallback then -- Dont show information TacoTip shows if it is loaded
                             if CI:CanInspect(curMouseOver) then
                                 CI:DoInspect(curMouseOver)
@@ -2638,17 +2643,42 @@ function addon.SetupConfig()
                         set = function(info, val) addon.LFGMode = val end,
                     },
                     spacerdesc3 = { type = "description", name = " ", width = "full", order = 7 },
+                    talentTooltipToggle = {
+                        type = "toggle",
+                        name = "Enable Talent Summary in Player Tooltips",
+                        order = 8,
+                        width = "full",
+                        get = function(info) return addon.db.global.talentTooltips end,
+                        set = function(info, val) addon.db.global.talentTooltips = val end,
+                    },
+                    gearTooltipToggle = {
+                        type = "toggle",
+                        name = "Enable Gear Summary in Max-Level Player Tooltips",
+                        order = 9,
+                        width = "full",
+                        get = function(info) return addon.db.global.gearSummaryTooltips end,
+                        set = function(info, val) addon.db.global.gearSummaryTooltips = val end,
+                    },
+                    charSheetGearToggle = {
+                        type = "toggle",
+                        name = "Enable Gear Summary on Your Character Sheet",
+                        order = 10,
+                        width = "full",
+                        get = function(info) return addon.db.global.charSheetGear end,
+                        set = function(info, val) addon.db.global.charSheetGear = val end,
+                    },
+                    spacerdesc4 = { type = "description", name = " ", width = "full", order = 11 },
                     header2 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. L["GlobalOptions"].LFGData,
-                        order = 8,
+                        order = 12,
                         fontSize = "medium"
                     },
                     preserveDurationDropdown = {
                         type = "select",
                         style = "dropdown",
                         name = "",
-                        order = 9,
+                        order = 13,
                         width = 1.4,
                         values = { [1] = L["GlobalOptions"].DurationDropdown["1"],
                             [2] = L["GlobalOptions"].DurationDropdown["2"],
@@ -2658,11 +2688,11 @@ function addon.SetupConfig()
                         set = function(info, val) addon.db.global.minsToPreserve = val end,
                         get = function(info) return addon.db.global.minsToPreserve end,
                     },
-                    spacerdesc4 = { type = "description", name = " ", width = "full", order = 10 },
+                    spacerdesc5 = { type = "description", name = " ", width = "full", order = 14 },
                     header3 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. L["GlobalOptions"].UIScale,
-                        order = 11,
+                        order = 15,
                         fontSize = "medium"
                     },
                     scaleSlider = {
@@ -2671,7 +2701,7 @@ function addon.SetupConfig()
                         min = 0.5,
                         max = 2.0,
                         step = 0.1,
-                        order = 12,
+                        order = 16,
                         set = function(info, val)
                             addon.db.global.UIScale = val
                             GroupieFrame:SetScale(val)
