@@ -493,8 +493,8 @@ lib:SetButtonRadius(lib.radius) -- Upgrade to 40
 ---------------------------
 --GROUPIE SPECIFIC CHANGE--
 ---------------------------
-function lib:ChangeTexture(path)
-	icon:SetTexture(path)
+function lib:ChangeTexture(path, name)
+	lib.objects[name].icon:SetTexture(path)
 end
 
 -------
