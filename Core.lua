@@ -109,6 +109,7 @@ local GroupieLootDropdown   = nil
 local GroupieLangDropdown   = nil
 local GroupieLevelDropdown  = nil
 local ShowingFontStr        = nil
+local CharSheetSummaryFrame = nil
 local columnCount           = 0
 local LFGScrollFrame        = nil
 local AddButton             = nil
@@ -1661,6 +1662,13 @@ local function BuildGroupieWindow()
     AddButton:Hide()
 
 
+    --------------------------------------
+    --Character Sheet Gear Summary Frame--
+    --------------------------------------
+    CharSheetSummaryFrame = _G["CharacterModelFrame"]:CreateFontString("GroupieCharSheetAddin", "OVERLAY",
+        "GameFontNormalSmall")
+    CharSheetSummaryFrame:SetPoint("LEFT", CharSheetSummaryFrame:GetParent(), "LEFT", 8, -60)
+    CharSheetSummaryFrame:SetJustifyH("LEFT")
 
     -------------
     --Statusbar--
@@ -1972,7 +1980,7 @@ function addon:OnInitialize()
                             local ilvl = addon.GetILVLByGUID(curMouseOver)
                             if gearScore and gearScore.GearScore > 0 and ilvl and ilvl > 0 then
                                 GameTooltip:AddDoubleLine(format("Item-level : %d", ilvl),
-                                    format("GearScore : %d", gearScore.GearScore))
+                                    format("GearScore : |c%s%d", gearScore.Color:GenerateHexColor(), gearScore.GearScore))
                             end
                         end
                     end
@@ -1980,10 +1988,8 @@ function addon:OnInitialize()
 
                 if addon.GroupieDevs[curMouseOver] then
                     GameTooltip:AddLine(" ")
-                    GameTooltip:AddLine(format("|TInterface\\AddOns\\" ..
-                        addonName .. "\\Images\\icon64:16:16:0:0|t %s : %s"
-                        ,
-                        addonName, addon.GroupieDevs[curMouseOver]))
+                    GameTooltip:AddLine(format("|TInterface\\AddOns\\%s\\Images\\icon64:16:16:0:0|t %s : %s"
+                        , addonName, addonName, addon.GroupieDevs[curMouseOver]))
                 end
                 if unittype == "player" then
                     --GameTooltip:AddLine(addon.TalentSummary("mouseover"))
@@ -2713,7 +2719,14 @@ function addon.SetupConfig()
                         order = 10,
                         width = "full",
                         get = function(info) return addon.db.global.charSheetGear end,
-                        set = function(info, val) addon.db.global.charSheetGear = val end,
+                        set = function(info, val)
+                            addon.db.global.charSheetGear = val
+                            if val then
+                                CharSheetSummaryFrame:Show()
+                            else
+                                CharSheetSummaryFrame:Hide()
+                            end
+                        end,
                     },
                     spacerdesc4 = { type = "description", name = " ", width = "full", order = 11 },
                     header2 = {
@@ -2976,6 +2989,24 @@ function addon.UpdateFriends()
     addon.GenerateGuildToggles(1010, myserver, "globalfriendslist")
 end
 
+local function UpdateCharacterSheet()
+    --1st Line : Show Talents
+    --2nd Line : Show Average Item Level
+    --3rd Line : Show Gear Score
+    if addon.db.global.charSheetGear then
+        local spec1, spec2, spec3 = CI:GetTalentPoints("player")
+        local talentStr = format("%d / %d / %d", spec1, spec2, spec3)
+        local ilvl = addon.MyILVL()
+        local guid, gearScore = LGS:GetScore("player")
+        local colorStr = ""
+        if gearScore.Color then
+            colorStr = "|c" .. gearScore.Color:GenerateHexColor()
+        end
+        CharSheetSummaryFrame:SetText(format("%s\nItem-Level: %d\nGearScore: %s%d", talentStr, ilvl,
+            colorStr, gearScore.GearScore))
+    end
+end
+
 -------------------
 --Event Registers--
 -------------------
@@ -2988,6 +3019,7 @@ function addon:OnEnable()
         C_Timer.After(5, function()
             addon.UpdateFriends()
             addon.UpdateSavedInstances()
+            UpdateCharacterSheet()
             C_ChatInfo.RegisterAddonMessagePrefix(addon.ADDON_PREFIX)
             C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "YELL")
         end)
@@ -3045,5 +3077,9 @@ function addon:OnEnable()
         elseif strmatch(msg, L["VersionChecking"].JoinParty) then
             C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "PARTY")
         end
+    end)
+    --Update the gearscore/ilvl/talent lines in the character sheet
+    addon:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", function(...)
+        UpdateCharacterSheet()
     end)
 end
