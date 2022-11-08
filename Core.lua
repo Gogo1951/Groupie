@@ -558,7 +558,15 @@ local function DrawListings(self)
             button.icon:SetTexture(texture)
             button.btn:SetScript("OnClick", function()
                 addon.SendPlayerInfo(listing.author, nil, nil, listing.fullName, listing.resultID)
+                listing.messageSent = true
             end)
+            --Change
+            if listing.messageSent then
+                button.btn:SetText("|TInterface\\AddOns\\" ..
+                    addonName .. "\\Images\\load" .. tostring(MainTabFrame.animFrame + 1) .. ":10:32:0:-1|t")
+            else
+                button.btn:SetText("LFG")
+            end
             if myName == button.listing.author and not addon.debugMenus then
                 button.btn:Hide()
             else
@@ -953,10 +961,20 @@ end
 --Listing update timer
 local function TimerListingUpdate()
     if not addon.lastUpdate then
-        addon.lastUpdate = time()
+        addon.lastUpdate = GetTime()
+        addon.lastAnimUpdate = addon.lastUpdate
     end
 
-    if time() - addon.lastUpdate > 1 then
+    local now = GetTime()
+
+    if (now - addon.lastAnimUpdate) > 0.25 then
+        addon.lastAnimUpdate = now
+        MainTabFrame.animFrame = (MainTabFrame.animFrame + 1) % 3
+        print(MainTabFrame.animFrame)
+    end
+
+    if (now - addon.lastUpdate) > 0.1 then
+        addon.lastUpdate = now
         if MainTabFrame.tabType ~= 10 and MainTabFrame.tabType ~= 11 then
             DrawListings(LFGScrollFrame)
         else
@@ -1273,6 +1291,7 @@ local function BuildGroupieWindow()
     MainTabFrame.isHeroic = false
     MainTabFrame.size = 5
     MainTabFrame.tabType = 0
+    MainTabFrame.animFrame = 0
 
     --Listing Columns
     createColumn(L["UI_columns"].Created, COL_CREATED, MainTabFrame, -1, nil)
