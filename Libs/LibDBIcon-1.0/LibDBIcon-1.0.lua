@@ -1,4 +1,3 @@
-
 -----------------------------------------------------------------------
 -- LibDBIcon-1.0
 --
@@ -7,6 +6,13 @@
 
 local DBICON10 = "LibDBIcon-1.0"
 local DBICON10_MINOR = 44 -- Bump on changes
+---------------------------
+--GROUPIE SPECIFIC CHANGE--
+---------------------------
+local icon = nil
+-------
+--END--
+-------
 if not LibStub then error(DBICON10 .. " requires LibStub.") end
 local ldb = LibStub("LibDataBroker-1.1", true)
 if not ldb then error(DBICON10 .. " requires LibDataBroker-1.1.") end
@@ -40,6 +46,7 @@ function lib:IconCallback(event, name, key, value)
 		end
 	end
 end
+
 if not lib.callbackRegistered then
 	ldb.RegisterCallback(lib, "LibDataBroker_AttributeChanged__icon", "IconCallback")
 	ldb.RegisterCallback(lib, "LibDataBroker_AttributeChanged__iconCoords", "IconCallback")
@@ -52,9 +59,9 @@ end
 local function getAnchors(frame)
 	local x, y = frame:GetCenter()
 	if not x or not y then return "CENTER" end
-	local hhalf = (x > UIParent:GetWidth()*2/3) and "RIGHT" or (x < UIParent:GetWidth()/3) and "LEFT" or ""
-	local vhalf = (y > UIParent:GetHeight()/2) and "TOP" or "BOTTOM"
-	return vhalf..hhalf, frame, (vhalf == "TOP" and "BOTTOM" or "TOP")..hhalf
+	local hhalf = (x > UIParent:GetWidth() * 2 / 3) and "RIGHT" or (x < UIParent:GetWidth() / 3) and "LEFT" or ""
+	local vhalf = (y > UIParent:GetHeight() / 2) and "TOP" or "BOTTOM"
+	return vhalf .. hhalf, frame, (vhalf == "TOP" and "BOTTOM" or "TOP") .. hhalf
 end
 
 local function onEnter(self)
@@ -101,20 +108,20 @@ local onDragStart, updatePosition
 
 do
 	local minimapShapes = {
-		["ROUND"] = {true, true, true, true},
-		["SQUARE"] = {false, false, false, false},
-		["CORNER-TOPLEFT"] = {false, false, false, true},
-		["CORNER-TOPRIGHT"] = {false, false, true, false},
-		["CORNER-BOTTOMLEFT"] = {false, true, false, false},
-		["CORNER-BOTTOMRIGHT"] = {true, false, false, false},
-		["SIDE-LEFT"] = {false, true, false, true},
-		["SIDE-RIGHT"] = {true, false, true, false},
-		["SIDE-TOP"] = {false, false, true, true},
-		["SIDE-BOTTOM"] = {true, true, false, false},
-		["TRICORNER-TOPLEFT"] = {false, true, true, true},
-		["TRICORNER-TOPRIGHT"] = {true, false, true, true},
-		["TRICORNER-BOTTOMLEFT"] = {true, true, false, true},
-		["TRICORNER-BOTTOMRIGHT"] = {true, true, true, false},
+		["ROUND"] = { true, true, true, true },
+		["SQUARE"] = { false, false, false, false },
+		["CORNER-TOPLEFT"] = { false, false, false, true },
+		["CORNER-TOPRIGHT"] = { false, false, true, false },
+		["CORNER-BOTTOMLEFT"] = { false, true, false, false },
+		["CORNER-BOTTOMRIGHT"] = { true, false, false, false },
+		["SIDE-LEFT"] = { false, true, false, true },
+		["SIDE-RIGHT"] = { true, false, true, false },
+		["SIDE-TOP"] = { false, false, true, true },
+		["SIDE-BOTTOM"] = { true, true, false, false },
+		["TRICORNER-TOPLEFT"] = { false, true, true, true },
+		["TRICORNER-TOPRIGHT"] = { true, false, true, true },
+		["TRICORNER-BOTTOMLEFT"] = { true, true, false, true },
+		["TRICORNER-BOTTOMRIGHT"] = { true, true, true, false },
 	}
 
 	local rad, cos, sin, sqrt, max, min = math.rad, math.cos, math.sin, math.sqrt, math.max, math.min
@@ -128,12 +135,12 @@ do
 		local w = (Minimap:GetWidth() / 2) + lib.radius
 		local h = (Minimap:GetHeight() / 2) + lib.radius
 		if quadTable[q] then
-			x, y = x*w, y*h
+			x, y = x * w, y * h
 		else
-			local diagRadiusW = sqrt(2*(w)^2)-10
-			local diagRadiusH = sqrt(2*(h)^2)-10
-			x = max(-w, min(x*diagRadiusW, w))
-			y = max(-h, min(y*diagRadiusH, h))
+			local diagRadiusW = sqrt(2 * (w) ^ 2) - 10
+			local diagRadiusH = sqrt(2 * (h) ^ 2) - 10
+			x = max(-w, min(x * diagRadiusW, w))
+			y = max(-h, min(y * diagRadiusH, h))
 		end
 		button:SetPoint("CENTER", Minimap, "CENTER", x, y)
 	end
@@ -202,7 +209,7 @@ local function onDragStop(self)
 	end
 end
 
-local defaultCoords = {0, 1, 0, 1}
+local defaultCoords = { 0, 1, 0, 1 }
 local function updateCoord(self)
 	local coords = self:GetParent().dataObject.iconCoords or defaultCoords
 	local deltaX, deltaY = 0, 0
@@ -214,7 +221,7 @@ local function updateCoord(self)
 end
 
 local function createButton(name, object, db)
-	local button = CreateFrame("Button", "LibDBIcon10_"..name, Minimap)
+	local button = CreateFrame("Button", "LibDBIcon10_" .. name, Minimap)
 	button.dataObject = object
 	button.db = db
 	button:SetFrameStrata("MEDIUM")
@@ -237,7 +244,13 @@ local function createButton(name, object, db)
 	background:SetSize(20, 20)
 	background:SetTexture(136467) --"Interface\\Minimap\\UI-Minimap-Background"
 	background:SetPoint("TOPLEFT", 7, -5)
-	local icon = button:CreateTexture(nil, "ARTWORK")
+	---------------------------
+	--GROUPIE SPECIFIC CHANGE--
+	---------------------------
+	icon = button:CreateTexture(nil, "ARTWORK")
+	-------
+	--END--
+	-------
 	icon:SetSize(17, 17)
 	icon:SetTexture(object.icon)
 	icon:SetPoint("TOPLEFT", 7, -6)
@@ -316,11 +329,11 @@ end
 
 function lib:Register(name, object, db)
 	if not object.icon then error("Can't register LDB objects without icons set!") end
-	if lib.objects[name] or lib.notCreated[name] then error(DBICON10.. ": Object '".. name .."' is already registered.") end
+	if lib.objects[name] or lib.notCreated[name] then error(DBICON10 .. ": Object '" .. name .. "' is already registered.") end
 	if not db or not db.hide then
 		createButton(name, object, db)
 	else
-		lib.notCreated[name] = {object, db}
+		lib.notCreated[name] = { object, db }
 	end
 end
 
@@ -401,6 +414,7 @@ do
 			end
 		end
 	end
+
 	local function OnMinimapLeave()
 		if isDraggingButton then return end
 		for _, button in next, lib.objects do
@@ -409,6 +423,7 @@ do
 			end
 		end
 	end
+
 	Minimap:HookScript("OnEnter", OnMinimapEnter)
 	Minimap:HookScript("OnLeave", OnMinimapLeave)
 
@@ -431,7 +446,7 @@ end
 function lib:GetButtonList()
 	local t = {}
 	for name in next, lib.objects do
-		t[#t+1] = name
+		t[#t + 1] = name
 	end
 	return t
 end
@@ -474,3 +489,14 @@ for name, button in next, lib.objects do
 	end
 end
 lib:SetButtonRadius(lib.radius) -- Upgrade to 40
+
+---------------------------
+--GROUPIE SPECIFIC CHANGE--
+---------------------------
+function lib:ChangeTexture(path)
+	icon:SetTexture(path)
+end
+
+-------
+--END--
+-------
