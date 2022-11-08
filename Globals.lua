@@ -39,6 +39,9 @@ addon.validLocales = { "enGB", "enUS" }
 addon.completedLocales = { "enGB", "enUS" }
 
 addon.groupieSystemColor = "ffd900"
+addon.groupieSystemColorR = 255
+addon.groupieSystemColorG = 217
+addon.groupieSystemColorB = 0
 
 addon.groupieLocaleTable = {
     ["zhCN"] = "Chinese",

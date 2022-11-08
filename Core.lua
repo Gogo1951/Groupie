@@ -5,6 +5,8 @@ local addon                        = LibStub("AceAddon-3.0"):NewAddon(Groupie, a
     "AceTimer-3.0")
 local CI                           = LibStub("LibClassicInspector")
 local LGS                          = LibStub:GetLibrary("LibGearScore.1000", true)
+local LDD                          = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
+L_UIDROPDOWNMENU_SHOW_TIME         = 2 -- Timeout once the cursor leaves menu
 local L                            = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 local localizedClass, englishClass = UnitClass("player")
 local myserver                     = GetRealmName()
@@ -110,6 +112,7 @@ local GroupieLangDropdown   = nil
 local GroupieLevelDropdown  = nil
 local ShowingFontStr        = nil
 local CharSheetSummaryFrame = nil
+local MiniMapDropdown       = nil
 local columnCount           = 0
 local LFGScrollFrame        = nil
 local AddButton             = nil
@@ -1742,7 +1745,36 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
                 BuildGroupieWindow()
             end
         else
-            addon:OpenConfig()
+            if not MiniMapDropdown then
+                MiniMapDropdown = LDD:Create_UIDropDownMenu("GroupieMinimapDropdown", UIParent)
+            end
+
+            local menu = {
+                { text = "Groupie",
+                    isTitle = true,
+                    notCheckable = true,
+                },
+                { text = " ",
+                    isTitle = true,
+                    notCheckable = true,
+                },
+                { text = "Open Settings",
+                    notCheckable = true,
+                    func = function() addon:OpenConfig() end,
+                },
+                {
+                    text = "Enable LFG Mode",
+                    checked = function() return addon.LFGMode end,
+                    func = function() addon.LFGMode = not addon.LFGMode end,
+                },
+                {
+                    text = "Cancel",
+                    notCheckable = true,
+                    func = function() end,
+                }
+            }
+            LDD:EasyMenu(menu, MiniMapDropdown, "cursor", -80, 0, "MENU")
+
         end
     end,
     OnTooltipShow = function(tooltip)
@@ -1874,12 +1906,12 @@ function addon:OnInitialize()
                     alertSoundID = 17318,
                 },
                 ["5H"] = {
-                    responseType = 1,
+                    responseType = 4,
                     soundType = 5,
                     alertSoundID = 17318,
                 },
                 ["5"] = {
-                    responseType = 1,
+                    responseType = 4,
                     soundType = 5,
                     alertSoundID = 17318,
                 },
@@ -2687,16 +2719,16 @@ function addon.SetupConfig()
                             end
                         end,
                     },
-                    spacerdesc2 = { type = "description", name = " ", width = "full", order = 5 },
-                    LFGtoggle = {
-                        type = "toggle",
-                        name = "Enable LFG Mode - Placeholder",
-                        order = 6,
-                        width = "full",
-                        get = function(info) return addon.LFGMode end,
-                        set = function(info, val) addon.LFGMode = val end,
-                    },
-                    spacerdesc3 = { type = "description", name = " ", width = "full", order = 7 },
+                    --spacerdesc2 = { type = "description", name = " ", width = "full", order = 5 },
+                    --LFGtoggle = {
+                    --    type = "toggle",
+                    --    name = "Enable LFG Mode - Placeholder",
+                    --    order = 6,
+                    --    width = "full",
+                    --    get = function(info) return addon.LFGMode end,
+                    --    set = function(info, val) addon.LFGMode = val end,
+                    --},
+                    --spacerdesc3 = { type = "description", name = " ", width = "full", order = 7 },
                     talentTooltipToggle = {
                         type = "toggle",
                         name = "Enable Talent Summary in Player Tooltips",

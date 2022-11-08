@@ -72,17 +72,15 @@ function addon.ShouldAutoRespond(author, groupType)
     --Responses are disabled for this group type
     if responseType == 7 then return false end
 
-    --These values require the player to be in town
-    if responseType == 1 or responseType == 2 or responseType == 3 then
-        if not resting then return false end
-    end
+    --in town options are now disabled
+    if responseType == 1 or responseType == 2 or responseType == 3 then return false end
 
-    if responseType == 1 or responseType == 4 then --Global friends
+    if responseType == 4 then --Global friends
         if addon.friendList[author] then return true end
-    elseif responseType == 2 or responseType == 5 then --Local friends and guild
+    elseif responseType == 5 then --Local friends and guild
         if addon.db.global.friends[myserver][myname][author] then return true end
         if addon.db.global.guild[myserver][myname][author] then return true end
-    elseif responseType == 3 or responseType == 6 then --Local friends
+    elseif responseType == 6 then --Local friends
         if addon.db.global.friends[myserver][myname][author] then return true end
     end
     return false
@@ -96,19 +94,18 @@ function addon.ShouldPlaySound(author, groupType)
     --Responses are disabled for this group type
     if soundType == 9 then return false end
 
-    --These values require the player to be in town
-    if soundType == 1 or soundType == 2 or soundType == 3 or soundType == 4 then
-        if not resting then return false end
-    end
+    --in town options are now disabled
+    if soundType == 1 or soundType == 2 or soundType == 3 or soundType == 4 then return false end
 
-    if soundType == 1 or soundType == 5 then --Global friends
+
+    if soundType == 5 then --Global friends
         if addon.friendList[author] then return true end
-    elseif soundType == 2 or soundType == 6 then --Local friends and guild
+    elseif soundType == 6 then --Local friends and guild
         if addon.db.global.friends[myserver][myname][author] then return true end
         if addon.db.global.guild[myserver][myname][author] then return true end
-    elseif soundType == 3 or soundType == 7 then --Local friends
+    elseif soundType == 7 then --Local friends
         if addon.db.global.friends[myserver][myname][author] then return true end
-    elseif soundType == 4 or soundType == 8 then --Anyone
+    elseif soundType == 8 then --Anyone
         return true
     end
     return false
