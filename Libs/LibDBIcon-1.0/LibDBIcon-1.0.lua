@@ -6,13 +6,6 @@
 
 local DBICON10 = "LibDBIcon-1.0"
 local DBICON10_MINOR = 44 -- Bump on changes
----------------------------
---GROUPIE SPECIFIC CHANGE--
----------------------------
-local icon = nil
--------
---END--
--------
 if not LibStub then error(DBICON10 .. " requires LibStub.") end
 local ldb = LibStub("LibDataBroker-1.1", true)
 if not ldb then error(DBICON10 .. " requires LibDataBroker-1.1.") end
@@ -244,13 +237,7 @@ local function createButton(name, object, db)
 	background:SetSize(20, 20)
 	background:SetTexture(136467) --"Interface\\Minimap\\UI-Minimap-Background"
 	background:SetPoint("TOPLEFT", 7, -5)
-	---------------------------
-	--GROUPIE SPECIFIC CHANGE--
-	---------------------------
-	icon = button:CreateTexture(nil, "ARTWORK")
-	-------
-	--END--
-	-------
+	local icon = button:CreateTexture(nil, "ARTWORK")
 	icon:SetSize(17, 17)
 	icon:SetTexture(object.icon)
 	icon:SetPoint("TOPLEFT", 7, -6)
