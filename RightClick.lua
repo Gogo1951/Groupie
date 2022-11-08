@@ -14,29 +14,8 @@ local mylevel = UnitLevel("player")
 -------------------------------
 function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultID, isAutoResponse)
 	addon.UpdateSpecOptions()
-	--Calculate average itemlevel
-	local iLevelSum = 0
-	for slotNum = 1, 19 do
-		--Exclude shirt and tabard slots from itemlevel calculation
-		if slotNum ~= 4 and slotNum ~= 19 then
-			local tempItemLink = GetInventoryItemLink("player", slotNum)
 
-			if tempItemLink then
-				local name, _, _, iLevel, _, _, _, _, itemType = GetItemInfo(tempItemLink)
-				if slotNum == 16 and itemType == "INVTYPE_2HWEAPON" then
-					--If the weapon is 2 handed, and the offhand slot is empty, we sum the weapon's itemlevel twice
-					if GetInventoryItemLink("player", 17) == nil then
-						iLevelSum = iLevelSum + iLevel
-					end
-				end
-
-				iLevelSum = iLevelSum + iLevel
-			end
-		end
-	end
-	local averageiLevel = floor(iLevelSum / 17)
-
-
+	local averageiLevel = addon.MyILVL()
 
 	--Find out which spec group is active
 	local specGroup = addon.GetActiveSpecGroup()

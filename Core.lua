@@ -967,12 +967,13 @@ local function TimerListingUpdate()
 
     local now = GetTime()
 
-    if (now - addon.lastAnimUpdate) > 0.25 then
+    --Animate the spinner texture by cycling
+    if (now - addon.lastAnimUpdate) > 0.4 then
         addon.lastAnimUpdate = now
         MainTabFrame.animFrame = (MainTabFrame.animFrame + 1) % 3
-        print(MainTabFrame.animFrame)
     end
 
+    --Draw the listings
     if (now - addon.lastUpdate) > 0.1 then
         addon.lastUpdate = now
         if MainTabFrame.tabType ~= 10 and MainTabFrame.tabType ~= 11 then
@@ -1945,7 +1946,7 @@ function addon:OnInitialize()
                     if addon.db.global.talentTooltips then
                         local spec1, spec2, spec3 = CI:GetTalentPoints(curMouseOver)
                         local _, class = GetPlayerInfoByGUID(curMouseOver)
-                        local playerLevel = UnitLevel(unittype)
+
                         local mainSpecIndex, pointsSpent = CI:GetSpecialization(curMouseOver)
                         if mainSpecIndex then
                             local specName = CI:GetSpecializationName(class, mainSpecIndex)
@@ -1961,14 +1962,14 @@ function addon:OnInitialize()
                     end
 
                     --Gearscore/Ilevel Information
+                    local playerLevel = UnitLevel(unittype)
                     if playerLevel and playerLevel >= 80 and addon.db.global.gearSummaryTooltips then
                         if not TacoTip_GSCallback then -- Dont show information TacoTip shows if it is loaded
                             if CI:CanInspect(curMouseOver) then
                                 CI:DoInspect(curMouseOver)
                             end
                             local guid, gearScore = LGS:GetScore(curMouseOver)
-                            local ilvl = 0
-
+                            local ilvl = addon.GetILVLByGUID(curMouseOver)
                             if gearScore and gearScore.GearScore > 0 and ilvl and ilvl > 0 then
                                 GameTooltip:AddDoubleLine(format("Item-level : %d", ilvl),
                                     format("GearScore : %d", gearScore.GearScore))

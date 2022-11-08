@@ -16,6 +16,9 @@ addon.sounds = {
 --Toggle for 'LFG mode', which disables or enables auto responses and alert sounds
 addon.LFGMode = false
 
+--Cached Item level calculations by GUID for current session
+addon.ILVLCache = {}
+
 --Message formats for various checked messages
 addon.askForPlayerInfo = format("{rt3} %s : What Role are you?", addonName)
 addon.askForInstance = format("{rt3} %s : What are you inviting me to?", addonName)

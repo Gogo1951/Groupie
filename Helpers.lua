@@ -3,6 +3,7 @@ local GetTalentTabInfo = GetTalentTabInfo
 local time             = time
 local gmatch           = gmatch
 local L                = LibStub('AceLocale-3.0'):GetLocale('Groupie')
+local CI               = LibStub("LibClassicInspector")
 local myname           = UnitName("player")
 
 --Return the primary talent spec for either main or dual specialization
@@ -710,4 +711,71 @@ function addon.RTHash(text)
     local char2 = tonumber(strsub(strhash, -2, -2), 16) % 8 + 1
     local char3 = tonumber(strsub(strhash, -1, -1), 16) % 8 + 1
     return format("{rt%d}{rt%d}{rt%d}", char1, char2, char3)
+end
+
+--Calculate the player's own ilvl average
+function addon.MyILVL()
+    local iLevelSum = 0
+    for slotNum = 1, 19 do
+        --Exclude shirt and tabard slots from itemlevel calculation
+        if slotNum ~= 4 and slotNum ~= 19 then
+            local tempItemLink = GetInventoryItemLink("player", slotNum)
+
+            if tempItemLink then
+                local name, _, _, iLevel, _, _, _, _, itemType = GetItemInfo(tempItemLink)
+                if slotNum == 16 and itemType == "INVTYPE_2HWEAPON" then
+                    --If the weapon is 2 handed, and the offhand slot is empty, we sum the weapon's itemlevel twice
+                    if GetInventoryItemLink("player", 17) == nil then
+                        iLevelSum = iLevelSum + iLevel
+                    end
+                end
+
+                iLevelSum = iLevelSum + iLevel
+            end
+        end
+    end
+    return floor(iLevelSum / 17)
+end
+
+--Calculate the average ilvl for a given GUID
+function addon.GetILVLByGUID(guid)
+
+    if addon.ILVLCache[guid] then
+        return addon.ILVLCache[guid]
+    end
+
+    local iLevelSum = 0
+    for slotNum = 1, 19 do
+
+        --Exclude shirt and tabard slots from itemlevel calculation
+        if slotNum ~= 4 and slotNum ~= 19 then
+            local item = CI:GetInventoryItemMixin(guid, slotNum)
+            if item then
+                if not item:IsItemDataCached() then
+
+                    local itemID = item:GetItemID()
+                    if itemID then
+                        C_Item.RequestLoadItemDataByID(itemID)
+                    end
+                end
+                local tempItemLink = item:GetItemLink()
+                local name, _, _, iLevel, _, _, _, _, itemType = GetItemInfo(tempItemLink)
+                if slotNum == 16 and itemType == "INVTYPE_2HWEAPON" then
+                    --If the weapon is 2 handed, and the offhand slot is empty, we sum the weapon's itemlevel twice
+                    if GetInventoryItemLink("player", 17) == nil then
+                        iLevelSum = iLevelSum + iLevel
+                    end
+                end
+
+                iLevelSum = iLevelSum + iLevel
+            end
+        end
+    end
+
+    local averageilvl = floor(iLevelSum / 17)
+    if averageilvl > 0 then
+        addon.ILVLCache[guid] = averageilvl
+    end
+
+    return averageilvl
 end
