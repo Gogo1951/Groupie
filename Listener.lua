@@ -47,11 +47,13 @@ function addon.CanRespondOrSound(author, order, minlevel, maxlevel)
     if addon.db.char.hideInstances[order] then return false end
 
     --Instance is out of level range
-    --if not minlevel or not maxlevel then return false end --required nil check for non raid/dungeon activities
-    --if (minlevel > (mylevel + addon.db.char.recommendedLevelRange)) or
-    --    maxlevel < mylevel then
-    --    return false
-    --end
+    if not addon.debugMenus then
+        if not minlevel or not maxlevel then return false end --required nil check for non raid/dungeon activities
+        if (minlevel > (mylevel + addon.db.char.recommendedLevelRange)) or
+            maxlevel < mylevel then
+            return false
+        end
+    end
 
     --In a group
     if UnitInAnyGroup("player") or IsActiveBattlefieldArena() then return false end
