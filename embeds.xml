@@ -18,5 +18,4 @@
     <Script file="Libs\LibDetours-1.0\LibDetours-1.0.lua"/>
     <Script file="Libs\LibClassicInspector\LibClassicInspector.lua"/>
     <Script file="Libs\LibGearScore-1.0\LibGearScore.lua"/>
-    <Script file="Libs\LibUIDropDownMenu\LibUIDropDownMenu.lua"/>
 </Ui>

@@ -5,7 +5,6 @@ local addon                        = LibStub("AceAddon-3.0"):NewAddon(Groupie, a
     "AceTimer-3.0")
 local CI                           = LibStub("LibClassicInspector")
 local LGS                          = LibStub:GetLibrary("LibGearScore.1000", true)
-local LDD                          = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
 L_UIDROPDOWNMENU_SHOW_TIME         = 2 -- Timeout once the cursor leaves menu
 local L                            = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 local localizedClass, englishClass = UnitClass("player")
