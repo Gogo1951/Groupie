@@ -1739,42 +1739,25 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
     icon = "Interface\\AddOns\\" .. addonName .. "\\Images\\icon64.tga",
     OnClick = function(self, button, down)
         if button == "LeftButton" then
-            if GroupieFrame:IsShown() then
-                GroupieFrame:Hide()
+            if IsShiftKeyDown() then
+                addon.OpenConfig()
             else
-                BuildGroupieWindow()
+                if GroupieFrame:IsShown() then
+                    GroupieFrame:Hide()
+                else
+                    BuildGroupieWindow()
+                end
             end
-        else
-            if not MiniMapDropdown then
-                MiniMapDropdown = LDD:Create_UIDropDownMenu("GroupieMinimapDropdown", UIParent)
+        elseif button == "RightButton" then
+            if IsShiftKeyDown() then
+                addon.OpenConfig()
+            else
+                addon.LFGMode = not addon.LFGMode
+                --TODO: Change minimap icon, play LFG sound
+                if addon.LFGMode then
+                    PlaySound(8458)
+                end
             end
-
-            local menu = {
-                { text = "Groupie",
-                    isTitle = true,
-                    notCheckable = true,
-                },
-                { text = " ",
-                    isTitle = true,
-                    notCheckable = true,
-                },
-                { text = "Open Settings",
-                    notCheckable = true,
-                    func = function() addon:OpenConfig() end,
-                },
-                {
-                    text = "Enable LFG Mode",
-                    checked = function() return addon.LFGMode end,
-                    func = function() addon.LFGMode = not addon.LFGMode end,
-                },
-                {
-                    text = "Cancel",
-                    notCheckable = true,
-                    func = function() end,
-                }
-            }
-            LDD:EasyMenu(menu, MiniMapDropdown, "cursor", -80, 0, "MENU")
-
         end
     end,
     OnTooltipShow = function(tooltip)
@@ -1785,10 +1768,18 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
             1, 0.85, 0.00, 1, 0.85, 0.00)
         tooltip:AddLine(L["slogan"], 255, 255, 255, false)
         tooltip:AddLine(" ")
+
+        if addon.LFGMode then
+            tooltip:AddLine("LFG Mode: Enabled", 0, 255, 0)
+        else
+            tooltip:AddLine("LFG Mode: Disabled", 255, 0, 0)
+        end
+
         tooltip:AddLine(L["Click"] ..
             " |cffffffff" ..
             L["MiniMap"].lowerOr .. "|r /groupie |cffffffff: " .. addonName .. " " .. L["BulletinBoard"] .. "|r ")
-        tooltip:AddLine(L["RightClick"] .. " |cffffffff: " .. addonName .. " " .. L["Settings"] .. "|r ")
+        tooltip:AddLine(L["RightClick"] .. " |cffffffff: " .. addonName .. " Enable LFG Mode|r ")
+        tooltip:AddLine("Shift+Click |cffffffff: " .. addonName .. " Open Settings|r ")
         --Version Check
         if addon.version < addon.db.global.highestSeenVersion then
             tooltip:AddLine(" ");
