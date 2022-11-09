@@ -95,7 +95,7 @@ if not addon.tableContains(addon.validLocales, locale) then
         }
     }
     addon.db = LibStub("AceDB-3.0"):New("GroupieDB", defaults)
-    addon.icon = LibStub("LibDBIcon-1.0")
+    addon.icon = LibStub("LibDBIconGroupie-1.0")
     addon.icon:Register("GroupieLDB", addon.groupieLDB, addon.db.global or defaults.global)
     addon.icon:Hide("GroupieLDB")
     return
@@ -1951,7 +1951,7 @@ function addon:OnInitialize()
         defaults.char.hideInstances[key] = false
     end
     addon.db = LibStub("AceDB-3.0"):New("GroupieDB", defaults)
-    addon.icon = LibStub("LibDBIcon-1.0")
+    addon.icon = LibStub("LibDBIconGroupie-1.0")
 
     --For changes requiring resetting certain saved variables
     if addon.db.global.configVer == nil or addon.db.global.configVer < 1.53 then

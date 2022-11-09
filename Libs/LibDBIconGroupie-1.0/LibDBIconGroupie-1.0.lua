@@ -4,7 +4,7 @@
 -- Allows addons to easily create a lightweight minimap icon as an alternative to heavier LDB displays.
 --
 
-local DBICON10 = "LibDBIcon-1.0"
+local DBICON10 = "LibDBIconGroupie-1.0"
 local DBICON10_MINOR = 44 -- Bump on changes
 if not LibStub then error(DBICON10 .. " requires LibStub.") end
 local ldb = LibStub("LibDataBroker-1.1", true)
@@ -18,7 +18,7 @@ lib.callbacks = lib.callbacks or LibStub("CallbackHandler-1.0"):New(lib)
 lib.notCreated = lib.notCreated or {}
 lib.radius = lib.radius or 5
 local next, Minimap, CreateFrame = next, Minimap, CreateFrame
-lib.tooltip = lib.tooltip or CreateFrame("GameTooltip", "LibDBIconTooltip", UIParent, "GameTooltipTemplate")
+lib.tooltip = lib.tooltip or CreateFrame("GameTooltip", "LibDBIconTooltipGroupie", UIParent, "GameTooltipTemplate")
 local isDraggingButton = false
 
 function lib:IconCallback(event, name, key, value)
