@@ -3031,7 +3031,7 @@ local function UpdateCharacterSheet()
         if gearScore.Color then
             colorStr = "|c" .. gearScore.Color:GenerateHexColor()
         end
-        CharSheetSummaryFrame:SetText(format("%s\nItem-Level: %d\nGearScore: %s%d", talentStr, ilvl,
+        CharSheetSummaryFrame:SetText(format("%s\nItem-level : %d\nGearScore : %s%d", talentStr, ilvl,
             colorStr, gearScore.GearScore))
     end
 end
