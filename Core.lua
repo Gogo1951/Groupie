@@ -2540,7 +2540,7 @@ function addon.SetupConfig()
                     },
                     respondRequestDesc = {
                         type = "description",
-                        name = "Note: This will only engage when you are listed in the LFG Tool.",
+                        name = "Note : This will only engage when you are listed in the LFG Tool.",
                         width = "full",
                         order = 23,
                     },
@@ -2571,7 +2571,7 @@ function addon.SetupConfig()
                     },
                     respondInviteDesc = {
                         type = "description",
-                        name = "Note: This will only engage when you are listed in the LFG Tool.",
+                        name = "Note : This will only engage when you are listed in the LFG Tool.",
                         width = "full",
                         order = 28,
                     },
@@ -2622,7 +2622,7 @@ function addon.SetupConfig()
                     },
                     autorespDesc = {
                         type = "description",
-                        name = "NOTE: Auto-Response will only fire when you are not already in an arena, battleground, or group of any kind.\n\n    \"Hey Friend, you can count on me!...\"",
+                        name = "Note : Auto-Response will only fire when you are not already in an arena, battleground, or group of any kind.\n\n    \"Hey Friend, you can count on me!...\"",
                         order = 36,
                     },
 
