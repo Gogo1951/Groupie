@@ -1774,9 +1774,9 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         tooltip:AddLine(" ")
 
         if addon.LFGMode then
-            tooltip:AddLine("LFG Auto-Response Mode : Enabled", 0, 255, 0)
+            tooltip:AddLine("LFG Auto-Response : Enabled", 0, 255, 0)
         else
-            tooltip:AddLine("LFG Auto-Response Mode : Disabled", 255, 255, 255)
+            tooltip:AddLine("LFG Auto-Response : Disabled", 255, 255, 255)
         end
 
         tooltip:AddLine(" ")
@@ -1784,7 +1784,7 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         tooltip:AddLine(L["Click"] ..
             " |cffffffff" ..
             L["MiniMap"].lowerOr .. "|r /groupie |cffffffff: " .. addonName .. " " .. L["BulletinBoard"] .. "|r ")
-        tooltip:AddLine(L["RightClick"] .. " |cffffffff: " .. " Toggle LFG Auto-Response Mode|r ")
+        tooltip:AddLine(L["RightClick"] .. " |cffffffff: " .. " Toggle LFG Auto-Response|r ")
         tooltip:AddLine("Shift + Click |cffffffff: " .. " Open Groupie Settings|r ")
         --Version Check
         if addon.version < addon.db.global.highestSeenVersion then
