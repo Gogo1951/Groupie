@@ -1776,7 +1776,7 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         if addon.LFGMode then
             tooltip:AddLine("LFG Auto-Response Mode : Enabled", 0, 255, 0)
         else
-            tooltip:AddLine("LFG Auto-Response Mode : Disabled", 0, 0, 0)
+            tooltip:AddLine("LFG Auto-Response Mode : Disabled", 255, 255, 255)
         end
 
         tooltip:AddLine(" ")
