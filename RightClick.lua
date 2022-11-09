@@ -77,7 +77,7 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 	if mylevel < 80 or addon.db.char.LFGMsgGearType == 1 then
 		lvlStr = "Level " .. tostring(mylevel)
 	elseif addon.db.char.LFGMsgGearType == 2 then
-		lvlStr = "Item-Level " .. tostring(averageiLevel)
+		lvlStr = "Item-level " .. tostring(averageiLevel)
 	elseif addon.db.char.LFGMsgGearType == 3 then
 		local guid, gearScore = LGS:GetScore("player")
 		lvlStr = "GearScore " .. tostring(gearScore.GearScore)
