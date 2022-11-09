@@ -1770,14 +1770,17 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         tooltip:AddDoubleLine(addonName, tostring(addon.version),
             1, 0.85, 0.00, 1, 0.85, 0.00)
         tooltip:AddLine(L["slogan"], 255, 255, 255, false)
+        
         tooltip:AddLine(" ")
 
         if addon.LFGMode then
-            tooltip:AddLine("LFG Mode: Enabled", 0, 255, 0)
+            tooltip:AddLine("LFG Auto-Response Mode : Enabled", 0, 255, 0)
         else
-            tooltip:AddLine("LFG Mode: Disabled", 255, 0, 0)
+            tooltip:AddLine("LFG Auto-Response Mode : Disabled", 0, 0, 0)
         end
 
+        tooltip:AddLine(" ")
+            
         tooltip:AddLine(L["Click"] ..
             " |cffffffff" ..
             L["MiniMap"].lowerOr .. "|r /groupie |cffffffff: " .. addonName .. " " .. L["BulletinBoard"] .. "|r ")
