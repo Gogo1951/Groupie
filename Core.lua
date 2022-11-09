@@ -2463,7 +2463,7 @@ function addon.SetupConfig()
                         width = 1.4,
                         values = {
                             [1] = "Character Level",
-                            [2] = "Item-Level",
+                            [2] = "Item-level",
                             [3] = "GearScore"
                         },
                         set = function(info, val) addon.db.char.LFGMsgGearType = val end,
