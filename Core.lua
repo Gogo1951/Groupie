@@ -1781,8 +1781,8 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         tooltip:AddLine(L["Click"] ..
             " |cffffffff" ..
             L["MiniMap"].lowerOr .. "|r /groupie |cffffffff: " .. addonName .. " " .. L["BulletinBoard"] .. "|r ")
-        tooltip:AddLine(L["RightClick"] .. " |cffffffff: " .. addonName .. " Enable LFG Mode|r ")
-        tooltip:AddLine("Shift+Click |cffffffff: " .. addonName .. " Open Settings|r ")
+        tooltip:AddLine(L["RightClick"] .. " |cffffffff: " .. addonName .. " Toggle LFG Auto-Response Mode|r ")
+        tooltip:AddLine("Shift + Click |cffffffff: " .. addonName .. " Open Settings|r ")
         --Version Check
         if addon.version < addon.db.global.highestSeenVersion then
             tooltip:AddLine(" ");
