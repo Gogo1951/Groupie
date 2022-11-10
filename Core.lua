@@ -1873,6 +1873,7 @@ function addon:OnInitialize()
             ignoreLFM = false,
             ignoreLFG = true,
             LFGMsgGearType = 3,
+            defaultLFGModeOn = true,
             --Auto Response Types:
             -- 1 : Respond to Global Friends, but only when You are in Town
             -- 2 : Respond to Local Friends & Guildies, but only when You are in Town
@@ -2506,31 +2507,34 @@ function addon.SetupConfig()
                     spacerdesc5 = { type = "description", name = " ", width = "full", order = 17 },
                     header5 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. addonName .. " " .. L["CharOptions"].AutoResponse,
+                        name = "|cff" .. addon.groupieSystemColor .. "LFG Auto-Response",
                         order = 18,
-                        fontSize = "medium",
-                        hidden = true,
-                        disabled = true,
+                        fontSize = "medium"
                     },
-                    autoFriendsToggle = {
-                        type = "toggle",
-                        name = L["CharOptions"].AutoFriends,
+                    autoResponseDropdown = {
+                        type = "select",
+                        style = "dropdown",
+                        name = "",
                         order = 19,
-                        width = "full",
-                        get = function(info) return addon.db.char.autoRespondFriends end,
-                        set = function(info, val) addon.db.char.autoRespondFriends = val end,
-                        hidden = true,
-                        disabled = true,
-                    },
-                    autoGuildToggle = {
-                        type = "toggle",
-                        name = L["CharOptions"].AutoGuild,
-                        order = 20,
-                        width = "full",
-                        get = function(info) return addon.db.char.autoRespondGuild end,
-                        set = function(info, val) addon.db.char.autoRespondGuild = val end,
-                        hidden = true,
-                        disabled = true,
+                        width = 1.4,
+                        values = {
+                            [0] = "Enable on Login",
+                            [1] = "Disable on Login",
+                        },
+                        set = function(info, val)
+                            if val == 0 then
+                                addon.db.char.defaultLFGModeOn = true
+                            else
+                                addon.db.char.defaultLFGModeOn = false
+                            end
+                        end,
+                        get = function(info)
+                            if addon.db.char.defaultLFGModeOn then
+                                return 0
+                            else
+                                return 1
+                            end
+                        end,
                     },
                     spacerdesc6 = { type = "description", name = " ", width = "full", order = 21 },
                     respondRequestHeader = {
@@ -2625,7 +2629,7 @@ function addon.SetupConfig()
                     },
                     autorespDesc = {
                         type = "description",
-                        name = "Note : Auto-Response will only fire when you are not already in an arena, battleground, or group of any kind.\n\n    \"Hey Friend, you can count on me!...\"",
+                        name = "Note : Auto-Response will only fire when you are not already in an arena, battleground, or group of any kind, and only when LFG Auto-Response|r is toggled on using the Minimap button.\n\n    \"Hey Friend, you can count on me!...\"",
                         order = 36,
                     },
 
@@ -3018,11 +3022,12 @@ function addon.UpdateFriends()
     addon.GenerateGuildToggles(1010, myserver, "globalfriendslist")
 end
 
-function addon.UpdateCharacterSheet()
+function addon.UpdateCharacterSheet(ignoreILVL, ignoreGS)
     --1st Line : Show Talents
     --2nd Line : Show Average Item Level
     --3rd Line : Show Gear Score
     if addon.db.global.charSheetGear then
+        --Calculate talents
         local spec1, spec2, spec3 = CI:GetTalentPoints("player")
         local talentStr = format("%d / %d / %d", spec1, spec2, spec3)
         --Calculate Item level
@@ -3033,6 +3038,7 @@ function addon.UpdateCharacterSheet()
             end
         end
         --Calculate gearscore
+        LGS:PLAYER_EQUIPMENT_CHANGED() --Workaround for PEW event in library being too early
         CI:DoInspect("player")
         local guid, gearScore = LGS:GetScore("player")
         if gearScore and gearScore.GearScore and gearScore.GearScore > 0 then
@@ -3052,17 +3058,25 @@ end
 --Event Registers--
 -------------------
 function addon:OnEnable()
-    addon:RegisterEvent("CHARACTER_POINTS_CHANGED", addon.UpdateSpecOptions)
+    addon:RegisterEvent("CHARACTER_POINTS_CHANGED", function()
+        addon.UpdateSpecOptions()
+        addon.UpdateCharacterSheet()
+    end)
     --Update player's saved instances on boss kill and login
     --The api is very slow to populate saved instance data, so we need a delay on these events
     addon:RegisterEvent("PLAYER_ENTERING_WORLD", function()
         addon.SetupConfig()
-        C_Timer.After(5, function()
+        C_Timer.After(3, function()
             addon.UpdateFriends()
             addon.UpdateSavedInstances()
             addon.UpdateCharacterSheet()
             C_ChatInfo.RegisterAddonMessagePrefix(addon.ADDON_PREFIX)
             C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "YELL")
+            if addon.db.char.defaultLFGModeOn then
+                addon.LFGMode = true
+                PlaySound(8458)
+                addon.icon:ChangeTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\lfg64.tga", "GroupieLDB")
+            end
         end)
         C_Timer.After(15, function()
             local GroupieGroupBrowser = Groupie:GetModule("GroupieGroupBrowser")
