@@ -1770,7 +1770,7 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         tooltip:AddDoubleLine(addonName, tostring(addon.version),
             1, 0.85, 0.00, 1, 0.85, 0.00)
         tooltip:AddLine(L["slogan"], 255, 255, 255, false)
-        
+
         tooltip:AddLine(" ")
 
         if addon.LFGMode then
@@ -1780,7 +1780,7 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         end
 
         tooltip:AddLine(" ")
-            
+
         tooltip:AddLine(L["Click"] ..
             " |cffffffff" ..
             L["MiniMap"].lowerOr .. "|r /groupie |cffffffff: " .. addonName .. " " .. L["BulletinBoard"] .. "|r ")
@@ -3042,12 +3042,8 @@ function addon.UpdateCharacterSheet()
         if gearScore.Color then
             colorStr = "|c" .. gearScore.Color:GenerateHexColor()
         end
-<<<<<<< HEAD
         --Display on character sheet
-        CharSheetSummaryFrame:SetText(format("%s\nItem-Level: %d\nGearScore: %s%d", talentStr, ilvl,
-=======
         CharSheetSummaryFrame:SetText(format("%s\nItem-level : %d\nGearScore : %s%d", talentStr, ilvl,
->>>>>>> e6542f0bbe48b8f7b3632d54cef5624625254fc6
             colorStr, gearScore.GearScore))
     end
 end
