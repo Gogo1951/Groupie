@@ -1770,19 +1770,22 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         tooltip:AddDoubleLine(addonName, tostring(addon.version),
             1, 0.85, 0.00, 1, 0.85, 0.00)
         tooltip:AddLine(L["slogan"], 255, 255, 255, false)
+        
         tooltip:AddLine(" ")
 
         if addon.LFGMode then
-            tooltip:AddLine("LFG Mode: Enabled", 0, 255, 0)
+            tooltip:AddLine("LFG Auto-Response : Enabled", 0, 255, 0)
         else
-            tooltip:AddLine("LFG Mode: Disabled", 255, 0, 0)
+            tooltip:AddLine("LFG Auto-Response : Disabled", 255, 255, 255)
         end
 
+        tooltip:AddLine(" ")
+            
         tooltip:AddLine(L["Click"] ..
             " |cffffffff" ..
             L["MiniMap"].lowerOr .. "|r /groupie |cffffffff: " .. addonName .. " " .. L["BulletinBoard"] .. "|r ")
-        tooltip:AddLine(L["RightClick"] .. " |cffffffff: " .. addonName .. " Enable LFG Mode|r ")
-        tooltip:AddLine("Shift+Click |cffffffff: " .. addonName .. " Open Settings|r ")
+        tooltip:AddLine(L["RightClick"] .. " |cffffffff: " .. " Toggle LFG Auto-Response|r ")
+        tooltip:AddLine("Shift + Click |cffffffff: " .. " Open Groupie Settings|r ")
         --Version Check
         if addon.version < addon.db.global.highestSeenVersion then
             tooltip:AddLine(" ");
@@ -2463,7 +2466,7 @@ function addon.SetupConfig()
                         width = 1.4,
                         values = {
                             [1] = "Character Level",
-                            [2] = "Item-Level",
+                            [2] = "Item-level",
                             [3] = "GearScore"
                         },
                         set = function(info, val) addon.db.char.LFGMsgGearType = val end,
@@ -2540,7 +2543,7 @@ function addon.SetupConfig()
                     },
                     respondRequestDesc = {
                         type = "description",
-                        name = "Note: This will only engage when you are listed in the LFG Tool.",
+                        name = "Note : This will only engage when you are listed in the LFG Tool.",
                         width = "full",
                         order = 23,
                     },
@@ -2571,7 +2574,7 @@ function addon.SetupConfig()
                     },
                     respondInviteDesc = {
                         type = "description",
-                        name = "Note: This will only engage when you are listed in the LFG Tool.",
+                        name = "Note : This will only engage when you are listed in the LFG Tool.",
                         width = "full",
                         order = 28,
                     },
@@ -2622,7 +2625,7 @@ function addon.SetupConfig()
                     },
                     autorespDesc = {
                         type = "description",
-                        name = "NOTE: Auto-Response will only fire when you are not already in an arena, battleground, or group of any kind.\n\n    \"Hey Friend, you can count on me!...\"",
+                        name = "Note : Auto-Response will only fire when you are not already in an arena, battleground, or group of any kind.\n\n    \"Hey Friend, you can count on me!...\"",
                         order = 36,
                     },
 
@@ -3039,8 +3042,12 @@ function addon.UpdateCharacterSheet()
         if gearScore.Color then
             colorStr = "|c" .. gearScore.Color:GenerateHexColor()
         end
+<<<<<<< HEAD
         --Display on character sheet
         CharSheetSummaryFrame:SetText(format("%s\nItem-Level: %d\nGearScore: %s%d", talentStr, ilvl,
+=======
+        CharSheetSummaryFrame:SetText(format("%s\nItem-level : %d\nGearScore : %s%d", talentStr, ilvl,
+>>>>>>> e6542f0bbe48b8f7b3632d54cef5624625254fc6
             colorStr, gearScore.GearScore))
     end
 end
