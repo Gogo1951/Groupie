@@ -3064,30 +3064,35 @@ function addon:OnEnable()
     end)
     --Update player's saved instances on boss kill and login
     --The api is very slow to populate saved instance data, so we need a delay on these events
-    addon:RegisterEvent("PLAYER_ENTERING_WORLD", function()
+    addon:RegisterEvent("PLAYER_ENTERING_WORLD", function(...)
         addon.SetupConfig()
+        local event, isInitialLogin, isReloadingUi = ...
         C_Timer.After(3, function()
             addon.UpdateFriends()
             addon.UpdateSavedInstances()
             addon.UpdateCharacterSheet()
             C_ChatInfo.RegisterAddonMessagePrefix(addon.ADDON_PREFIX)
             C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "YELL")
-            if addon.db.char.defaultLFGModeOn then
-                addon.LFGMode = true
-                PlaySound(8458)
-                addon.icon:ChangeTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\lfg64.tga", "GroupieLDB")
+            if isInitialLogin == true then
+                if addon.db.char.defaultLFGModeOn then
+                    addon.LFGMode = true
+                    PlaySound(8458)
+                    addon.icon:ChangeTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\lfg64.tga", "GroupieLDB")
+                end
             end
         end)
-        C_Timer.After(15, function()
-            local GroupieGroupBrowser = Groupie:GetModule("GroupieGroupBrowser")
-            if GroupieGroupBrowser then
-                --Queue updates from the LFG tool for dungeons and raids on login
-                local dungeons, dungeonactivities = GroupieGroupBrowser:GetActivitiesFor(2)
-                GroupieGroupBrowser:Queue(dungeons, dungeonactivities)
-                local raids, raidactivities = GroupieGroupBrowser:GetActivitiesFor(114)
-                GroupieGroupBrowser:Queue(raids, raidactivities)
-            end
-        end)
+        if isInitialLogin == true then
+            C_Timer.After(15, function()
+                local GroupieGroupBrowser = Groupie:GetModule("GroupieGroupBrowser")
+                if GroupieGroupBrowser then
+                    --Queue updates from the LFG tool for dungeons and raids on login
+                    local dungeons, dungeonactivities = GroupieGroupBrowser:GetActivitiesFor(2)
+                    GroupieGroupBrowser:Queue(dungeons, dungeonactivities)
+                    local raids, raidactivities = GroupieGroupBrowser:GetActivitiesFor(114)
+                    GroupieGroupBrowser:Queue(raids, raidactivities)
+                end
+            end)
+        end
     end)
     --Update friend and ignore lists
     addon:RegisterEvent("FRIENDLIST_UPDATE", function()
