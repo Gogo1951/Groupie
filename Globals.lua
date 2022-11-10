@@ -18,6 +18,8 @@ addon.LFGMode = false
 
 --Cached Item level calculations by GUID for current session
 addon.ILVLCache = {}
+addon.playerILVL = nil
+addon.playerGearScore = nil
 
 --Message formats for various checked messages
 addon.askForPlayerInfo = format("{rt3} %s : What Role are you?", addonName)

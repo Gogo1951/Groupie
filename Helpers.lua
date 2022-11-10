@@ -63,7 +63,6 @@ function addon.TalentSummary(unit)
     if talentsum < UnitLevel(unit) - 9 then
         result = result .. "\nUNSPENT TALENT POINTS"
     end
-    print(result)
     return result
 end
 
@@ -759,15 +758,17 @@ function addon.GetILVLByGUID(guid)
                     end
                 end
                 local tempItemLink = item:GetItemLink()
-                local name, _, _, iLevel, _, _, _, _, itemType = GetItemInfo(tempItemLink)
-                if slotNum == 16 and itemType == "INVTYPE_2HWEAPON" then
-                    --If the weapon is 2 handed, and the offhand slot is empty, we sum the weapon's itemlevel twice
-                    if GetInventoryItemLink("player", 17) == nil then
-                        iLevelSum = iLevelSum + iLevel
+                if tempItemLink then
+                    local name, _, _, iLevel, _, _, _, _, itemType = GetItemInfo(tempItemLink)
+                    if slotNum == 16 and itemType == "INVTYPE_2HWEAPON" then
+                        --If the weapon is 2 handed, and the offhand slot is empty, we sum the weapon's itemlevel twice
+                        if GetInventoryItemLink("player", 17) == nil then
+                            iLevelSum = iLevelSum + iLevel
+                        end
                     end
-                end
 
-                iLevelSum = iLevelSum + iLevel
+                    iLevelSum = iLevelSum + iLevel
+                end
             end
         end
     end

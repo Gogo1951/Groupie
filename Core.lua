@@ -3015,19 +3015,31 @@ function addon.UpdateFriends()
     addon.GenerateGuildToggles(1010, myserver, "globalfriendslist")
 end
 
-local function UpdateCharacterSheet()
+function addon.UpdateCharacterSheet()
     --1st Line : Show Talents
     --2nd Line : Show Average Item Level
     --3rd Line : Show Gear Score
     if addon.db.global.charSheetGear then
         local spec1, spec2, spec3 = CI:GetTalentPoints("player")
         local talentStr = format("%d / %d / %d", spec1, spec2, spec3)
+        --Calculate Item level
         local ilvl = addon.MyILVL()
+        if ilvl then
+            if ilvl > 0 then
+                addon.playerILVL = ilvl
+            end
+        end
+        --Calculate gearscore
+        CI:DoInspect("player")
         local guid, gearScore = LGS:GetScore("player")
+        if gearScore and gearScore.GearScore and gearScore.GearScore > 0 then
+            addon.playerGearScore = gearScore.GearScore
+        end
         local colorStr = ""
         if gearScore.Color then
             colorStr = "|c" .. gearScore.Color:GenerateHexColor()
         end
+        --Display on character sheet
         CharSheetSummaryFrame:SetText(format("%s\nItem-Level: %d\nGearScore: %s%d", talentStr, ilvl,
             colorStr, gearScore.GearScore))
     end
@@ -3045,7 +3057,7 @@ function addon:OnEnable()
         C_Timer.After(5, function()
             addon.UpdateFriends()
             addon.UpdateSavedInstances()
-            UpdateCharacterSheet()
+            addon.UpdateCharacterSheet()
             C_ChatInfo.RegisterAddonMessagePrefix(addon.ADDON_PREFIX)
             C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "YELL")
         end)
@@ -3106,6 +3118,6 @@ function addon:OnEnable()
     end)
     --Update the gearscore/ilvl/talent lines in the character sheet
     addon:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", function(...)
-        UpdateCharacterSheet()
+        addon.UpdateCharacterSheet()
     end)
 end

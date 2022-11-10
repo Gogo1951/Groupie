@@ -71,7 +71,8 @@ local After = _G.C_Timer.After
 local CreateColor = _G.CreateColor
 local floor = _G.math.floor
 local max = _G.math.max
-local ScanTip = _G["LibGearScoreScanTooltip.1000"] or CreateFrame("GameTooltip", "LibGearScoreScanTooltip.1000", UIParent, "GameTooltipTemplate")
+local ScanTip = _G["LibGearScoreScanTooltip.1000"] or
+    CreateFrame("GameTooltip", "LibGearScoreScanTooltip.1000", UIParent, "GameTooltipTemplate")
 lib.callbacks = lib.callbacks or LibStub:GetLibrary("CallbackHandler-1.0"):New(lib)
 
 local BRACKET_SIZE = 1000
@@ -84,7 +85,7 @@ elseif WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
   BRACKET_SIZE = 200
 end
 
-local MAX_SCORE = BRACKET_SIZE*6-1
+local MAX_SCORE = BRACKET_SIZE * 6 - 1
 
 local GS_ItemSlots = {
   _G.INVSLOT_HEAD,
@@ -102,12 +103,12 @@ local GS_ItemSlots = {
   _G.INVSLOT_TRINKET2,
   _G.INVSLOT_BACK,
   _G.INVSLOT_MAINHAND,
---  _G.INVSLOT_OFFHAND, -- handled separately
+  --  _G.INVSLOT_OFFHAND, -- handled separately
   _G.INVSLOT_RANGED,
 }
 
 local GS_ItemTypes = {
-  ["INVTYPE_RELIC"] = { ["SlotMOD"] = 0.3164, ["ItemSlot"] = 18, ["Enchantable"] = false},
+  ["INVTYPE_RELIC"] = { ["SlotMOD"] = 0.3164, ["ItemSlot"] = 18, ["Enchantable"] = false },
   ["INVTYPE_TRINKET"] = { ["SlotMOD"] = 0.5625, ["ItemSlot"] = 33, ["Enchantable"] = false },
   ["INVTYPE_2HWEAPON"] = { ["SlotMOD"] = 2.000, ["ItemSlot"] = 16, ["Enchantable"] = true },
   ["INVTYPE_WEAPONMAINHAND"] = { ["SlotMOD"] = 1.0000, ["ItemSlot"] = 16, ["Enchantable"] = true },
@@ -134,14 +135,14 @@ local GS_ItemTypes = {
 }
 
 local GS_Rarity = {
-  [0] = {Red = 0.55, Green = 0.55, Blue = 0.55 },
-  [1] = {Red = 1.00, Green = 1.00, Blue = 1.00 },
-  [2] = {Red = 0.12, Green = 1.00, Blue = 0.00 },
-  [3] = {Red = 0.00, Green = 0.50, Blue = 1.00 },
-  [4] = {Red = 0.69, Green = 0.28, Blue = 0.97 },
-  [5] = {Red = 0.94, Green = 0.09, Blue = 0.00 },
-  [6] = {Red = 1.00, Green = 0.00, Blue = 0.00 },
-  [7] = {Red = 0.90, Green = 0.80, Blue = 0.50 },
+  [0] = { Red = 0.55, Green = 0.55, Blue = 0.55 },
+  [1] = { Red = 1.00, Green = 1.00, Blue = 1.00 },
+  [2] = { Red = 0.12, Green = 1.00, Blue = 0.00 },
+  [3] = { Red = 0.00, Green = 0.50, Blue = 1.00 },
+  [4] = { Red = 0.69, Green = 0.28, Blue = 0.97 },
+  [5] = { Red = 0.94, Green = 0.09, Blue = 0.00 },
+  [6] = { Red = 1.00, Green = 0.00, Blue = 0.00 },
+  [7] = { Red = 0.90, Green = 0.80, Blue = 0.50 },
 }
 
 local GS_Formula = {
@@ -159,31 +160,31 @@ local GS_Formula = {
 }
 
 local GS_Quality = {
-  [BRACKET_SIZE*6] = {
-    ["Red"] = { ["A"] = 0.94, ["B"] = BRACKET_SIZE*5, ["C"] = 0.00006, ["D"] = 1 },
-    ["Blue"] = { ["A"] = 0.47, ["B"] = BRACKET_SIZE*5, ["C"] = 0.00047, ["D"] = -1 },
+  [BRACKET_SIZE * 6] = {
+    ["Red"] = { ["A"] = 0.94, ["B"] = BRACKET_SIZE * 5, ["C"] = 0.00006, ["D"] = 1 },
+    ["Blue"] = { ["A"] = 0.47, ["B"] = BRACKET_SIZE * 5, ["C"] = 0.00047, ["D"] = -1 },
     ["Green"] = { ["A"] = 0, ["B"] = 0, ["C"] = 0, ["D"] = 0 },
     ["Description"] = _G.ITEM_QUALITY5_DESC
   },
-  [BRACKET_SIZE*5] = {
-    ["Red"] = { ["A"] = 0.69, ["B"] = BRACKET_SIZE*4, ["C"] = 0.00025, ["D"] = 1 },
-    ["Blue"] = { ["A"] = 0.28, ["B"] = BRACKET_SIZE*4, ["C"] = 0.00019, ["D"] = 1 },
-    ["Green"] = { ["A"] = 0.97, ["B"] = BRACKET_SIZE*4, ["C"] = 0.00096, ["D"] = -1 },
+  [BRACKET_SIZE * 5] = {
+    ["Red"] = { ["A"] = 0.69, ["B"] = BRACKET_SIZE * 4, ["C"] = 0.00025, ["D"] = 1 },
+    ["Blue"] = { ["A"] = 0.28, ["B"] = BRACKET_SIZE * 4, ["C"] = 0.00019, ["D"] = 1 },
+    ["Green"] = { ["A"] = 0.97, ["B"] = BRACKET_SIZE * 4, ["C"] = 0.00096, ["D"] = -1 },
     ["Description"] = _G.ITEM_QUALITY4_DESC
   },
-  [BRACKET_SIZE*4] = {
-    ["Red"] = { ["A"] = 0.0, ["B"] = BRACKET_SIZE*3, ["C"] = 0.00069, ["D"] = 1 },
-    ["Blue"] = { ["A"] = 0.5, ["B"] = BRACKET_SIZE*3, ["C"] = 0.00022, ["D"] = -1 },
-    ["Green"] = { ["A"] = 1, ["B"] = BRACKET_SIZE*3, ["C"] = 0.00003, ["D"] = -1 },
+  [BRACKET_SIZE * 4] = {
+    ["Red"] = { ["A"] = 0.0, ["B"] = BRACKET_SIZE * 3, ["C"] = 0.00069, ["D"] = 1 },
+    ["Blue"] = { ["A"] = 0.5, ["B"] = BRACKET_SIZE * 3, ["C"] = 0.00022, ["D"] = -1 },
+    ["Green"] = { ["A"] = 1, ["B"] = BRACKET_SIZE * 3, ["C"] = 0.00003, ["D"] = -1 },
     ["Description"] = _G.ITEM_QUALITY3_DESC
   },
-  [BRACKET_SIZE*3] = {
-    ["Red"] = { ["A"] = 0.12, ["B"] = BRACKET_SIZE*2, ["C"] = 0.00012, ["D"] = -1 },
-    ["Blue"] = { ["A"] = 1, ["B"] = BRACKET_SIZE*2, ["C"] = 0.00050, ["D"] = -1 },
-    ["Green"] = { ["A"] = 0, ["B"] = BRACKET_SIZE*2, ["C"] = 0.001, ["D"] = 1 },
+  [BRACKET_SIZE * 3] = {
+    ["Red"] = { ["A"] = 0.12, ["B"] = BRACKET_SIZE * 2, ["C"] = 0.00012, ["D"] = -1 },
+    ["Blue"] = { ["A"] = 1, ["B"] = BRACKET_SIZE * 2, ["C"] = 0.00050, ["D"] = -1 },
+    ["Green"] = { ["A"] = 0, ["B"] = BRACKET_SIZE * 2, ["C"] = 0.001, ["D"] = 1 },
     ["Description"] = _G.ITEM_QUALITY2_DESC
   },
-  [BRACKET_SIZE*2] = {
+  [BRACKET_SIZE * 2] = {
     ["Red"] = { ["A"] = 1, ["B"] = BRACKET_SIZE, ["C"] = 0.00088, ["D"] = -1 },
     ["Blue"] = { ["A"] = 1, ["B"] = 000, ["C"] = 0.00000, ["D"] = 0 },
     ["Green"] = { ["A"] = 1, ["B"] = BRACKET_SIZE, ["C"] = 0.001, ["D"] = -1 },
@@ -220,12 +221,21 @@ local function GetScoreColor(ItemScore)
   local Red = 0.1
   local Blue = 0.1
   local Green = 0.1
-  for i = 0,6 do
+  for i = 0, 6 do
     if ((ItemScore > i * BRACKET_SIZE) and (ItemScore <= ((i + 1) * BRACKET_SIZE))) then
-      local Red = GS_Quality[( i + 1 ) * BRACKET_SIZE].Red["A"] + (((ItemScore - GS_Quality[( i + 1 ) * BRACKET_SIZE].Red["B"])*GS_Quality[( i + 1 ) * BRACKET_SIZE].Red["C"])*GS_Quality[( i + 1 ) * BRACKET_SIZE].Red["D"])
-      local Blue = GS_Quality[( i + 1 ) * BRACKET_SIZE].Green["A"] + (((ItemScore - GS_Quality[( i + 1 ) * BRACKET_SIZE].Green["B"])*GS_Quality[( i + 1 ) * BRACKET_SIZE].Green["C"])*GS_Quality[( i + 1 ) * BRACKET_SIZE].Green["D"])
-      local Green = GS_Quality[( i + 1 ) * BRACKET_SIZE].Blue["A"] + (((ItemScore - GS_Quality[( i + 1 ) * BRACKET_SIZE].Blue["B"])*GS_Quality[( i + 1 ) * BRACKET_SIZE].Blue["C"])*GS_Quality[( i + 1 ) * BRACKET_SIZE].Blue["D"])
-      return Red, Green, Blue, GS_Quality[( i + 1 ) * BRACKET_SIZE].Description
+      local Red = GS_Quality[(i + 1) * BRACKET_SIZE].Red["A"] +
+          (
+          ((ItemScore - GS_Quality[(i + 1) * BRACKET_SIZE].Red["B"]) * GS_Quality[(i + 1) * BRACKET_SIZE].Red["C"]) *
+              GS_Quality[(i + 1) * BRACKET_SIZE].Red["D"])
+      local Blue = GS_Quality[(i + 1) * BRACKET_SIZE].Green["A"] +
+          (
+          ((ItemScore - GS_Quality[(i + 1) * BRACKET_SIZE].Green["B"]) * GS_Quality[(i + 1) * BRACKET_SIZE].Green["C"]) *
+              GS_Quality[(i + 1) * BRACKET_SIZE].Green["D"])
+      local Green = GS_Quality[(i + 1) * BRACKET_SIZE].Blue["A"] +
+          (
+          ((ItemScore - GS_Quality[(i + 1) * BRACKET_SIZE].Blue["B"]) * GS_Quality[(i + 1) * BRACKET_SIZE].Blue["C"]) *
+              GS_Quality[(i + 1) * BRACKET_SIZE].Blue["D"])
+      return Red, Green, Blue, GS_Quality[(i + 1) * BRACKET_SIZE].Description
     end
   end
   return 0.1, 0.1, 0.1, _G.ITEM_QUALITY0_DESC
@@ -255,8 +265,10 @@ local function ItemScoreCalc(ItemRarity, ItemLevel, ItemEquipLoc)
     Table = GS_Formula["B"]
   end
   if ((ItemRarity >= 2) and (ItemRarity <= 4)) then
-    local Red, Green, Blue, Description = GetScoreColor((floor(((ItemLevel - Table[ItemRarity].A) / Table[ItemRarity].B) * 1 * Scale)) * 11.25)
-    GearScore = floor(((ItemLevel - Table[ItemRarity].A) / Table[ItemRarity].B) * GS_ItemTypes[ItemEquipLoc].SlotMOD * Scale * QualityScale)
+    local Red, Green, Blue, Description = GetScoreColor((
+      floor(((ItemLevel - Table[ItemRarity].A) / Table[ItemRarity].B) * 1 * Scale)) * 11.25)
+    GearScore = floor(((ItemLevel - Table[ItemRarity].A) / Table[ItemRarity].B) * GS_ItemTypes[ItemEquipLoc].SlotMOD *
+      Scale * QualityScale)
     if (ItemLevel == 187.05) then
       ItemLevel = 0
     end
@@ -268,17 +280,20 @@ local function ItemScoreCalc(ItemRarity, ItemLevel, ItemEquipLoc)
   end
 end
 
-lib.ItemScoreData = setmetatable({},{__index = function(cache, item)
+lib.ItemScoreData = setmetatable({}, { __index = function(cache, item)
   local itemID, _, _, ItemEquipLoc = GetItemInfoInstant(item)
-  if not itemID then return {ItemScore=0, ItemLevel=0, Red=0.1, Green=0.1, Blue=0.1, Description=_G.UNKNOWNOBJECT} end
-  if not GS_ItemTypes[ItemEquipLoc] then return {ItemScore=0, ItemLevel=0, Red=0.1, Green=0.1, Blue=0.1, Description=_G.UNKNOWNOBJECT} end
+  if not itemID then return { ItemScore = 0, ItemLevel = 0, Red = 0.1, Green = 0.1, Blue = 0.1,
+    Description = _G.UNKNOWNOBJECT } end
+  if not GS_ItemTypes[ItemEquipLoc] then return { ItemScore = 0, ItemLevel = 0, Red = 0.1, Green = 0.1, Blue = 0.1,
+    Description = _G.UNKNOWNOBJECT } end
   local itemAsync = Item:CreateFromItemID(itemID)
   if itemAsync:IsItemDataCached() then
     local ItemLink = itemAsync:GetItemLink()
     local ItemRarity = itemAsync:GetItemQuality()
     local ItemLevel = itemAsync:GetCurrentItemLevel()
     local ItemScore, ItemLevel, Red, Green, Blue, Description = ItemScoreCalc(ItemRarity, ItemLevel, ItemEquipLoc)
-    local scoreData = {ItemScore=ItemScore,ItemLevel=ItemLevel,Red=Red,Green=Green,Blue=Blue,Description=Description}
+    local scoreData = { ItemScore = ItemScore, ItemLevel = ItemLevel, Red = Red, Green = Green, Blue = Blue,
+      Description = Description }
     rawset(cache, item, scoreData)
     rawset(cache, ItemLink, scoreData)
     rawset(cache, itemID, scoreData)
@@ -290,15 +305,16 @@ lib.ItemScoreData = setmetatable({},{__index = function(cache, item)
       local ItemRarity = itemAsync:GetItemQuality()
       local ItemLevel = itemAsync:GetCurrentItemLevel()
       local ItemScore, ItemLevel, Red, Green, Blue, Description = ItemScoreCalc(ItemRarity, ItemLevel, ItemEquipLoc)
-      local scoreData = {ItemScore=ItemScore,ItemLevel=ItemLevel,Red=Red,Green=Green,Blue=Blue,Description=Description}
+      local scoreData = { ItemScore = ItemScore, ItemLevel = ItemLevel, Red = Red, Green = Green, Blue = Blue,
+        Description = Description }
       rawset(cache, item, scoreData)
       rawset(cache, ItemLink, scoreData)
       rawset(cache, itemID, scoreData)
       lib.callbacks:Fire("LibGearScore_ItemPending", itemID)
     end)
-    return {ItemScore=0, ItemLevel=0, Red=0.1, Green=0.1, Blue=0.1, Description=_G.PENDING_INVITE}
+    return { ItemScore = 0, ItemLevel = 0, Red = 0.1, Green = 0.1, Blue = 0.1, Description = _G.PENDING_INVITE }
   end
-end})
+end })
 
 local function GetUnitSlotLink(unit, slot)
   ScanTip:SetOwner(UIParent, "ANCHOR_NONE")
@@ -376,40 +392,42 @@ local function CacheScore(guid, unit)
   end
   if GearScore > 0 and ItemCount > 0 then
     GearScore = floor(GearScore)
-    AvgItemLevel = floor(LevelTotal/ItemCount)
+    AvgItemLevel = floor(LevelTotal / ItemCount)
     local RawTime = GetServerTime()
-    local TimeStamp = date("%Y%m%d%H%M%S",RawTime) -- 20221017133545 (YYYYMMDDHHMMSS)
-    local r,g,b, description = GetScoreColor(GearScore)
-    local color = CreateColor(r,g,b,1)
-    local scoreData = {TimeStamp = TimeStamp, PlayerName = PlayerName, PlayerRealm = PlayerRealm, GearScore = GearScore, AvgItemLevel = AvgItemLevel, RawTime = RawTime, Color = color, Description = description}
+    local TimeStamp = date("%Y%m%d%H%M%S", RawTime) -- 20221017133545 (YYYYMMDDHHMMSS)
+    local r, g, b, description = GetScoreColor(GearScore)
+    local color = CreateColor(r, g, b, 1)
+    local scoreData = { TimeStamp = TimeStamp, PlayerName = PlayerName, PlayerRealm = PlayerRealm, GearScore = GearScore,
+      AvgItemLevel = AvgItemLevel, RawTime = RawTime, Color = color, Description = description }
     lib.PlayerScoreData[guid] = scoreData
     lib.callbacks:Fire("LibGearScore_Update", guid, scoreData)
   end
 end
 
-lib.PlayerScoreData = setmetatable({},{__index = function(cache, guid)
-  return {PlayerName = _G.UNKNOWNOBJECT, PlayerRealm = _G.UNKNOWNOBJECT, GearScore = 0, AvgItemLevel = 0}
-end})
+lib.PlayerScoreData = setmetatable({}, { __index = function(cache, guid)
+  return { PlayerName = _G.UNKNOWNOBJECT, PlayerRealm = _G.UNKNOWNOBJECT, GearScore = 0, AvgItemLevel = 0 }
+end })
 
 --------------
 --- Events ---
 --------------
 lib.eventFrame = lib.eventFrame or CreateFrame("Frame")
 lib.eventFrame:UnregisterAllEvents()
-lib.eventFrame:SetScript("OnEvent",nil)
+lib.eventFrame:SetScript("OnEvent", nil)
 lib.eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 lib.eventFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 lib.eventFrame:RegisterEvent("UNIT_INVENTORY_CHANGED")
 lib.eventFrame:RegisterEvent("INSPECT_READY")
-lib.OnEvent = function(_,event,...)
-  return lib[event] and lib[event](lib,event,...)
+lib.OnEvent = function(_, event, ...)
+  return lib[event] and lib[event](lib, event, ...)
 end
-lib.eventFrame:SetScript("OnEvent",lib.OnEvent)
-function lib:PLAYER_EQUIPMENT_CHANGED(event,...)
+lib.eventFrame:SetScript("OnEvent", lib.OnEvent)
+function lib:PLAYER_EQUIPMENT_CHANGED(event, ...)
   local guid, unit = UnitGUID("player"), "player"
-  CacheScore(guid,unit)
+  CacheScore(guid, unit)
 end
-function lib:UNIT_INVENTORY_CHANGED(event,...)
+
+function lib:UNIT_INVENTORY_CHANGED(event, ...)
   local unit = ...
   if unit and UnitIsPlayer(unit) then
     local guid = UnitGUID(unit)
@@ -418,31 +436,36 @@ function lib:UNIT_INVENTORY_CHANGED(event,...)
     end
   end
 end
-function lib:INSPECT_READY(event,...)
+
+function lib:INSPECT_READY(event, ...)
   local guid = ...
   if self.inspecting and self.inspecting.guid == guid then
     if self.inspecting.unit and UnitIsVisible(self.inspecting.unit) then
-      if CanInspect(self.inspecting.unit,false) and CheckInteractDistance(self.inspecting.unit,1) then
+      if CanInspect(self.inspecting.unit, false) and CheckInteractDistance(self.inspecting.unit, 1) then
         CacheScore(self.inspecting.guid, self.inspecting.unit)
       end
     end
   end
 end
-function lib:PLAYER_ENTERING_WORLD(event,...)
+
+function lib:PLAYER_ENTERING_WORLD(event, ...)
   local guid = UnitGUID("player")
   CacheScore(guid, "player")
 end
+
 function lib.NotifyInspect(unit)
   if unit and UnitIsPlayer(unit) then
     local guid = UnitGUID(unit)
-    lib.inspecting = {guid=guid,unit=unit}
+    lib.inspecting = { guid = guid, unit = unit }
   end
 end
+
 function lib.ClearInspectPlayer()
   lib.inspecting = false
 end
-hooksecurefunc("NotifyInspect",lib.NotifyInspect)
-hooksecurefunc("ClearInspectPlayer",lib.ClearInspectPlayer)
+
+hooksecurefunc("NotifyInspect", lib.NotifyInspect)
+hooksecurefunc("ClearInspectPlayer", lib.ClearInspectPlayer)
 
 ------------------
 --- Public API ---
@@ -462,30 +485,32 @@ function lib:GetScore(unitorguid)
 end
 
 function lib:GetScoreColor(score)
-  local r,g,b, desc = GetScoreColor(score)
-  local colorObj = CreateColor(r,g,b)
+  local r, g, b, desc = GetScoreColor(score)
+  local colorObj = CreateColor(r, g, b)
   return colorObj, desc
 end
+
 ---------------
 --- Testing ---
 ---------------
 local function TargetScore()
   if UnitExists("target")
-    and UnitIsPlayer("target")
-    and UnitIsFriend("target","player") then
+      and UnitIsPlayer("target")
+      and UnitIsFriend("target", "player") then
     local guid, scoreData = lib:GetScore("target")
     if scoreData then
       if scoreData.PlayerName == _G.UNKNOWNOBJECT then
-        print(format("No GearScore available for '%s'. Try inspecting first.",(UnitName("target"))))
+        print(format("No GearScore available for '%s'. Try inspecting first.", (UnitName("target"))))
       else
-        print(format("%s's GS: ",scoreData.PlayerName)..scoreData.Color:WrapTextInColorCode(scoreData.GearScore))
+        print(format("%s's GS: ", scoreData.PlayerName) .. scoreData.Color:WrapTextInColorCode(scoreData.GearScore))
       end
     else
-      print(format("No GearScore data available for '%s'. Try inspecting first.",(UnitName("target"))))
+      print(format("No GearScore data available for '%s'. Try inspecting first.", (UnitName("target"))))
     end
   else
-    print(format("Can't get GearScore information for that target:%s",(UnitName("target")) or _G.TARGET_TOKEN_NOT_FOUND))
+    print(format("Can't get GearScore information for that target:%s", (UnitName("target")) or _G.TARGET_TOKEN_NOT_FOUND))
   end
 end
+
 SLASH_LibGearScore1 = "/lib_gs"
 _G.SlashCmdList["LibGearScore"] = TargetScore

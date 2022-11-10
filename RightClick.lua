@@ -15,7 +15,9 @@ local mylevel = UnitLevel("player")
 function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultID, isAutoResponse)
 	addon.UpdateSpecOptions()
 
-	local averageiLevel = addon.MyILVL()
+	if addon.playerILVL == nil or addon.playerGearScore == nil or addon.playerILVL < 1 or addon.playerGearScore < 1 then
+		addon.UpdateCharacterSheet()
+	end
 
 	--Find out which spec group is active
 	local specGroup = addon.GetActiveSpecGroup()
@@ -77,10 +79,19 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 	if mylevel < 80 or addon.db.char.LFGMsgGearType == 1 then
 		lvlStr = "Level " .. tostring(mylevel)
 	elseif addon.db.char.LFGMsgGearType == 2 then
-		lvlStr = "Item-Level " .. tostring(averageiLevel)
+		if addon.playerILVL == nil or addon.playerILVL < 1 then
+			addon.UpdateCharacterSheet()
+		end
+		if addon.playerILVL ~= nil and addon.playerILVL > 0 then
+			lvlStr = "Item-Level " .. tostring(addon.playerILVL)
+		end
 	elseif addon.db.char.LFGMsgGearType == 3 then
-		local guid, gearScore = LGS:GetScore("player")
-		lvlStr = "GearScore " .. tostring(gearScore.GearScore)
+		if addon.playerGearScore == nil or addon.playerGearScore < 1 then
+			addon.UpdateCharacterSheet()
+		end
+		if addon.playerGearScore ~= nil and addon.playerGearScore > 0 then
+			lvlStr = "GearScore " .. tostring(addon.playerGearScore)
+		end
 	end
 
 	local isAutoResponseString = ""
