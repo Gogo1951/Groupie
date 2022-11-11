@@ -1947,6 +1947,7 @@ function addon:OnInitialize()
             talentTooltips = true,
             gearSummaryTooltips = true,
             charSheetGear = true,
+            announceInstanceReset = true,
         }
     }
 
