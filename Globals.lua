@@ -8,6 +8,33 @@ addon.version = tonumber(GetAddOnMetadata(addonName, "Version"))
 addon.friendList = {}
 addon.ignoreList = {}
 
+--Sounds for group alerts
+addon.sounds = {
+    [17318] = "LFG-DungeonReady"
+}
+
+--Toggle for 'LFG mode', which disables or enables auto responses and alert sounds
+addon.LFGMode = false
+
+--Cached Item level calculations by GUID for current session
+addon.ILVLCache = {}
+addon.playerILVL = nil
+addon.playerGearScore = nil
+addon.playerGearScoreColor = nil
+
+--Message formats for various checked messages
+addon.askForPlayerInfo = format("{rt3} %s : What Role are you?", addonName)
+addon.askForInstance = format("{rt3} %s : What are you inviting me to?", addonName)
+addon.autoRejectRequestString = "FYI, I have Auto-Reject enabled. Message me back and if it's a good fit I'll send you an invite. Thanks!"
+addon.autoRejectInviteString = "FYI, I have Auto-Reject enabled. Message me back and if it's a good fit I'll come. Thanks!"
+addon.PROTECTED_TOKENS = {
+    [1] = "%s*{rt3}%s*groupie%s*:",
+    [2] = "%s*groupie%s*{rt3}%s*:",
+    [3] = "%s*{diamond}%s*groupie%s*:",
+    [4] = "%s*groupie%s*{diamond}%s*:",
+}
+addon.WARNING_MESSAGE = "{rt3} Groupie : Fake News! That is not a real Groupie Message. Quit being shady."
+
 --Supported localizations, we only load the addon for these
 addon.validLocales = { "enGB", "enUS" }
 --Localizations for which we have all the saved instance data
@@ -15,6 +42,9 @@ addon.validLocales = { "enGB", "enUS" }
 addon.completedLocales = { "enGB", "enUS" }
 
 addon.groupieSystemColor = "ffd900"
+addon.groupieSystemColorR = 255
+addon.groupieSystemColorG = 217
+addon.groupieSystemColorB = 0
 
 addon.groupieLocaleTable = {
     ["zhCN"] = "Chinese",
@@ -252,7 +282,7 @@ addon.classColors = {
     ["WARRIOR"] = "C79C6E",
 }
 
-addon.edgeCasePatterns = { "mt", "os", "up", "dk", "eye", "st", "mh" }
+addon.edgeCasePatterns = { "mt", "os", "up", "dk", "eye", "st", "mh", "an" }
 
 --instanceVersions[instance] = {{size, isHeroic}, ...}
 addon.instanceVersions = {
@@ -334,17 +364,17 @@ addon.instanceVersions = {
     ["Pit of Saron"]          = { { 5, false }, { 5, true } },
     ["Halls of Reflection"]   = { { 5, false }, { 5, true } },
 
-    ["Naxxramas"]         = { { 10, false }, { 25, false } },
-    ["Obsidian Sanctum"]  = { { 10, false }, { 25, false } },
-    ["Vault of Archavon"] = { { 10, false }, { 25, false } },
-    ["Eye of Eternity"]   = { { 10, false }, { 25, false } },
+    ["Naxxramas"]         = { { 25, false }, { 10, false } },
+    ["Obsidian Sanctum"]  = { { 25, false }, { 10, false } },
+    ["Vault of Archavon"] = { { 25, false }, { 10, false } },
+    ["Eye of Eternity"]   = { { 25, false }, { 10, false } },
     --["Onyxia's Lair"]        = { { 10, false }, { 25, false } },
-    ["Ulduar"]            = { { 10, false }, { 25, false } },
+    ["Ulduar"]            = { { 25, false }, { 10, false } },
 
-    ["Trial of the Crusader"]       = { { 10, false }, { 25, false }, { 10, true }, { 25, true } },
-    ["Icecrown Citadel"]            = { { 10, false }, { 25, false }, { 10, true }, { 25, true } },
-    ["Ruby Sanctum"]                = { { 10, false }, { 25, false }, { 10, true }, { 25, true } },
-    ["Trial of the Grand Crusader"] = { { 10, true }, { 25, true } },
+    ["Trial of the Crusader"]       = { { 25, false }, { 10, false }, { 25, true }, { 10, true } },
+    ["Icecrown Citadel"]            = { { 25, false }, { 10, false }, { 25, true }, { 10, true } },
+    ["Ruby Sanctum"]                = { { 25, false }, { 10, false }, { 25, true }, { 10, true } },
+    ["Trial of the Grand Crusader"] = { { 25, true }, { 10, true } },
 
     ["Coren Direbrew"]    = { { 5, false } },
     ["Ahune"]             = { { 5, false }, { 5, true } },
@@ -769,7 +799,7 @@ addon.groupieUnflippedDungeonPatterns = {
     ["Nexus"]                 = "nexus nex",
     ["Azjol-Nerub"]           = "an azjol nerub",
     ["Old Kingdom"]           = "ok atok ahnkahet ankahet kahet kingdom ak ank ahk",
-    ["Drak'Tharon Keep"]      = "dtk tharon dk drak",
+    ["Drak'Tharon Keep"]      = "dtk tharon drak",
     ["Violet Hold"]           = "vh violet violethold",
     ["Gundrak"]               = "gundrak gd gdk",
     ["Halls of Stone"]        = "hos stone",
@@ -831,7 +861,7 @@ addon.GroupieDevs = {
     -- TODO
 
     -- Test Accounts
-    ["Player-4728-03F542F0"] = L["TeamMember"], -- Cooltestguy-Benediction
+    ["Player-4395-034E469C"] = L["TeamMember"], -- Cooltestguy-Benediction
 }
 
 addon.groupieAchievementPriorities = {
@@ -893,7 +923,7 @@ addon.groupieAchievementPriorities = {
         [2] = 1289,
         [3] = 500,
         [4] = 1288,
-        [5] = 500,
+        [5] = 479,
     },
     ["Deadmines"] = {
         [1] = 1283,

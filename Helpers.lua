@@ -3,6 +3,8 @@ local GetTalentTabInfo = GetTalentTabInfo
 local time             = time
 local gmatch           = gmatch
 local L                = LibStub('AceLocale-3.0'):GetLocale('Groupie')
+local CI               = LibStub("LibClassicInspector")
+local myname           = UnitName("player")
 
 --Return the primary talent spec for either main or dual specialization
 function addon.GetSpecByGroupNum(groupnum)
@@ -61,7 +63,6 @@ function addon.TalentSummary(unit)
     if talentsum < UnitLevel(unit) - 9 then
         result = result .. "\nUNSPENT TALENT POINTS"
     end
-    print(result)
     return result
 end
 
@@ -196,6 +197,268 @@ function addon.GenerateInstanceToggles(order, instanceType, showMaxLevel, config
     end
 end
 
+--Generate toggles for including friends/ignores from a certain character
+function addon.GenerateFriendToggles(order, myserver, configGroup)
+    local initorder = order
+    --create tables for the current server if needed
+    if addon.db.global.friends[myserver] == nil then
+        addon.db.global.friends[myserver] = {}
+    end
+    if addon.db.global.ignores[myserver] == nil then
+        addon.db.global.ignores[myserver] = {}
+    end
+    if addon.db.global.guilds[myserver] == nil then
+        addon.db.global.guilds[myserver] = {}
+    end
+    if addon.db.global.groupieFriends[myserver] == nil then
+        addon.db.global.groupieFriends[myserver] = {}
+    end
+    if addon.db.global.groupieIgnores[myserver] == nil then
+        addon.db.global.groupieIgnores[myserver] = {}
+    end
+    if addon.db.global.friendnotes[myserver] == nil then
+        addon.db.global.friendnotes[myserver] = {}
+    end
+    if addon.db.global.ignorenotes[myserver] == nil then
+        addon.db.global.ignorenotes[myserver] = {}
+    end
+    if addon.db.global.hiddenFriendLists[myserver] == nil then
+        addon.db.global.hiddenFriendLists[myserver] = {}
+    end
+    if addon.db.global.hiddenGuilds[myserver] == nil then
+        addon.db.global.hiddenGuilds[myserver] = {}
+    end
+
+    for character, list in pairs(addon.db.global.friends[myserver]) do
+        local nameStr = ""
+        addon.options.args[configGroup].args[character .. "toggle"] = {
+            type = "toggle",
+            name = character .. "-" .. myserver,
+            order = initorder,
+            width = "full",
+            get = function(info) return not addon.db.global.hiddenFriendLists[myserver][character] end,
+            set = function(info, val)
+                addon.db.global.hiddenFriendLists[myserver][character] = not val
+                addon.UpdateFriends()
+            end,
+        }
+        initorder = initorder + 1
+    end
+end
+
+--Generate toggles for including friends/ignores from a certain character
+function addon.GenerateGuildToggles(order, myserver, configGroup)
+    local initorder = order
+    --create tables for the current server if needed
+    if addon.db.global.friends[myserver] == nil then
+        addon.db.global.friends[myserver] = {}
+    end
+    if addon.db.global.ignores[myserver] == nil then
+        addon.db.global.ignores[myserver] = {}
+    end
+    if addon.db.global.guilds[myserver] == nil then
+        addon.db.global.guilds[myserver] = {}
+    end
+    if addon.db.global.groupieFriends[myserver] == nil then
+        addon.db.global.groupieFriends[myserver] = {}
+    end
+    if addon.db.global.groupieIgnores[myserver] == nil then
+        addon.db.global.groupieIgnores[myserver] = {}
+    end
+    if addon.db.global.friendnotes[myserver] == nil then
+        addon.db.global.friendnotes[myserver] = {}
+    end
+    if addon.db.global.ignorenotes[myserver] == nil then
+        addon.db.global.ignorenotes[myserver] = {}
+    end
+    if addon.db.global.hiddenFriendLists[myserver] == nil then
+        addon.db.global.hiddenFriendLists[myserver] = {}
+    end
+    if addon.db.global.hiddenGuilds[myserver] == nil then
+        addon.db.global.hiddenGuilds[myserver] = {}
+    end
+
+    for guild, list in pairs(addon.db.global.guilds[myserver]) do
+        local nameStr = list["__NAME__"]
+        addon.options.args[configGroup].args[nameStr .. "toggle"] = {
+            type = "toggle",
+            name = "<" .. nameStr .. "> of " .. myserver,
+            order = initorder,
+            width = "full",
+            get = function(info) return not addon.db.global.hiddenGuilds[myserver][nameStr] end,
+            set = function(info, val)
+                addon.db.global.hiddenGuilds[myserver][nameStr] = not val
+                addon.UpdateFriends()
+            end,
+        }
+        initorder = initorder + 1
+    end
+end
+
+--Generate dropdowns for all auto response/sound alert options
+function addon.GenerateAutoResponseOptions(order, groupTypeTitle, groupTypeKey, configGroup)
+    local initorder = order
+    --spacer
+    addon.options.args[configGroup].args[tostring(initorder) .. "headerspacer"] = {
+        type = "description",
+        name = " ",
+        width = "full",
+        order = initorder
+    }
+    initorder = initorder + 1
+    --Group Type Title
+    addon.options.args[configGroup].args[tostring(initorder) .. "header"] = {
+        type = "description",
+        name = "|cff" ..
+            addon.groupieSystemColor .. "When a " .. groupTypeTitle ..
+            " Group that Matches Your Filters is Discovered...",
+        width = "full",
+        fontSize = "medium",
+        order = initorder
+    }
+    initorder = initorder + 1
+    --spacer
+    addon.options.args[configGroup].args[tostring(initorder) .. "headerspacer"] = {
+        type = "description",
+        name = " ",
+        width = "full",
+        order = initorder
+    }
+    initorder = initorder + 1
+
+    --indent spacer
+    addon.options.args[configGroup].args[tostring(initorder) .. "indentspacer"] = {
+        type = "description",
+        name = " ",
+        width = 0.2,
+        order = initorder
+    }
+    initorder = initorder + 1
+    --Auto response dropdown
+    addon.options.args[configGroup].args[groupTypeTitle .. "responsedropdown"] = {
+        type = "select",
+        style = "dropdown",
+        name = "",
+        width = 1.8,
+        order = initorder,
+        values = {
+            --[1] = "Respond to Global Friends, When in in Town",
+            --[2] = "Respond to Local Friends & Guildies, When in in Town",
+            --[3] = "Respond to Local Friends, When in in Town",
+            [4] = "Respond to Global Friends",
+            [5] = "Respond to Local Friends & Guildies",
+            [6] = "Respond to Local Friends",
+            [7] = "Disable Auto Responses for " .. groupTypeTitle .. " Groups",
+        },
+        get = function(info) return addon.db.char.autoResponseOptions[groupTypeKey].responseType end,
+        set = function(info, val) addon.db.char.autoResponseOptions[groupTypeKey].responseType = val end,
+    }
+    initorder = initorder + 1
+    --spacer
+    addon.options.args[configGroup].args[tostring(initorder) .. "headerspacer"] = {
+        type = "description",
+        name = " ",
+        width = "full",
+        order = initorder
+    }
+    initorder = initorder + 1
+    --indent spacer
+    addon.options.args[configGroup].args[tostring(initorder) .. "indentspacer"] = {
+        type = "description",
+        name = " ",
+        width = 0.2,
+        order = initorder
+    }
+    initorder = initorder + 1
+    --Alert sound title
+    addon.options.args[configGroup].args[tostring(initorder) .. "header"] = {
+        type = "description",
+        name = "|cff" ..
+            addon.groupieSystemColor .. "... Play an Alert Sound When a",
+        width = 1.9,
+        fontSize = "medium",
+        order = initorder
+    }
+    initorder = initorder + 1
+    --indent spacer
+    addon.options.args[configGroup].args[tostring(initorder) .. "indentspacer"] = {
+        type = "description",
+        name = " ",
+        width = 0.2,
+        order = initorder
+    }
+    initorder = initorder + 1
+    --Alert sound dropdown
+    addon.options.args[configGroup].args[groupTypeTitle .. "sounddropdown"] = {
+        type = "select",
+        style = "dropdown",
+        name = "",
+        width = 1.8,
+        order = initorder,
+        values = {
+            --[1] = "Global Friend Creates a Group, When in in Town",
+            --[2] = "Local Friend or Guildie Creates a Group, When in in Town",
+            --[3] = "Local Friend Creates a Group, When in in Town",
+            --[4] = "Anyone Creates a Group, When in in Town",
+            [5] = "Global Friend Creates a Group",
+            [6] = "Local Friend or Guildie Creates a Group",
+            [7] = "Local Friend Creates a Group",
+            [8] = "Anyone Creates a Group",
+            [9] = "Disable Alert Sounds for " .. groupTypeTitle .. " Groups",
+        },
+        get = function(info) return addon.db.char.autoResponseOptions[groupTypeKey].soundType end,
+        set = function(info, val) addon.db.char.autoResponseOptions[groupTypeKey].soundType = val end,
+    }
+    initorder = initorder + 1
+    --spacer
+    addon.options.args[configGroup].args[tostring(initorder) .. "headerspacer"] = {
+        type = "description",
+        name = " ",
+        width = "full",
+        order = initorder
+    }
+    initorder = initorder + 1
+    --indent spacer
+    addon.options.args[configGroup].args[tostring(initorder) .. "indentspacer"] = {
+        type = "description",
+        name = " ",
+        width = 0.2,
+        order = initorder
+    }
+    initorder = initorder + 1
+    --Alert sound selection title
+    addon.options.args[configGroup].args[tostring(initorder) .. "header"] = {
+        type = "description",
+        name = "|cff" ..
+            addon.groupieSystemColor .. "... Play Sound",
+        width = 1.9,
+        fontSize = "medium",
+        order = initorder
+    }
+    initorder = initorder + 1
+
+    --indent spacer
+    addon.options.args[configGroup].args[tostring(initorder) .. "indentspacer"] = {
+        type = "description",
+        name = " ",
+        width = 0.2,
+        order = initorder
+    }
+    initorder = initorder + 1
+    --Alert sound selection dropdown
+    addon.options.args[configGroup].args[groupTypeTitle .. "soundiddropdown"] = {
+        type = "select",
+        style = "dropdown",
+        name = "",
+        width = 1.8,
+        order = initorder,
+        values = addon.sounds,
+        get = function(info) return addon.db.char.autoResponseOptions[groupTypeKey].alertSoundID end,
+        set = function(info, val) addon.db.char.autoResponseOptions[groupTypeKey].alertSoundID = val end,
+    }
+    initorder = initorder + 1
+end
+
 --Remove expired listings from the listing table
 function addon.ExpireListings()
     --Save 20 mins of data for everyone
@@ -306,7 +569,7 @@ end
 --Stored in a double nested table with form:
 --savedInstanceInfo[instanceOrder][playerName]
 function addon.UpdateSavedInstances()
-    local playerName = UnitName("player")
+    local playerName = myname
     local locClass, engClass = UnitClass("player")
     local locale = GetLocale()
     if addon.db.global.savedInstanceLogs[locale] == nil then
@@ -428,4 +691,92 @@ function addon.StringHash(text)
     end
     local numhash = math.fmod(counter, 4294967291) -- 2^32 - 5: Prime (and different from the prime in the loop)
     return strsub(format("%x", numhash), -4)
+end
+
+--Return a string of 3 raid target icons from the hash of a given string input
+--From https://wowwiki-archive.fandom.com/wiki/USERAPI_StringHash
+function addon.RTHash(text)
+    local counter = 1
+    local len = string.len(text)
+    for i = 1, len, 3 do
+        counter = math.fmod(counter * 8161, 4294967279) + -- 2^32 - 17: Prime!
+            (string.byte(text, i) * 16776193) +
+            ((string.byte(text, i + 1) or (len - i + 256)) * 8372226) +
+            ((string.byte(text, i + 2) or (len - i + 256)) * 3932164)
+    end
+    local numhash = math.fmod(counter, 4294967291) -- 2^32 - 5: Prime (and different from the prime in the loop)
+    local strhash = format("%x", numhash)
+    local char1 = tonumber(strsub(strhash, -3, -3), 16) % 8 + 1
+    local char2 = tonumber(strsub(strhash, -2, -2), 16) % 8 + 1
+    local char3 = tonumber(strsub(strhash, -1, -1), 16) % 8 + 1
+    return format("{rt%d}{rt%d}{rt%d}", char1, char2, char3)
+end
+
+--Calculate the player's own ilvl average
+function addon.MyILVL()
+    local iLevelSum = 0
+    for slotNum = 1, 19 do
+        --Exclude shirt and tabard slots from itemlevel calculation
+        if slotNum ~= 4 and slotNum ~= 19 then
+            local tempItemLink = GetInventoryItemLink("player", slotNum)
+
+            if tempItemLink then
+                local name, _, _, iLevel, _, _, _, _, itemType = GetItemInfo(tempItemLink)
+                if slotNum == 16 and itemType == "INVTYPE_2HWEAPON" then
+                    --If the weapon is 2 handed, and the offhand slot is empty, we sum the weapon's itemlevel twice
+                    if GetInventoryItemLink("player", 17) == nil then
+                        iLevelSum = iLevelSum + iLevel
+                    end
+                end
+
+                iLevelSum = iLevelSum + iLevel
+            end
+        end
+    end
+    return floor(iLevelSum / 17)
+end
+
+--Calculate the average ilvl for a given GUID
+function addon.GetILVLByGUID(guid)
+
+    if addon.ILVLCache[guid] then
+        return addon.ILVLCache[guid]
+    end
+
+    local iLevelSum = 0
+    for slotNum = 1, 19 do
+
+        --Exclude shirt and tabard slots from itemlevel calculation
+        if slotNum ~= 4 and slotNum ~= 19 then
+            local item = CI:GetInventoryItemMixin(guid, slotNum)
+            if item then
+                if not item:IsItemDataCached() then
+
+                    local itemID = item:GetItemID()
+                    if itemID then
+                        C_Item.RequestLoadItemDataByID(itemID)
+                    end
+                end
+                local tempItemLink = item:GetItemLink()
+                if tempItemLink then
+                    local name, _, _, iLevel, _, _, _, _, itemType = GetItemInfo(tempItemLink)
+                    if slotNum == 16 and itemType == "INVTYPE_2HWEAPON" then
+                        --If the weapon is 2 handed, and the offhand slot is empty, we sum the weapon's itemlevel twice
+                        if GetInventoryItemLink("player", 17) == nil then
+                            iLevelSum = iLevelSum + iLevel
+                        end
+                    end
+
+                    iLevelSum = iLevelSum + iLevel
+                end
+            end
+        end
+    end
+
+    local averageilvl = floor(iLevelSum / 17)
+    if averageilvl > 0 then
+        addon.ILVLCache[guid] = averageilvl
+    end
+
+    return averageilvl
 end

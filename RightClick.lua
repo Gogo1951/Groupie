@@ -3,38 +3,21 @@ local locale = GetLocale()
 if not addon.tableContains(addon.validLocales, locale) then
 	return
 end
-local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
+local L       = LibStub('AceLocale-3.0'):GetLocale('Groupie')
+local LGS     = LibStub:GetLibrary("LibGearScore.1000", true)
+local myname  = UnitName("player")
+local myclass = UnitClass("player")
+local mylevel = UnitLevel("player")
 
 -------------------------------
 -- Right Click Functionality --
 -------------------------------
-function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultID)
+function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultID, isAutoResponse)
 	addon.UpdateSpecOptions()
-	--Calculate average itemlevel
-	local iLevelSum = 0
-	for slotNum = 1, 19 do
-		--Exclude shirt and tabard slots from itemlevel calculation
-		if slotNum ~= 4 and slotNum ~= 19 then
-			local tempItemLink = GetInventoryItemLink("player", slotNum)
 
-			if tempItemLink then
-				local name, _, _, iLevel, _, _, _, _, itemType = GetItemInfo(tempItemLink)
-				if slotNum == 16 and itemType == "INVTYPE_2HWEAPON" then
-					--If the weapon is 2 handed, and the offhand slot is empty, we sum the weapon's itemlevel twice
-					if GetInventoryItemLink("player", 17) == nil then
-						iLevelSum = iLevelSum + iLevel
-					end
-				end
-
-				iLevelSum = iLevelSum + iLevel
-			end
-		end
+	if addon.playerILVL == nil or addon.playerGearScore == nil or addon.playerILVL < 1 or addon.playerGearScore < 1 then
+		addon.UpdateCharacterSheet()
 	end
-	local averageiLevel = floor(iLevelSum / 17)
-
-	local myclass = UnitClass("player")
-	local mylevel = UnitLevel("player")
-	local myname = UnitName("player")
 
 	--Find out which spec group is active
 	local specGroup = addon.GetActiveSpecGroup()
@@ -92,20 +75,33 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 	end
 
 	local lvlStr = ""
-	--Show ilvl for level 70/80 players, otherwise show level
-	if mylevel == 80 then
-		lvlStr = "Item-Level " .. tostring(averageiLevel)
-	else
+	--Show ilvl or gearscore or level
+	if mylevel < 80 or addon.db.char.LFGMsgGearType == 1 then
 		lvlStr = "Level " .. tostring(mylevel)
+	elseif addon.db.char.LFGMsgGearType == 2 then
+		if addon.playerILVL == nil or addon.playerILVL < 1 then
+			addon.UpdateCharacterSheet()
+		end
+		if addon.playerILVL ~= nil and addon.playerILVL > 0 then
+			lvlStr = "Item-level " .. tostring(addon.playerILVL)
+		end
+	elseif addon.db.char.LFGMsgGearType == 3 then
+		if addon.playerGearScore == nil or addon.playerGearScore < 1 then
+			addon.UpdateCharacterSheet()
+		end
+		if addon.playerGearScore ~= nil and addon.playerGearScore > 0 then
+			lvlStr = "GearScore " .. tostring(addon.playerGearScore)
+		end
 	end
 
-	local askLootRules = ""
-	--if resultID then
-	--	askLootRules = "MS > OS? Any Reserves?" .. " "
-	--end
+	local isAutoResponseString = ""
+	if isAutoResponse then
+		isAutoResponseString = "Hey Friend, you can count on me! "
+	end
 
-	local groupieMsg = format("{rt3} %s : %s%s %s! %s %s%s %s. %s(%s)%s",
+	local groupieMsg = format("{rt3} %s : %s%s%s %s! %s %s%s %s.%s",
 		addonName,
+		isAutoResponseString,
 		activeRole,
 		otherRoleMsg,
 		lfgStr,
@@ -113,14 +109,20 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 		activeTalentSpec,
 		otherSpecMsg,
 		myclass,
-		askLootRules,
-		addon.localeCodes[locale],
 		achieveLinkStr
 	)
 
 	--Hash the message and attach the suffix of the hash
+	------------
+	--Old Hash--
+	------------
 	local msgHash = addon.StringHash(myname .. groupieMsg)
 	groupieMsg = format("%s [#%s]", groupieMsg, msgHash)
+	------------
+	--New Hash--
+	------------
+	--local msgHash = addon.RTHash(myname .. groupieMsg)
+	--groupieMsg = format("%s %s", groupieMsg, msgHash)
 
 	--Sending Current Spec Info
 	if which == "BN_FRIEND" then
@@ -132,7 +134,7 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 end
 
 function addon.SendWCLInfo(targetName, dropdownMenu, which)
-	local myname = UnitName("player")
+
 	local myserver = (GetRealmName()):gsub("[ '`]", "-"):lower() or nil
 	local region = (GetCVar("portal")):lower() or nil
 	local link
@@ -144,8 +146,17 @@ function addon.SendWCLInfo(targetName, dropdownMenu, which)
 	local groupieMsg = "{rt3} " .. addonName .. " : Check My Parses on Warcraft Logs " .. link
 
 	--Hash the message and attach the suffix of the hash
+	------------
+	--Old Hash--
+	------------
 	local msgHash = addon.StringHash(myname .. groupieMsg)
 	groupieMsg = format("%s [#%s]", groupieMsg, msgHash)
+	------------
+	--New Hash--
+	------------
+	--local msgHash = addon.RTHash(myname .. groupieMsg)
+	--groupieMsg = format("%s %s", groupieMsg, msgHash)
+
 
 	if which == "BN_FRIEND" then
 		BNSendWhisper(dropdownMenu.accountInfo.bnetAccountID, groupieMsg)
@@ -182,7 +193,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 	if unit == "player" and not addon.debugMenus then
 		return
 	end
-	if UnitName("player") == name and not addon.debugMenus then
+	if myname == name and not addon.debugMenus then
 		return
 	end
 

@@ -1,18 +1,20 @@
 local addonName, addon = ...
+local GroupieListener = addon:NewModule("GroupieListener", "AceEvent-3.0")
+
 local locale = GetLocale()
 if not addon.tableContains(addon.validLocales, locale) then
     return
 end
 local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
+local myname = UnitName("player")
+local myserver = GetRealmName()
+local mylevel = UnitLevel("player")
 
+local askForPlayerInfo = addon.askForPlayerInfo
+local askForInstance = addon.askForInstance
+local PROTECTED_TOKENS = addon.PROTECTED_TOKENS
+local WARNING_MESSAGE = addon.WARNING_MESSAGE
 
-local PROTECTED_TOKENS = {
-    [1] = "%s*{rt3}%s*groupie%s*:",
-    [2] = "%s*groupie%s*{rt3}%s*:",
-    [3] = "%s*{diamond}%s*groupie%s*:",
-    [4] = "%s*groupie%s*{diamond}%s*:",
-}
-local WARNING_MESSAGE = "{rt3} Groupie : Fake News! That is not a real Groupie Message. Quit being shady."
 
 --Local Function References for performance reasons
 local gsub = gsub
@@ -24,9 +26,91 @@ local tinsert = tinsert
 local next = next
 local format = format
 
---Play a sound and auto respond when a friend lists a group the player is interested in
-local function FriendAutoResponse()
 
+--Decide whether we can auto respond OR play a sound
+function addon.CanRespondOrSound(author, order, minlevel, maxlevel)
+    -------------------------
+    --Dont auto respond if:--
+    -------------------------
+
+    --Its our own group
+    if myname == author then return false end
+
+    --AFK or DND
+    if UnitIsAFK("player") then return false end
+    if UnitIsDND("player") then return false end
+
+    --Instance is saved or hidden
+    if addon.db.global.savedInstanceInfo[order] then
+        if addon.db.global.savedInstanceInfo[order][myname] then return false end
+    end
+    if addon.db.char.hideInstances[order] then return false end
+
+    --Instance is out of level range
+    if not addon.debugMenus then
+        if not minlevel or not maxlevel then return false end --required nil check for non raid/dungeon activities
+        if (minlevel > (mylevel + addon.db.char.recommendedLevelRange)) or
+            maxlevel < mylevel then
+            return false
+        end
+    end
+
+    --In a group
+    if UnitInAnyGroup("player") or IsActiveBattlefieldArena() then return false end
+
+    --In a battleground/arena queue
+    for i = 1, GetMaxBattlefieldID() do
+        local status = GetBattlefieldStatus(i)
+        if status and status ~= "none" then return false end
+    end
+    return true
+end
+
+--Decide whether to auto respond
+function addon.ShouldAutoRespond(author, groupType)
+
+    local resting = IsResting()
+    local responseType = addon.db.char.autoResponseOptions[groupType].responseType
+    --Responses are disabled for this group type
+    if responseType == 7 then return false end
+
+    --in town options are now disabled
+    if responseType == 1 or responseType == 2 or responseType == 3 then return false end
+
+    if responseType == 4 then --Global friends
+        if addon.friendList[author] then return true end
+    elseif responseType == 5 then --Local friends and guild
+        if addon.db.global.friends[myserver][myname][author] then return true end
+        if addon.db.global.guild[myserver][myname][author] then return true end
+    elseif responseType == 6 then --Local friends
+        if addon.db.global.friends[myserver][myname][author] then return true end
+    end
+    return false
+end
+
+--Decide whether to play an alert sound
+function addon.ShouldPlaySound(author, groupType)
+    local resting = IsResting()
+    local soundType = addon.db.char.autoResponseOptions[groupType].soundType
+
+    --Responses are disabled for this group type
+    if soundType == 9 then return false end
+
+    --in town options are now disabled
+    if soundType == 1 or soundType == 2 or soundType == 3 or soundType == 4 then return false end
+
+
+    if soundType == 5 then --Global friends
+        if addon.friendList[author] then return true end
+    elseif soundType == 6 then --Local friends and guild
+        if addon.db.global.friends[myserver][myname][author] then return true end
+        if addon.db.global.guild[myserver][myname][author] then return true end
+    elseif soundType == 7 then --Local friends
+        if addon.db.global.friends[myserver][myname][author] then return true end
+    elseif soundType == 8 then --Anyone
+        return true
+    end
+    return false
 end
 
 --Extract a specified language from an LFG message, if it exists
@@ -100,50 +184,46 @@ local function GetDungeons(messageWords)
             --        instance = lookupAttempt
             --    end
             --end
-        elseif instance == nil then -- We shouldn't try matching for instance+heroic+size patterns if we've already found one
+        elseif instance == nil or addon.tableContains(addon.edgeCasePatterns, lastUsedToken) then -- We shouldn't try matching for instance+heroic+size patterns if we've already found one
             --If we couldn't recognize an instance, try removing heroic/size patterns from the start and end of the word
             for key, val in pairs(addon.groupieVersionPatterns) do
                 if addon.EndsWith(word, key) then
                     lookupAttempt = addon.groupieInstancePatterns[strsub(word, 1, #word - #key)]
-                    if lookupAttempt ~= nil then
-                        local validVersion, _ = isValidVersion(instance, forceSize, isHeroic)
-                        if validVersion then
-                            instance = lookupAttempt
-                            if val == 0 then
-                                isHeroic = true
-                            elseif val == 1 then
-                                forceSize = 10
-                            elseif val == 2 then
-                                forceSize = 25
-                            elseif val == 3 then
-                                isHeroic = true
-                                forceSize = 10
-                            elseif val == 4 then
-                                isHeroic = true
-                                forceSize = 25
-                            end
+                    if lookupAttempt ~= nil and addon.groupieVersionPatterns[word] == nil then
+                        --local validVersion, _ = isValidVersion(lookupAttempt, forceSize, isHeroic)
+                        instance = lookupAttempt
+                        if val == 0 then
+                            isHeroic = true
+                        elseif val == 1 then
+                            forceSize = 10
+                        elseif val == 2 then
+                            forceSize = 25
+                        elseif val == 3 then
+                            isHeroic = true
+                            forceSize = 10
+                        elseif val == 4 then
+                            isHeroic = true
+                            forceSize = 25
                         end
                     end
                 end
                 if addon.StartsWith(word, key) then
                     lookupAttempt = addon.groupieInstancePatterns[strsub(word, 1 + #key, #word)]
-                    if lookupAttempt ~= nil then
-                        local validVersion, _ = isValidVersion(instance, forceSize, isHeroic)
-                        if validVersion then
-                            instance = lookupAttempt
-                            if val == 0 then
-                                isHeroic = true
-                            elseif val == 1 then
-                                forceSize = 10
-                            elseif val == 2 then
-                                forceSize = 25
-                            elseif val == 3 then
-                                isHeroic = true
-                                forceSize = 10
-                            elseif val == 4 then
-                                isHeroic = true
-                                forceSize = 25
-                            end
+                    if lookupAttempt ~= nil and addon.groupieVersionPatterns[word] == nil then
+                        --local validVersion, _ = isValidVersion(lookupAttempt, forceSize, isHeroic)
+                        instance = lookupAttempt
+                        if val == 0 then
+                            isHeroic = true
+                        elseif val == 1 then
+                            forceSize = 10
+                        elseif val == 2 then
+                            forceSize = 25
+                        elseif val == 3 then
+                            isHeroic = true
+                            forceSize = 10
+                        elseif val == 4 then
+                            isHeroic = true
+                            forceSize = 25
                         end
                     end
                 end
@@ -355,10 +435,13 @@ local function ParseMessage(event, msg, author, _, channel, guid)
         rolesNeeded = { 1, 2, 3, 4 }
     end
 
+
+    local isNewListing = false
     --Create a new entry for the author if one doesnt exist
     --Used in listing board to prevent jumpy data by default
     if addon.db.global.listingTable[author] == nil or addon.db.global.listingTable[author].resultID ~= nil then
         addon.db.global.listingTable[author] = {}
+        isNewListing = true
     end
     if addon.db.global.listingTable[author].createdat == nil then
         --Set the created time if it isnt already set
@@ -398,10 +481,37 @@ local function ParseMessage(event, msg, author, _, channel, guid)
     addon.db.global.listingTable[author].icon = icon
     addon.db.global.listingTable[author].classColor = classColor
     addon.db.global.listingTable[author].resultID = nil -- Required to prevent /4 listings from being overwritten by LFG listings
-    --Collect data to debug with
-    --if addon.debugMenus then
-    --tinsert(addon.db.global.debugData, { msg, preprocessedStr, addon.db.global.listingTable[author] })
-    --end
+
+    if isNewListing and addon.LFGMode then --If the listing is new, we can autoRespond
+        --Find the group type string for auto response options
+        local optionsGroupType = nil
+        if lootType == "PVP" then
+            optionsGroupType = "PVP"
+        elseif groupSize == 25 and lootType ~= "Other" then
+            optionsGroupType = "25"
+        elseif groupSize == 10 and lootType ~= "Other" then
+            optionsGroupType = "10"
+        elseif groupSize == 5 and isHeroic == true and lootType ~= "Other" then
+            optionsGroupType = "5H"
+        elseif groupSize == 5 and lootType ~= "Other" then
+            optionsGroupType = "5"
+        end
+
+        --Remove server name from author string
+        local shortAuthor = author:gsub("-.+", "")
+        if optionsGroupType then
+            if addon.CanRespondOrSound(shortAuthor, instanceOrder, minLevel, maxLevel) then
+                if addon.ShouldAutoRespond(shortAuthor, optionsGroupType) then
+                    addon.SendPlayerInfo(author, nil, nil, fullName, nil, true)
+                end
+
+                if addon.ShouldPlaySound(shortAuthor, optionsGroupType) then
+                    PlaySound(addon.db.char.autoResponseOptions[optionsGroupType].alertSoundID)
+                end
+            end
+        end
+    end
+
     return true
 end
 
@@ -429,18 +539,18 @@ local function GroupieEventHandlers(...)
     return true
 end
 
--------------------------------
---DEBUG FUNCTIONS FOR TESTING--
--------------------------------
+--This function currently does two things
+--1. Provides testing functions when the player whispers commands to themselves
+--2. Checks that the message hash is valid and therefore a non fake groupie message
+--TODO: This should be separated into two seperate functions, and probably the hash validation should live in rightclick.lua
 local function WhisperListener(_, msg, longAuthor, ...)
 
     local author = gsub(longAuthor, "-.*", "")
 
     --test phrases for debugging
-    print(msg, author, UnitName("player"))
-    if msg == "clear" and author == UnitName("player") and addon.debugMenus then
+    if msg == "clear" and author == myname and addon.debugMenus then
         addon.db.global.listingTable = {}
-    elseif msg == "all" and author == UnitName("player") and addon.debugMenus then
+    elseif msg == "all" and author == myname and addon.debugMenus then
         addon.db.global.listingTable = {}
         local idx = 0
         for key, val in pairs(addon.groupieUnflippedDungeonPatterns) do
@@ -448,18 +558,40 @@ local function WhisperListener(_, msg, longAuthor, ...)
             ParseMessage(nil, "lfm " .. temppattern, tostring(idx), nil, nil, UnitGUID("player"))
             idx = idx + 1
         end
+    elseif msg == "friends" and author == myname and addon.debugMenus then
+        for k, v in pairs(addon.friendList) do
+            print(k, v)
+        end
     else
         --Check the hash if it is a groupie branded message
         --Unless it is the warning message itself
-        if msg ~= WARNING_MESSAGE then
+        if msg ~= WARNING_MESSAGE and msg ~= askForInstance and msg ~= askForPlayerInfo then
             for key, val in pairs(PROTECTED_TOKENS) do
                 if strmatch(strlower(msg), val) then
+                    local flag1, flag2 = false, false
+                    ------------
+                    --Old Hash--
+                    ------------
                     --Remove the hash
                     local hashRecieved = gsub(gsub(msg, ".+ %[%#", ""), "%]", "")
                     local suffixRemoved = gsub(msg, " %[%#.+", "")
                     local hashCalculated = addon.StringHash(author .. suffixRemoved)
                     --Fake found
                     if hashCalculated ~= hashRecieved then
+                        flag1 = true
+                    end
+                    ------------
+                    --New Hash--
+                    ------------
+                    --Remove the hash
+                    hashRecieved = strmatch(gsub(msg, "{rt3} Groupie", ""), "{.+}")
+                    suffixRemoved = gsub(msg, " {rt.+", "")
+                    hashCalculated = addon.RTHash(author .. suffixRemoved)
+                    --Fake found
+                    if hashCalculated ~= hashRecieved then
+                        flag2 = true
+                    end
+                    if flag1 and flag2 then
                         SendChatMessage(WARNING_MESSAGE, "WHISPER", "COMMON", longAuthor)
                     end
                 end
@@ -471,6 +603,8 @@ end
 -------------------
 --Event Registers--
 -------------------
-addon:RegisterEvent("CHAT_MSG_CHANNEL", GroupieEventHandlers)
-addon:RegisterEvent("CHAT_MSG_GUILD", GroupieEventHandlers)
-addon:RegisterEvent("CHAT_MSG_WHISPER", WhisperListener)
+function GroupieListener:OnEnable()
+    self:RegisterEvent("CHAT_MSG_CHANNEL", GroupieEventHandlers)
+    self:RegisterEvent("CHAT_MSG_GUILD", GroupieEventHandlers)
+    self:RegisterEvent("CHAT_MSG_WHISPER", WhisperListener)
+end
