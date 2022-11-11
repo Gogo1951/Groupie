@@ -2763,18 +2763,33 @@ function addon.SetupConfig()
                             end
                         end,
                     },
-                    spacerdesc4 = { type = "description", name = " ", width = "full", order = 11 },
+                    announceResetToggle = {
+                        type = "toggle",
+                        name = "Announce Instance Reset in Party/Raid Chat",
+                        order = 11,
+                        width = "full",
+                        get = function(info) return addon.db.global.announceInstanceReset end,
+                        set = function(info, val)
+                            addon.db.global.announceInstanceReset = val
+                            if addon.db.global.announceInstanceReset then
+                                ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", addon.resetChatFilter)
+                            else
+                                ChatFrame_RemoveMessageEventFilter("CHAT_MSG_SYSTEM", addon.resetChatFilter)
+                            end
+                        end,
+                    },
+                    spacerdesc4 = { type = "description", name = " ", width = "full", order = 12 },
                     header2 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. L["GlobalOptions"].LFGData,
-                        order = 12,
+                        order = 13,
                         fontSize = "medium"
                     },
                     preserveDurationDropdown = {
                         type = "select",
                         style = "dropdown",
                         name = "",
-                        order = 13,
+                        order = 14,
                         width = 1.4,
                         values = { [1] = L["GlobalOptions"].DurationDropdown["1"],
                             [2] = L["GlobalOptions"].DurationDropdown["2"],
@@ -2784,11 +2799,11 @@ function addon.SetupConfig()
                         set = function(info, val) addon.db.global.minsToPreserve = val end,
                         get = function(info) return addon.db.global.minsToPreserve end,
                     },
-                    spacerdesc5 = { type = "description", name = " ", width = "full", order = 14 },
+                    spacerdesc5 = { type = "description", name = " ", width = "full", order = 15 },
                     header3 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. L["GlobalOptions"].UIScale,
-                        order = 15,
+                        order = 16,
                         fontSize = "medium"
                     },
                     scaleSlider = {
@@ -2797,7 +2812,7 @@ function addon.SetupConfig()
                         min = 0.5,
                         max = 2.0,
                         step = 0.1,
-                        order = 16,
+                        order = 17,
                         set = function(info, val)
                             addon.db.global.UIScale = val
                             GroupieFrame:SetScale(val)
