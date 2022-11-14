@@ -3201,11 +3201,16 @@ function addon:OnEnable()
     addon:RegisterEvent("GROUP_JOINED", function(...)
         local inParty = UnitInParty("player")
         local inRaid = UnitInRaid("player")
+
         if inRaid then
             C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "RAID")
         elseif inParty then
             C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "PARTY")
         end
+
+        --Turn LFG mode off on group join
+        addon.icon:ChangeTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\icon64.tga", "GroupieLDB")
+        addon.LFGMode = false
     end)
     --Send version check to players joining group/raid
     addon:RegisterEvent("CHAT_MSG_SYSTEM", function(...)
