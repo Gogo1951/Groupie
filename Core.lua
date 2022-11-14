@@ -1844,8 +1844,8 @@ function addon:OnInitialize()
             autoRespondGuild = true,
             autoRespondInvites = false,
             autoRejectInvites = false,
-            autoRespondRequests = true,
-            autoRejectRequests = true,
+            autoRespondRequests = false,
+            autoRejectRequests = false,
             afterParty = true,
             useChannels = {
                 [L["text_channels"].Guild] = true,
@@ -1873,7 +1873,7 @@ function addon:OnInitialize()
             ignoreLFM = false,
             ignoreLFG = true,
             LFGMsgGearType = 3,
-            defaultLFGModeOn = true,
+            defaultLFGModeOn = false,
             showedv160InfoPopup = false,
             --Auto Response Types:
             -- 1 : Respond to Global Friends, but only when You are in Town
@@ -1947,6 +1947,7 @@ function addon:OnInitialize()
             talentTooltips = true,
             gearSummaryTooltips = true,
             charSheetGear = true,
+            announceInstanceReset = true,
         }
     }
 
@@ -2506,38 +2507,7 @@ function addon.SetupConfig()
                         get = function(info) return addon.db.char.recommendedLevelRange end,
                     },
                     spacerdesc5 = { type = "description", name = " ", width = "full", order = 17 },
-                    header5 = {
-                        type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. "LFG Auto-Response",
-                        order = 18,
-                        fontSize = "medium"
-                    },
-                    autoResponseDropdown = {
-                        type = "select",
-                        style = "dropdown",
-                        name = "",
-                        order = 19,
-                        width = 1.4,
-                        values = {
-                            [0] = "Enable on Login",
-                            [1] = "Disable on Login",
-                        },
-                        set = function(info, val)
-                            if val == 0 then
-                                addon.db.char.defaultLFGModeOn = true
-                            else
-                                addon.db.char.defaultLFGModeOn = false
-                            end
-                        end,
-                        get = function(info)
-                            if addon.db.char.defaultLFGModeOn then
-                                return 0
-                            else
-                                return 1
-                            end
-                        end,
-                    },
-                    spacerdesc6 = { type = "description", name = " ", width = "full", order = 21 },
+
                     respondRequestHeader = {
                         type = "description",
                         name = "|cff" ..
@@ -2721,16 +2691,6 @@ function addon.SetupConfig()
                             end
                         end,
                     },
-                    --spacerdesc2 = { type = "description", name = " ", width = "full", order = 5 },
-                    --LFGtoggle = {
-                    --    type = "toggle",
-                    --    name = "Enable LFG Mode - Placeholder",
-                    --    order = 6,
-                    --    width = "full",
-                    --    get = function(info) return addon.LFGMode end,
-                    --    set = function(info, val) addon.LFGMode = val end,
-                    --},
-                    --spacerdesc3 = { type = "description", name = " ", width = "full", order = 7 },
                     talentTooltipToggle = {
                         type = "toggle",
                         name = "Enable Talent Summary in Player Tooltips",
@@ -2762,18 +2722,33 @@ function addon.SetupConfig()
                             end
                         end,
                     },
-                    spacerdesc4 = { type = "description", name = " ", width = "full", order = 11 },
+                    announceResetToggle = {
+                        type = "toggle",
+                        name = "Announce Instance Reset in Party/Raid Chat",
+                        order = 11,
+                        width = "full",
+                        get = function(info) return addon.db.global.announceInstanceReset end,
+                        set = function(info, val)
+                            addon.db.global.announceInstanceReset = val
+                            if addon.db.global.announceInstanceReset then
+                                ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", addon.resetChatFilter)
+                            else
+                                ChatFrame_RemoveMessageEventFilter("CHAT_MSG_SYSTEM", addon.resetChatFilter)
+                            end
+                        end,
+                    },
+                    spacerdesc4 = { type = "description", name = " ", width = "full", order = 12 },
                     header2 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. L["GlobalOptions"].LFGData,
-                        order = 12,
+                        order = 13,
                         fontSize = "medium"
                     },
                     preserveDurationDropdown = {
                         type = "select",
                         style = "dropdown",
                         name = "",
-                        order = 13,
+                        order = 14,
                         width = 1.4,
                         values = { [1] = L["GlobalOptions"].DurationDropdown["1"],
                             [2] = L["GlobalOptions"].DurationDropdown["2"],
@@ -2783,11 +2758,11 @@ function addon.SetupConfig()
                         set = function(info, val) addon.db.global.minsToPreserve = val end,
                         get = function(info) return addon.db.global.minsToPreserve end,
                     },
-                    spacerdesc5 = { type = "description", name = " ", width = "full", order = 14 },
+                    spacerdesc5 = { type = "description", name = " ", width = "full", order = 15 },
                     header3 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. L["GlobalOptions"].UIScale,
-                        order = 15,
+                        order = 16,
                         fontSize = "medium"
                     },
                     scaleSlider = {
@@ -2796,7 +2771,7 @@ function addon.SetupConfig()
                         min = 0.5,
                         max = 2.0,
                         step = 0.1,
-                        order = 16,
+                        order = 17,
                         set = function(info, val)
                             addon.db.global.UIScale = val
                             GroupieFrame:SetScale(val)
@@ -3006,10 +2981,15 @@ function addon.UpdateFriends()
         --Show title in options
     end
 
-    if #addon.db.global.guilds[myserver] < 1 then
-        addon.options.args.globalfriendslist.args.header3.hidden = true
-    else
+    local hasAnyGuilds = false
+    for k, v in pairs(addon.db.global.guilds[myserver]) do
+        hasAnyGuilds = true
+    end
+
+    if hasAnyGuilds then
         addon.options.args.globalfriendslist.args.header3.hidden = false
+    else
+        addon.options.args.globalfriendslist.args.header3.hidden = true
     end
 
     --Update for the current character
@@ -3135,13 +3115,7 @@ function addon:OnEnable()
             addon.UpdateCharacterSheet()
             C_ChatInfo.RegisterAddonMessagePrefix(addon.ADDON_PREFIX)
             C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "YELL")
-            if isInitialLogin == true then
-                if addon.db.char.defaultLFGModeOn then
-                    addon.LFGMode = true
-                    PlaySound(8458)
-                    addon.icon:ChangeTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\lfg64.tga", "GroupieLDB")
-                end
-            end
+
         end)
         if isInitialLogin == true then
             C_Timer.After(15, function()
@@ -3185,11 +3159,16 @@ function addon:OnEnable()
     addon:RegisterEvent("GROUP_JOINED", function(...)
         local inParty = UnitInParty("player")
         local inRaid = UnitInRaid("player")
+
         if inRaid then
             C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "RAID")
         elseif inParty then
             C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "PARTY")
         end
+
+        --Turn LFG mode off on group join
+        addon.icon:ChangeTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\icon64.tga", "GroupieLDB")
+        addon.LFGMode = false
     end)
     --Send version check to players joining group/raid
     addon:RegisterEvent("CHAT_MSG_SYSTEM", function(...)

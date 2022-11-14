@@ -482,7 +482,7 @@ local function ParseMessage(event, msg, author, _, channel, guid)
     addon.db.global.listingTable[author].classColor = classColor
     addon.db.global.listingTable[author].resultID = nil -- Required to prevent /4 listings from being overwritten by LFG listings
 
-    if isNewListing and addon.LFGMode then --If the listing is new, we can autoRespond
+    if isNewListing and addon.LFGMode == true then --If the listing is new, we can autoRespond
         --Find the group type string for auto response options
         local optionsGroupType = nil
         if lootType == "PVP" then
