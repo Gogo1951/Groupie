@@ -673,6 +673,11 @@ local function ListingOnClick(self, button, down)
     --Select a listing, if shift is held, do a Who Request
     if button == "LeftButton" then
         if addon.debugMenus then
+            if addon.LFGMode then
+                print('on')
+            else
+                print('off')
+            end
             --print(addon.groupieBoardButtons[addon.selectedListing].listing.isLFM)
             --print(addon.groupieBoardButtons[addon.selectedListing].listing.isLFG)
             --print(addon.groupieBoardButtons[addon.selectedListing].listing.timestamp)
@@ -3022,10 +3027,15 @@ function addon.UpdateFriends()
         --Show title in options
     end
 
-    if #addon.db.global.guilds[myserver] < 1 then
-        addon.options.args.globalfriendslist.args.header3.hidden = true
-    else
+    local hasAnyGuilds = false
+    for k, v in pairs(addon.db.global.guilds[myserver]) do
+        hasAnyGuilds = true
+    end
+
+    if hasAnyGuilds then
         addon.options.args.globalfriendslist.args.header3.hidden = false
+    else
+        addon.options.args.globalfriendslist.args.header3.hidden = true
     end
 
     --Update for the current character
