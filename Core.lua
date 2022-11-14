@@ -673,11 +673,6 @@ local function ListingOnClick(self, button, down)
     --Select a listing, if shift is held, do a Who Request
     if button == "LeftButton" then
         if addon.debugMenus then
-            if addon.LFGMode then
-                print('on')
-            else
-                print('off')
-            end
             --print(addon.groupieBoardButtons[addon.selectedListing].listing.isLFM)
             --print(addon.groupieBoardButtons[addon.selectedListing].listing.isLFG)
             --print(addon.groupieBoardButtons[addon.selectedListing].listing.timestamp)
@@ -2696,16 +2691,6 @@ function addon.SetupConfig()
                             end
                         end,
                     },
-                    --spacerdesc2 = { type = "description", name = " ", width = "full", order = 5 },
-                    --LFGtoggle = {
-                    --    type = "toggle",
-                    --    name = "Enable LFG Mode - Placeholder",
-                    --    order = 6,
-                    --    width = "full",
-                    --    get = function(info) return addon.LFGMode end,
-                    --    set = function(info, val) addon.LFGMode = val end,
-                    --},
-                    --spacerdesc3 = { type = "description", name = " ", width = "full", order = 7 },
                     talentTooltipToggle = {
                         type = "toggle",
                         name = "Enable Talent Summary in Player Tooltips",
@@ -3130,13 +3115,7 @@ function addon:OnEnable()
             addon.UpdateCharacterSheet()
             C_ChatInfo.RegisterAddonMessagePrefix(addon.ADDON_PREFIX)
             C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "YELL")
-            --if isInitialLogin == true then
-            --    if addon.db.char.defaultLFGModeOn then
-            --        addon.LFGMode = true
-            --        PlaySound(8458)
-            --        addon.icon:ChangeTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\lfg64.tga", "GroupieLDB")
-            --    end
-            --end
+
         end)
         if isInitialLogin == true then
             C_Timer.After(15, function()
