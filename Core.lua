@@ -1873,7 +1873,7 @@ function addon:OnInitialize()
             ignoreLFM = false,
             ignoreLFG = true,
             LFGMsgGearType = 3,
-            defaultLFGModeOn = true,
+            defaultLFGModeOn = false,
             showedv160InfoPopup = false,
             --Auto Response Types:
             -- 1 : Respond to Global Friends, but only when You are in Town

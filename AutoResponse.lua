@@ -31,7 +31,7 @@ local function RespondToInvite(_, author)
     local listedLFG = C_LFGList.HasActiveEntryInfo()
 
     --automatically reject party invites
-    if addon.db.char.autoRejectInvites and listedLFG then
+    if addon.db.char.autoRejectInvites == true and listedLFG then
         for i = 1, STATICPOPUP_NUMDIALOGS do
             if _G["StaticPopup" .. i].which == "PARTY_INVITE" then
                 local player = _G["StaticPopup" .. i].text.text_arg1:gsub(" invites you.+", "")
@@ -50,7 +50,7 @@ local function RespondToInvite(_, author)
     --Not someone recently spoken to
     if addon.recentPlayers[author] == nil and listedLFG then
         local msg = askForInstance
-        if addon.db.char.autoRejectInvites then
+        if addon.db.char.autoRejectInvites == true then
             msg = msg .. " " .. addon.autoRejectInviteString
         end
         SendChatMessage(msg, "WHISPER", "COMMON", author)
@@ -75,7 +75,7 @@ local function RespondToRequest(_, msg, ...)
         --Not someone recently spoken to
         if addon.recentPlayers[author] == nil and listedLFG then
             local msg = askForPlayerInfo
-            if addon.db.char.autoRejectRequests then
+            if addon.db.char.autoRejectRequests == true then
                 msg = msg .. " " .. addon.autoRejectRequestString
             end
             SendChatMessage(msg, "WHISPER", "COMMON", author)
@@ -114,7 +114,7 @@ local function RejectInviteRequest()
     local listedLFG = C_LFGList.HasActiveEntryInfo()
 
     --automatically reject party invite requests
-    if addon.db.char.autoRejectRequests and listedLFG then
+    if addon.db.char.autoRejectRequests == true and listedLFG then
         for i = 1, STATICPOPUP_NUMDIALOGS do
             if _G["StaticPopup" .. i].which == "GROUP_INVITE_CONFIRMATION" then
                 local player = _G["StaticPopup" .. i].text.text_arg1:gsub(" has requested.+", "")
