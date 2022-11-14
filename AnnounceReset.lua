@@ -21,7 +21,7 @@ local function AnnounceInstanceReset(_, msg, ...)
                 end
             end
         elseif strmatch(msg, failedreset) then
-            local playersStillInside = " Anyone still inside can exit and re-enter"
+            local playersStillInside = " Any players still inside will need to exit and then re-enter."
             if (UnitIsGroupLeader("player")) then
                 if (IsInRaid()) then
                     SendChatMessage(addon.instanceResetString .. playersStillInside, "RAID")
