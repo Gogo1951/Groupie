@@ -1849,8 +1849,8 @@ function addon:OnInitialize()
             autoRespondGuild = true,
             autoRespondInvites = false,
             autoRejectInvites = false,
-            autoRespondRequests = true,
-            autoRejectRequests = true,
+            autoRespondRequests = false,
+            autoRejectRequests = false,
             afterParty = true,
             useChannels = {
                 [L["text_channels"].Guild] = true,
@@ -2512,38 +2512,7 @@ function addon.SetupConfig()
                         get = function(info) return addon.db.char.recommendedLevelRange end,
                     },
                     spacerdesc5 = { type = "description", name = " ", width = "full", order = 17 },
-                    header5 = {
-                        type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. "LFG Auto-Response",
-                        order = 18,
-                        fontSize = "medium"
-                    },
-                    autoResponseDropdown = {
-                        type = "select",
-                        style = "dropdown",
-                        name = "",
-                        order = 19,
-                        width = 1.4,
-                        values = {
-                            [0] = "Enable on Login",
-                            [1] = "Disable on Login",
-                        },
-                        set = function(info, val)
-                            if val == 0 then
-                                addon.db.char.defaultLFGModeOn = true
-                            else
-                                addon.db.char.defaultLFGModeOn = false
-                            end
-                        end,
-                        get = function(info)
-                            if addon.db.char.defaultLFGModeOn then
-                                return 0
-                            else
-                                return 1
-                            end
-                        end,
-                    },
-                    spacerdesc6 = { type = "description", name = " ", width = "full", order = 21 },
+
                     respondRequestHeader = {
                         type = "description",
                         name = "|cff" ..
@@ -3161,13 +3130,13 @@ function addon:OnEnable()
             addon.UpdateCharacterSheet()
             C_ChatInfo.RegisterAddonMessagePrefix(addon.ADDON_PREFIX)
             C_ChatInfo.SendAddonMessage(addon.ADDON_PREFIX, "v" .. tostring(addon.version), "YELL")
-            if isInitialLogin == true then
-                if addon.db.char.defaultLFGModeOn then
-                    addon.LFGMode = true
-                    PlaySound(8458)
-                    addon.icon:ChangeTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\lfg64.tga", "GroupieLDB")
-                end
-            end
+            --if isInitialLogin == true then
+            --    if addon.db.char.defaultLFGModeOn then
+            --        addon.LFGMode = true
+            --        PlaySound(8458)
+            --        addon.icon:ChangeTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\lfg64.tga", "GroupieLDB")
+            --    end
+            --end
         end)
         if isInitialLogin == true then
             C_Timer.After(15, function()

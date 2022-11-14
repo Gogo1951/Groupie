@@ -34,6 +34,7 @@ local function RespondToInvite(_, author)
     if addon.db.char.autoRejectInvites == true and listedLFG then
         for i = 1, STATICPOPUP_NUMDIALOGS do
             if _G["StaticPopup" .. i].which == "PARTY_INVITE" then
+                print(1)
                 local player = _G["StaticPopup" .. i].text.text_arg1:gsub(" invites you.+", "")
                 --dont reject recently spoken to players or friends
                 if addon.recentPlayers[player] == nil and addon.friendList[player] == nil then
