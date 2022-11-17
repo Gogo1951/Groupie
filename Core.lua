@@ -1964,6 +1964,10 @@ function addon:OnInitialize()
         --Due to an issue with how guilds were stored
         addon.db.global.guilds = {}
     end
+    if addon.db.global.minsToPreserve > 10 then
+        --Removing 20 minute option to fix an issue on high pop servers
+        addon.db.global.minsToPreserve = 10
+    end
     addon.db.global.configVer = addon.version
 
     addon.icon:Register("GroupieLDB", addon.groupieLDB, addon.db.global or defaults.global)
@@ -2753,8 +2757,7 @@ function addon.SetupConfig()
                         values = { [1] = L["GlobalOptions"].DurationDropdown["1"],
                             [2] = L["GlobalOptions"].DurationDropdown["2"],
                             [5] = L["GlobalOptions"].DurationDropdown["5"],
-                            [10] = L["GlobalOptions"].DurationDropdown["10"],
-                            [20] = L["GlobalOptions"].DurationDropdown["20"] },
+                            [10] = L["GlobalOptions"].DurationDropdown["10"] },
                         set = function(info, val) addon.db.global.minsToPreserve = val end,
                         get = function(info) return addon.db.global.minsToPreserve end,
                     },
