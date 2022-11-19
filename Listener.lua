@@ -33,6 +33,9 @@ function addon.CanRespondOrSound(author, order, minlevel, maxlevel)
     --Dont auto respond if:--
     -------------------------
 
+    --LFG mode is off
+    if not addon.LFGMode then return false end
+
     --Its our own group
     if myname == author then return false end
 
@@ -69,7 +72,9 @@ end
 --Decide whether to auto respond
 function addon.ShouldAutoRespond(author, groupType)
 
-    local resting = IsResting()
+    --Return if LFG mode is off
+    if not addon.LFGMode then return false end
+
     local responseType = addon.db.char.autoResponseOptions[groupType].responseType
     --Responses are disabled for this group type
     if responseType == 7 then return false end
@@ -90,7 +95,10 @@ end
 
 --Decide whether to play an alert sound
 function addon.ShouldPlaySound(author, groupType)
-    local resting = IsResting()
+
+    --Return if LFG mode is off
+    if not addon.LFGMode then return false end
+
     local soundType = addon.db.char.autoResponseOptions[groupType].soundType
 
     --Responses are disabled for this group type
