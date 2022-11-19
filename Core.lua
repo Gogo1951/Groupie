@@ -1752,7 +1752,6 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
                 addon.OpenConfig()
             else
                 addon.LFGMode = not addon.LFGMode
-                --TODO: Change minimap icon, play LFG sound
                 if addon.LFGMode then
                     PlaySound(8458)
                     addon.icon:ChangeTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\lfg64.tga", "GroupieLDB")

@@ -1059,7 +1059,7 @@ function GroupieGroupBrowser:MapResultToListing(resultID, resultData, leader, me
       GroupieGroupBrowser:SendMessage("GROUPIE_GROUPBROWSER_UPDATE", resultID)
       -- We can Groupie:RegisterMessage("GROUPIE_GROUPBROWSER_UPDATE", callback) and do something in our callback function when a listing is added from this module
 
-      if isNewListing then --If the listing is new, we can autoRespond
+      if isNewListing and Groupie.LFGMode then --If the listing is new, we can autoRespond
         --Find the group type string for auto response options
         local optionsGroupType = nil
         if lootType == "PVP" then
