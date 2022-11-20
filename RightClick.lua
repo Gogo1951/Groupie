@@ -84,6 +84,8 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 		end
 		if addon.playerILVL ~= nil and addon.playerILVL > 0 then
 			lvlStr = "Item-level " .. tostring(addon.playerILVL)
+		else
+			lvlStr = "Level " .. tostring(mylevel)
 		end
 	elseif addon.db.char.LFGMsgGearType == 3 then
 		if addon.playerGearScore == nil or addon.playerGearScore < 1 then
@@ -91,6 +93,8 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 		end
 		if addon.playerGearScore ~= nil and addon.playerGearScore > 0 then
 			lvlStr = "GearScore " .. tostring(addon.playerGearScore)
+		else
+			lvlStr = "Level " .. tostring(mylevel)
 		end
 	end
 

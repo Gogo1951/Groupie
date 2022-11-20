@@ -3072,29 +3072,30 @@ function addon.UpdateCharacterSheet(ignoreILVL, ignoreGS)
     --1st Line : Show Talents
     --2nd Line : Show Average Item Level
     --3rd Line : Show Gear Score
+
+    --Calculate talents
+    local spec1, spec2, spec3 = CI:GetTalentPoints("player")
+    local talentStr = format("%d / %d / %d", spec1, spec2, spec3)
+    --Calculate Item level
+    local ilvl = addon.MyILVL()
+    if ilvl then
+        if ilvl > 0 then
+            addon.playerILVL = ilvl
+        end
+    end
+    --Calculate gearscore
+    LGS:PLAYER_EQUIPMENT_CHANGED() --Workaround for PEW event in library being too early
+    CI:DoInspect("player")
+    local guid, gearScore = LGS:GetScore("player")
+    if gearScore and gearScore.GearScore and gearScore.GearScore > 0 then
+        addon.playerGearScore = gearScore.GearScore
+    end
+    local colorStr = ""
+    if gearScore.Color then
+        colorStr = "|c" .. gearScore.Color:GenerateHexColor()
+    end
+    --Display on character sheet
     if addon.db.global.charSheetGear then
-        --Calculate talents
-        local spec1, spec2, spec3 = CI:GetTalentPoints("player")
-        local talentStr = format("%d / %d / %d", spec1, spec2, spec3)
-        --Calculate Item level
-        local ilvl = addon.MyILVL()
-        if ilvl then
-            if ilvl > 0 then
-                addon.playerILVL = ilvl
-            end
-        end
-        --Calculate gearscore
-        LGS:PLAYER_EQUIPMENT_CHANGED() --Workaround for PEW event in library being too early
-        CI:DoInspect("player")
-        local guid, gearScore = LGS:GetScore("player")
-        if gearScore and gearScore.GearScore and gearScore.GearScore > 0 then
-            addon.playerGearScore = gearScore.GearScore
-        end
-        local colorStr = ""
-        if gearScore.Color then
-            colorStr = "|c" .. gearScore.Color:GenerateHexColor()
-        end
-        --Display on character sheet
         CharSheetSummaryFrame:SetText(format("%s\nItem-level : %d\nGearScore : %s%d", talentStr, ilvl,
             colorStr, gearScore.GearScore))
     end
