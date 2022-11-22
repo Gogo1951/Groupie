@@ -814,7 +814,7 @@ addon.groupieUnflippedDungeonPatterns = {
     ["Halls of Reflection"]   = "hor reflection",
 
     --["Naxxramas"]            = "",
-    ["Obsidian Sanctum"]  = "os obsidian obssanc obsanc obsidiansanctum",
+    ["Obsidian Sanctum"]  = "os obsidian obssanc obsanc obsidiansanctum os0d os1d os2d os3d",
     ["Vault of Archavon"] = "voa archavon vault",
     ["Eye of Eternity"]   = "eoe eye maly malygos",
     --["Onyxia's Lair"]        = "",

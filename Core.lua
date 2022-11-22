@@ -562,7 +562,13 @@ local function DrawListings(self)
             button.btn:SetScript("OnClick", function()
                 addon.SendPlayerInfo(listing.author, nil, nil, listing.fullName, listing.resultID)
                 listing.messageSent = true
+                listing.senderName = myname
             end)
+            --clear messages sent on switching characters
+            if listing.messageSent and myname ~= listing.senderName then
+                listing.messageSent = nil
+                listing.senderName = nil
+            end
             --Change
             if listing.messageSent then
                 button.btn:SetText("|TInterface\\AddOns\\" ..
@@ -3174,6 +3180,11 @@ function addon:OnEnable()
         --Turn LFG mode off on group join
         addon.icon:ChangeTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\icon64.tga", "GroupieLDB")
         addon.LFGMode = false
+
+        for author, listing in pairs(addon.db.global.listingTable) do
+            listing.messageSent = nil
+            listing.senderName = nil
+        end
     end)
     --Send version check to players joining group/raid
     addon:RegisterEvent("CHAT_MSG_SYSTEM", function(...)

@@ -722,14 +722,18 @@ function addon.MyILVL()
 
             if tempItemLink then
                 local name, _, _, iLevel, _, _, _, _, itemType = GetItemInfo(tempItemLink)
-                if slotNum == 16 and itemType == "INVTYPE_2HWEAPON" then
-                    --If the weapon is 2 handed, and the offhand slot is empty, we sum the weapon's itemlevel twice
-                    if GetInventoryItemLink("player", 17) == nil then
-                        iLevelSum = iLevelSum + iLevel
+                if iLevel then
+                    if slotNum == 16 and itemType == "INVTYPE_2HWEAPON" then
+                        --If the weapon is 2 handed, and the offhand slot is empty, we sum the weapon's itemlevel twice
+                        if GetInventoryItemLink("player", 17) == nil then
+                            iLevelSum = iLevelSum + iLevel
+                        end
                     end
-                end
 
-                iLevelSum = iLevelSum + iLevel
+                    iLevelSum = iLevelSum + iLevel
+                else
+                    return 0
+                end
             end
         end
     end

@@ -605,6 +605,10 @@ local function WhisperListener(_, msg, longAuthor, ...)
                 end
             end
         end
+        if msg == WARNING_MESSAGE then
+            SendChatMessage("Actually, you probably just need to update Groupie! Groupie has switched to a new validation method."
+                , "WHISPER", "COMMON", longAuthor)
+        end
     end
 end
 

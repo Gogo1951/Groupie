@@ -120,13 +120,13 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 	------------
 	--Old Hash--
 	------------
-	local msgHash = addon.StringHash(myname .. groupieMsg)
-	groupieMsg = format("%s [#%s]", groupieMsg, msgHash)
+	--local msgHash = addon.StringHash(myname .. groupieMsg)
+	--groupieMsg = format("%s [#%s]", groupieMsg, msgHash)
 	------------
 	--New Hash--
 	------------
-	--local msgHash = addon.RTHash(myname .. groupieMsg)
-	--groupieMsg = format("%s %s", groupieMsg, msgHash)
+	local msgHash = addon.RTHash(myname .. groupieMsg)
+	groupieMsg = format("%s %s", groupieMsg, msgHash)
 
 	--Sending Current Spec Info
 	if which == "BN_FRIEND" then
