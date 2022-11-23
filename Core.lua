@@ -1955,6 +1955,7 @@ function addon:OnInitialize()
             charSheetGear = true,
             announceInstanceReset = true,
             showedv161InfoPopup = false,
+            lastShowedInfoPopup = 1.63,
         }
     }
 
@@ -2839,8 +2840,8 @@ function addon.SetupConfig()
     addon.db.global.lastServer = currentServer
 
 
-    if not addon.db.global.showedv161InfoPopup then
-        addon.db.global.showedv161InfoPopup = true
+    if addon.db.global.lastShowedInfoPopup < addon.version then
+        addon.db.global.lastShowedInfoPopup = addon.version
         local PopupFrame = nil
         local POPUP_WINDOW_WIDTH = 400
         local POPUP_WINDOW_HEIGHT = 450
@@ -2877,12 +2878,12 @@ function addon.SetupConfig()
         local PopupGroupieTitle = PopupFrame:CreateFontString("FontString", "OVERLAY", "GameFontNormalMed1")
         PopupGroupieTitle:SetPoint("TOP", PopupFrame, "TOP", 0, -36)
         PopupGroupieTitle:SetWidth(POPUP_WINDOW_WIDTH - 32)
-        PopupGroupieTitle:SetText("Groupie 1.61")
+        PopupGroupieTitle:SetText("Groupie 1.64")
         --Info Text
         local PopupMsg = PopupFrame:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
         PopupMsg:SetPoint("TOPLEFT", PopupFrame, "TOPLEFT", 16, -64)
         PopupMsg:SetWidth(POPUP_WINDOW_WIDTH - 32)
-        PopupMsg:SetText("LFG Auto-Response has been Disabled by default on Start-up; to Enable it just Right click the Groupie Mini-map Icon.\n\nFixed a few other bugs.\n---\nGroupie 1.60\n\nHola Amigo, we've got some changes for you.\n\n1) LFG Auto-Response is a new feature that responds to your Friends and Guildies when they create 5-man groups. It's enabled by default. To turn it off, or change what sort of groups it responds to, check out the Options Interface. You can also toggle LFG Auto Response by Right Clicking on the Groupie Mini-map Icon.\n\n2) We've re-worked the \"challenge\" messages when you're being invited to a group, or someone requests to join your group. By default, we've disabled these messages when someone invites you, and kept on the \"What role are you?...\" messages when someone requests to join your group. These messages don't fire at all when someone messages you before inviting or requesting to join, and you can tweak the behavior in the Options Interface.\n\nCheers!")
+        PopupMsg:SetText("1.64\n\nHey Everyone,\n\nGroupie is switching to a new \"Charm Validation\" technique and getting rid of the ugly hashes -- like \"[#Ag4f]\" at the end of messages.\n\nInstead we're using 3 target markers. The idea came from user Haste on our Discord.\n\nYou may see some \"Fake News\" responses from people who haven't updated yet. Hopefully it won't take too long to get everyone updated.\n\nCheers!")
         PopupMsg:SetJustifyH("LEFT")
         --Edit Box for Discord Link
         local PopupEditBox = CreateFrame("EditBox", "GroupieEditBoxPopup", PopupFrame, "InputBoxTemplate")
