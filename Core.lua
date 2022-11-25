@@ -1675,7 +1675,8 @@ local function BuildGroupieWindow()
     --------------------------------------
     CharSheetSummaryFrame = _G["CharacterModelFrame"]:CreateFontString("GroupieCharSheetAddin", "OVERLAY",
         "GameFontNormalSmall")
-    CharSheetSummaryFrame:SetPoint("LEFT", CharSheetSummaryFrame:GetParent(), "LEFT", 8, -60)
+    CharSheetSummaryFrame:SetPoint("LEFT", CharSheetSummaryFrame:GetParent(), "LEFT", 8 +
+        addon.db.global.charSheetXOffset, -60 + addon.db.global.charSheetYOffset)
     CharSheetSummaryFrame:SetJustifyH("LEFT")
 
     -------------
@@ -1953,6 +1954,8 @@ function addon:OnInitialize()
             talentTooltips = true,
             gearSummaryTooltips = true,
             charSheetGear = true,
+            charSheetXOffset = 0,
+            charSheetYOffset = 0,
             announceInstanceReset = true,
             showedv161InfoPopup = false,
             lastShowedInfoPopup = 1.63,
@@ -2722,7 +2725,7 @@ function addon.SetupConfig()
                     charSheetGearToggle = {
                         type = "toggle",
                         name = "Enable Gear Summary on Your Character Sheet",
-                        order = 10,
+                        order = 11,
                         width = "full",
                         get = function(info) return addon.db.global.charSheetGear end,
                         set = function(info, val)
@@ -2737,7 +2740,7 @@ function addon.SetupConfig()
                     announceResetToggle = {
                         type = "toggle",
                         name = "Announce Instance Reset in Party/Raid Chat",
-                        order = 11,
+                        order = 10,
                         width = "full",
                         get = function(info) return addon.db.global.announceInstanceReset end,
                         set = function(info, val)
@@ -2752,15 +2755,67 @@ function addon.SetupConfig()
                     spacerdesc4 = { type = "description", name = " ", width = "full", order = 12 },
                     header2 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. L["GlobalOptions"].LFGData,
+                        name = "|cff" .. addon.groupieSystemColor .. "Gear Summary Offsets",
                         order = 13,
+                        fontSize = "medium"
+                    },
+                    spacerdesc5 = { type = "description", name = " ", width = "full", order = 14 },
+                    header3 = {
+                        type = "description",
+                        name = "|cff" .. addon.groupieSystemColor .. "X Offset",
+                        order = 15,
+                        fontSize = "medium"
+                    },
+                    charSheetXSlider = {
+                        type = "range",
+                        name = "",
+                        min = 0,
+                        max = 150,
+                        step = 1,
+                        order = 16,
+                        width = 1.5,
+                        set = function(info, val)
+                            addon.db.global.charSheetXOffset = val
+                            CharSheetSummaryFrame:SetPoint("LEFT", CharSheetSummaryFrame:GetParent(), "LEFT",
+                                8 + addon.db.global.charSheetXOffset,
+                                -60 + addon.db.global.charSheetYOffset)
+                        end,
+                        get = function(info) return addon.db.global.charSheetXOffset end,
+                    },
+                    header4 = {
+                        type = "description",
+                        name = "|cff" .. addon.groupieSystemColor .. "Y Offset",
+                        order = 17,
+                        fontSize = "medium"
+                    },
+                    charSheetYSlider = {
+                        type = "range",
+                        name = "",
+                        min = 0,
+                        max = 150,
+                        step = 1,
+                        order = 18,
+                        width = 1.5,
+                        set = function(info, val)
+                            addon.db.global.charSheetYOffset = val
+                            CharSheetSummaryFrame:SetPoint("LEFT", CharSheetSummaryFrame:GetParent(), "LEFT",
+                                8 + addon.db.global.charSheetXOffset,
+                                -60 + addon.db.global.charSheetYOffset)
+                        end,
+                        get = function(info) return addon.db.global.charSheetYOffset end,
+                    },
+                    spacerdesc6 = { type = "description", name = " ", width = "full", order = 19 },
+                    header5 = {
+                        type = "description",
+                        name = "|cff" .. addon.groupieSystemColor .. L["GlobalOptions"].LFGData,
+                        order = 20,
                         fontSize = "medium"
                     },
                     preserveDurationDropdown = {
                         type = "select",
                         style = "dropdown",
                         name = "",
-                        order = 14,
+                        order = 21,
                         width = 1.4,
                         values = { [1] = L["GlobalOptions"].DurationDropdown["1"],
                             [2] = L["GlobalOptions"].DurationDropdown["2"],
@@ -2769,11 +2824,11 @@ function addon.SetupConfig()
                         set = function(info, val) addon.db.global.minsToPreserve = val end,
                         get = function(info) return addon.db.global.minsToPreserve end,
                     },
-                    spacerdesc5 = { type = "description", name = " ", width = "full", order = 15 },
-                    header3 = {
+                    spacerdesc7 = { type = "description", name = " ", width = "full", order = 22 },
+                    header6 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. L["GlobalOptions"].UIScale,
-                        order = 16,
+                        order = 23,
                         fontSize = "medium"
                     },
                     scaleSlider = {
@@ -2782,7 +2837,7 @@ function addon.SetupConfig()
                         min = 0.5,
                         max = 2.0,
                         step = 0.1,
-                        order = 17,
+                        order = 24,
                         set = function(info, val)
                             addon.db.global.UIScale = val
                             GroupieFrame:SetScale(val)
