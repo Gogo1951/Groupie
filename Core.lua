@@ -3037,8 +3037,8 @@ function addon.UpdateFriends()
     --Always clear and reload the current character
     addon.db.global.friends[myserver][myname] = {}
     addon.db.global.ignores[myserver][myname] = {}
+    addon.db.global.guilds[myserver][myname] = {}
     if myguild ~= nil then
-        addon.db.global.guilds[myserver][myname] = {}
         addon.db.global.guilds[myserver][myname]["__NAME__"] = myguild
         --Show title in options
     end
