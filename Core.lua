@@ -1771,7 +1771,6 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         --tooltip:AddLine(addonName .. " - v" .. tostring(addon.version))
         tooltip:AddDoubleLine(addonName, tostring(addon.version),
             1, 0.85, 0.00, 1, 0.85, 0.00)
-        tooltip:AddLine(L["slogan"], 255, 255, 255, false)
 
         tooltip:AddLine(" ")
 
@@ -1785,9 +1784,9 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
 
         tooltip:AddLine(L["Click"] ..
             " |cffffffff" ..
-            L["MiniMap"].lowerOr .. "|r /groupie |cffffffff: " .. addonName .. " " .. L["BulletinBoard"] .. "|r ")
-        tooltip:AddLine(L["RightClick"] .. " |cffffffff: " .. " Toggle LFG Auto-Response|r ")
-        tooltip:AddLine("Shift + Click |cffffffff: " .. " Open Groupie Settings|r ")
+            L["MiniMap"].lowerOr .. "|r /groupie|cffffffff : " .. addonName .. " Toggle " .. L["BulletinBoard"] .. "|r ")
+        tooltip:AddLine(L["RightClick"] .. "|cffffffff : Toggle LFG Auto-Response|r ")
+        tooltip:AddLine("Shift + Click|cffffffff : Open " .. addonName .. " Settings|r ")
         --Version Check
         if addon.version < addon.db.global.highestSeenVersion then
             tooltip:AddLine(" ");
