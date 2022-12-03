@@ -280,18 +280,20 @@ function addon.GenerateGuildToggles(order, myserver, configGroup)
 
     for guild, list in pairs(addon.db.global.guilds[myserver]) do
         local nameStr = list["__NAME__"]
-        addon.options.args[configGroup].args[nameStr .. "toggle"] = {
-            type = "toggle",
-            name = "<" .. nameStr .. "> of " .. myserver,
-            order = initorder,
-            width = "full",
-            get = function(info) return not addon.db.global.hiddenGuilds[myserver][nameStr] end,
-            set = function(info, val)
-                addon.db.global.hiddenGuilds[myserver][nameStr] = not val
-                addon.UpdateFriends()
-            end,
-        }
-        initorder = initorder + 1
+        if nameStr ~= nil then
+            addon.options.args[configGroup].args[nameStr .. "toggle"] = {
+                type = "toggle",
+                name = "<" .. nameStr .. "> of " .. myserver,
+                order = initorder,
+                width = "full",
+                get = function(info) return not addon.db.global.hiddenGuilds[myserver][nameStr] end,
+                set = function(info, val)
+                    addon.db.global.hiddenGuilds[myserver][nameStr] = not val
+                    addon.UpdateFriends()
+                end,
+            }
+            initorder = initorder + 1
+        end
     end
 end
 

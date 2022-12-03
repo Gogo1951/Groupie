@@ -675,28 +675,7 @@ local function ListingOnClick(self, button, down)
     --Select a listing, if shift is held, do a Who Request
     if button == "LeftButton" then
         if addon.debugMenus then
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.isLFM)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.isLFG)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.timestamp)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.instanceName)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.fullName)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.isHeroic)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.groupSize)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.lootType)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.rolesNeeded)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.msg)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.author)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.words)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.minLevel)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.maxLevel)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.order)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.instanceID)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.resultID)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.createdat)
-            --for k, v in pairs(addon.groupieBoardButtons[addon.selectedListing].listing.rolesNeeded) do
-            --    print(v)
-            --end
-            for k, v in pairs(C_FriendList.GetFriendInfoByIndex(1)) do
+            for k, v in pairs(addon.ignoreList) do
                 print(k, v)
             end
         end
@@ -3044,7 +3023,12 @@ function addon.UpdateFriends()
 
     local hasAnyGuilds = false
     for k, v in pairs(addon.db.global.guilds[myserver]) do
-        hasAnyGuilds = true
+
+        if addon.db.global.guilds[myserver][k] ~= nil then
+            if addon.db.global.guilds[myserver][k]["__NAME__"] ~= nil then
+                hasAnyGuilds = true
+            end
+        end
     end
 
     if hasAnyGuilds then

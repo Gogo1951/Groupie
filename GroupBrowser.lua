@@ -801,6 +801,7 @@ function GroupieGroupBrowser:GetResult(event, resultID)
   if hasData then
     local resultData = C_LFGList.GetSearchResultInfo(resultID)
     local leader = wrapTuple(C_LFGList.GetSearchResultLeaderInfo(resultID))
+
     --GroupieGroupBrowser:dump(leader,"leader") -- DEBUG, comment out before package
     local membercounts = C_LFGList.GetSearchResultMemberCounts(resultID)
     local numMembers = resultData.numMembers or nil
@@ -964,7 +965,13 @@ function GroupieGroupBrowser:MapResultToListing(resultID, resultData, leader, me
       if not GroupieGroupBrowser._realmName or GroupieGroupBrowser._realmName == "" then GroupieGroupBrowser._realmName = GetNormalizedRealmName() end
       author, classColor = leader[1] .. "-" .. GroupieGroupBrowser._realmName,
           RAID_CLASS_COLORS[leader[3]].colorStr:sub(3)
+      --Dont overwrite /4 listings with LFG tool listings
       if listingTable[author] ~= nil and listingTable[author].resultID == nil then
+        return
+      end
+      --Dont include groups from ignored users
+      local shortAuthor = author:gsub("%-.+", "")
+      if Groupie.ignoreList[shortAuthor] ~= nil then
         return
       end
       if numMembers and numMembers > 1 then

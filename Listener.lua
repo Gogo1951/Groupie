@@ -331,6 +331,7 @@ local function ParseMessage(event, msg, author, _, channel, guid)
     local icon = "Other.tga"
     local classColor = addon.groupieSystemColor
 
+
     for i = 1, #messageWords do
         --handle cases of 'LF3M', etc by removing numbers for this part
         local word = gsub(messageWords[i], "%d", "")
@@ -542,7 +543,12 @@ local function GroupieEventHandlers(...)
         validChannel = true
     end
     if validChannel then
-        ParseMessage(event, msg, author, _, channel, guid)
+        local shortAuthor = author:gsub("%-.+", "")
+        if addon.ignoreList[shortAuthor] ~= nil then
+            return
+        else
+            ParseMessage(event, msg, author, _, channel, guid)
+        end
     end
     return true
 end
