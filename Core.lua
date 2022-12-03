@@ -75,11 +75,7 @@ if not addon.tableContains(addon.validLocales, locale) then
         icon = "Interface\\AddOns\\" .. addonName .. "\\Images\\icon64.tga",
         OnClick = function(self, button, down)
             if button == "LeftButton" then
-                if GroupieFrame:IsShown() then
-                    GroupieFrame:Hide()
-                else
-                    BuildGroupieWindow()
-                end
+                BuildGroupieWindow()
             end
         end,
         OnTooltipShow = function(tooltip)
@@ -1129,7 +1125,11 @@ local function BuildGroupieWindow()
             GroupieGroupBrowser:AttachLFGToolPreset(GroupieTab6, 114)
             GroupieGroupBrowser:AttachLFGToolPreset(GroupieTab7, 118)
         end
-        GroupieFrame:Show()
+        if GroupieFrame:IsShown() then
+            GroupieFrame:Hide()
+        else
+            GroupieFrame:Show()
+        end
         return
     end
 
@@ -1748,11 +1748,7 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
             if IsShiftKeyDown() then
                 addon.OpenConfig()
             else
-                if GroupieFrame:IsShown() then
-                    GroupieFrame:Hide()
-                else
-                    BuildGroupieWindow()
-                end
+                BuildGroupieWindow()
             end
         elseif button == "RightButton" then
             if IsShiftKeyDown() then
@@ -1995,21 +1991,20 @@ function addon:OnInitialize()
         local unitname, unittype = GameTooltip:GetUnit()
         if unittype then
             local curMouseOver = UnitGUID(unittype)
+            local mouseoverLevel = UnitLevel("mouseover")
             if curMouseOver then
                 if not InCombatLockdown() then
                     --Talents/Spec Information
                     if addon.db.global.talentTooltips then
                         local spec1, spec2, spec3 = CI:GetTalentPoints(curMouseOver)
                         local _, class = GetPlayerInfoByGUID(curMouseOver)
-
                         local mainSpecIndex, pointsSpent = CI:GetSpecialization(curMouseOver)
                         if mainSpecIndex then
                             local specName = CI:GetSpecializationName(class, mainSpecIndex)
-                            local unspentTalents = (mylevel - 9) > (spec1 + spec2 + spec3)
                             if specName ~= nil then
                                 GameTooltip:AddLine(" ")
                                 GameTooltip:AddDoubleLine(specName, format("%d / %d / %d", spec1, spec2, spec3))
-                                if unspentTalents then
+                                if (mouseoverLevel - 9) > (spec1 + spec2 + spec3) then
                                     GameTooltip:AddLine("Unspent Talent Points!", 148, 0, 211)
                                 end
                             end
@@ -2099,7 +2094,8 @@ function addon.SetupConfig()
                 args = {
                     header0 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. L["InstanceLog"].Name,
+                        name = "|cff9d9d9d|Hitem:3299::::::::20:257::::::|h[Fractured Canine]|h|r|cff" ..
+                            addon.groupieSystemColor .. L["InstanceLog"].Name,
                         order = 0,
                         fontSize = "large"
                     },
