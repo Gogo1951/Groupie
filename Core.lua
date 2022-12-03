@@ -504,9 +504,21 @@ local function filterFriends()
     for key, listing in pairs(sorted) do
         --Ensure no duplicates
         if not addon.tableContains(seen, listing.name) then
-            addon.filteredFriends[idx] = listing
-            idx = idx + 1
-            tinsert(seen, listing.name)
+            local ownCharFlag = false
+            --Dont include the player's own alts
+            for k, v in pairs(addon.db.global.friends) do
+                for k2, v2 in pairs(v) do
+                    local shortName = k2:gsub(" %-.+", "")
+                    if strlower(listing.name) == strlower(shortName) then
+                        ownCharFlag = true
+                    end
+                end
+            end
+            if not ownCharFlag then
+                addon.filteredFriends[idx] = listing
+                idx = idx + 1
+                tinsert(seen, listing.name)
+            end
         end
     end
 end
