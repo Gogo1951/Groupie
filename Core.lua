@@ -650,6 +650,7 @@ local function DrawFriends(self)
                 else
                     addon.db.global.groupieIgnores[myserver][listing.name] = nil
                 end
+                addon.UpdateFriends()
             end)
             if listing.isGroupieFriend then
                 button.btn:Show()
@@ -821,7 +822,7 @@ local function CreateFriendListingButtons()
         currentListing.btn:SetWidth(REMOVE_BTN_WIDTH)
         currentListing.btn:SetText("Remove")
         currentListing.btn:SetScript("OnClick", function()
-            return
+            addon.UpdateFriends()
         end)
 
 
@@ -1945,6 +1946,7 @@ function addon:OnInitialize()
             announceInstanceReset = true,
             showedv161InfoPopup = false,
             lastShowedInfoPopup = 1.63,
+            savedPartyPlayers = nil,
         }
     }
 
@@ -3117,6 +3119,11 @@ function addon.UpdateFriends()
             end
         end
     end
+
+    for name, _ in pairs(addon.db.global.groupieFriends[myserver]) do
+        addon.friendList[name] = true
+    end
+
     addon.GenerateFriendToggles(10, myserver, "globalfriendslist")
     addon.GenerateGuildToggles(1010, myserver, "globalfriendslist")
 end
