@@ -5,7 +5,7 @@ local addon                        = LibStub("AceAddon-3.0"):NewAddon(Groupie, a
     "AceTimer-3.0")
 local CI                           = LibStub("LibClassicInspector")
 local LGS                          = LibStub:GetLibrary("LibGearScore.1000", true)
-L_UIDROPDOWNMENU_SHOW_TIME         = 2 -- Timeout once the cursor leaves menu
+--L_UIDROPDOWNMENU_SHOW_TIME         = 2 -- Timeout once the cursor leaves menu
 local L                            = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 local localizedClass, englishClass = UnitClass("player")
 local myserver                     = GetRealmName()
@@ -1840,6 +1840,7 @@ function addon:OnInitialize()
             autoRespondRequests = false,
             autoRejectRequests = false,
             afterParty = true,
+            notifyAfterParty = true,
             useChannels = {
                 [L["text_channels"].Guild] = true,
                 [L["text_channels"].General] = true,
@@ -2579,8 +2580,7 @@ function addon.SetupConfig()
                         name = "|cff" .. addon.groupieSystemColor .. addonName .. " " .. L["CharOptions"].AfterParty,
                         order = 32,
                         fontSize = "medium",
-                        hidden = true,
-                        disabled = true,
+
                     },
                     afterPartyToggle = {
                         type = "toggle",
@@ -2589,22 +2589,29 @@ function addon.SetupConfig()
                         width = "full",
                         get = function(info) return addon.db.char.afterParty end,
                         set = function(info, val) addon.db.char.afterParty = val end,
-                        hidden = true,
-                        disabled = true,
+
                     },
-                    spacerdesc9 = { type = "description", name = " ", width = "full", order = 34,
-                        hidden = true,
-                        disabled = true, },
+                    afterPartyMsgToggle = {
+                        type = "toggle",
+                        name = "Enable " .. addonName .. " Enable Message to Added Friends",
+                        order = 34,
+                        width = "full",
+                        get = function(info) return addon.db.char.notifyAfterParty end,
+                        set = function(info, val) addon.db.char.notifyAfterParty = val end,
+
+                    },
+                    spacerdesc9 = { type = "description", name = " ", width = "full", order = 35,
+                    },
                     header7 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. "Enable Auto Responses",
-                        order = 35,
+                        order = 36,
                         fontSize = "medium",
                     },
                     autorespDesc = {
                         type = "description",
                         name = "Note : Auto-Response will only fire when you are not already in an arena, battleground, or group of any kind, and only when LFG Auto-Response|r is toggled on using the Minimap button.\n\n    \"Hey Friend, you can count on me!...\"",
-                        order = 36,
+                        order = 37,
                     },
 
                     spacerdesc10 = { type = "description", name = " ", width = "full", order = 999 },

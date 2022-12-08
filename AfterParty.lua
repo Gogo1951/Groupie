@@ -12,7 +12,7 @@ local myserver = GetRealmName()
 local OuterFrame     = nil
 local InnerFrame     = nil
 local WINDOW_WIDTH   = 600
-local WINDOW_HEIGHT  = 300
+local WINDOW_HEIGHT  = 348
 local WINDOW_OFFSET  = 123
 local WINDOW_YOFFSET = -84
 local FrameRows      = {}
@@ -76,7 +76,7 @@ local function BuildAfterPartyWindow()
                 self.isMoving = false
             end
         end)
-    OuterFrame:SetScript("OnShow", function() return end)
+
 
     --------
     --Icon--
@@ -86,16 +86,52 @@ local function BuildAfterPartyWindow()
     icon:SetPoint("TOPLEFT", -5, 7)
     icon:SetTexture("Interface\\AddOns\\" .. addonName .. "\\Images\\icon128.tga")
 
+    --------------
+    --CheckBoxes--
+    --------------
 
+    local CheckBoxAP = CreateFrame("CheckButton", "GroupieAfterPartyCB1", OuterFrame,
+        "ChatConfigCheckButtonTemplate")
+    CheckBoxAP:SetPoint("BOTTOMLEFT", 48, 8)
+    GroupieAfterPartyCB1Text:SetText("Enable Groupie After Party")
+    CheckBoxAP:SetScript("OnClick", function()
+        addon.db.char.afterParty = CheckBoxAP:GetChecked()
+    end)
+    CheckBoxAP:SetChecked(addon.db.char.afterParty)
+
+    local CheckBoxAPMsg = CreateFrame("CheckButton", "GroupieAfterPartyCB2", OuterFrame,
+        "ChatConfigCheckButtonTemplate")
+    CheckBoxAPMsg:SetPoint("BOTTOMLEFT", 300, 8)
+    GroupieAfterPartyCB2Text:SetText("Enable Message to Added Friends")
+    CheckBoxAPMsg:SetScript("OnClick", function()
+        addon.db.char.notifyAfterParty = CheckBoxAPMsg:GetChecked()
+    end)
+    CheckBoxAPMsg:SetChecked(addon.db.char.notifyAfterParty)
+
+    OuterFrame:SetScript("OnShow", function()
+        --Update values for checkboxes
+        CheckBoxAP:SetChecked(addon.db.char.afterParty)
+        CheckBoxAPMsg:SetChecked(addon.db.char.notifyAfterParty)
+    end)
+
+    -----------
+    --Content--
+    -----------
 
     InnerFrame = CreateFrame("Frame", "GroupieAfterPartyInner", OuterFrame, "InsetFrameTemplate")
     InnerFrame:SetWidth(WINDOW_WIDTH - 20)
-    InnerFrame:SetHeight(WINDOW_HEIGHT - WINDOW_OFFSET + 20)
+    InnerFrame:SetHeight(WINDOW_HEIGHT - WINDOW_OFFSET + 20 - 16)
     InnerFrame:SetPoint("TOPLEFT", OuterFrame, "TOPLEFT", 8, WINDOW_YOFFSET)
     InnerFrame:SetScript("OnShow",
         function(self)
             return
         end)
+
+    InnerFrame.infotext = InnerFrame:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
+    InnerFrame.infotext:SetJustifyH("CENTER")
+    InnerFrame.infotext:SetPoint("TOP", 0, 52)
+    InnerFrame.infotext:SetWidth(WINDOW_WIDTH - 128)
+    InnerFrame.infotext:SetText("Note : Since you are limited to 100 in-game friends per Character, these friends will be added to your Groupie Global Friends List.")
 
     createColumn("Name", COL_NAME, InnerFrame)
     createColumn("Level", COL_LEVEL, InnerFrame)
@@ -117,7 +153,7 @@ local function BuildAfterPartyWindow()
             FrameRows[i]:SetPoint("TOP", FrameRows[i - 1], "BOTTOM", 0, 0)
         end
         FrameRows[i]:SetSize(BUTTON_WIDTH, BUTTON_HEIGHT)
-        FrameRows[i]:Disable()
+        --FrameRows[i]:Disable()
 
         --Name Col
         FrameRows[i].name:SetWidth(COL_NAME)
@@ -145,7 +181,7 @@ local function BuildAfterPartyWindow()
 
         --Add Col
         FrameRows[i].btn = CreateFrame("Button", "$parentApplyBtn", FrameRows[i], "UIPanelButtonTemplate")
-        FrameRows[i].btn:SetPoint("LEFT", FrameRows[i].guildrank, "RIGHT", 0, 0)
+        FrameRows[i].btn:SetPoint("LEFT", FrameRows[i].guildrank, "RIGHT", -2, 0)
         FrameRows[i].btn:SetWidth(COL_BTN - 12)
         FrameRows[i].btn:SetScript("OnClick", function()
             return
@@ -155,6 +191,61 @@ local function BuildAfterPartyWindow()
 
 
     OuterFrame:Hide()
+end
+
+--Generate a tooltip for a given friended or ignored player name
+local function GenerateTooltip(name, isIgnore)
+    local outStr = ""
+    local ignores = {}
+    local friends = {}
+    local guilds = {}
+    name = name:gsub("%-.+", "")
+    if isIgnore then
+        --Ignore
+        outStr = "Ignored\n\n"
+
+        for char, ignorelist in pairs(addon.db.global.ignores[myserver]) do
+            if ignorelist[name] then
+                tinsert(ignores, char)
+            end
+        end
+        sort(ignores, function(a, b) return a < b end)
+        for k, v in pairs(ignores) do
+            outStr = outStr .. "\nvia " .. v
+        end
+
+    else
+        --Friend
+        outStr = "Already Friends!\n\n"
+
+        --Check Groupie Friends
+        if addon.db.global.groupieFriends[myserver][name] then
+            outStr = outStr .. "\nvia Groupie Global Friends"
+        end
+
+        --Check Character Friends
+        for char, friendlist in pairs(addon.db.global.friends[myserver]) do
+            if friendlist[name] then
+                tinsert(friends, char)
+            end
+        end
+        sort(friends, function(a, b) return a < b end)
+        for k, v in pairs(friends) do
+            outStr = outStr .. "\nvia " .. v
+        end
+
+        --Check Guilds
+        for guild, roster in pairs(addon.db.global.guilds[myserver]) do
+            if roster[name] then
+                tinsert(guilds, roster["__NAME__"])
+            end
+        end
+        sort(guilds, function(a, b) return a < b end)
+        for k, v in pairs(guilds) do
+            outStr = outStr .. "\nvia <" .. v .. ">"
+        end
+    end
+    return outStr
 end
 
 --Clear saved party info on initial login or after displaying window
@@ -191,36 +282,38 @@ end
 local function ShowPartyWindow()
 
     --Test data injection
-    --addon.db.global.savedPartyPlayers = {
-    --    [1] = {
-    --        name = "Funnyguy",
-    --        level = UnitLevel("player"),
-    --        class = "SHAMAN",
-    --        guildName = "Test Guild 1",
-    --        guildRank = "Testrank1",
-    --    },
-    --    [2] = {
-    --        name = "Dog",
-    --        level = 70,
-    --        class = "DRUID",
-    --        guildName = "Long Guild Name Here",
-    --        guildRank = "testrank2",
-    --    },
-    --    [3] = {
-    --        name = "Cat",
-    --        level = 25,
-    --        class = "HUNTER",
-    --        guildName = nil,
-    --        guildRank = nil,
-    --    },
-    --    --[4] = {
-    --    --    name = "Sillyguy",
-    --    --    level = 80,
-    --    --    class = "WARRIOR",
-    --    --    guildName = "Test Guild 1",
-    --    --    guildRank = "Rank",
-    --    --}
-    --}
+    if addon.debugMenus then
+        addon.db.global.savedPartyPlayers = {
+            [1] = {
+                name = "Funnyguy",
+                level = UnitLevel("player"),
+                class = "SHAMAN",
+                guildName = "Test Guild 1",
+                guildRank = "Testrank1",
+            },
+            [2] = {
+                name = "Dog",
+                level = 70,
+                class = "DRUID",
+                guildName = "Long Guild Name Here",
+                guildRank = "testrank2",
+            },
+            [3] = {
+                name = "Testguytwo",
+                level = 25,
+                class = "HUNTER",
+                guildName = nil,
+                guildRank = nil,
+            },
+            [4] = {
+                name = "Sillyguy",
+                level = 80,
+                class = "WARRIOR",
+                guildName = "Test Guild 1",
+                guildRank = "Rank",
+            }
+        }
+    end
     --Populate the rows with text
     if addon.db.global.savedPartyPlayers ~= nil then
         for i = 1, 4 do
@@ -232,7 +325,9 @@ local function ShowPartyWindow()
                     local class = addon.db.global.savedPartyPlayers[i].class
                     local guildName = addon.db.global.savedPartyPlayers[i].guildName or ""
                     local guildRank = addon.db.global.savedPartyPlayers[i].guildRank or ""
+                    local tooltip = ""
 
+                    --Row data
                     FrameRows[i].name:SetText(format("|cff%s%s",
                         addon.classColors[class],
                         name))
@@ -248,19 +343,43 @@ local function ShowPartyWindow()
                     if addon.friendList[name] then
                         FrameRows[i].btn:SetText("Already Friends")
                         FrameRows[i].btn:Disable()
+                        tooltip = GenerateTooltip(name, false)
+                        --Tooltip
+                        FrameRows[i]:SetScript("OnEnter", function()
+                            GameTooltip:SetOwner(FrameRows[i], "ANCHOR_CURSOR")
+                            GameTooltip:SetText(tooltip, 1, 1, 1, 1, true)
+                            GameTooltip:Show()
+                        end)
+                        FrameRows[i]:SetScript("OnLeave", function()
+                            GameTooltip:Hide()
+                        end)
                     elseif addon.ignoreList[name] then
                         FrameRows[i].btn:SetText("Ignored")
                         FrameRows[i].btn:Disable()
+                        tooltip = GenerateTooltip(name, true)
                     else
                         FrameRows[i].btn:SetText("Add To Friends")
                         FrameRows[i].btn:SetScript("OnClick", function()
                             addon.db.global.groupieFriends[myserver][name] = true
+                            if addon.db.char.notifyAfterParty then
+                                SendChatMessage(addon.addedNewFriendString, "WHISPER", "COMMON", name)
+                            end
                             addon.UpdateFriends()
                             FrameRows[i].btn:SetText("Already Friends")
                             FrameRows[i].btn:Disable()
                         end)
                         FrameRows[i].btn:Enable()
+                        tooltip = ""
                     end
+                    --Tooltip
+                    FrameRows[i]:SetScript("OnEnter", function()
+                        GameTooltip:SetOwner(FrameRows[i], "ANCHOR_CURSOR")
+                        GameTooltip:SetText(tooltip, 1, 1, 1, 1, true)
+                        GameTooltip:Show()
+                    end)
+                    FrameRows[i]:SetScript("OnLeave", function()
+                        GameTooltip:Hide()
+                    end)
                 else
                     FrameRows[i].btn:Disable()
                     FrameRows[i]:Hide()

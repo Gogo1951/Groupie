@@ -28,6 +28,7 @@ addon.askForInstance = format("{rt3} %s : What are you inviting me to?", addonNa
 addon.autoRejectRequestString = "FYI, I have Auto-Reject enabled. Message me back and if it's a good fit I'll send you an invite. Thanks!"
 addon.autoRejectInviteString = "FYI, I have Auto-Reject enabled. Message me back and if it's a good fit I'll come. Thanks!"
 addon.instanceResetString = format("{rt3} %s : All Instances Have Been Reset!", addonName)
+addon.addedNewFriendString = format("{rt3} %s : I added you as a friend! Cheers!", addonName)
 addon.PROTECTED_TOKENS = {
     [1] = "%s*{rt3}%s*groupie%s*:",
     [2] = "%s*groupie%s*{rt3}%s*:",
