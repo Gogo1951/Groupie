@@ -407,12 +407,19 @@ function AfterParty:OnEnable()
         BuildAfterPartyWindow()
     end)
     self:RegisterEvent("BOSS_KILL", StoreParty)
+    self:RegisterEvent("ZONE_CHANGED_NEW_AREA", function() --Workaround for normal dungeons with no BOSS_KILL event
+        local inInstance, instanceType = IsInInstance()
+        if inInstance and instanceType == "party" then
+            StoreParty()
+        end
+    end)
+
     self:RegisterEvent("GROUP_LEFT", ShowPartyWindow)
 end
 
 --TODO: REMOVE TESTING COMMANDS
---function AfterParty:OnInitialize()
---    addon:RegisterChatCommand("gshow", ShowPartyWindow)
---    addon:RegisterChatCommand("gstore", StoreParty)
---    addon:RegisterChatCommand("gclear", ClearParty)
---end
+function AfterParty:OnInitialize()
+    addon:RegisterChatCommand("gshow", ShowPartyWindow)
+    addon:RegisterChatCommand("gstore", StoreParty)
+    addon:RegisterChatCommand("gclear", ClearParty)
+end
