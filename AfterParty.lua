@@ -7,6 +7,7 @@ if not addon.tableContains(addon.validLocales, locale) then
 end
 local L        = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 local myserver = GetRealmName()
+local myname   = UnitName("player")
 
 
 local OuterFrame     = nil
@@ -93,7 +94,7 @@ local function BuildAfterPartyWindow()
     local CheckBoxAP = CreateFrame("CheckButton", "GroupieAfterPartyCB1", OuterFrame,
         "ChatConfigCheckButtonTemplate")
     CheckBoxAP:SetPoint("BOTTOMLEFT", 48, 8)
-    GroupieAfterPartyCB1Text:SetText("Enable Groupie After Party")
+    _G["GroupieAfterPartyCB1Text"]:SetText("Enable Groupie After Party")
     CheckBoxAP:SetScript("OnClick", function()
         addon.db.char.afterParty = CheckBoxAP:GetChecked()
     end)
@@ -102,7 +103,7 @@ local function BuildAfterPartyWindow()
     local CheckBoxAPMsg = CreateFrame("CheckButton", "GroupieAfterPartyCB2", OuterFrame,
         "ChatConfigCheckButtonTemplate")
     CheckBoxAPMsg:SetPoint("BOTTOMLEFT", 300, 8)
-    GroupieAfterPartyCB2Text:SetText("Enable Message to Added Friends")
+    _G["GroupieAfterPartyCB2Text"]:SetText("Enable Message to Added Friends")
     CheckBoxAPMsg:SetScript("OnClick", function()
         addon.db.char.notifyAfterParty = CheckBoxAPMsg:GetChecked()
     end)
@@ -220,7 +221,7 @@ local function GenerateTooltip(name, isIgnore)
 
         --Check Groupie Friends
         if addon.db.global.groupieFriends[myserver][name] then
-            outStr = outStr .. "\nvia Groupie Global Friends"
+            return "Already Friends!"
         end
 
         --Check Character Friends
@@ -255,6 +256,10 @@ end
 
 --Store information about party players on boss kill
 local function StoreParty()
+    --Disabled if global friends are disabled, or if this characters friend lists are disabled
+    if not addon.db.global.enableGlobalFriends then return end
+    if addon.db.global.hiddenFriendLists[myserver][myname] then return end
+
     if IsInGroup() and not IsInRaid() then
         for i = 1, 4 do
             local name = UnitName("party" .. tostring(i))
@@ -280,6 +285,10 @@ end
 
 --Display the window, clear saved party info
 local function ShowPartyWindow()
+
+    --Disabled if global friends are disabled, or if this characters friend lists are disabled
+    if not addon.db.global.enableGlobalFriends then return end
+    if addon.db.global.hiddenFriendLists[myserver][myname] then return end
 
     --Test data injection
     if addon.debugMenus then
@@ -419,7 +428,7 @@ end
 
 --TODO: REMOVE TESTING COMMANDS
 function AfterParty:OnInitialize()
-    addon:RegisterChatCommand("gshow", ShowPartyWindow)
-    addon:RegisterChatCommand("gstore", StoreParty)
-    addon:RegisterChatCommand("gclear", ClearParty)
+    addon:RegisterChatCommand("gpapshow", ShowPartyWindow)
+    addon:RegisterChatCommand("gpapstore", StoreParty)
+    --addon:RegisterChatCommand("gclear", ClearParty)
 end
