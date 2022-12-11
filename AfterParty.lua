@@ -30,10 +30,10 @@ local BUTTON_HEIGHT  = 49
 --Create column headers for the main tab
 local function createColumn(text, width, parent)
     columnCount = columnCount + 1
-    local Header = CreateFrame("Button", parent:GetName() .. "Header" .. columnCount, parent,
+    local Header = CreateFrame("Button", parent:GetName() .. "APHeader" .. columnCount, parent,
         "WhoFrameColumnHeaderTemplate")
     Header:SetWidth(width)
-    _G[parent:GetName() .. "Header" .. columnCount .. "Middle"]:SetWidth(width - 9)
+    _G[parent:GetName() .. "APHeader" .. columnCount .. "Middle"]:SetWidth(width - 9)
     Header:SetText(text)
     --Header:SetJustifyH("CENTER")
     Header:SetNormalFontObject("GameFontHighlight")
@@ -43,7 +43,7 @@ local function createColumn(text, width, parent)
     if columnCount == 1 then
         Header:SetPoint("TOPLEFT", parent, "TOPLEFT", 1, 22)
     else
-        Header:SetPoint("LEFT", parent:GetName() .. "Header" .. columnCount - 1, "RIGHT", 0, 0)
+        Header:SetPoint("LEFT", parent:GetName() .. "APHeader" .. columnCount - 1, "RIGHT", 0, 0)
     end
 
     Header:SetScript("OnClick", function() return end)
@@ -77,6 +77,7 @@ local function BuildAfterPartyWindow()
                 self.isMoving = false
             end
         end)
+    OuterFrame:SetFrameStrata("FULLSCREEN")
 
 
     --------
@@ -93,8 +94,8 @@ local function BuildAfterPartyWindow()
 
     local CheckBoxAP = CreateFrame("CheckButton", "GroupieAfterPartyCB1", OuterFrame,
         "ChatConfigCheckButtonTemplate")
-    CheckBoxAP:SetPoint("BOTTOMLEFT", 48, 8)
-    _G["GroupieAfterPartyCB1Text"]:SetText("Enable Groupie After Party")
+    CheckBoxAP:SetPoint("BOTTOMLEFT", 8, 8)
+    _G["GroupieAfterPartyCB1Text"]:SetText(" Enable Groupie After Party")
     CheckBoxAP:SetScript("OnClick", function()
         addon.db.char.afterParty = CheckBoxAP:GetChecked()
     end)
@@ -102,8 +103,8 @@ local function BuildAfterPartyWindow()
 
     local CheckBoxAPMsg = CreateFrame("CheckButton", "GroupieAfterPartyCB2", OuterFrame,
         "ChatConfigCheckButtonTemplate")
-    CheckBoxAPMsg:SetPoint("BOTTOMLEFT", 300, 8)
-    _G["GroupieAfterPartyCB2Text"]:SetText("Enable Message to Added Friends")
+    CheckBoxAPMsg:SetPoint("LEFT", _G["GroupieAfterPartyCB1Text"], "RIGHT", 8, -2)
+    _G["GroupieAfterPartyCB2Text"]:SetText(" Notify New Friends")
     CheckBoxAPMsg:SetScript("OnClick", function()
         addon.db.char.notifyAfterParty = CheckBoxAPMsg:GetChecked()
     end)

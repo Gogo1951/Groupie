@@ -7,12 +7,13 @@ local L       = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 local LGS     = LibStub:GetLibrary("LibGearScore.1000", true)
 local myname  = UnitName("player")
 local myclass = UnitClass("player")
-local mylevel = UnitLevel("player")
+
 
 -------------------------------
 -- Right Click Functionality --
 -------------------------------
 function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultID, isAutoResponse)
+	local mylevel = UnitLevel("player")
 	addon.UpdateSpecOptions()
 
 	if addon.playerILVL == nil or addon.playerGearScore == nil or addon.playerILVL < 1 or addon.playerGearScore < 1 then

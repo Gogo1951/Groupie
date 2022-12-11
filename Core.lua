@@ -45,6 +45,7 @@ if not addon.tableContains(addon.validLocales, locale) then
                 end
             end)
         GroupieFrame:SetScript("OnShow", function() return end)
+        GroupieFrame:SetFrameStrata("DIALOG")
         --Icon
         local icon = GroupieFrame:CreateTexture("$parentIcon", "OVERLAY", nil, -8)
         icon:SetSize(60, 60)
@@ -450,11 +451,11 @@ local function filterListings()
                 --Doesnt match language in the dropdown
             elseif MainTabFrame.levelFilter and listing.minLevel and
                 MainTabFrame.size == 5 and MainTabFrame.isHeroic == false
-                and listing.minLevel > (UnitLevel("player") + addon.db.char.recommendedLevelRange) then
+                and listing.minLevel > (mylevel + addon.db.char.recommendedLevelRange) then
                 --Instance is outside of level range (ONLY for normal dungeons)
             elseif MainTabFrame.levelFilter and listing.maxLevel and
                 MainTabFrame.size == 5 and MainTabFrame.isHeroic == false
-                and listing.maxLevel < UnitLevel("player") then
+                and listing.maxLevel < mylevel then
                 --Instance is outside of level range (ONLY for normal dungeons)
             elseif addon.db.char.hideInstances[listing.order] == true then
                 --Ignoring specifically hidden instances
@@ -3259,5 +3260,9 @@ function addon:OnEnable()
     --Update the gearscore/ilvl/talent lines in the character sheet
     addon:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", function(...)
         addon.UpdateCharacterSheet()
+    end)
+
+    addon:RegisterEvent("PLAYER_LEVEL_UP", function()
+        mylevel = UnitLevel("player")
     end)
 end
