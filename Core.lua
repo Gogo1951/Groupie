@@ -573,6 +573,25 @@ local function DrawListings(self)
                 listing.messageSent = true
                 listing.senderName = myname
             end)
+            button.btn:SetScript("OnEnter", function()
+                local groupieMsg = addon.GetPlayerInfoMsg(listing.fullName,nil,true)
+                if groupieMsg and #groupieMsg > 0 then
+                    groupieMsg = format("%q",groupieMsg)
+                else
+                    groupieMsg = nil
+                end
+                if groupieMsg then
+                    GameTooltip:SetOwner(button.btn, "ANCHOR_CURSOR")
+                    GameTooltip:SetText(L["ClickSend"],246/255,235/255,97/25, 1, false)
+                    GameTooltip:AddLine(groupieMsg, 1, 1, 1, 1, true)
+                    GameTooltip:Show()
+                end
+            end)
+            button.btn:SetScript("OnLeave", function()
+                if GameTooltip:IsOwned(button.btn) then
+                    GameTooltip:Hide()
+                end
+            end)
             --clear messages sent on switching characters
             if listing.messageSent and myname ~= listing.senderName then
                 listing.messageSent = nil

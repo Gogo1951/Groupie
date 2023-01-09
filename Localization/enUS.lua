@@ -68,6 +68,7 @@ L["Settings"] = "Settings"
 L["BulletinBoard"] = "Bulletin Board"
 L["Reset"] = "Reset"
 L["Options"] = "Options"
+L["ClickSend"] = "Send this Message"
 -- Channels Name /!\ VERY IMPORTANT, THE ADDON PARSES DEPENDING ON THE CHANNEL NAME
 L["text_channels"] = {
     ["Guild"] = "Guild",

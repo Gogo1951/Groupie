@@ -1,12 +1,13 @@
-tag fbed12e8b49225ce6b58d8a25bd93ecae85bca60 1.0.r5
+tag 98d90d4ae6c8f739075dfc30c78b8a2ba5e5d5ee 1.0.r6
 Author:	Road-block <dridzt.addons@hotmail.com>
-Date:	Wed Dec 7 18:34:18 2022 +0200
+Date:	Fri Dec 9 15:41:41 2022 +0200
 
-GearScore, Flame Leviathan, Herald checks
+VehicleMath
 
-commit 7d50ad92c85b992445f5ae588bab73880dcfea16
+commit 796356247b515c47d8d52d8bade3901a3a84463c
 Author: Road-block <dridzt.addons@hotmail.com>
-Date:   Wed Dec 7 18:33:01 2022 +0200
+Date:   Fri Dec 9 15:39:57 2022 +0200
 
-    update toc information
+    add a :VehicleMath(extra_ilevels,[base]) method that returns a human friendly % increase in base hp or damage
+    update the /lig_gs handler to return that info as well
 
