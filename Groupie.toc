@@ -1,4 +1,4 @@
-## Interface: 30400
+## Interface: 30401
 ## Title: Groupie
 ## Notes: A better LFG tool for Classic WoW.
 ## Version: 1.65
