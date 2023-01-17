@@ -1688,7 +1688,7 @@ local function BuildGroupieWindow()
     CharSheetSummaryFrame = _G["CharacterModelFrame"]:CreateFontString("GroupieCharSheetAddin", "OVERLAY",
         "GameFontNormalSmall")
     CharSheetSummaryFrame:SetPoint("LEFT", CharSheetSummaryFrame:GetParent(), "LEFT", 8 +
-        addon.db.global.charSheetXOffset, -60 + addon.db.global.charSheetYOffset)
+        addon.db.global.charSheetXOffset, -50 + addon.db.global.charSheetYOffset)
     CharSheetSummaryFrame:SetJustifyH("LEFT")
 
     -------------
@@ -3160,9 +3160,18 @@ function addon.UpdateCharacterSheet(ignoreILVL, ignoreGS)
     --2nd Line : Show Average Item Level
     --3rd Line : Show Gear Score
 
+    CI:DoInspect("player")
+    --Calculate gearscore
+    LGS:PLAYER_EQUIPMENT_CHANGED() --Workaround for PEW event in library being too early
+    local guid, gsData = LGS:GetScore("player")
+    if gsData and gsData.GearScore and gsData.GearScore > 0 then
+        addon.playerGearScore = gsData.GearScore
+        addon.playerFLOPScore = gsData.FLOPScore
+    end
+
     --Calculate talents
     local spec1, spec2, spec3 = CI:GetTalentPoints("player")
-    local talentStr = format("%d / %d / %d", spec1, spec2, spec3)
+    local talentStr = format("%d/%d/%d", spec1 or 0, spec2 or 0, spec3 or 0)
     --Calculate Item level
     local ilvl = addon.MyILVL()
     if ilvl then
@@ -3170,21 +3179,29 @@ function addon.UpdateCharacterSheet(ignoreILVL, ignoreGS)
             addon.playerILVL = ilvl
         end
     end
-    --Calculate gearscore
-    LGS:PLAYER_EQUIPMENT_CHANGED() --Workaround for PEW event in library being too early
-    CI:DoInspect("player")
-    local guid, gearScore = LGS:GetScore("player")
-    if gearScore and gearScore.GearScore and gearScore.GearScore > 0 then
-        addon.playerGearScore = gearScore.GearScore
-    end
-    local colorStr = ""
-    if gearScore.Color then
-        colorStr = "|c" .. gearScore.Color:GenerateHexColor()
-    end
+
     --Display on character sheet
     if addon.db.global.charSheetGear then
-        CharSheetSummaryFrame:SetText(format("%s\nItem-level : %d\nGearScore : %s%d", talentStr, ilvl,
-            colorStr, gearScore.GearScore))
+        local ilvlStr, gearScoreStr, flopScoreStr, heraldStr = "", "", "", ""
+        if addon.playerILVL then
+            ilvlStr = gsData.Color and gsData.Color:WrapTextInColorCode(addon.playerILVL) or format("%d",addon.playerILVL)
+        end
+        if addon.playerGearScore then
+            gearScoreStr = gsData.Color and gsData.Color:WrapTextInColorCode(addon.playerGearScore) or format("%d",addon.playerGearScore)
+        end
+        if addon.playerFLOPScore then
+            flopScoreStr = gsData.FLOPColor and gsData.FLOPColor:WrapTextInColorCode(addon.playerFLOPScore) or format("%d",addon.playerFLOPScore)
+        end
+        if gsData.HeraldFails then
+            heraldStr = gsData.HeraldColor and gsData.HeraldColor:WrapTextInColorCode(_G.YES) or _G.YES
+            for failslot,faillvl in pairs(gsData.HeraldFails) do
+                if faillvl then
+                    heraldStr = gsData.HeraldColor and gsData.HeraldColor:WrapTextInColorCode(_G.NO) or _G.NO
+                    break
+                end
+            end
+        end
+        CharSheetSummaryFrame:SetText(format("Spec: %s\nItemLevel: %s\nGearScore: %s\nLeviathan: %s\nHerald: %s", talentStr, ilvlStr, gearScoreStr, flopScoreStr, heraldStr))
     end
 end
 
