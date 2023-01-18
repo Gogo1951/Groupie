@@ -121,7 +121,8 @@ function addon.GetPlayerInfoMsg(fullName, isAutoResponse, isTooltip)
 		myclass,
 		achieveLinkStr
 	)
-	msgCache[msgKey] = groupieMsg
+	msgCache[msgKey] = groupieMsg:gsub("%b{}%s*","")
+	if isTooltip then return msgCache[msgKey] end
 	return groupieMsg
 end
 

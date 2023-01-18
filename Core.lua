@@ -576,7 +576,8 @@ local function DrawListings(self)
             button.btn:SetScript("OnEnter", function()
                 local groupieMsg = addon.GetPlayerInfoMsg(listing.fullName,nil,true)
                 if groupieMsg and #groupieMsg > 0 then
-                    groupieMsg = format("%q",groupieMsg)
+                    local color = CreateColor(ChatTypeInfo["WHISPER"].r, ChatTypeInfo["WHISPER"].g, ChatTypeInfo["WHISPER"].b)
+                    groupieMsg = color:WrapTextInColorCode(groupieMsg)
                 else
                     groupieMsg = nil
                 end
@@ -3190,7 +3191,13 @@ function addon.UpdateCharacterSheet(ignoreILVL, ignoreGS)
             gearScoreStr = gsData.Color and gsData.Color:WrapTextInColorCode(addon.playerGearScore) or format("%d",addon.playerGearScore)
         end
         if addon.playerFLOPScore then
-            flopScoreStr = gsData.FLOPColor and gsData.FLOPColor:WrapTextInColorCode(addon.playerFLOPScore) or format("%d",addon.playerFLOPScore)
+            local percent_delta = LGS:VehicleMath(addon.playerFLOPScore)
+            if addon.playerFLOPScore > 0 then
+                flopScoreStr = format("+%s%%",percent_delta)
+            else
+                flopScoreStr = format("%s%%",percent_delta)
+            end
+            flopScoreStr = gsData.FLOPColor and gsData.FLOPColor:WrapTextInColorCode(flopScoreStr) or format("%s",flopScoreStr)
         end
         if gsData.HeraldFails then
             heraldStr = gsData.HeraldColor and gsData.HeraldColor:WrapTextInColorCode(_G.YES) or _G.YES
@@ -3201,7 +3208,7 @@ function addon.UpdateCharacterSheet(ignoreILVL, ignoreGS)
                 end
             end
         end
-        CharSheetSummaryFrame:SetText(format("Spec: %s\nItemLevel: %s\nGearScore: %s\nLeviathan: %s\nHerald: %s", talentStr, ilvlStr, gearScoreStr, flopScoreStr, heraldStr))
+        CharSheetSummaryFrame:SetText(format("Spec: %s\nItemLevel: %s\nGearScore: %s\nVehicles: %s\nHerald: %s", talentStr, ilvlStr, gearScoreStr, flopScoreStr, heraldStr))
     end
 end
 
