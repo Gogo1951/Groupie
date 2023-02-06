@@ -23,4 +23,3 @@ RightClick.lua
 Listener.lua
 AutoResponse.lua
 AnnounceReset.lua
-AfterParty.lua
