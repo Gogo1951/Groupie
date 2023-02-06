@@ -12,6 +12,7 @@ local mylevel = UnitLevel("player")
 
 local askForPlayerInfo = addon.askForPlayerInfo
 local askForInstance = addon.askForInstance
+local addedNewFriendString = addon.addedNewFriendString
 local PROTECTED_TOKENS = addon.PROTECTED_TOKENS
 local WARNING_MESSAGE = addon.WARNING_MESSAGE
 
@@ -331,6 +332,7 @@ local function ParseMessage(event, msg, author, _, channel, guid)
     local icon = "Other.tga"
     local classColor = addon.groupieSystemColor
 
+
     for i = 1, #messageWords do
         --handle cases of 'LF3M', etc by removing numbers for this part
         local word = gsub(messageWords[i], "%d", "")
@@ -542,7 +544,12 @@ local function GroupieEventHandlers(...)
         validChannel = true
     end
     if validChannel then
-        ParseMessage(event, msg, author, _, channel, guid)
+        local shortAuthor = author:gsub("%-.+", "")
+        if addon.ignoreList[shortAuthor] ~= nil then
+            return
+        else
+            ParseMessage(event, msg, author, _, channel, guid)
+        end
     end
     return true
 end
@@ -573,7 +580,7 @@ local function WhisperListener(_, msg, longAuthor, ...)
     else
         --Check the hash if it is a groupie branded message
         --Unless it is the warning message itself
-        if msg ~= WARNING_MESSAGE and msg ~= askForInstance and msg ~= askForPlayerInfo then
+        if msg ~= WARNING_MESSAGE and msg ~= askForInstance and msg ~= askForPlayerInfo and msg ~= addedNewFriendString then
             for key, val in pairs(PROTECTED_TOKENS) do
                 if strmatch(strlower(msg), val) then
                     local flag1, flag2 = false, false

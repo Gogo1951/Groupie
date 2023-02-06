@@ -5,7 +5,7 @@ local addon                        = LibStub("AceAddon-3.0"):NewAddon(Groupie, a
     "AceTimer-3.0")
 local CI                           = LibStub("LibClassicInspector")
 local LGS                          = LibStub:GetLibrary("LibGearScore.1000", true)
-L_UIDROPDOWNMENU_SHOW_TIME         = 2 -- Timeout once the cursor leaves menu
+--L_UIDROPDOWNMENU_SHOW_TIME         = 2 -- Timeout once the cursor leaves menu
 local L                            = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 local localizedClass, englishClass = UnitClass("player")
 local myserver                     = GetRealmName()
@@ -45,6 +45,7 @@ if not addon.tableContains(addon.validLocales, locale) then
                 end
             end)
         GroupieFrame:SetScript("OnShow", function() return end)
+        GroupieFrame:SetFrameStrata("DIALOG")
         --Icon
         local icon = GroupieFrame:CreateTexture("$parentIcon", "OVERLAY", nil, -8)
         icon:SetSize(60, 60)
@@ -75,11 +76,7 @@ if not addon.tableContains(addon.validLocales, locale) then
         icon = "Interface\\AddOns\\" .. addonName .. "\\Images\\icon64.tga",
         OnClick = function(self, button, down)
             if button == "LeftButton" then
-                if GroupieFrame:IsShown() then
-                    GroupieFrame:Hide()
-                else
-                    BuildGroupieWindow()
-                end
+                BuildGroupieWindow()
             end
         end,
         OnTooltipShow = function(tooltip)
@@ -454,11 +451,11 @@ local function filterListings()
                 --Doesnt match language in the dropdown
             elseif MainTabFrame.levelFilter and listing.minLevel and
                 MainTabFrame.size == 5 and MainTabFrame.isHeroic == false
-                and listing.minLevel > (UnitLevel("player") + addon.db.char.recommendedLevelRange) then
+                and listing.minLevel > (mylevel + addon.db.char.recommendedLevelRange) then
                 --Instance is outside of level range (ONLY for normal dungeons)
             elseif MainTabFrame.levelFilter and listing.maxLevel and
                 MainTabFrame.size == 5 and MainTabFrame.isHeroic == false
-                and listing.maxLevel < UnitLevel("player") then
+                and listing.maxLevel < mylevel then
                 --Instance is outside of level range (ONLY for normal dungeons)
             elseif addon.db.char.hideInstances[listing.order] == true then
                 --Ignoring specifically hidden instances
@@ -508,9 +505,21 @@ local function filterFriends()
     for key, listing in pairs(sorted) do
         --Ensure no duplicates
         if not addon.tableContains(seen, listing.name) then
-            addon.filteredFriends[idx] = listing
-            idx = idx + 1
-            tinsert(seen, listing.name)
+            local ownCharFlag = false
+            --Dont include the player's own alts
+            for k, v in pairs(addon.db.global.friends) do
+                for k2, v2 in pairs(v) do
+                    local shortName = k2:gsub(" %-.+", "")
+                    if strlower(listing.name) == strlower(shortName) then
+                        ownCharFlag = true
+                    end
+                end
+            end
+            if not ownCharFlag then
+                addon.filteredFriends[idx] = listing
+                idx = idx + 1
+                tinsert(seen, listing.name)
+            end
         end
     end
 end
@@ -642,6 +651,7 @@ local function DrawFriends(self)
                 else
                     addon.db.global.groupieIgnores[myserver][listing.name] = nil
                 end
+                addon.UpdateFriends()
             end)
             if listing.isGroupieFriend then
                 button.btn:Show()
@@ -679,28 +689,7 @@ local function ListingOnClick(self, button, down)
     --Select a listing, if shift is held, do a Who Request
     if button == "LeftButton" then
         if addon.debugMenus then
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.isLFM)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.isLFG)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.timestamp)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.instanceName)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.fullName)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.isHeroic)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.groupSize)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.lootType)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.rolesNeeded)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.msg)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.author)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.words)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.minLevel)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.maxLevel)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.order)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.instanceID)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.resultID)
-            --print(addon.groupieBoardButtons[addon.selectedListing].listing.createdat)
-            --for k, v in pairs(addon.groupieBoardButtons[addon.selectedListing].listing.rolesNeeded) do
-            --    print(v)
-            --end
-            for k, v in pairs(C_FriendList.GetFriendInfoByIndex(1)) do
+            for k, v in pairs(addon.ignoreList) do
                 print(k, v)
             end
         end
@@ -834,7 +823,7 @@ local function CreateFriendListingButtons()
         currentListing.btn:SetWidth(REMOVE_BTN_WIDTH)
         currentListing.btn:SetText("Remove")
         currentListing.btn:SetScript("OnClick", function()
-            return
+            addon.UpdateFriends()
         end)
 
 
@@ -1129,7 +1118,11 @@ local function BuildGroupieWindow()
             GroupieGroupBrowser:AttachLFGToolPreset(GroupieTab6, 114)
             GroupieGroupBrowser:AttachLFGToolPreset(GroupieTab7, 118)
         end
-        GroupieFrame:Show()
+        if GroupieFrame:IsShown() then
+            GroupieFrame:Hide()
+        else
+            GroupieFrame:Show()
+        end
         return
     end
 
@@ -1748,11 +1741,7 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
             if IsShiftKeyDown() then
                 addon.OpenConfig()
             else
-                if GroupieFrame:IsShown() then
-                    GroupieFrame:Hide()
-                else
-                    BuildGroupieWindow()
-                end
+                BuildGroupieWindow()
             end
         elseif button == "RightButton" then
             if IsShiftKeyDown() then
@@ -1775,7 +1764,6 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
         --tooltip:AddLine(addonName .. " - v" .. tostring(addon.version))
         tooltip:AddDoubleLine(addonName, tostring(addon.version),
             1, 0.85, 0.00, 1, 0.85, 0.00)
-        tooltip:AddLine(L["slogan"], 255, 255, 255, false)
 
         tooltip:AddLine(" ")
 
@@ -1789,9 +1777,9 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
 
         tooltip:AddLine(L["Click"] ..
             " |cffffffff" ..
-            L["MiniMap"].lowerOr .. "|r /groupie |cffffffff: " .. addonName .. " " .. L["BulletinBoard"] .. "|r ")
-        tooltip:AddLine(L["RightClick"] .. " |cffffffff: " .. " Toggle LFG Auto-Response|r ")
-        tooltip:AddLine("Shift + Click |cffffffff: " .. " Open Groupie Settings|r ")
+            L["MiniMap"].lowerOr .. "|r /groupie|cffffffff : " .. addonName .. " Toggle " .. L["BulletinBoard"] .. "|r ")
+        tooltip:AddLine(L["RightClick"] .. "|cffffffff : Toggle LFG Auto-Response|r ")
+        tooltip:AddLine("Shift + Click|cffffffff : Open " .. addonName .. " Settings|r ")
         --Version Check
         if addon.version < addon.db.global.highestSeenVersion then
             tooltip:AddLine(" ");
@@ -1853,6 +1841,7 @@ function addon:OnInitialize()
             autoRespondRequests = false,
             autoRejectRequests = false,
             afterParty = true,
+            notifyAfterParty = true,
             useChannels = {
                 [L["text_channels"].Guild] = true,
                 [L["text_channels"].General] = true,
@@ -1959,6 +1948,7 @@ function addon:OnInitialize()
             announceInstanceReset = true,
             showedv161InfoPopup = false,
             lastShowedInfoPopup = 1.63,
+            savedPartyPlayers = nil,
         }
     }
 
@@ -1995,21 +1985,20 @@ function addon:OnInitialize()
         local unitname, unittype = GameTooltip:GetUnit()
         if unittype then
             local curMouseOver = UnitGUID(unittype)
+            local mouseoverLevel = UnitLevel("mouseover")
             if curMouseOver then
                 if not InCombatLockdown() then
                     --Talents/Spec Information
                     if addon.db.global.talentTooltips then
                         local spec1, spec2, spec3 = CI:GetTalentPoints(curMouseOver)
                         local _, class = GetPlayerInfoByGUID(curMouseOver)
-
                         local mainSpecIndex, pointsSpent = CI:GetSpecialization(curMouseOver)
                         if mainSpecIndex then
                             local specName = CI:GetSpecializationName(class, mainSpecIndex)
-                            local unspentTalents = (mylevel - 9) > (spec1 + spec2 + spec3)
                             if specName ~= nil then
                                 GameTooltip:AddLine(" ")
                                 GameTooltip:AddDoubleLine(specName, format("%d / %d / %d", spec1, spec2, spec3))
-                                if unspentTalents then
+                                if (mouseoverLevel - 9) > (spec1 + spec2 + spec3) then
                                     GameTooltip:AddLine("Unspent Talent Points!", 148, 0, 211)
                                 end
                             end
@@ -2099,7 +2088,8 @@ function addon.SetupConfig()
                 args = {
                     header0 = {
                         type = "description",
-                        name = "|cff" .. addon.groupieSystemColor .. L["InstanceLog"].Name,
+                        name = "|cff9d9d9d|Hitem:3299::::::::20:257::::::|h[Fractured Canine]|h|r|cff" ..
+                            addon.groupieSystemColor .. L["InstanceLog"].Name,
                         order = 0,
                         fontSize = "large"
                     },
@@ -2591,8 +2581,7 @@ function addon.SetupConfig()
                         name = "|cff" .. addon.groupieSystemColor .. addonName .. " " .. L["CharOptions"].AfterParty,
                         order = 32,
                         fontSize = "medium",
-                        hidden = true,
-                        disabled = true,
+
                     },
                     afterPartyToggle = {
                         type = "toggle",
@@ -2601,22 +2590,29 @@ function addon.SetupConfig()
                         width = "full",
                         get = function(info) return addon.db.char.afterParty end,
                         set = function(info, val) addon.db.char.afterParty = val end,
-                        hidden = true,
-                        disabled = true,
+
                     },
-                    spacerdesc9 = { type = "description", name = " ", width = "full", order = 34,
-                        hidden = true,
-                        disabled = true, },
+                    afterPartyMsgToggle = {
+                        type = "toggle",
+                        name = "Enable " .. addonName .. " Enable Message to Added Friends",
+                        order = 34,
+                        width = "full",
+                        get = function(info) return addon.db.char.notifyAfterParty end,
+                        set = function(info, val) addon.db.char.notifyAfterParty = val end,
+
+                    },
+                    spacerdesc9 = { type = "description", name = " ", width = "full", order = 35,
+                    },
                     header7 = {
                         type = "description",
                         name = "|cff" .. addon.groupieSystemColor .. "Enable Auto Responses",
-                        order = 35,
+                        order = 36,
                         fontSize = "medium",
                     },
                     autorespDesc = {
                         type = "description",
                         name = "Note : Auto-Response will only fire when you are not already in an arena, battleground, or group of any kind, and only when LFG Auto-Response|r is toggled on using the Minimap button.\n\n    \"Hey Friend, you can count on me!...\"",
-                        order = 36,
+                        order = 37,
                     },
 
                     spacerdesc10 = { type = "description", name = " ", width = "full", order = 999 },
@@ -3041,15 +3037,20 @@ function addon.UpdateFriends()
     --Always clear and reload the current character
     addon.db.global.friends[myserver][myname] = {}
     addon.db.global.ignores[myserver][myname] = {}
+    addon.db.global.guilds[myserver][myname] = {}
     if myguild ~= nil then
-        addon.db.global.guilds[myserver][myname] = {}
         addon.db.global.guilds[myserver][myname]["__NAME__"] = myguild
         --Show title in options
     end
 
     local hasAnyGuilds = false
     for k, v in pairs(addon.db.global.guilds[myserver]) do
-        hasAnyGuilds = true
+
+        if addon.db.global.guilds[myserver][k] ~= nil then
+            if addon.db.global.guilds[myserver][k]["__NAME__"] ~= nil then
+                hasAnyGuilds = true
+            end
+        end
     end
 
     if hasAnyGuilds then
@@ -3126,6 +3127,11 @@ function addon.UpdateFriends()
             end
         end
     end
+
+    for name, _ in pairs(addon.db.global.groupieFriends[myserver]) do
+        addon.friendList[name] = true
+    end
+
     addon.GenerateFriendToggles(10, myserver, "globalfriendslist")
     addon.GenerateGuildToggles(1010, myserver, "globalfriendslist")
 end
@@ -3254,5 +3260,9 @@ function addon:OnEnable()
     --Update the gearscore/ilvl/talent lines in the character sheet
     addon:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", function(...)
         addon.UpdateCharacterSheet()
+    end)
+
+    addon:RegisterEvent("PLAYER_LEVEL_UP", function()
+        mylevel = UnitLevel("player")
     end)
 end

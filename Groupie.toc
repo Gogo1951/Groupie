@@ -14,6 +14,8 @@ UI/minimap.xml
 UI/listingtemplate.xml
 UI/friendlistingtemplate.xml
 Helpers.lua
+DBs/AchievementData.lua
+DBs/InstanceData.lua
 Globals.lua
 Core.lua
 GroupBrowser.lua
