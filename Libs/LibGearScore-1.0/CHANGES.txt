@@ -1,13 +1,14 @@
-tag 98d90d4ae6c8f739075dfc30c78b8a2ba5e5d5ee 1.0.r6
+tag d887963e455626d6f0b000318dd63d498cf002ad 1.0.r7
 Author:	Road-block <dridzt.addons@hotmail.com>
-Date:	Fri Dec 9 15:41:41 2022 +0200
+Date:	Thu Jan 19 19:01:41 2023 +0200
 
-VehicleMath
+3.4.1 update
 
-commit 796356247b515c47d8d52d8bade3901a3a84463c
+commit d180f5388f684b3ed5b62c998efd843898e7f494
 Author: Road-block <dridzt.addons@hotmail.com>
-Date:   Fri Dec 9 15:39:57 2022 +0200
+Date:   Thu Jan 19 18:58:40 2023 +0200
 
-    add a :VehicleMath(extra_ilevels,[base]) method that returns a human friendly % increase in base hp or damage
-    update the /lig_gs handler to return that info as well
+    add a friendly :HeraldCheck(unit) method that returns pass/fail and failed slots
+    better cleanup when the instance replaces an older revision
+    up revision and update interface numbers for 3.4.1
 

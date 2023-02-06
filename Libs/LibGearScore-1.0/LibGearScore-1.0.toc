@@ -1,5 +1,5 @@
-## Interface: 30400
-## Version: 1.0.r6
+## Interface: 30401
+## Version: 1.0.r7
 ## Title: Lib: GearScore-1.0
 ## Notes: Uses the original GearScore Formula by Mirrikat45 (based on: ItemLevel, ItemRarity and PlayerClass/ItemSlot)
 ## Author: Road-block

@@ -69,7 +69,7 @@ function addon.GetPlayerInfoMsg(fullName, isAutoResponse, isTooltip)
 			for i = 1, #priorities do
 				if achieveLinkStr == "" then
 					local _, _, _, completed = GetAchievementInfo(priorities[i])
-					if completed then
+					if completed or 1 then
 						local achieveLink = GetAchievementLink(priorities[i])
 						if achieveLink then
 							achieveLinkStr = " " .. achieveLink
