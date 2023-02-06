@@ -15,7 +15,7 @@
 --       GearScore = GearScore, -- Number
 --       AvgItemLevel = AvgItemLevel, -- Number
 --       FLOPScore = FLOPScore, -- Number (bonus or minus itemlevels for Flame Leviathan vehicles)
---       HeraldFails = hashTable, -- {slot = itemlevel}
+--       HeraldFails = hashTable, -- {slotName = itemlevel}
 --       RawTime = RawTime, -- nilable: unixtime (can feed to date(fmt,RawTime) to get back human readable datetime)
 --       Color = color, -- nilable: ColorMixin
 --       FLOPColor = color, -- ColorMixin
@@ -54,7 +54,7 @@
 --     LibGearScore-1.0 does NOT initiate Inspects, it only passively monitors inspect results.
 -----------------------------------------------------------------------------------------------------------------------
 
-local MAJOR, MINOR = "LibGearScore.1000", 5
+local MAJOR, MINOR = "LibGearScore.1000", 7
 assert(LibStub, format("%s requires LibStub.", MAJOR))
 local lib, oldMinor = LibStub:NewLibrary(MAJOR, MINOR)
 
@@ -79,7 +79,11 @@ local max = _G.math.max
 local min = _G.math.min
 local modf = _G.math.modf
 
-local ScanTip = _G["LibGearScoreScanTooltip.1000"] or CreateFrame("GameTooltip", "LibGearScoreScanTooltip.1000", UIParent, "GameTooltipTemplate")
+local ScanTip = _G["LibGearScoreScanTooltip.1000"] or CreateFrame("GameTooltip", "LibGearScoreScanTooltip.1000", nil, "GameTooltipTemplate")
+if not ScanTip:IsOwned(WorldFrame) then
+  ScanTip:SetOwner(WorldFrame, "ANCHOR_NONE")
+end
+ScanTip:Hide()
 lib.callbacks = lib.callbacks or LibStub:GetLibrary("CallbackHandler-1.0"):New(lib)
 
 local BRACKET_SIZE = 1000
@@ -94,7 +98,7 @@ end
 local MAX_PLAYER_LEVEL = MAX_PLAYER_LEVEL_TABLE[LE_EXPANSION_LEVEL_CURRENT]
 local MAX_SCORE = BRACKET_SIZE*6-1
 local BASELINE, ARMOR_MAX, WEAPON_MAX = 200, 239, 245
-local FLOPBASE, FLOPMAX = 3000, 4225
+local FLOPBASE, FLOPMAX, SCALING_FACTOR = 3000, 4225, 6
 
 local AllSlots = {
   _G.INVSLOT_HEAD,
@@ -452,8 +456,12 @@ lib.ItemScoreData = setmetatable({},{__index = function(cache, item)
 end})
 
 local function GetUnitSlotLink(unit, slot)
-  ScanTip:SetOwner(UIParent, "ANCHOR_NONE")
+  if not ScanTip:IsOwned(WorldFrame) then
+    ScanTip:SetOwner(WorldFrame, "ANCHOR_NONE")
+  end
+  ScanTip:ClearLines()
   ScanTip:SetInventoryItem(unit, slot)
+  ScanTip:Hide()
   return GetInventoryItemLink(unit, slot) or select(2, ScanTip:GetItem())
 end
 
@@ -538,11 +546,12 @@ local function CacheScore(guid, unit, level)
         end
       end
       if Herald_ItemSlots[slot] then
+        local slotName = SlotMap[slot]
         if ItemLevel > Herald_ItemSlots[slot] then
-          HeraldFails[slot] = ItemLevel
+          HeraldFails[slotName] = ItemLevel
         else
-          if HeraldFails[slot] then
-            HeraldFails[slot] = nil
+          if HeraldFails[slotName] then
+            HeraldFails[slotName] = nil
           end
         end
       end
@@ -676,6 +685,33 @@ function lib:GetSlotName(slot)
   return SlotMap[slot] or slot
 end
 
+-- itemlevels_extra are the bonus (positive or negative) computed in GetScore for FLOPScore
+-- base can be baseHP (eg 1.134.000 for siege, 630.000 for demo, 504.000 for bike)
+-- or it can be baseDMG (eg 62636 for direct mortar hit)
+function lib:VehicleMath(itemlevels_extra, base)
+  if not itemlevels_extra then return end
+  -- SCALING_FACTOR/FLOPBASE*100 = 0.2
+  local percent_delta = itemlevels_extra * 0.2
+  if base then
+    return percent_delta, base*percent_delta/100
+  else
+    return percent_delta
+  end
+end
+
+-- return overall pass/fail and the array of fail slots
+function lib:HeraldCheck(unitorguid)
+  local guid = ResolveGUID(unitorguid)
+  if (guid) then
+    local scoreData = lib.PlayerScoreData[guid]
+    if scoreData and scoreData.HeraldFails then
+      local fail = tCount(scoreData.HeraldFails)>0
+      local pass = not fail
+      return pass, scoreData.HeraldFails, scoreData.HeraldColor
+    end
+  end
+end
+
 ---------------
 --- Testing ---
 ---------------
@@ -690,15 +726,17 @@ local function TargetScore()
       else
         print("GearScore: "..scoreData.Color:WrapTextInColorCode(scoreData.GearScore))
         if scoreData.FLOPScore then
-          print("Leviathan: "..scoreData.FLOPColor:WrapTextInColorCode(scoreData.FLOPScore))
+          print("Vehicles: "..scoreData.FLOPColor:WrapTextInColorCode(scoreData.FLOPScore))
+          local percent_delta = lib:VehicleMath(scoreData.FLOPScore)
+          print(format("  %s%%",scoreData.FLOPColor:WrapTextInColorCode(percent_delta)))
         end
         if tCount(scoreData.HeraldFails) > 0 then
           print("Herald: "..scoreData.HeraldColor:WrapTextInColorCode(_G.NO))
           for k,v in pairs(scoreData.HeraldFails) do
-            print(format("  %s:%s",SlotMap[k],scoreData.HeraldColor:WrapTextInColorCode(v)))
+            print(format("  %s: %s",k,scoreData.HeraldColor:WrapTextInColorCode(v)))
           end
         else
-          print("HeraldCheck: "..scoreData.HeraldColor:WrapTextInColorCode(_G.YES))
+          print("Herald: "..scoreData.HeraldColor:WrapTextInColorCode(_G.YES))
         end
       end
     else

@@ -1,12 +1,14 @@
-tag fbed12e8b49225ce6b58d8a25bd93ecae85bca60 1.0.r5
+tag d887963e455626d6f0b000318dd63d498cf002ad 1.0.r7
 Author:	Road-block <dridzt.addons@hotmail.com>
-Date:	Wed Dec 7 18:34:18 2022 +0200
+Date:	Thu Jan 19 19:01:41 2023 +0200
 
-GearScore, Flame Leviathan, Herald checks
+3.4.1 update
 
-commit 7d50ad92c85b992445f5ae588bab73880dcfea16
+commit d180f5388f684b3ed5b62c998efd843898e7f494
 Author: Road-block <dridzt.addons@hotmail.com>
-Date:   Wed Dec 7 18:33:01 2022 +0200
+Date:   Thu Jan 19 18:58:40 2023 +0200
 
-    update toc information
+    add a friendly :HeraldCheck(unit) method that returns pass/fail and failed slots
+    better cleanup when the instance replaces an older revision
+    up revision and update interface numbers for 3.4.1
 
