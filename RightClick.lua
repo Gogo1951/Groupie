@@ -64,7 +64,7 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 			for i = 1, #priorities do
 				if achieveLinkStr == "" then
 					local _, _, _, completed = GetAchievementInfo(priorities[i])
-					if completed or 1 then
+					if completed then
 						local achieveLink = GetAchievementLink(priorities[i])
 						if achieveLink then
 							achieveLinkStr = " " .. achieveLink
