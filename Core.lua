@@ -2949,7 +2949,7 @@ function addon.SetupConfig()
         local PopupGroupieTitle = PopupFrame:CreateFontString("FontString", "OVERLAY", "GameFontNormalMed1")
         PopupGroupieTitle:SetPoint("TOP", PopupFrame, "TOP", 0, -36)
         PopupGroupieTitle:SetWidth(POPUP_WINDOW_WIDTH - 32)
-        PopupGroupieTitle:SetText("Groupie 1.64")
+        PopupGroupieTitle:SetText(format("Groupie %s",addon.version))
         --Info Text
         local PopupMsg = PopupFrame:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
         PopupMsg:SetPoint("TOPLEFT", PopupFrame, "TOPLEFT", 16, -64)
