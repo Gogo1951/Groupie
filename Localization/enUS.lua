@@ -68,6 +68,7 @@ L["Settings"] = "Settings"
 L["BulletinBoard"] = "Bulletin Board"
 L["Reset"] = "Reset"
 L["Options"] = "Options"
+L["Reply"] = "Reply"
 L["ClickSend"] = "Reply with:"
 -- Channels Name /!\ VERY IMPORTANT, THE ADDON PARSES DEPENDING ON THE CHANNEL NAME
 L["text_channels"] = {

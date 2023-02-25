@@ -603,7 +603,7 @@ local function DrawListings(self)
                 button.btn:SetText("|TInterface\\AddOns\\" ..
                     addonName .. "\\Images\\load" .. tostring(MainTabFrame.animFrame + 1) .. ":10:32:0:-1|t")
             else
-                button.btn:SetText("LFG")
+                button.btn:SetText(L["Reply"])
             end
             if myName == button.listing.author and not addon.debugMenus then
                 button.btn:Hide()
@@ -929,7 +929,7 @@ local function CreateListingButtons()
         currentListing.btn = CreateFrame("Button", "$parentApplyBtn", currentListing, "UIPanelButtonTemplate")
         currentListing.btn:SetPoint("LEFT", currentListing.msg, "RIGHT", 4, 0)
         currentListing.btn:SetWidth(APPLY_BTN_WIDTH)
-        currentListing.btn:SetText("LFG")
+        currentListing.btn:SetText(L["Reply"])
         currentListing.btn:SetScript("OnClick", function()
             return
         end)
@@ -3235,6 +3235,7 @@ function addon:OnEnable()
         end)
         if isInitialLogin == true then
             C_Timer.After(15, function()
+                addon.UpdateCharacterSheet()
                 local GroupieGroupBrowser = Groupie:GetModule("GroupieGroupBrowser")
                 if GroupieGroupBrowser then
                     --Queue updates from the LFG tool for dungeons and raids on login
