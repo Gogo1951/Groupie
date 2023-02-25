@@ -57,6 +57,7 @@ if  not L then return end
     L["Settings"] = "Réglages"
     L["BulletinBoard"] = "Panneau d'affichage"
     L["Reset"] = "Remise à zéro"
+    L["ClickSend"] = "Répondre avec:"
 
     -- Channels Name /!\ VERY IMPORTANT, THE ADDON PARSES DEPENDING ON THE CHANNEL NAME
     L["GuildChannel"] = "Guilde"

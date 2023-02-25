@@ -20,7 +20,7 @@ addon.LFGMode = false
 addon.ILVLCache = {}
 addon.playerILVL = nil
 addon.playerGearScore = nil
-addon.playerGearScoreColor = nil
+addon.playerFLOPScore = nil
 
 --Message formats for various checked messages
 addon.askForPlayerInfo = format("{rt3} %s : What Role are you?", addonName)

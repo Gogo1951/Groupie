@@ -12,7 +12,12 @@ local myclass = UnitClass("player")
 -------------------------------
 -- Right Click Functionality --
 -------------------------------
-function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultID, isAutoResponse)
+local msgCache = {}
+function addon.GetPlayerInfoMsg(fullName, isAutoResponse, isTooltip)
+	local msgKey = format("%s:%s",tostring(fullName),tostring(isAutoResponse))
+	if msgCache[msgKey] and isTooltip then
+		return msgCache[msgKey]
+	end
 	local mylevel = UnitLevel("player")
 	addon.UpdateSpecOptions()
 
@@ -116,6 +121,14 @@ function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultI
 		myclass,
 		achieveLinkStr
 	)
+	msgCache[msgKey] = groupieMsg:gsub("%b{}%s*","")
+	if isTooltip then return msgCache[msgKey] end
+	return groupieMsg
+end
+
+function addon.SendPlayerInfo(targetName, dropdownMenu, which, fullName, resultID, isAutoResponse)
+
+	local groupieMsg = addon.GetPlayerInfoMsg(fullName, isAutoResponse)
 
 	--Hash the message and attach the suffix of the hash
 	------------
