@@ -1,5 +1,6 @@
 local addonName, addon = ...
 local L = LibStub('AceLocale-3.0'):GetLocale('Groupie')
+local GetAddOnMetadata = GetAddOnMetadata or (C_AddOns and C_AddOns.GetAddOnMetadata)
 
 --Update this with each push to curse, this will be used for version checks
 addon.version = tonumber(GetAddOnMetadata(addonName, "Version"))
