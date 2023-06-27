@@ -320,7 +320,7 @@ local function ParseMessage(event, msg, author, _, channel, guid)
     local isLFM = false
     local rolesNeeded = {}
     local groupLanguage = nil
-    local groupTimestamp = time()
+    local groupTimestamp = GetServerTime()
     local groupDungeon = nil
     local isHeroic = nil
     local groupSize = nil
@@ -455,10 +455,10 @@ local function ParseMessage(event, msg, author, _, channel, guid)
     end
     if addon.db.global.listingTable[author].createdat == nil then
         --Set the created time if it isnt already set
-        addon.db.global.listingTable[author].createdat = time()
+        addon.db.global.listingTable[author].createdat = GetServerTime()
     elseif addon.db.global.listingTable[author].instanceName ~= groupDungeon then
         --Also, update the created time if the instance has changed since last posting, as this is functionally a new group
-        addon.db.global.listingTable[author].createdat = time()
+        addon.db.global.listingTable[author].createdat = GetServerTime()
     end
 
     --Moved from Event listener to minimize API calls to only successfully parsed listings

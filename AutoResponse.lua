@@ -17,7 +17,7 @@ local autoRejectRequestString = addon.autoRejectRequestString
 --Clear table entries more than 1 minute old
 local function expireRecentPlayers()
     local timediff = 60
-    local now = time()
+    local now = GetServerTime()
     for player, timestamp in pairs(addon.recentPlayers) do
         if now - timestamp > timediff then
             addon.recentPlayers[player] = nil
@@ -54,7 +54,7 @@ local function RespondToInvite(_, author)
             msg = msg .. " " .. addon.autoRejectInviteString
         end
         SendChatMessage(msg, "WHISPER", "COMMON", author)
-        addon.recentPlayers[author] = time()
+        addon.recentPlayers[author] = GetServerTime()
     end
 end
 
@@ -79,7 +79,7 @@ local function RespondToRequest(_, msg, ...)
                 msg = msg .. " " .. addon.autoRejectRequestString
             end
             SendChatMessage(msg, "WHISPER", "COMMON", author)
-            addon.recentPlayers[author] = time()
+            addon.recentPlayers[author] = GetServerTime()
         end
     elseif strmatch(msg, "could not accept because you are already in a group") then
         --Decided not to auto respond in this situation. If you are already
@@ -94,7 +94,7 @@ local function RespondToRequest(_, msg, ...)
         ----Not someone recently spoken to
         --if addon.recentPlayers[author] == nil and listedLFG then
         --    SendChatMessage(askForInstance, "WHISPER", "COMMON", author)
-        --    addon.recentPlayers[author] = time()
+        --    addon.recentPlayers[author] = GetServerTime()
         --end
     end
 end
@@ -103,7 +103,7 @@ local function OnWhisper(isReceiver, _, msg, longAuthor, ...)
     expireRecentPlayers()
     local author = gsub(longAuthor, "%-.+", "")
     --Store the player as recently spoken to with a timestamp
-    addon.recentPlayers[author] = time()
+    addon.recentPlayers[author] = GetServerTime()
     if msg == askForPlayerInfo and isReceiver then
         addon.SendPlayerInfo(author)
     end

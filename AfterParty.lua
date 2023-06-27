@@ -424,7 +424,11 @@ function AfterParty:OnEnable()
         end
     end)
 
-    self:RegisterEvent("GROUP_LEFT", ShowPartyWindow)
+    self:RegisterEvent("GROUP_LEFT", function()
+        if addon.db.char.afterParty then
+            ShowPartyWindow()
+        end
+    end)
 end
 
 --TODO: REMOVE TESTING COMMANDS

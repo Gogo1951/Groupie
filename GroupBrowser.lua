@@ -1007,7 +1007,7 @@ function GroupieGroupBrowser:MapResultToListing(resultID, resultData, leader, me
         isLFG = true
         isLFM = false
       end
-      timestamp = time()
+      timestamp = GetServerTime()
       if resultData.age then
         createdat = timestamp - resultData.age
       end

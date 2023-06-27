@@ -469,7 +469,7 @@ function addon.ExpireListings()
     local expirytimediff = 1200
     local maxLFGposttime = 1800
     for key, val in pairs(addon.db.global.listingTable) do
-        if time() - val.timestamp > expirytimediff then
+        if val.timestamp and (GetServerTime() - val.timestamp) > expirytimediff then
             addon.db.global.listingTable[key] = nil
         end
         --Also expire LFG listings created >30 min ago
@@ -481,7 +481,7 @@ end
 
 --Convert a timestamp into a XXMin:XXSec string
 function addon.GetTimeSinceString(timestamp, displayLen)
-    local timediff = abs(time() - timestamp)
+    local timediff = abs(GetServerTime() - timestamp)
     if displayLen == 4 then
         local days = floor(timediff / 86400)
         local hours = floor(mod(timediff, 86400) / 3600)
@@ -558,7 +558,7 @@ end
 
 --Expire out of date lockouts
 function addon.ExpireSavedInstances()
-    local now = time()
+    local now = GetServerTime()
     for order, val in pairs(addon.db.global.savedInstanceInfo) do
         for player, lockout in pairs(val) do
             if lockout.resetTime < now then
@@ -614,7 +614,7 @@ function addon.UpdateSavedInstances()
                                 instance = key,
                                 isHeroic = isHeroic,
                                 groupSize = maxPlayers,
-                                resetTime = reset + time()
+                                resetTime = reset + GetServerTime()
                             }
                         end
                     end
@@ -633,7 +633,7 @@ function addon.UpdateSavedInstances()
         instance = "Zul'Aman",
         isHeroic = false,
         groupSize = 10,
-        resetTime = 41595 + time()
+        resetTime = 41595 + GetServerTime()
     }
     addon.db.global.savedInstanceInfo[2160] = {}
     addon.db.global.savedInstanceInfo[2160][UnitName("player")] = {
@@ -642,7 +642,7 @@ function addon.UpdateSavedInstances()
         instance = "Coilfang: The Underbog",
         isHeroic = true,
         groupSize = 5,
-        resetTime = 41595 + time()
+        resetTime = 41595 + GetServerTime()
     }
     addon.db.global.savedInstanceInfo[2370] = {}
     addon.db.global.savedInstanceInfo[2370][UnitName("player")] = {
@@ -651,7 +651,7 @@ function addon.UpdateSavedInstances()
         instance = "Tempest Keep",
         isHeroic = false,
         groupSize = 25,
-        resetTime = 386957 + time()
+        resetTime = 386957 + GetServerTime()
     }
     addon.db.global.savedInstanceInfo[2330]["OtherGuy"] = {
         characterName = "OtherGuy",
@@ -659,7 +659,7 @@ function addon.UpdateSavedInstances()
         instance = "Zul'Aman",
         isHeroic = false,
         groupSize = 10,
-        resetTime = 41595 + time()
+        resetTime = 41595 + GetServerTime()
     }
     addon.db.global.savedInstanceInfo[2330]["FunnyGuy"] = {
         characterName = "FunnyGuy",
@@ -667,7 +667,7 @@ function addon.UpdateSavedInstances()
         instance = "Zul'Aman",
         isHeroic = false,
         groupSize = 10,
-        resetTime = 41595 + time()
+        resetTime = 41595 + GetServerTime()
     }
     addon.db.global.savedInstanceInfo[2390] = {}
     addon.db.global.savedInstanceInfo[2390]["OtherGuy"] = {
@@ -676,7 +676,7 @@ function addon.UpdateSavedInstances()
         instance = "Black Temple",
         isHeroic = false,
         groupSize = 25,
-        resetTime = 386957 + time()
+        resetTime = 386957 + GetServerTime()
     }
     --]]
 end

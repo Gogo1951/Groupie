@@ -336,7 +336,7 @@ local function filterListings()
     local idx = 1
     local total = 0
     local sortType = MainTabFrame.sortType or -1
-    local now = time()
+    local now = GetServerTime()
     local sortDir = MainTabFrame.sortDir or false
     local sorted = GetSortedListingIndex(sortType, sortDir)
 
@@ -1780,7 +1780,7 @@ addon.groupieLDB = LibStub("LibDataBroker-1.1"):NewDataObject(addonName, {
     end,
     OnTooltipShow = function(tooltip)
         addon.ExpireSavedInstances()
-        local now = time()
+        local now = GetServerTime()
         --tooltip:AddLine(addonName .. " - v" .. tostring(addon.version))
         tooltip:AddDoubleLine(addonName, tostring(addon.version),
             1, 0.85, 0.00, 1, 0.85, 0.00)
