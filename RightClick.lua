@@ -5,6 +5,7 @@ if not addon.tableContains(addon.validLocales, locale) then
 end
 local L       = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 local LGS     = LibStub:GetLibrary("LibGearScore.1000", true)
+local LDD     = LibStub("LibDropDown")
 local myname  = UnitName("player")
 local myclass = UnitClass("player")
 

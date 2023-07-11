@@ -12,6 +12,8 @@
     <Include file="Libs\AceDB-3.0\AceDB-3.0.xml"/>
     <Include file="Libs\AceGUI-3.0\AceGUI-3.0.xml"/>
     <Include file="Libs\AceConfig-3.0\AceConfig-3.0.xml"/>
+    <Include file="Libs\LibDropDown\embed.xml"/>
+    <Include file="Libs\TaintLess\TaintLess.xml"/>
     <Script file="Libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua"/>
     <Script file="Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua"/>
     <Script file="Libs\LibDBIconGroupie-1.0\LibDBIconGroupie-1.0.lua"/>

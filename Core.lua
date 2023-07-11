@@ -5,6 +5,7 @@ local addon                        = LibStub("AceAddon-3.0"):NewAddon(Groupie, a
     "AceTimer-3.0")
 local CI                           = LibStub("LibClassicInspector")
 local LGS                          = LibStub:GetLibrary("LibGearScore.1000", true)
+local LDD                          = LibStub("LibDropDown")
 --L_UIDROPDOWNMENU_SHOW_TIME         = 2 -- Timeout once the cursor leaves menu
 local L                            = LibStub('AceLocale-3.0'):GetLocale('Groupie')
 local localizedClass, englishClass = UnitClass("player")
@@ -1015,14 +1016,14 @@ local function TabSwap(isHeroic, size, tabType, tabNum)
     MainTabFrame.sortType = -1
     MainTabFrame.sortDir = false
     --Reset dropdowns
-    UIDropDownMenu_SetText(GroupieRoleDropdown, L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Any)
     MainTabFrame.roleType = nil
-    UIDropDownMenu_SetText(GroupieLootDropdown, L["Filters"].Loot_Styles.AnyLoot)
+    GroupieRoleDropdown:SetText(L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Any)
     MainTabFrame.lootType = nil
-    UIDropDownMenu_SetText(GroupieLangDropdown, L["Filters"].AnyLanguage)
+    GroupieLootDropdown:SetText(L["Filters"].Loot_Styles.AnyLoot)
     MainTabFrame.lang = nil
-    UIDropDownMenu_SetText(GroupieLevelDropdown, L["Filters"].Dungeons.RecommendedDungeon)
+    GroupieLangDropdown:SetText(L["Filters"].AnyLanguage)
     MainTabFrame.levelFilter = true
+    GroupieLevelDropdown:SetText(L["Filters"].Dungeons.RecommendedDungeon)
 
     --Clear selected listing
     if addon.selectedListing then
@@ -1343,150 +1344,134 @@ local function BuildGroupieWindow()
     ShowingFontStr:SetJustifyH("LEFT")
     ShowingFontStr:SetJustifyV("MIDDLE")
     --Role Dropdown
-    GroupieRoleDropdown = CreateFrame("Frame", "GroupieRoleDropdown", MainTabFrame, "UIDropDownMenuTemplate")
-    UIDropDownMenu_SetWidth(GroupieRoleDropdown, DROPDOWN_WIDTH, DROPDOWN_PAD)
-    GroupieRoleDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET, 55)
-    local function RoleDropdownOnClick(self, arg1)
-        if arg1 == 0 then
-            UIDropDownMenu_SetText(GroupieRoleDropdown, L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Any)
+    GroupieRoleDropdown = LDD:NewButton(MainTabFrame, "GroupieRoleDropdown")
+    --GroupieRoleDropdown:SetWidth(DROPDOWN_WIDTH, DROPDOWN_PAD)
+    GroupieRoleDropdown:SetPoint("TOPLEFT", MainTabFrame, DROPDOWN_LEFTOFFSET, 55)
+    GroupieRoleDropdown:Add(
+    {
+        text = L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Any,
+        func = function()
             MainTabFrame.roleType = nil
-        elseif arg1 == 1 then
-            UIDropDownMenu_SetText(GroupieRoleDropdown, L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Tank)
+            GroupieRoleDropdown:SetText(L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Any)
+        end,
+    },
+    {
+        text = L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Tank,
+        func = function()
             MainTabFrame.roleType = 1
-        elseif arg1 == 2 then
-            UIDropDownMenu_SetText(GroupieRoleDropdown, L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Healer)
+            GroupieRoleDropdown:SetText(L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Tank)
+        end,
+    },
+    {
+        text = L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Healer,
+        func = function()
             MainTabFrame.roleType = 2
-        elseif arg1 == 3 then
-            UIDropDownMenu_SetText(GroupieRoleDropdown, L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.DPS)
+            GroupieRoleDropdown:SetText(L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Healer)
+        end,
+    },
+    {
+        text = L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.DPS,
+        func = function()
             MainTabFrame.roleType = 3
-        end
-    end
-
-    local function RoleDropdownInit()
-        --Create menu list
-        local info = UIDropDownMenu_CreateInfo()
-        info.func = RoleDropdownOnClick
-        info.text, info.arg1, info.notCheckable = L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Any, 0, true
-        UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Tank, 1,
-            true
-        UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Healer, 2,
-            true
-        UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.DPS, 3, true
-        UIDropDownMenu_AddButton(info)
-    end
-
-    --Initialize Shown Value
-    UIDropDownMenu_Initialize(GroupieRoleDropdown, RoleDropdownInit)
-    UIDropDownMenu_SetText(GroupieRoleDropdown, L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Any)
+            GroupieRoleDropdown:SetText(L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.DPS)
+        end,
+    })
     MainTabFrame.roleType = nil
+    GroupieRoleDropdown:SetText(L["Filters"].Roles.LookingFor .. " " .. L["Filters"].Roles.Any)
+    GroupieRoleDropdown:Show()
 
     --Loot Type Dropdown
-    GroupieLootDropdown = CreateFrame("Frame", "GroupieLootDropdown", MainTabFrame, "UIDropDownMenuTemplate")
-    UIDropDownMenu_SetWidth(GroupieLootDropdown, DROPDOWN_WIDTH, DROPDOWN_PAD)
-    GroupieLootDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + DROPDOWN_WIDTH + DROPDOWN_PAD, 55)
-    local function LootDropdownOnClick(self, arg1)
-        if arg1 == 0 then
-            UIDropDownMenu_SetText(GroupieLootDropdown, L["Filters"].Loot_Styles.AnyLoot)
+    GroupieLootDropdown = LDD:NewButton(MainTabFrame, "GroupieLootDropdown")
+    --GroupieLootDropdown:SetWidth(DROPDOWN_WIDTH, DROPDOWN_PAD)
+    GroupieLootDropdown:SetPoint("TOPLEFT", MainTabFrame, DROPDOWN_LEFTOFFSET + DROPDOWN_WIDTH + DROPDOWN_PAD, 55)
+    GroupieLootDropdown:Add(
+    {
+        text = L["Filters"].Loot_Styles.AnyLoot,
+        func = function()
             MainTabFrame.lootType = nil
-        elseif arg1 == 1 then
-            UIDropDownMenu_SetText(GroupieLootDropdown, L["Filters"].Loot_Styles.MSOS)
+            GroupieLootDropdown:SetText(L["Filters"].Loot_Styles.AnyLoot)
+        end,
+    },
+    {
+        text = L["Filters"].Loot_Styles.MSOS,
+        func = function()
             MainTabFrame.lootType = L["Filters"].Loot_Styles.MSOS
-        elseif arg1 == 2 then
-            UIDropDownMenu_SetText(GroupieLootDropdown, L["Filters"].Loot_Styles.SoftRes)
+            GroupieLootDropdown:SetText(L["Filters"].Loot_Styles.MSOS)
+        end,
+    },
+    {
+        text = L["Filters"].Loot_Styles.SoftRes,
+        func = function()
             MainTabFrame.lootType = L["Filters"].Loot_Styles.SoftRes
-        elseif arg1 == 3 then
-            UIDropDownMenu_SetText(GroupieLootDropdown, L["Filters"].Loot_Styles.GDKP)
+            GroupieLootDropdown:SetText(L["Filters"].Loot_Styles.SoftRes)
+        end,
+    },
+    {
+        text = L["Filters"].Loot_Styles.GDKP,
+        func = function()
             MainTabFrame.lootType = L["Filters"].Loot_Styles.GDKP
-        elseif arg1 == 4 then
-            UIDropDownMenu_SetText(GroupieLootDropdown, L["Filters"].Loot_Styles.Ticket)
+            GroupieLootDropdown:SetText(L["Filters"].Loot_Styles.GDKP)
+        end,
+    },
+    {
+        text = L["Filters"].Loot_Styles.Ticket,
+        func = function()
             MainTabFrame.lootType = L["Filters"].Loot_Styles.Ticket
-        end
-    end
-
-    local function LootDropdownInit()
-        --Create menu list
-        local info = UIDropDownMenu_CreateInfo()
-        info.func = LootDropdownOnClick
-        info.text, info.arg1, info.notCheckable = L["Filters"].Loot_Styles.AnyLoot, 0, true
-        UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = L["Filters"].Loot_Styles.MSOS, 1, true
-        UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = L["Filters"].Loot_Styles.SoftRes, 2, true
-        UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = L["Filters"].Loot_Styles.GDKP, 3, true
-        UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = L["Filters"].Loot_Styles.Ticket, 4, true
-        UIDropDownMenu_AddButton(info)
-    end
-
-    --Initialize Shown Value
-    UIDropDownMenu_Initialize(GroupieLootDropdown, LootDropdownInit)
-    UIDropDownMenu_SetText(GroupieLootDropdown, L["Filters"].Loot_Styles.AnyLoot)
+            GroupieLootDropdown:SetText(L["Filters"].Loot_Styles.Ticket)
+        end,
+    })
     MainTabFrame.lootType = nil
+    GroupieLootDropdown:SetText(L["Filters"].Loot_Styles.AnyLoot)
+    GroupieLootDropdown:Show()
 
     --Language Dropdown
-    GroupieLangDropdown = CreateFrame("Frame", "GroupieLangDropdown", MainTabFrame, "UIDropDownMenuTemplate")
-    UIDropDownMenu_SetWidth(GroupieLangDropdown, DROPDOWN_WIDTH, DROPDOWN_PAD)
-    GroupieLangDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
-    local function LangDropdownOnClick(self, arg1)
-        if arg1 == 0 then
-            UIDropDownMenu_SetText(GroupieLangDropdown, L["Filters"].AnyLanguage)
+    GroupieLangDropdown = LDD:NewButton(MainTabFrame, "GroupieLangDropdown")
+    --GroupieLangDropdown:SetWidth(DROPDOWN_WIDTH, DROPDOWN_PAD)
+    GroupieLangDropdown:SetPoint("TOPLEFT", MainTabFrame, DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
+    GroupieLangDropdown:Add(
+    {
+        text = L["Filters"].AnyLanguage,
+        func = function()
             MainTabFrame.lang = nil
-        else
-            UIDropDownMenu_SetText(GroupieLangDropdown, addon.groupieLangList[arg1])
-            MainTabFrame.lang = addon.groupieLangList[arg1]
-        end
+            GroupieLangDropdown:SetText(L["Filters"].AnyLanguage)
+        end,
+    })
+    for i = 1, #addon.groupieLangList do
+        GroupieLangDropdown:Add(
+        {
+            text = addon.groupieLangList[i],
+            func = function()
+                MainTabFrame.lang = addon.groupieLangList[i]
+                GroupieLangDropdown:SetText(addon.groupieLangList[i])
+            end,
+        })
     end
-
-    local function LangDropdownInit()
-        --Create menu list
-        local info = UIDropDownMenu_CreateInfo()
-        info.func = LangDropdownOnClick
-        info.text, info.arg1, info.notCheckable = L["Filters"].AnyLanguage, 0, true
-        UIDropDownMenu_AddButton(info)
-
-        for i = 1, #addon.groupieLangList do
-            info.text, info.arg1, info.notCheckable = addon.groupieLangList[i], i, true
-            UIDropDownMenu_AddButton(info)
-        end
-    end
-
-    --Initialize Shown Value
-    UIDropDownMenu_Initialize(GroupieLangDropdown, LangDropdownInit)
-    UIDropDownMenu_SetText(GroupieLangDropdown, L["Filters"].AnyLanguage)
     MainTabFrame.lang = nil
+    GroupieLangDropdown:SetText(L["Filters"].AnyLanguage)
+    GroupieLangDropdown:Show()
 
     --Dungeon Level Dropdown
-    GroupieLevelDropdown = CreateFrame("Frame", "GroupieLevelDropdown", MainTabFrame, "UIDropDownMenuTemplate")
-    UIDropDownMenu_SetWidth(GroupieLevelDropdown, DROPDOWN_WIDTH * 2, DROPDOWN_PAD)
-    GroupieLevelDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 3, 55)
-    local function LevelDropdownOnClick(self, arg1)
-        if arg1 == 0 then
-            UIDropDownMenu_SetText(GroupieLevelDropdown, L["Filters"].Dungeons.RecommendedDungeon)
+    GroupieLevelDropdown = LDD:NewButton(MainTabFrame, "GroupieLevelDropdown")
+    GroupieLevelDropdown:SetWidth(DROPDOWN_WIDTH * 2 + DROPDOWN_PAD, DROPDOWN_PAD)
+    GroupieLevelDropdown:SetPoint("TOPLEFT", MainTabFrame, DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 3, 55)
+    GroupieLevelDropdown:Add(
+    {
+        text = L["Filters"].Dungeons.RecommendedDungeon,
+        func = function()
             MainTabFrame.levelFilter = true
-        else
-            UIDropDownMenu_SetText(GroupieLevelDropdown, L["Filters"].Dungeons.AnyDungeon)
+            GroupieLevelDropdown:SetText(L["Filters"].Dungeons.RecommendedDungeon)
+        end,
+    },
+    {
+        text = L["Filters"].Dungeons.AnyDungeon,
+        func = function()
             MainTabFrame.levelFilter = false
-        end
-    end
-
-    local function LevelDropdownInit()
-        --Create menu list
-        local info = UIDropDownMenu_CreateInfo()
-        info.func = LevelDropdownOnClick
-        info.text, info.arg1, info.notCheckable = L["Filters"].Dungeons.RecommendedDungeon, 0, true
-        UIDropDownMenu_AddButton(info)
-        info.text, info.arg1, info.notCheckable = L["Filters"].Dungeons.AnyDungeon, 1, true
-        UIDropDownMenu_AddButton(info)
-    end
-
-    --Initialize Shown Value
-    UIDropDownMenu_Initialize(GroupieLevelDropdown, LevelDropdownInit)
-    UIDropDownMenu_SetText(GroupieLevelDropdown, L["Filters"].Dungeons.RecommendedDungeon)
+            GroupieLevelDropdown:SetText(L["Filters"].Dungeons.AnyDungeon)
+        end,
+    })
     MainTabFrame.levelFilter = true
+    GroupieLevelDropdown:SetText(L["Filters"].Dungeons.RecommendedDungeon)
+    GroupieLevelDropdown:Show()
 
     --Settings Button
     GroupieSettingsButton = CreateFrame("Button", "GroupieTopFrame", MainTabFrame, "UIPanelButtonTemplate")
