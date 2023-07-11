@@ -101,7 +101,8 @@
         "PetJournalPetCard",
         "Settings",
         "GameFontDisableSmall",
-        "GameFontNormalSmall"
+        "GameFontNormalSmall",
+        "ChatTypeInfo"
     ],
     "Lua.diagnostics.disable": [
         "param-type-mismatch"
