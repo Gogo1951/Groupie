@@ -1,7 +1,7 @@
-## Interface: 30402
+## Interface: 30403
 ## Title: Groupie
 ## Notes: A better LFG tool for Classic WoW.
-## Version: 1.73
+## Version: 1.74-alpha
 ## Author: Gogo, LemonDrake, Kynura, Raegen
 ## SavedVariables: GroupieDB
 ## X-Curse-Project-ID: 661450
@@ -18,7 +18,7 @@ DBs/AchievementData.lua
 DBs/InstanceData.lua
 Globals.lua
 Core.lua
-GroupBrowser.lua
+#GroupBrowser.lua
 RightClick.lua
 Listener.lua
 AutoResponse.lua

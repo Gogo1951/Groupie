@@ -1129,7 +1129,7 @@ end
 local function BuildGroupieWindow()
     if GroupieFrame ~= nil then
         addon.ExpireListings()
-        local GroupieGroupBrowser = Groupie:GetModule("GroupieGroupBrowser")
+        local GroupieGroupBrowser = Groupie:GetModule("GroupieGroupBrowser",true)
         if GroupieGroupBrowser then
             GroupieGroupBrowser:AttachLFGToolPreset(GroupieTab1, 2)
             GroupieGroupBrowser:AttachLFGToolPreset(GroupieTab2, 2)
@@ -3221,7 +3221,7 @@ function addon:OnEnable()
         if isInitialLogin == true then
             C_Timer.After(15, function()
                 addon.UpdateCharacterSheet()
-                local GroupieGroupBrowser = Groupie:GetModule("GroupieGroupBrowser")
+                local GroupieGroupBrowser = Groupie:GetModule("GroupieGroupBrowser",true)
                 if GroupieGroupBrowser then
                     --Queue updates from the LFG tool for dungeons and raids on login
                     local dungeons, dungeonactivities = GroupieGroupBrowser:GetActivitiesFor(2)

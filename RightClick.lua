@@ -189,12 +189,12 @@ end
 ---------------
 local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 
-	if (UIDROPDOWNMENU_MENU_LEVEL > 1) then
+	--Attempt to prevent taint by not hooking dropdown while in combat
+	if InCombatLockdown() then
 		return
 	end
 
-	--Attempt to prevent taint by not hooking dropdown while in combat
-	if InCombatLockdown() then
+	if (UIDROPDOWNMENU_MENU_LEVEL > 1) or (which ~= "PLAYER") then
 		return
 	end
 
@@ -209,7 +209,7 @@ local function GroupieUnitMenu(dropdownMenu, which, unit, name, userData, ...)
 	end
 
 	--Dont show the menu on the player's own frame if not in debug mode
-	if unit == "player" and not addon.debugMenus then
+	if UnitIsUnit(unit,"player") and not addon.debugMenus then
 		return
 	end
 	if myname == name and not addon.debugMenus then
