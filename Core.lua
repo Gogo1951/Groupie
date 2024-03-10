@@ -31,7 +31,7 @@ if not addon.tableContains(addon.validLocales, locale) then
         GroupieFrame:EnableMouse(true)
         GroupieFrame:RegisterForDrag("LeftButton", "RightButton")
         GroupieFrame:SetClampedToScreen(true)
-        GroupieFrame.text = _G["GroupieTitleText"]
+        GroupieFrame.text = GroupieFrame.TitleText
         GroupieFrame.text:SetText(addonName)
         GroupieFrame:SetScript("OnMouseDown",
             function(self)
@@ -1164,7 +1164,7 @@ local function BuildGroupieWindow()
     GroupieFrame:EnableMouse(true)
     GroupieFrame:RegisterForDrag("LeftButton", "RightButton")
     GroupieFrame:SetClampedToScreen(true)
-    GroupieFrame.title = _G["GroupieTitleText"]
+    GroupieFrame.title = GroupieFrame.TitleText
     GroupieFrame.title:SetText(addonName .. " - v" .. tostring(addon.version))
     GroupieFrame:SetScript("OnMouseDown",
         function(self)
@@ -2944,7 +2944,7 @@ function addon.SetupConfig()
         PopupFrame:EnableMouse(true)
         PopupFrame:RegisterForDrag("LeftButton", "RightButton")
         PopupFrame:SetClampedToScreen(true)
-        PopupFrame.text = _G["GroupieTitleText"]
+        PopupFrame.text = PopupFrame.TitleText
         PopupFrame.text:SetText(addonName)
         PopupFrame:SetScript("OnMouseDown",
             function(self)
