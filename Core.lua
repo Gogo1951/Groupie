@@ -222,7 +222,7 @@ local function GetSortedFriendIndex(sortType, sortDir)
 
 
     --Build a numerical index to sort on
-    if MainTabFrame.tabType == 10 then --Friends
+    if MainTabFrame.tabType == "friend" then --Friends
         --Include Friends
         for source, list in pairs(addon.db.global.friends[myserver]) do
             if addon.db.global.hiddenFriendLists[myserver][source] then
@@ -270,7 +270,7 @@ local function GetSortedFriendIndex(sortType, sortDir)
                 end
             end
         end
-    elseif MainTabFrame.tabType == 11 then --Ignores
+    elseif MainTabFrame.tabType == "ignore" then --Ignores
         --Include Ignores
         for source, list in pairs(addon.db.global.ignores[myserver]) do
             if addon.db.global.hiddenFriendLists[myserver][source] then
@@ -342,7 +342,7 @@ local function filterListings()
     local sorted = GetSortedListingIndex(sortType, sortDir)
 
 
-    if MainTabFrame.tabType == 7 then --PVP
+    if MainTabFrame.tabType == "pvp" then --PVP
         for key, listing in pairs(sorted) do
             if listing.lootType ~= L["Filters"].Loot_Styles.PVP then
                 --Wrong tab
@@ -364,7 +364,7 @@ local function filterListings()
             end
             total = total + 1
         end
-    elseif MainTabFrame.tabType == 8 then --Other
+    elseif MainTabFrame.tabType == "other" then --Other
         for key, listing in pairs(sorted) do
             if listing.lootType ~= L["Filters"].Loot_Styles.Other then
                 --Wrong tab
@@ -404,7 +404,7 @@ local function filterListings()
             end
             total = total + 1
         end
-    elseif MainTabFrame.tabType == 9 then --All
+    elseif MainTabFrame.tabType == "all" then --All
         for key, listing in pairs(sorted) do
             if now - listing.timestamp > addon.db.global.minsToPreserve * 60 then
                 --Expired based on user settings
@@ -667,7 +667,7 @@ local function DrawFriends(self)
             button.groupieNote:SetText(listing.groupieNote)
             button.userNote:SetText(listing.userNote)
             button.btn:SetScript("OnClick", function()
-                if MainTabFrame.tabType == 10 then
+                if MainTabFrame.tabType == "friend" then
                     addon.db.global.groupieFriends[myserver][listing.name] = nil
                 else
                     addon.db.global.groupieIgnores[myserver][listing.name] = nil
@@ -995,7 +995,7 @@ local function TimerListingUpdate()
     --Draw the listings
     if (now - addon.lastUpdate) > 0.1 then
         addon.lastUpdate = now
-        if MainTabFrame.tabType ~= 10 and MainTabFrame.tabType ~= 11 then
+        if MainTabFrame.tabType ~= "friend" and MainTabFrame.tabType ~= "ignore" then
             DrawListings(LFGScrollFrame)
         else
             DrawFriends(FriendScrollFrame)
@@ -1012,7 +1012,7 @@ local function TabSwap(isHeroic, size, tabType, tabNum)
     --Reset environment values
     MainTabFrame.isHeroic = isHeroic
     MainTabFrame.size = size
-    MainTabFrame.tabType = tabNum
+    MainTabFrame.tabType = tabType
     MainTabFrame.sortType = -1
     MainTabFrame.sortDir = false
     --Reset dropdowns
@@ -1031,7 +1031,7 @@ local function TabSwap(isHeroic, size, tabType, tabNum)
     end
     addon.selectedListing = nil
 
-    if tabNum == 10 then --Friends
+    if tabType == "friend" then --Friends
         for i = 1, 6 do --Hide group listing columns
             _G["GroupieFrame1Header" .. i]:Hide()
         end
@@ -1053,7 +1053,7 @@ local function TabSwap(isHeroic, size, tabType, tabNum)
         SetNoteButton:Show()
         DrawFriends(FriendScrollFrame)
 
-    elseif tabNum == 11 then --Ignores
+    elseif tabType == "ignore" then --Ignores
         for i = 1, 6 do --Hide group listing columns
             _G["GroupieFrame1Header" .. i]:Hide()
         end
@@ -1091,21 +1091,21 @@ local function TabSwap(isHeroic, size, tabType, tabNum)
         end
         --Only show level dropdown on normal dungeon tab
         --Show no filters on pvp tab
-        if tabNum == 1 then --Normal dungeons
+        if tabType == "dungeon" then --Normal dungeons
             GroupieLangDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
             GroupieLevelDropdown:Show()
             GroupieRoleDropdown:Show()
             GroupieLootDropdown:Show()
             GroupieLangDropdown:Show()
             ShowingFontStr:Show()
-        elseif tabNum == 8 then --Other
+        elseif tabType == "other" then --Other
             GroupieLangDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 1, 55)
             GroupieLevelDropdown:Hide()
             GroupieRoleDropdown:Show()
             GroupieLootDropdown:Hide()
             GroupieLangDropdown:Show()
             ShowingFontStr:Show()
-        elseif tabNum == 7 then --PVP
+        elseif tabType == "pvp" then --PVP
             GroupieLangDropdown:SetPoint("TOPLEFT", DROPDOWN_LEFTOFFSET + (DROPDOWN_WIDTH + DROPDOWN_PAD) * 2, 55)
             GroupieLevelDropdown:Hide()
             GroupieRoleDropdown:Hide()
@@ -1150,7 +1150,7 @@ local function BuildGroupieWindow()
     --------------
     --Main Frame--
     --------------
-    GroupieFrame = CreateFrame("Frame", "Groupie", UIParent, "PortraitFrameTemplate")
+    GroupieFrame = GroupieFrame or CreateFrame("Frame", "Groupie", UIParent, "PortraitFrameTemplate")
     GroupieFrame:Hide()
     --Allow the frame to close when ESC is pressed
     tinsert(UISpecialFrames, "Groupie")
@@ -1191,103 +1191,119 @@ local function BuildGroupieWindow()
     ------------------------
     --Category Tab Buttons--
     ------------------------
-    local DungeonTabButton = CreateFrame("Button", "GroupieTab1", GroupieFrame, "CharacterFrameTabButtonTemplate")
+    local numTabs = 0
+    numTabs = numTabs + 1
+    local DungeonTabButton = CreateFrame("Button", "GroupieTab"..numTabs, GroupieFrame, "CharacterFrameTabButtonTemplate")
     DungeonTabButton:SetPoint("TOPLEFT", GroupieFrame, "BOTTOMLEFT", 20, 1)
     DungeonTabButton:SetText(L["UI_tabs"].Dungeon)
-    DungeonTabButton:SetID("1")
+    DungeonTabButton:SetID(numTabs)
     DungeonTabButton:SetScript("OnClick",
         function(self)
-            TabSwap(false, 5, 0, 1)
+            TabSwap(false, 5, "dungeon", self:GetID())
         end)
 
-    local DungeonHTabButton = CreateFrame("Button", "GroupieTab2", GroupieFrame, "CharacterFrameTabButtonTemplate")
-    DungeonHTabButton:SetPoint("LEFT", "GroupieTab1", "RIGHT", -16, 0)
-    DungeonHTabButton:SetText(L["UI_tabs"].Dungeon .. ' (' .. L["UI_tabs"].ShortHeroic .. ')')
-    DungeonHTabButton:SetID("2")
-    DungeonHTabButton:SetScript("OnClick",
-        function(self)
-            TabSwap(true, 5, 0, 2)
-        end)
+    if addon.wow_project == "wrath" then
+        numTabs = numTabs + 1
+        local DungeonHTabButton = CreateFrame("Button", "GroupieTab"..numTabs, GroupieFrame, "CharacterFrameTabButtonTemplate")
+        DungeonHTabButton:SetPoint("LEFT", "GroupieTab"..(numTabs-1), "RIGHT", -16, 0)
+        DungeonHTabButton:SetText(L["UI_tabs"].Dungeon .. ' (' .. L["UI_tabs"].ShortHeroic .. ')')
+        DungeonHTabButton:SetID(numTabs)
+        DungeonHTabButton:SetScript("OnClick",
+            function(self)
+                TabSwap(true, 5, "dungeon_h", self:GetID())
+            end)
+    end
 
-    local Raid10TabButton = CreateFrame("Button", "GroupieTab3", GroupieFrame, "CharacterFrameTabButtonTemplate")
-    Raid10TabButton:SetPoint("LEFT", "GroupieTab2", "RIGHT", -16, 0)
+    numTabs = numTabs + 1
+    local Raid10TabButton = CreateFrame("Button", "GroupieTab"..numTabs, GroupieFrame, "CharacterFrameTabButtonTemplate")
+    Raid10TabButton:SetPoint("LEFT", "GroupieTab"..(numTabs-1), "RIGHT", -16, 0)
     Raid10TabButton:SetText(L["UI_tabs"].Raid .. " (10)")
-    Raid10TabButton:SetID("3")
+    Raid10TabButton:SetID(numTabs)
     Raid10TabButton:SetScript("OnClick",
         function(self)
-            TabSwap(false, 10, 0, 3)
+            TabSwap(false, 10, "raid10", self:GetID())
         end)
 
-    local Raid25TabButton = CreateFrame("Button", "GroupieTab4", GroupieFrame, "CharacterFrameTabButtonTemplate")
-    Raid25TabButton:SetPoint("LEFT", "GroupieTab3", "RIGHT", -16, 0)
+    numTabs = numTabs + 1
+    local Raid25TabButton = CreateFrame("Button", "GroupieTab"..numTabs, GroupieFrame, "CharacterFrameTabButtonTemplate")
+    Raid25TabButton:SetPoint("LEFT", "GroupieTab"..(numTabs-1), "RIGHT", -16, 0)
     Raid25TabButton:SetText(L["UI_tabs"].Raid .. " (25)")
-    Raid25TabButton:SetID("4")
+    Raid25TabButton:SetID(numTabs)
     Raid25TabButton:SetScript("OnClick",
         function(self)
-            TabSwap(false, 25, 0, 4)
+            TabSwap(false, 25, "raid25", self:GetID())
         end)
 
-    local RaidH10TabButton = CreateFrame("Button", "GroupieTab5", GroupieFrame, "CharacterFrameTabButtonTemplate")
-    RaidH10TabButton:SetPoint("LEFT", "GroupieTab4", "RIGHT", -16, 0)
-    RaidH10TabButton:SetText(L["UI_tabs"].Raid .. ' (10' .. L["UI_tabs"].ShortHeroic .. ')')
-    RaidH10TabButton:SetID("5")
-    RaidH10TabButton:SetScript("OnClick",
-        function(self)
-            TabSwap(true, 10, 0, 5)
-        end)
+    if addon.wow_project == "wrath" then
+        numTabs = numTabs + 1
+        local RaidH10TabButton = CreateFrame("Button", "GroupieTab"..numTabs, GroupieFrame, "CharacterFrameTabButtonTemplate")
+        RaidH10TabButton:SetPoint("LEFT", "GroupieTab"..(numTabs-1), "RIGHT", -16, 0)
+        RaidH10TabButton:SetText(L["UI_tabs"].Raid .. ' (10' .. L["UI_tabs"].ShortHeroic .. ')')
+        RaidH10TabButton:SetID(numTabs)
+        RaidH10TabButton:SetScript("OnClick",
+            function(self)
+                TabSwap(true, 10, "raid10_h", self:GetID())
+            end)
 
-    local RaidH25TabButton = CreateFrame("Button", "GroupieTab6", GroupieFrame, "CharacterFrameTabButtonTemplate")
-    RaidH25TabButton:SetPoint("LEFT", "GroupieTab5", "RIGHT", -16, 0)
-    RaidH25TabButton:SetText(L["UI_tabs"].Raid .. ' (25' .. L["UI_tabs"].ShortHeroic .. ')')
-    RaidH25TabButton:SetID("6")
-    RaidH25TabButton:SetScript("OnClick",
-        function(self)
-            TabSwap(true, 25, 0, 6)
-        end)
+        numTabs = numTabs + 1
+        local RaidH25TabButton = CreateFrame("Button", "GroupieTab"..numTabs, GroupieFrame, "CharacterFrameTabButtonTemplate")
+        RaidH25TabButton:SetPoint("LEFT", "GroupieTab"..(numTabs-1), "RIGHT", -16, 0)
+        RaidH25TabButton:SetText(L["UI_tabs"].Raid .. ' (25' .. L["UI_tabs"].ShortHeroic .. ')')
+        RaidH25TabButton:SetID(numTabs)
+        RaidH25TabButton:SetScript("OnClick",
+            function(self)
+                TabSwap(true, 25, "raid25_h", self:GetID())
+            end)
+    end
 
-    local PVPTabButton = CreateFrame("Button", "GroupieTab7", GroupieFrame, "CharacterFrameTabButtonTemplate")
-    PVPTabButton:SetPoint("LEFT", "GroupieTab6", "RIGHT", -16, 0)
+    numTabs = numTabs + 1
+    local PVPTabButton = CreateFrame("Button", "GroupieTab"..numTabs, GroupieFrame, "CharacterFrameTabButtonTemplate")
+    PVPTabButton:SetPoint("LEFT", "GroupieTab"..(numTabs-1), "RIGHT", -16, 0)
     PVPTabButton:SetText(L["UI_tabs"].PVP)
-    PVPTabButton:SetID("7")
+    PVPTabButton:SetID(numTabs)
     PVPTabButton:SetScript("OnClick",
         function(self)
-            TabSwap(nil, nil, 3, 7)
+            TabSwap(nil, nil, "pvp", self:GetID())
         end)
 
-    local OtherTabButton = CreateFrame("Button", "GroupieTab8", GroupieFrame, "CharacterFrameTabButtonTemplate")
-    OtherTabButton:SetPoint("LEFT", "GroupieTab7", "RIGHT", -16, 0)
+    numTabs = numTabs + 1
+    local OtherTabButton = CreateFrame("Button", "GroupieTab"..numTabs, GroupieFrame, "CharacterFrameTabButtonTemplate")
+    OtherTabButton:SetPoint("LEFT", "GroupieTab"..(numTabs-1), "RIGHT", -16, 0)
     OtherTabButton:SetText(L["UI_tabs"].Other)
-    OtherTabButton:SetID("8")
+    OtherTabButton:SetID(numTabs)
     OtherTabButton:SetScript("OnClick",
         function(self)
-            TabSwap(nil, nil, 1, 8)
+            TabSwap(nil, nil, "other", self:GetID())
         end)
 
-    local AllTabButton = CreateFrame("Button", "GroupieTab9", GroupieFrame, "CharacterFrameTabButtonTemplate")
-    AllTabButton:SetPoint("LEFT", "GroupieTab8", "RIGHT", -16, 0)
+    numTabs = numTabs + 1
+    local AllTabButton = CreateFrame("Button", "GroupieTab"..numTabs, GroupieFrame, "CharacterFrameTabButtonTemplate")
+    AllTabButton:SetPoint("LEFT", "GroupieTab"..(numTabs-1), "RIGHT", -16, 0)
     AllTabButton:SetText(L["UI_tabs"].All)
-    AllTabButton:SetID("9")
+    AllTabButton:SetID(numTabs)
     AllTabButton:SetScript("OnClick",
         function(self)
-            TabSwap(nil, nil, 2, 9)
+            TabSwap(nil, nil, "all", self:GetID())
         end)
 
-    local FriendsTabButton = CreateFrame("Button", "GroupieTab10", GroupieFrame, "CharacterFrameTabButtonTemplate")
-    FriendsTabButton:SetPoint("LEFT", "GroupieTab9", "RIGHT", -16, 0)
+    numTabs = numTabs + 1
+    local FriendsTabButton = CreateFrame("Button", "GroupieTab"..numTabs, GroupieFrame, "CharacterFrameTabButtonTemplate")
+    FriendsTabButton:SetPoint("LEFT", "GroupieTab"..(numTabs-1), "RIGHT", -16, 0)
     FriendsTabButton:SetText("Friends")
-    FriendsTabButton:SetID("10")
+    FriendsTabButton:SetID(numTabs)
     FriendsTabButton:SetScript("OnClick",
         function(self)
-            TabSwap(nil, nil, nil, 10)
+            TabSwap(nil, nil, "friend", self:GetID())
         end)
 
-    local IgnoresTabButton = CreateFrame("Button", "GroupieTab11", GroupieFrame, "CharacterFrameTabButtonTemplate")
-    IgnoresTabButton:SetPoint("LEFT", "GroupieTab10", "RIGHT", -16, 0)
+    numTabs = numTabs + 1
+    local IgnoresTabButton = CreateFrame("Button", "GroupieTab"..numTabs, GroupieFrame, "CharacterFrameTabButtonTemplate")
+    IgnoresTabButton:SetPoint("LEFT", "GroupieTab"..(numTabs-1), "RIGHT", -16, 0)
     IgnoresTabButton:SetText("Ignores")
-    IgnoresTabButton:SetID("11")
+    IgnoresTabButton:SetID(numTabs)
     IgnoresTabButton:SetScript("OnClick",
         function(self)
-            TabSwap(nil, nil, nil, 11)
+            TabSwap(nil, nil, "ignore", self:GetID())
         end)
 
 
@@ -1314,7 +1330,7 @@ local function BuildGroupieWindow()
 
     MainTabFrame.isHeroic = false
     MainTabFrame.size = 5
-    MainTabFrame.tabType = 0
+    MainTabFrame.tabType = "dungeon"
     MainTabFrame.animFrame = 0
 
     --Listing Columns
@@ -1521,7 +1537,7 @@ local function BuildGroupieWindow()
     FriendScrollFrame:Hide()
 
 
-    PanelTemplates_SetNumTabs(GroupieFrame, 11)
+    PanelTemplates_SetNumTabs(GroupieFrame, numTabs)
     PanelTemplates_SetTab(GroupieFrame, 1)
 
     -------------------
@@ -1535,7 +1551,7 @@ local function BuildGroupieWindow()
         if addon.selectedListing then
             MainTabFrame.selectedFriend = addon.friendBoardButtons[addon.selectedListing].listing.name
             if MainTabFrame.selectedFriend then
-                if MainTabFrame.tabType == 10 then --Friend
+                if MainTabFrame.tabType == "friend" then --Friend
                     StaticPopupDialogs["GroupieAddFriendNote"] = {
                         text = "Set Note for " .. MainTabFrame.selectedFriend,
                         hasEditBox = 1,
@@ -1599,7 +1615,7 @@ local function BuildGroupieWindow()
     AddButton:SetText("Add Groupie Friend")
     AddButton:SetPoint("RIGHT", SetNoteButton, "LEFT", -24, 0)
     AddButton:SetScript("OnClick", function(self)
-        if MainTabFrame.tabType == 10 then --Friend
+        if MainTabFrame.tabType == "friend" then --Friend
             StaticPopupDialogs["GroupieAddFriend"] = {
                 text = "Add Groupie Global Friend",
                 hasEditBox = 1,
@@ -1733,7 +1749,8 @@ local function BuildGroupieWindow()
     --]]
 
     GroupieFrame:SetScale(addon.db.global.UIScale)
-    GroupieFrame:Show()
+    --GroupieFrame:Show()
+    return GroupieFrame
 end
 
 --Minimap Icon Creation
@@ -1980,7 +1997,7 @@ function addon:OnInitialize()
     addon.icon:Hide("GroupieLDB")
 
     --Build the main UI
-    BuildGroupieWindow()
+    --BuildGroupieWindow()
 
     --Debug variable defaults to false
     addon.debugMenus = false
@@ -2074,6 +2091,17 @@ end
 -- AceConfig Setup --
 ---------------------
 function addon.SetupConfig()
+    addon.wow_project = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE) and "retail" or (WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC) and "wrath" or (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) and "vanilla" or "unknown"
+    local wowver, wowbuild, wowbuildate, wowtoc = GetBuildInfo()
+    if addon.wow_project == "vanilla" then
+        if C_Seasons and C_Seasons.HasActiveSeason and C_Seasons.HasActiveSeason() then
+            addon.wow_classic_sod = C_Seasons.GetActiveSeason() == Enum.SeasonID.SeasonOfDiscovery or false
+        end
+        if addon.wow_classic_sod then
+            local levelcap = GetEffectivePlayerMaxLevel()
+            addon.wow_sod_phase = (levelcap == 25) and {1,25} or (levelcap == 40) and {2,40} or (levelcap == 50) and {3,50} or (levelcap == 60) and {4,60} or {wowtoc, 60}
+        end
+    end
     addon.options = {
         name = "|TInterface\\AddOns\\" ..
             addonName .. "\\Images\\icon64:16:16:0:4|t  " .. addonName .. " - v" .. tostring(addon.version),
@@ -2221,6 +2249,7 @@ function addon.SetupConfig()
                 width = "double",
                 inline = false,
                 order = 13,
+                hidden = function() return addon.wow_project ~= "wrath" end,
                 args = {
                     header1 = {
                         type = "description",
@@ -2238,6 +2267,7 @@ function addon.SetupConfig()
                 width = "double",
                 inline = false,
                 order = 14,
+                hidden = function() return addon.wow_project ~= "wrath" end,
                 args = {
                     header1 = {
                         type = "description",
@@ -2852,15 +2882,18 @@ function addon.SetupConfig()
     ---------------------------------------
     -- Generate Instance Filter Controls --
     ---------------------------------------
-    addon.GenerateInstanceToggles(1, "Wrath of the Lich King Heroic Raids - 25", false, "instancefiltersWrath")
-    addon.GenerateInstanceToggles(101, "Wrath of the Lich King Heroic Raids - 10", false, "instancefiltersWrath")
-    addon.GenerateInstanceToggles(201, "Wrath of the Lich King Raids - 25", false, "instancefiltersWrath")
-    addon.GenerateInstanceToggles(301, "Wrath of the Lich King Raids - 10", false, "instancefiltersWrath")
-    addon.GenerateInstanceToggles(401, "Wrath of the Lich King Heroic Dungeons", false, "instancefiltersWrath")
-    addon.GenerateInstanceToggles(501, "Wrath of the Lich King Dungeons", true, "instancefiltersWrath")
-    addon.GenerateInstanceToggles(601, "The Burning Crusade Raids", false, "instancefiltersTBC")
-    addon.GenerateInstanceToggles(701, "The Burning Crusade Heroic Dungeons", true, "instancefiltersTBC")
-    addon.GenerateInstanceToggles(801, "The Burning Crusade Dungeons", true, "instancefiltersTBC")
+    if addon.wow_project == "wrath" then
+        addon.GenerateInstanceToggles(1, "Wrath of the Lich King Heroic Raids - 25", false, "instancefiltersWrath")
+        addon.GenerateInstanceToggles(101, "Wrath of the Lich King Heroic Raids - 10", false, "instancefiltersWrath")
+        addon.GenerateInstanceToggles(201, "Wrath of the Lich King Raids - 25", false, "instancefiltersWrath")
+        addon.GenerateInstanceToggles(301, "Wrath of the Lich King Raids - 10", false, "instancefiltersWrath")
+        addon.GenerateInstanceToggles(401, "Wrath of the Lich King Heroic Dungeons", false, "instancefiltersWrath")
+        addon.GenerateInstanceToggles(501, "Wrath of the Lich King Dungeons", true, "instancefiltersWrath")
+
+        addon.GenerateInstanceToggles(601, "The Burning Crusade Raids", false, "instancefiltersTBC")
+        addon.GenerateInstanceToggles(701, "The Burning Crusade Heroic Dungeons", true, "instancefiltersTBC")
+        addon.GenerateInstanceToggles(801, "The Burning Crusade Dungeons", true, "instancefiltersTBC")
+    end
     addon.GenerateInstanceToggles(901, "Classic Raids", false, "instancefiltersClassic")
     addon.GenerateInstanceToggles(1001, "Classic Dungeons", true, "instancefiltersClassic")
     -----------------------------------
@@ -2896,7 +2929,7 @@ function addon.SetupConfig()
     addon.db.global.lastServer = currentServer
 
 
-    if addon.db.global.lastShowedInfoPopup < addon.version then
+    if not addon.db.global.lastShowedInfoPopup or (addon.db.global.lastShowedInfoPopup < addon.version) then
         addon.db.global.lastShowedInfoPopup = addon.version
         local PopupFrame = nil
         local POPUP_WINDOW_WIDTH = 400
@@ -2939,7 +2972,7 @@ function addon.SetupConfig()
         local PopupMsg = PopupFrame:CreateFontString("FontString", "OVERLAY", "GameFontHighlight")
         PopupMsg:SetPoint("TOPLEFT", PopupFrame, "TOPLEFT", 16, -64)
         PopupMsg:SetWidth(POPUP_WINDOW_WIDTH - 32)
-        PopupMsg:SetText("1.64\n\nHey Everyone,\n\nGroupie is switching to a new \"Charm Validation\" technique and getting rid of the ugly hashes -- like \"[#Ag4f]\" at the end of messages.\n\nInstead we're using 3 target markers. The idea came from user Haste on our Discord.\n\nYou may see some \"Fake News\" responses from people who haven't updated yet. Hopefully it won't take too long to get everyone updated.\n\nCheers!")
+        PopupMsg:SetText(L.VersionMessage)
         PopupMsg:SetJustifyH("LEFT")
         --Edit Box for Discord Link
         local PopupEditBox = CreateFrame("EditBox", "GroupieEditBoxPopup", PopupFrame, "InputBoxTemplate")
@@ -3208,8 +3241,11 @@ function addon:OnEnable()
     --Update player's saved instances on boss kill and login
     --The api is very slow to populate saved instance data, so we need a delay on these events
     addon:RegisterEvent("PLAYER_ENTERING_WORLD", function(...)
-        addon.SetupConfig()
         local event, isInitialLogin, isReloadingUi = ...
+        if isInitialLogin or isReloadingUi then
+            addon.SetupConfig()
+            BuildGroupieWindow()
+        end
         C_Timer.After(3, function()
             addon.UpdateFriends()
             addon.UpdateSavedInstances()

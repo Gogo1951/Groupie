@@ -335,3 +335,30 @@ addon.groupieInstanceData = {
     ["Ragefire Chasm"] = { Active = true, Expac = "World of Warcraft", InstanceType = "Classic Dungeons",
         InstanceID = 389, MinLevel = 13, MaxLevel = 20, GroupSize = 5, Order = 1000, ActivityID = 798, Icon = "RFC.tga" },
 }
+if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+    if C_Seasons and C_Seasons.HasActiveSeason and C_Seasons.HasActiveSeason() then
+        if C_Seasons.GetActiveSeason() == Enum.SeasonID.SeasonOfDiscovery then
+            addon.groupieInstanceData["Blackfathom Deeps"] = { Active = true, Expac = "World of Warcraft", InstanceType = "Classic Raids",
+        InstanceID = 48, MinLevel = 25, MaxLevel = 30, GroupSize = 10, Order = 1040, ActivityID = 801, Icon = "BFD.tga" }
+            addon.groupieInstanceData["Gnomeregan"] = { Active = true, Expac = "World of Warcraft", InstanceType = "Classic Raids", InstanceID = 90,
+        MinLevel = 40, MaxLevel = 45, GroupSize = 10, Order = 1070, ActivityID = 803, Icon = "GNOMER.tga" }
+            addon.instanceVersions = addon.instanceVersions or {}
+            addon.instanceVersions["Blackfathom Deeps"] = { { 10, false } }
+            addon.instanceVersions["Gnomeregan"] = { { 10, false } }
+
+            addon.instanceConfigData = addon.instanceConfigData or {}
+            -- BFD
+            addon.instanceConfigData[1040] = addon.instanceConfigData[1040] or {}
+            addon.instanceConfigData[1040].InstanceType = "Classic Raids"
+            addon.instanceConfigData[1040].MinLevel = 25
+            addon.instanceConfigData[1040].MaxLevel = 30
+            addon.instanceConfigData[1040].GroupSize = 10
+            -- Gnomer
+            addon.instanceConfigData[1070] = addon.instanceConfigData[1070] or {}
+            addon.instanceConfigData[1070].InstanceType = "Classic Raids"
+            addon.instanceConfigData[1070].MinLevel = 40
+            addon.instanceConfigData[1070].MaxLevel = 45
+            addon.instanceConfigData[1070].GroupSize = 10
+        end
+    end
+end

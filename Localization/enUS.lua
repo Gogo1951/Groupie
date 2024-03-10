@@ -305,3 +305,17 @@ L["CommunityLabel"] = "Groupie Community"
 L["GlobalFriendsLabel"] = "Global Friends List"
 L["GeneralOptionslabel"] = "General Options"
 L["KeywordFilters"] = "Keyword FIlters"
+L["VersionMessage"] =
+[[1.75
+Initial Classic Era / Season of Discovery Support
+
+1.74
+Remove GroupBrowser module for Wrath Classic (obsolete since RDF induction)
+
+1.64
+Groupie is switching to a new "Charm Validation" technique and getting rid of the ugly hashes -- like "[#Ag4f]" at the end of messages.
+Instead we're using 3 target markers. The idea came from user Haste on our Discord.
+
+You may see some "Fake News" responses from people who haven't updated yet. Hopefully it won't take too long to get everyone updated.
+
+Cheers!]]
