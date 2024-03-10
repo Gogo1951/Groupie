@@ -17,7 +17,5 @@ jobs:
       - name: Clone project
         uses: actions/checkout@v1
 
-      - name: Package and release Wrath
+      - name: Package and release Wrath,Vanilla
         uses: BigWigsMods/packager@master
-        with:
-          args: -g wrath
